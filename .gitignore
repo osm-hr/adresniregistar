@@ -1,0 +1,5 @@
+.idea/
+data/
+rgz_creds
+geckodriver
+geckodriver.log
