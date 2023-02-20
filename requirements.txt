@@ -1,2 +1,4 @@
 selenium==4.8.2
 selenium-wire==5.1.0
+osmium==3.4.1
+Shapely==1.8.4
