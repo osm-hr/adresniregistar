@@ -15,7 +15,7 @@ OPSTINE_TO_SKIP = ['VITINA', 'VUČITRN', 'GLOGOVAC', 'GNJILANE', 'GORA', 'DEČAN
                    'ZVEČAN', 'ZUBIN POTOK', 'ISTOK', 'KAČANIK', 'KLINA', 'KOSOVSKA MITROVICA',
                    'KOSOVO POLJE', 'KOSOVSKA KAMENICA', 'LEPOSAVIĆ', 'LIPLJAN', 'NOVO BRDO',
                    'OBILIĆ', 'ORAHOVAC', 'PEĆ', 'PODUJEVO', 'PRIŠTINA', 'PRIZREN', 'SRBICA',
-                   'SUVA REKA', 'UROŠEVAC', 'ŠTIMLJE', 'ŠTRPCE']
+                   'SUVA REKA', 'UROŠEVAC', 'ŠTIMLJE', 'ŠTRPCE', 'UB', 'TOPOLA', 'RAČA']
 
 
 def login(driver, rgz_username, rgz_password):
@@ -112,21 +112,19 @@ def download_all_from_rgz(rgz_username, rgz_password, download_path):
 
 
 def main():
-    if not os.path.exists('rgz_creds'):
-        print("Before runnning download, you need to create file named 'rgz_cred' with two lines.")
-        print("First line should contain username to log in to RGZ")
-        print("Second line should contain password to log in to RGZ")
+    if not os.path.exists('idp_creds'):
+        print("Before running download, you need to create file named 'idp_creds' with two lines.")
+        print("First line should contain username to log in to https://download-tmp.geosrbija.rs/download/")
+        print("Second line should contain password to log in to https://download-tmp.geosrbija.rs/download/")
         return
 
-    with open('rgz_creds') as f:
+    with open('idp_creds') as f:
         rgz_username = f.readline().strip()
         rgz_password = f.readline().strip()
 
     cwd = os.getcwd()
-    download_path = os.path.join(cwd, 'data/rgz_opstine/download')
+    download_path = os.path.join(cwd, 'data/rgz/download')
     download_all_from_rgz(rgz_username, rgz_password, download_path)
-
-
 
 
 if __name__ == '__main__':

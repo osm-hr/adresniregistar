@@ -119,14 +119,13 @@ class CollectAddressesHandler(osmium.SimpleHandler):
         if n.tags.get('addr:housenumber'):
             point = geometry.Point((n.location.lon, n.location.lat))
             self.addresses.append({
-                'id': 'n' + str(n.id),
-                'country': n.tags.get('addr:country') or '',
-                'city': n.tags.get('addr:city') or '',
-                'postcode': n.tags.get('addr:postcode') or '',
-                'street': n.tags.get('addr:street') or '',
-                'housenumber': n.tags.get('addr:housenumber'),
-                'geometry': point,
-                'centroid': point
+                'osm_id': 'n' + str(n.id),
+                'osm_country': n.tags.get('addr:country') or '',
+                'osm_city': n.tags.get('addr:city') or '',
+                'osm_postcode': n.tags.get('addr:postcode') or '',
+                'osm_street': n.tags.get('addr:street') or '',
+                'osm_housenumber': n.tags.get('addr:housenumber'),
+                'osm_geometry': point
             })
 
     def way(self, w):
@@ -138,14 +137,13 @@ class CollectAddressesHandler(osmium.SimpleHandler):
                 print(f"Dropping way {w.id} ({street} {housenumber}) as its geometry cannot be calculated")
                 return
             self.addresses.append({
-                'id': 'w' + str(w.id),
-                'country': w.tags.get('addr:country') or '',
-                'city': w.tags.get('addr:city') or '',
-                'postcode': w.tags.get('addr:postcode') or '',
-                'street': street,
-                'housenumber': housenumber,
-                'geometry': geom,
-                'centroid': geom.centroid
+                'osm_id': 'w' + str(w.id),
+                'osm_country': w.tags.get('addr:country') or '',
+                'osm_city': w.tags.get('addr:city') or '',
+                'osm_postcode': w.tags.get('addr:postcode') or '',
+                'osm_street': street,
+                'osm_housenumber': housenumber,
+                'osm_geometry': geom
             })
 
     def relation(self, r):
@@ -157,20 +155,20 @@ class CollectAddressesHandler(osmium.SimpleHandler):
                 print(f"Dropping relation {r.id} ({street} {housenumber}) as its geometry cannot be calculated")
                 return
             self.addresses.append({
-                'id': 'r' + str(r.id),
-                'country': r.tags.get('addr:country') or '',
-                'city': r.tags.get('addr:city') or '',
-                'postcode': r.tags.get('addr:postcode') or '',
-                'street': street,
-                'housenumber': housenumber,
-                'geometry': geom,
-                'centroid': geom.centroid
+                'osm_id': 'r' + str(r.id),
+                'osm_country': r.tags.get('addr:country') or '',
+                'osm_city': r.tags.get('addr:city') or '',
+                'osm_postcode': r.tags.get('addr:postcode') or '',
+                'osm_street': street,
+                'osm_housenumber': housenumber,
+                'osm_geometry': geom
             })
 
 
 def main():
     cwd = os.getcwd()
     collect_path = os.path.join(cwd, 'data/osm')
+    rgz_path = os.path.join(cwd, 'data/rgz')
     pbf_file = os.path.join(collect_path, 'download/serbia.osm.pbf')
 
     crwh = CollectRelationWaysHandler()
@@ -188,16 +186,15 @@ def main():
     cah = CollectAddressesHandler(bnch.nodes_cache, cwnh.ways_cache)
     cah.apply_file(pbf_file)
     print(f"Collected all addresses ({len(cah.addresses)})")
-
-    all_addresses_path = os.path.join(collect_path, 'osm_addresses.csv')
+    all_addresses_path = os.path.join(collect_path, 'addresses.csv')
     with open(all_addresses_path, 'w') as all_addresses_csv:
         writer = csv.DictWriter(
             all_addresses_csv,
-            fieldnames=['id', 'country', 'city', 'postcode', 'street', 'housenumber', 'geometry', 'centroid'])
+            fieldnames=['osm_id', 'osm_country', 'osm_city', 'osm_postcode', 'osm_street', 'osm_housenumber', 'osm_geometry'])
         writer.writeheader()
         for address in cah.addresses:
             writer.writerow(address)
-    print(f"All {len(cah.addresses)} addresses written to osm_addresses.csv")
+    print(f"All {len(cah.addresses)} addresses written to data/osm/addresses.csv")
 
 
 if __name__ == '__main__':

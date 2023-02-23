@@ -1,5 +1,6 @@
 .idea/
 data/
 rgz_creds
+idp_creds
 geckodriver
 geckodriver.log
