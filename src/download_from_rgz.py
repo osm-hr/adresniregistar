@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from common import OPSTINE_TO_SKIP
 import json
 import os
 import time
@@ -11,11 +12,8 @@ from selenium.webdriver.common.keys import Keys
 from seleniumwire import webdriver
 
 SLEEP_TIME = 1
-OPSTINE_TO_SKIP = ['VITINA', 'VUČITRN', 'GLOGOVAC', 'GNJILANE', 'GORA', 'DEČANI', 'ĐAKOVICA',
-                   'ZVEČAN', 'ZUBIN POTOK', 'ISTOK', 'KAČANIK', 'KLINA', 'KOSOVSKA MITROVICA',
-                   'KOSOVO POLJE', 'KOSOVSKA KAMENICA', 'LEPOSAVIĆ', 'LIPLJAN', 'NOVO BRDO',
-                   'OBILIĆ', 'ORAHOVAC', 'PEĆ', 'PODUJEVO', 'PRIŠTINA', 'PRIZREN', 'SRBICA',
-                   'SUVA REKA', 'UROŠEVAC', 'ŠTIMLJE', 'ŠTRPCE', 'UB', 'TOPOLA', 'RAČA']
+
+OPSTINE_TO_SKIP_UNHANDLED = ['UB', 'TOPOLA', 'RAČA']
 
 
 def login(driver, rgz_username, rgz_password):
@@ -83,6 +81,9 @@ def download_all_from_rgz(rgz_username, rgz_password, download_path):
             continue
         if opstina_name in OPSTINE_TO_SKIP:
             print(f'Skipping opstina {opstina_name}, Kosovo is not in RGZ')
+            continue
+        if opstina_name in OPSTINE_TO_SKIP_UNHANDLED:
+            print(f'Skipping opstina {opstina_name}, have to be downloaded manually')
             continue
 
         time.sleep(SLEEP_TIME)

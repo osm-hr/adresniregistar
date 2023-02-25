@@ -7,30 +7,7 @@ from shapely import wkt
 import Levenshtein
 import math
 
-normalize_rules = {
-    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e',
-    'ж': 'z', 'з': 'z', 'и': 'i', 'ј': 'j', 'к': 'k', 'л': 'l',
-    'љ': 'lj','м': 'm', 'н': 'n', 'њ': 'nj', 'о': 'o', 'п': 'p',
-    'р': 'r', 'с': 's', 'т': 't', 'ћ': 'c', 'у': 'u', 'ф': 'f',
-    'х': 'h', 'ц': 'c', 'ч': 'c', 'џ': 'dz', 'ш': 's', 'ђ': 'dj',
-    'č': 'c', 'ć': 'c', 'ž': 'z', 'š': 's', 'đ': 'dj'
-}
-
-
-def normalize_name(name: str):
-    if type(name) == float and math.isnan(name):
-        return name
-    if type(name) == int:
-        return str(name)
-    name = name.replace(' ', '').replace('.', '').lower()
-
-    normalized = ''
-    for c in name:
-        if c in normalize_rules:
-            normalized += normalize_rules[c]
-        else:
-            normalized += c
-    return normalized
+from common import normalize_name
 
 
 def calculate_housenumber_diff(housenumber_rgz, housenumber_osm):
@@ -125,15 +102,21 @@ def do_analysis(opstina, data_path):
     joined['matching'] = joined.apply(lambda row:
         row['rgz_ulica_norm'] == row['osm_street_norm'] and row['rgz_kucni_broj_norm'] == row['osm_housenumber_norm'], axis=1)
 
+    # TODO: try to somehow exclude address that are already conflated or part of perfect match
     print(f"    Finding best matches for addresses in {opstina}")
     joined.sort_values(['rgz_kucni_broj_id', 'matching', 'score', 'osm_id'], ascending=[True, False, False, False], inplace=True)
     joined['rank'] = 1
+    joined['conflated'] = False  # TODO: actually calculate this
     joined['rank'] = joined.groupby(['rgz_kucni_broj_id'])['rank'].cumsum()
     joined = joined[joined['rank'] == 1]
 
     print("    Saving analysis")
     joined.drop(['index_right', 'rgz_ulica_norm', 'rgz_kucni_broj_norm', 'rgz_buffered_geometry', 'osm_street_norm', 'osm_housenumber_norm', 'rank'], inplace=True, axis=1)
-    joined.assign(rgz_geometry=joined["rgz_geometry"].apply(lambda p: p.wkt))
+    joined.set_geometry('osm_geometry', inplace=True)
+    joined.to_crs("EPSG:4326", inplace=True)
+    joined.set_geometry('rgz_geometry', inplace=True)
+    joined.to_crs("EPSG:4326", inplace=True)
+    #joined.assign(rgz_geometry=joined["rgz_geometry"].apply(lambda p: p.wkt))
     pd.DataFrame(joined).to_csv(os.path.join(data_path, f'analysis/{opstina}.csv'), index=False)
 
 

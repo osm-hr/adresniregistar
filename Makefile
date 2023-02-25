@@ -37,4 +37,5 @@ analyze:
 report:
 	@echo "Generating report"
 	mkdir -p data/report
+	mkdir -p data/report/opstine
 	python3 src/create_report.py
