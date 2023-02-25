@@ -38,6 +38,10 @@ Sve komande se izvršavaju sa `make <komanda>`. Dostupne su sledeće komande:
   takvu adresu, postavlja se "`score``" i OSM elementi, a ako nema, te kolone ostaju prazne. Rezultujući CSV se smešta u
   data/analasis direktorijum.
 
+* `report`
+
+  Ova komanda generiše HTML fajlove u `data/report` direktorijumu na osnovu prethodno urađene analize. Izgenerisani
+  fajlovi su statički i mogu se prebaciti na neki server. Veličina je velika, 800 MB neotpakovano, 80 MB zapakovano. 
 
 ## Licenca
 
