@@ -10,6 +10,8 @@ clean:
 	rm data/rgz/addresses.csv
 	rm data/osm/download/serbia.osm.pbf
 	rm data/osm/addresses.csv
+	rm -r data/report/*
+	rm data/report.tar.gz
 
 download_from_rgz:
 	@echo "Download housenumbers from RGZ"
@@ -39,3 +41,6 @@ report:
 	mkdir -p data/report
 	mkdir -p data/report/opstine
 	python3 src/create_report.py
+
+upload_report:
+	@./src/upload_report.sh

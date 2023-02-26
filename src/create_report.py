@@ -147,6 +147,8 @@ def generate_index(env):
 
 
 def main():
+    # TODO: sorting in some columns should be as numbers (distance, kucni broj)
+    # TODO: address should be searchable with latin only
     env = Environment(loader=FileSystemLoader(searchpath='./templates'))
     generate_index(env)
 
