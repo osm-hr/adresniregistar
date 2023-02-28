@@ -187,7 +187,7 @@ def main():
     cah.apply_file(pbf_file)
     print(f"Collected all addresses ({len(cah.addresses)})")
     all_addresses_path = os.path.join(collect_path, 'addresses.csv')
-    with open(all_addresses_path, 'w') as all_addresses_csv:
+    with open(all_addresses_path, 'w', encoding="utf-8") as all_addresses_csv:
         writer = csv.DictWriter(
             all_addresses_csv,
             fieldnames=['osm_id', 'osm_country', 'osm_city', 'osm_postcode', 'osm_street', 'osm_housenumber', 'osm_geometry'])
