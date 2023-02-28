@@ -47,6 +47,22 @@ def normalize_name(name: str):
     return normalized
 
 
+def normalize_name_latin(name: str):
+    if type(name) == float and math.isnan(name):
+        return name
+    if type(name) == int:
+        return str(name)
+    name = name.replace(' ', '').replace('.', '').replace('-', '').lower()
+
+    normalized = ''
+    for c in name:
+        if c in cyr_to_lat:
+            normalized += cyr_to_lat[c]
+        else:
+            normalized += c
+    return normalized
+
+
 def cyr2lat(text):
     out = ''
     for c in text:
