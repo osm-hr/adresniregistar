@@ -8,8 +8,6 @@ import pandas as pd
 import osmium
 from common import normalize_name_latin
 
-csv.field_size_limit(sys.maxsize)
-
 
 class CollectRgzRefMappingHandler(osmium.SimpleHandler):
     """
@@ -211,7 +209,21 @@ def main():
         opstina = file[:-4]
         print(f"{i + 1}/{total_csvs} Processing {opstina}")
         process_opstina(mapping, opstina, data_path, curated_streets, ref_mappings, osm_mappings)
-    pass
+
+    mapping_csv_path = os.path.join(data_path, "mapping/mapping.csv")
+    with open(mapping_csv_path, 'w', encoding="utf-8") as mapping_csv:
+        writer = csv.DictWriter(
+            mapping_csv,
+            fieldnames=['rgz_name', 'name', 'source', 'refs'])
+        writer.writeheader()
+        for rgz_name in mapping.keys():
+            writer.writerow({
+                'rgz_name': rgz_name,
+                'name': mapping[rgz_name]['name'],
+                'source': mapping[rgz_name]['source'],
+                'refs': mapping[rgz_name]['refs'],
+            })
+    print(f"All {len(mapping)} mappings written to data/mapping/mapping.csv")
 
 
 if __name__ == '__main__':

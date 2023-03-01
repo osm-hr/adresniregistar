@@ -31,6 +31,11 @@ download_from_osm:
 	mkdir -p data/osm/csv
 	python3 src/prepare_osm_data.py
 
+normalize_street_names:
+	@echo "Normalizing street names"
+	mkdir -p data/mapping
+	python3 src/street_mapping.py
+
 analyze:
 	@echo "Analysing"
 	mkdir -p data/analysis
