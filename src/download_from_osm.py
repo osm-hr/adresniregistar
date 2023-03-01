@@ -7,8 +7,6 @@ import sys
 import osmium
 from shapely import geometry
 
-csv.field_size_limit(sys.maxsize)
-
 
 class CollectRelationWaysHandler(osmium.SimpleHandler):
     """
@@ -108,9 +106,9 @@ class CollectAddressesHandler(osmium.SimpleHandler):
         if len(polygons) == 1:
             return polygons[0]
         else:
-            if all(p.type == 'Polygon' for p in polygons):
+            if all(p.geom_type == 'Polygon' for p in polygons):
                 return geometry.MultiPolygon(polygons)
-            elif all(p.type == 'LineString' for p in polygons):
+            elif all(p.geom_type == 'LineString' for p in polygons):
                 return geometry.MultiLineString(polygons).convex_hull
             else:
                 return geometry.GeometryCollection(polygons).convex_hull
@@ -125,6 +123,8 @@ class CollectAddressesHandler(osmium.SimpleHandler):
                 'osm_postcode': n.tags.get('addr:postcode') or '',
                 'osm_street': n.tags.get('addr:street') or '',
                 'osm_housenumber': n.tags.get('addr:housenumber'),
+                'ref:RS:ulica': n.tags.get('ref:RS:ulica'),
+                'ref:RS:kucni_broj': n.tags.get('ref:RS:kucni_broj'),
                 'osm_geometry': point
             })
 
@@ -143,6 +143,8 @@ class CollectAddressesHandler(osmium.SimpleHandler):
                 'osm_postcode': w.tags.get('addr:postcode') or '',
                 'osm_street': street,
                 'osm_housenumber': housenumber,
+                'ref:RS:ulica': w.tags.get('ref:RS:ulica'),
+                'ref:RS:kucni_broj': w.tags.get('ref:RS:kucni_broj'),
                 'osm_geometry': geom
             })
 
@@ -161,6 +163,8 @@ class CollectAddressesHandler(osmium.SimpleHandler):
                 'osm_postcode': r.tags.get('addr:postcode') or '',
                 'osm_street': street,
                 'osm_housenumber': housenumber,
+                'ref:RS:ulica': r.tags.get('ref:RS:ulica'),
+                'ref:RS:kucni_broj': r.tags.get('ref:RS:kucni_broj'),
                 'osm_geometry': geom
             })
 
@@ -190,7 +194,7 @@ def main():
     with open(all_addresses_path, 'w', encoding="utf-8") as all_addresses_csv:
         writer = csv.DictWriter(
             all_addresses_csv,
-            fieldnames=['osm_id', 'osm_country', 'osm_city', 'osm_postcode', 'osm_street', 'osm_housenumber', 'osm_geometry'])
+            fieldnames=['osm_id', 'osm_country', 'osm_city', 'osm_postcode', 'osm_street', 'osm_housenumber', 'ref:RS:ulica', 'ref:RS:kucni_broj', 'osm_geometry'])
         writer.writeheader()
         for address in cah.addresses:
             writer.writerow(address)
