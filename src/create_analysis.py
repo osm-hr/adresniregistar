@@ -65,7 +65,7 @@ def do_analysis(opstina, data_path):
         return
 
     print(f"    Loading OSM addresses in {opstina}")
-    df_osm = pd.read_csv(input_osm_file)
+    df_osm = pd.read_csv(input_osm_file, dtype={'ref:RS:ulica': object, 'ref:RS:kucni_broj': object})
     df_osm['osm_geometry2'] = df_osm.osm_geometry.apply(wkt.loads)
     gdf_osm = gpd.GeoDataFrame(df_osm, geometry='osm_geometry2', crs="EPSG:4326")
     gdf_osm.drop(['osm_country', 'osm_city', 'osm_postcode'], inplace=True, axis=1)
@@ -76,7 +76,7 @@ def do_analysis(opstina, data_path):
     gdf_osm.sindex
 
     print(f"    Loading RGZ addresses in {opstina}")
-    df_rgz = pd.read_csv(input_rgz_file)
+    df_rgz = pd.read_csv(input_rgz_file, dtype={'rgz_kucni_broj_id': str})
     df_rgz['rgz_geometry'] = df_rgz.rgz_geometry.apply(wkt.loads)
     gdf_rgz = gpd.GeoDataFrame(df_rgz, geometry='rgz_geometry', crs="EPSG:4326")
     gdf_rgz.to_crs("EPSG:32634", inplace=True)
@@ -85,6 +85,23 @@ def do_analysis(opstina, data_path):
     gdf_rgz['rgz_kucni_broj_norm'] = gdf_rgz.rgz_kucni_broj.apply(normalize_name)
     gdf_rgz.sindex
 
+    # First we will join RGZ and OSM on "ref:RS:kucni_broj. During this process, we calculate distance and remove extra
+    # (not-needed) columns. We need to watch out if same "ref:RS:kucni_broj" exists 2 times in OSM! In this case,
+    # we take closer address. We don't worry about it here, as we will have QA to report on this.
+    print(f"    Joining addresses in RGZ and OSM in {opstina} by conflation (ref:RS:kucni_broj)")
+    gdf_osm['osm_housenumber'] = gdf_osm['osm_housenumber'].astype('str')  # For some reason, we need to explicitely cast this to string
+    gdf_rgz = gdf_rgz.merge(gdf_osm, how='left', left_on='rgz_kucni_broj_id', right_on='ref:RS:kucni_broj')
+    gdf_rgz['conflated_distance'] = gdf_rgz.rgz_geometry.distance(gdf_rgz.osm_geometry)
+    gdf_rgz.rename(columns={'osm_id': 'conflated_osm_id', 'osm_street': 'conflated_osm_street', 'osm_housenumber': 'conflated_osm_housenumber'}, inplace=True)
+    gdf_rgz.drop(['ref:RS:kucni_broj', 'ref:RS:ulica', 'osm_geometry', 'osm_geometry2', 'osm_street_norm', 'osm_housenumber_norm'], inplace=True, axis=1)
+    gdf_rgz['rank'] = 1
+    gdf_rgz['rank'] = gdf_rgz.sort_values('conflated_distance').groupby('rgz_kucni_broj_id')['rank'].cumsum()
+    gdf_rgz = gdf_rgz[gdf_rgz['rank'] == 1]
+    gdf_rgz.drop(['rank'], inplace=True, axis=1)
+    gdf_rgz.sindex
+
+    # Now we try to find the closest matching addresses when there is no conflation.
+    # For this, we first need to create 200m buffer on which we will join RGZ to OSM.
     print(f"    Buffering RGZ addresses for 200m in {opstina}")
     gdf_rgz['rgz_buffered_geometry'] = gdf_rgz.rgz_geometry.buffer(distance=200)
     gdf_rgz.set_geometry('rgz_buffered_geometry', inplace=True)
@@ -95,6 +112,8 @@ def do_analysis(opstina, data_path):
     joined['distance'] = joined.rgz_geometry.distance(joined.osm_geometry)
     joined.sindex
 
+    # At this point we have multiple rows for each RGZ address (those are RGZ-OSM pair within 200m).
+    # For each pair, we will calculate "score" of how close they are matching with name. Also calculate perfect matches.
     print(f"    Calculating score and matches for addresses in {opstina}")
     joined['score'] = joined.apply(lambda row: calculate_score(
         row['rgz_ulica_norm'], row['rgz_kucni_broj_norm'],
@@ -102,21 +121,23 @@ def do_analysis(opstina, data_path):
     joined['matching'] = joined.apply(lambda row:
         row['rgz_ulica_norm'] == row['osm_street_norm'] and row['rgz_kucni_broj_norm'] == row['osm_housenumber_norm'], axis=1)
 
+    # Out of all these calculated pairs, we want to pick only best one. For this, we use ranking function.
+    # Sort by matching and score (and osm_id to always get consistent result), and get cumulative sum rank.
+    # Once we take only rank=1, we get best candidates. This is how we remove all those RGZ-OSM pairs.
     # TODO: try to somehow exclude address that are already conflated or part of perfect match
     print(f"    Finding best matches for addresses in {opstina}")
     joined.sort_values(['rgz_kucni_broj_id', 'matching', 'score', 'osm_id'], ascending=[True, False, False, False], inplace=True)
     joined['rank'] = 1
-    joined['conflated'] = False  # TODO: actually calculate this
     joined['rank'] = joined.groupby(['rgz_kucni_broj_id'])['rank'].cumsum()
     joined = joined[joined['rank'] == 1]
-
-    print("    Saving analysis")
     joined.drop(['index_right', 'rgz_ulica_norm', 'rgz_kucni_broj_norm', 'rgz_buffered_geometry', 'osm_street_norm', 'osm_housenumber_norm', 'rank'], inplace=True, axis=1)
+
+    # At the end, save CSV
+    print("    Saving analysis")
     joined.set_geometry('osm_geometry', inplace=True)
     joined.to_crs("EPSG:4326", inplace=True)
     joined.set_geometry('rgz_geometry', inplace=True)
     joined.to_crs("EPSG:4326", inplace=True)
-    #joined.assign(rgz_geometry=joined["rgz_geometry"].apply(lambda p: p.wkt))
     pd.DataFrame(joined).to_csv(os.path.join(data_path, f'analysis/{opstina}.csv'), index=False)
 
 

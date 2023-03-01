@@ -28,8 +28,20 @@ def generate_naselje(env, opstina_dir_path, opstina_name, naselje, df_naselje):
         location_lat = round(float(location[1]), 6)
         location_url = f'https://www.openstreetmap.org/?mlat={location_lat}&mlon={location_lon}#map=19/{location_lat}/{location_lon}'
         location_text = f'{location_lat}, {location_lon}'
-        osm_link, osm_street, osm_housenumber, score, distance = '', '', '', '', ''
-        if type(address['osm_id']) == str:
+
+        conflated_osm_link, conflated_osm_street, conflated_osm_housenumber, score, distance = '', '', '', '', ''
+        is_conflated = type(address['conflated_osm_id']) == str
+        if is_conflated:
+            osm_type = 'node' if address['conflated_osm_id'][0] == 'n' else 'way' if address['osm_id'][0] == 'w' else 'relation'
+            conflated_osm_link = f'https://www.openstreetmap.org/{osm_type}/{address["conflated_osm_id"][1:]}'
+            conflated_osm_street = address['conflated_osm_street']
+            conflated_osm_housenumber = address['conflated_osm_housenumber']
+            score = 1
+            distance = float(address['conflated_distance'])
+
+        osm_link, osm_street, osm_housenumber = '', '', ''
+        is_matched = type(address['osm_id']) == str
+        if not is_conflated and is_matched:
             osm_type = 'node' if address['osm_id'][0] == 'n' else 'way' if address['osm_id'][0] == 'w' else 'relation'
             osm_link = f'https://www.openstreetmap.org/{osm_type}/{address["osm_id"][1:]}'
             osm_street = address['osm_street']
@@ -39,13 +51,16 @@ def generate_naselje(env, opstina_dir_path, opstina_name, naselje, df_naselje):
             else:
                 score = float(address['score'])
             distance = float(address['distance'])
+
         addresses.append({
             'rgz_kucni_broj_id': address['rgz_kucni_broj_id'],
             'rgz_ulica': address['rgz_ulica'],
             'rgz_kucni_broj': address['rgz_kucni_broj'],
             'location_url': location_url,
             'location_text': location_text,
-            'conflated': '✅' if address['conflated'] else '❌',
+            'conflated_osm_link': conflated_osm_link,
+            'conflated_osm_street': conflated_osm_street,
+            'conflated_osm_housenumber': conflated_osm_housenumber,
             'matching': address['matching'],
             'osm_link': osm_link,
             'osm_street': osm_street,
@@ -72,28 +87,29 @@ def generate_opstina(env, report_path, opstina_name, df_opstina):
         os.mkdir(opstine_dir_path)
 
     rgz_count = len(df_opstina)
+    conflated_count = len(df_opstina[df_opstina['conflated_osm_id'].notnull()])
     matched_count = len(df_opstina[df_opstina['matching'] == True])
     opstina = {
         'name': opstina_name,
         'rgz': rgz_count,
         'osm': 'N/A',
-        'conflated': 0,
+        'conflated': conflated_count,
         'matched': matched_count
     }
 
     naselja = []
 
     for naselje_name, df_naselje in df_opstina.groupby('rgz_naselje'):  # .agg({'rgz_kucni_broj_id': 'count'}).iterrows():
-        # df_naselje = df_opstina[df_opstina['rgz_naselje'] == naselje_name]
         rgz_count = len(df_naselje)
-        matched_count = df_naselje[df_naselje['matching'] == True]
+        conflated_count = len(df_naselje[df_naselje['conflated_osm_id'].notnull()])
+        matched_count = len(df_naselje[df_naselje['matching'] == True])
         naselje = {
             'name': naselje_name,
             'name_lat': cyr2lat(naselje_name),
             'rgz': rgz_count,
             'osm': 'N/A',
-            'conflated': 0,
-            'matched': len(matched_count)
+            'conflated': conflated_count,
+            'matched': matched_count
         }
         generate_naselje(env, opstine_dir_path, opstina_name, naselje, df_naselje)
 
@@ -129,9 +145,10 @@ def generate_index(env):
             continue
         opstina_name = file[:-4]
         print(f"{i+1}/{total_csvs} Processing {opstina_name}")
-        df_opstina = pd.read_csv(os.path.join(analysis_path, file))
+        df_opstina = pd.read_csv(os.path.join(analysis_path, file), dtype={'conflated_osm_housenumber': object, 'osm_housenumber': object})
         opstina = generate_opstina(env, report_path, opstina_name, df_opstina)
         opstine.append(opstina)
+        total['conflated'] += opstina['conflated']
         total['rgz'] += opstina['rgz']
         total['matched'] += opstina['matched']
 

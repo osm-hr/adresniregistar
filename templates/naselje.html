@@ -17,11 +17,10 @@
 			<li><b>Ulica (RGZ)</b> &mdash; Ime ulice iz RGZ-a</li>
 			<li><b>Kućni broj (RGZ)</b> &mdash; Kućni broj iz RGZ-a</li>
 			<li><b>Lokacija (RGZ)</b> &mdash; Pozicija adrese iz RGZ-a</li>
-			<li><b>Konflacija</b> &mdash; Da li je urađena konflacija (trenutno nije implementirano)</li>
-			<li><b>Pronađeno</b> &mdash; Ukoliko postoji savršeno poklapanje sa nekom adresom iz OSM-a, ona će biti navedena u ovoj koloni. Ove adrese su najbolji kandidati za konflaciju.</li>
-			<li><b>Fuzzy pronađeno</b> &mdash; Ukoliko adresa nema savršeno poklapanje, pokušava da nađe prvo najpribližnije poklapanje. Ovo je samo pokušaj i u većini slučajeva je jako loš. Tek ako je procenat poklapanja preko 95%, ima smisla analizirati ove adrese.</li>
+			<li><b>Conflated adresa</b> &mdash; Da li je urađena konflacija i sa kojom adresom</li>
+			<li><b>Potencijalno poklapanje</b> &mdash; Ukoliko postoji poklapanje sa nekom adresom iz OSM-a, ona će biti navedena u ovoj koloni. Ukoliko adresa ima "✅", znači da je poklapanje 100%. Ove adrese su najbolji kandidati za konflaciju.</li>
 			<li><b>Procenat poklapanja</b> &mdash; Ukoliko je nađena fuzzy adresa, ovo je procenat poklapanja. Neko pravilo je da adrese ispod 95% ne treba razmatrati.</li>
-			<li><b>Udaljenost</b> &mdash; I za adrese sa konflacijom, i za pronađene i za fuzzy pronađene, pokazuje udaljenost između RGZ i OSM lokacije adrese</li>
+			<li><b>Udaljenost</b> &mdash; I za adrese sa konflacijom, i za potencijalno poklapanje, pokazuje udaljenost između RGZ i OSM lokacije adrese</li>
 		</ul>
       </div>
       <div class="modal-footer">
@@ -67,9 +66,8 @@
 		<th>Ulica (RGZ)</th>
 		<th>Kućni broj (RGZ)</th>
 		<th>Lokacija (RGZ)</th>
-		<th>Konflacija</th>
-		<th>Pronađeno</th>
-		<th>Fuzzy pronađeno</th>
+		<th>Conflated adresa</th>
+		<th>Potencijalno poklapanje</th>
 		<th>Procenat poklapanja</th>
 		<th>Udaljenost</th>
 	</tr>
@@ -81,15 +79,16 @@
 		<td>{{ address.rgz_ulica }}</td>
 		<td>{{ address.rgz_kucni_broj }}</td>
 		<td><a href="{{address.location_url }}" target="_blank">{{ address.location_text}}</a></td>
-		<td>{{ address.conflated }}</td>
 		<td>
-			{% if address.matching %}
-			<a href="{{address.osm_link }}" target="_blank">{{ address.osm_street }} {{ address.osm_housenumber }}</a>
+			{% if address.conflated_osm_link != '' %}
+			<a href="{{address.conflated_osm_link }}" target="_blank">{{ address.conflated_osm_street }} {{ address.conflated_osm_housenumber }}</a>
 			{% endif %}
 		</td>
 		<td>
-			{% if not address.matching and address.osm_link != '' %}
-			<a href="{{address.osm_link }}" target="_blank">{{ address.osm_street }} {{ address.osm_housenumber }}</a>
+			{% if address.osm_link != '' %}
+			<a href="{{address.osm_link }}" target="_blank">
+				{% if address.matching %}✅{% endif %} &nbsp; {{ address.osm_street }} {{ address.osm_housenumber }}
+			</a>
 			{% endif %}
 		</td>
 		<td>
