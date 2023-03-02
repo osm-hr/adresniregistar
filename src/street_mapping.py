@@ -94,7 +94,9 @@ def load_osm_mappings(cwd):
 
 def best_effort_decapitalize(name):
     name = name.title()
-    original_name = name
+    if '.' in name and '. ' not in name and name[0:name.find('.')].isnumeric():
+        name = name[:name.find('.') + 1] + ' ' + name[name.find('.') + 1:]
+
     # Ћирила И Методија, Пут За Љиг, Заселак Код Крста
     name = name.replace(" И ", " и ").replace(" За ", " за ").replace(" Код ", " код ")
 
@@ -119,9 +121,9 @@ def best_effort_decapitalize(name):
 
     for word in words_to_replace:
         if not word.startswith(" "):
-            raise Exception(f"Word to replace must start with space and word '{word} doesn't")
+            raise Exception(f"Word to replace must start with space and word '{word}' doesn't")
         if not word[1].isupper():
-            raise Exception(f"Word to replace must start with capital case and word '{word} doesn't")
+            raise Exception(f"Word to replace must start with capital case and word '{word}' doesn't")
         name = name.replace(word + " ", word.lower() + " ")
         if name.endswith(word):
             name = name[:len(name) - len(word)] + word.lower()
