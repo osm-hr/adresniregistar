@@ -199,7 +199,6 @@ def main():
 
     data_path = os.path.join(cwd, 'data/')
     rgz_csv_path = os.path.join(data_path, 'rgz/csv')
-    rgz_mapping_path = os.path.join(data_path, 'rgz/mapping')
 
     total_csvs = len(os.listdir(rgz_csv_path))
     mapping = {}

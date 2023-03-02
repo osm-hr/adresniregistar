@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='RGZ_AR_Generator'>
+  {% for osm_entity in osm_entities %}
+  <node id='{{ osm_entity.id }}' action='modify' visible='true' lat='{{ osm_entity.lat }}' lon='{{ osm_entity.lon }}'>
+    <tag k='addr:housenumber' v='{{ osm_entity.housenumber }}' />
+    <tag k='addr:street' v='{{ osm_entity.street }}' />
+    <tag k='ref:RS:ulica' v='{{ osm_entity.ulica }}' />
+    <tag k='ref:RS:kucni_broj' v='{{ osm_entity.kucni_broj }}' />
+  </node>
+  {% endfor %}
+</osm>

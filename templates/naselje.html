@@ -59,6 +59,15 @@
 		});
 	} );
     </script>
+
+
+<div>
+	Lista fajlova za nove adrese:
+	{% for osm_file in osm_files %}
+	<a href="http://localhost:8111/import?changeset_tags=source=RGZ_AR_Import&new_layer=true&layer_name={{ naselje.name_lat }}-{{ osm_file.name }}&url={{ osm_file.url }}" target="_blank">{{ osm_file.name }}</a>
+	{% endfor %}
+</div>
+
 <table id="list" class="table table-sm table-striped table-bordered table-hover" style="width:100%">
 <thead class="thead-dark sticky-top">
 	<tr>

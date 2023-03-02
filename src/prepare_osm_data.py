@@ -26,13 +26,14 @@ def main():
     gdf_opstine.sindex
 
     print("Load all OSM addresses")
-    df_addresses = pd.read_csv(os.path.join(osm_path, 'addresses.csv'))
+    df_addresses = pd.read_csv(os.path.join(osm_path, 'addresses.csv'), dtype={'ref:RS:ulica': object, 'ref:RS:kucni_broj': object})
     df_addresses['osm_geometry'] = df_addresses.osm_geometry.apply(wkt.loads)
     gdf_addresses = gpd.GeoDataFrame(df_addresses, geometry='osm_geometry', crs="EPSG:4326")
     gdf_addresses.sindex
 
     print("Finding opstina for each OSM address")
     addresses_with_opstina = gdf_addresses.sjoin(gdf_opstine, how='inner', predicate='intersects')
+    addresses_with_opstina['ref:RS:ulica'] = addresses_with_opstina['ref:RS:ulica'].astype('str')
 
     for i, row in gdf_opstine.iterrows():
         opstina = row['opstina_imel']

@@ -6,10 +6,77 @@ import os
 import sys
 from jinja2 import Environment, PackageLoader, FileSystemLoader
 import csv
+from common import normalize_name_latin
 import datetime
 import pandas as pd
 
-csv.field_size_limit(sys.maxsize)
+
+street_mappings = {}
+
+
+def load_mappings(data_path):
+    global street_mappings
+    with open(os.path.join(data_path, 'mapping', 'mapping.csv'), encoding='utf-8') as mapping_csv_file:
+        reader = csv.DictReader(mapping_csv_file)
+        for row in reader:
+            street_mappings[row['rgz_name']] = row['name']
+
+
+def generate_osm_files(env, opstina_dir_path, opstina_name, naselje, df_naselje):
+    global street_mappings
+    naselje_dir_path = os.path.join(opstina_dir_path, opstina_name)
+
+    template = env.get_template('new_address.osm')
+    osm_files = []
+    osm_entities = []
+    counter = 0
+    for _, address in df_naselje.sort_values(['rgz_ulica', 'rgz_kucni_broj']).iterrows():
+        location = address['rgz_geometry'][7:-1].split(' ')
+        location_lon = round(float(location[0]), 6)
+        location_lat = round(float(location[1]), 6)
+
+        if len(osm_entities) == 100:
+            old_counter = counter
+            counter = counter + len(osm_entities)
+            output = template.render(osm_entities=osm_entities)
+            filename = f'{naselje["name_lat"]}-{counter}.osm'
+            osm_file_path = os.path.join(naselje_dir_path, filename)
+            with open(osm_file_path, 'w', encoding='utf-8') as fh:
+                fh.write(output)
+            osm_files.append(
+                {
+                    'name': f'{old_counter+1}-{counter}',
+                    'url': f'https://openstreetmap.rs/download/ar/opstine/{opstina_name}/{filename}'
+                }
+            )
+            osm_entities = []
+
+        osm_entities.append({
+            'id': 0 - (len(osm_entities) + 1),
+            'lat': location_lat,
+            'lon': location_lon,
+            'street': street_mappings[address['rgz_ulica']],
+            'housenumber': normalize_name_latin(address['rgz_kucni_broj']),
+            'ulica': address['rgz_ulica_mb'],
+            'kucni_broj': address['rgz_kucni_broj_id']
+        })
+
+    # Final write
+    old_counter = counter
+    counter = counter + len(osm_entities)
+    output = template.render(osm_entities=osm_entities)
+    filename = f'{naselje["name_lat"]}-{counter}.osm'
+    osm_file_path = os.path.join(naselje_dir_path, filename)
+    with open(osm_file_path, 'w', encoding='utf-8') as fh:
+        fh.write(output)
+    osm_files.append(
+        {
+            'name': f'{old_counter + 1}-{counter}',
+            'url': f'https://openstreetmap.rs/download/ar/opstine/{opstina_name}/{filename}'
+        }
+    )
+
+    return osm_files
 
 
 def generate_naselje(env, opstina_dir_path, opstina_name, naselje, df_naselje):
@@ -19,6 +86,9 @@ def generate_naselje(env, opstina_dir_path, opstina_name, naselje, df_naselje):
     naselje_dir_path = os.path.join(opstina_dir_path, opstina_name)
     if not os.path.exists(naselje_dir_path):
         os.mkdir(naselje_dir_path)
+
+    osm_files = generate_osm_files(env, opstina_dir_path, opstina_name, naselje, df_naselje)
+
     naselje_path = os.path.join(naselje_dir_path, f'{naselje["name_lat"]}.html')
 
     addresses = []
@@ -73,7 +143,8 @@ def generate_naselje(env, opstina_dir_path, opstina_name, naselje, df_naselje):
         currentDateSrb=current_date_srb,
         addresses=addresses,
         naselje=naselje,
-        opstina_name=opstina_name)
+        opstina_name=opstina_name,
+        osm_files=osm_files)
     with open(naselje_path, 'w', encoding='utf-8') as fh:
         fh.write(output)
 
@@ -129,8 +200,10 @@ def generate_index(env):
     template = env.get_template('index.html')
 
     cwd = os.getcwd()
-    analysis_path = os.path.join(cwd, 'data/analysis')
-    report_path = os.path.join(cwd, 'data/report')
+    data_path = os.path.join(cwd, 'data')
+    load_mappings(data_path)
+    analysis_path = os.path.join(data_path, 'analysis')
+    report_path = os.path.join(data_path, 'report')
     total_csvs = len(os.listdir(analysis_path))
 
     total = {
