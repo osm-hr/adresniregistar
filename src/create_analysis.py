@@ -151,7 +151,6 @@ def do_analysis(opstina, data_path):
     # Out of all these calculated pairs, we want to pick only best one. For this, we use ranking function.
     # Sort by matching and score (and osm_id to always get consistent result), and get cumulative sum rank.
     # Once we take only rank=1, we get best candidates. This is how we remove rest of all those RGZ-OSM pairs.
-    # TODO: try to somehow exclude address that are already conflated or part of perfect match
     print(f"    Finding best matches for addresses in {opstina}")
     joined.sort_values(['rgz_kucni_broj_id', 'matching', 'score', 'osm_id'], ascending=[True, False, False, False], inplace=True)
     joined['rank'] = 1
