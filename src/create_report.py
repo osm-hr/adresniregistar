@@ -138,6 +138,7 @@ def generate_naselje(env, opstina_dir_path, opstina_name, naselje, df_naselje):
             'score': score,
             'distance': distance
         })
+
     output = template.render(
         currentDate=current_date,
         currentDateSrb=current_date_srb,
@@ -149,7 +150,7 @@ def generate_naselje(env, opstina_dir_path, opstina_name, naselje, df_naselje):
         fh.write(output)
 
 
-def generate_opstina(env, report_path, opstina_name, df_opstina):
+def generate_opstina(env, report_path, opstina_name, df_opstina, df_opstina_osm):
     template = env.get_template('opstina.html')
     current_date = datetime.date.today().strftime('%Y-%m-%d')
     current_date_srb = datetime.date.today().strftime('%d.%m.%Y')
@@ -158,29 +159,33 @@ def generate_opstina(env, report_path, opstina_name, df_opstina):
         os.mkdir(opstine_dir_path)
 
     rgz_count = len(df_opstina)
+    osm_count = len(df_opstina_osm)
     conflated_count = len(df_opstina[df_opstina['conflated_osm_id'].notnull()])
     matched_count = len(df_opstina[df_opstina['matching'] == True])
+    partially_matched_count = len(df_opstina[(pd.notna(df_opstina.osm_id)) & (df_opstina.matching == False)])
     opstina = {
         'name': opstina_name,
         'rgz': rgz_count,
-        'osm': 'N/A',
+        'osm': osm_count,
         'conflated': conflated_count,
-        'matched': matched_count
+        'matched': matched_count,
+        'partially_matched_count': partially_matched_count
     }
 
     naselja = []
 
-    for naselje_name, df_naselje in df_opstina.groupby('rgz_naselje'):  # .agg({'rgz_kucni_broj_id': 'count'}).iterrows():
+    for naselje_name, df_naselje in df_opstina.groupby('rgz_naselje'):
         rgz_count = len(df_naselje)
         conflated_count = len(df_naselje[df_naselje['conflated_osm_id'].notnull()])
         matched_count = len(df_naselje[df_naselje['matching'] == True])
+        partially_matched_count = len(df_opstina[(pd.notna(df_opstina.osm_id)) & (df_opstina.matching == False)])
         naselje = {
             'name': naselje_name,
             'name_lat': cyr2lat(naselje_name),
             'rgz': rgz_count,
-            'osm': 'N/A',
             'conflated': conflated_count,
-            'matched': matched_count
+            'matched': matched_count,
+            'partially_matched_count': partially_matched_count
         }
         generate_naselje(env, opstine_dir_path, opstina_name, naselje, df_naselje)
 
@@ -202,6 +207,7 @@ def generate_index(env):
     cwd = os.getcwd()
     data_path = os.path.join(cwd, 'data')
     load_mappings(data_path)
+    osm_path = os.path.join(data_path, 'osm', 'csv')
     analysis_path = os.path.join(data_path, 'analysis')
     report_path = os.path.join(data_path, 'report')
     total_csvs = len(os.listdir(analysis_path))
@@ -210,7 +216,8 @@ def generate_index(env):
         'rgz': 0,
         'osm': 0,
         'conflated': 0,
-        'matched': 0
+        'matched': 0,
+        'partially_matched_count': 0
     }
     opstine = []
     for i, file in enumerate(os.listdir(analysis_path)):
@@ -219,11 +226,14 @@ def generate_index(env):
         opstina_name = file[:-4]
         print(f"{i+1}/{total_csvs} Processing {opstina_name}")
         df_opstina = pd.read_csv(os.path.join(analysis_path, file), dtype={'conflated_osm_housenumber': object, 'osm_housenumber': object})
-        opstina = generate_opstina(env, report_path, opstina_name, df_opstina)
+        df_opstina_osm = pd.read_csv(os.path.join(osm_path, file))
+        opstina = generate_opstina(env, report_path, opstina_name, df_opstina, df_opstina_osm)
         opstine.append(opstina)
         total['conflated'] += opstina['conflated']
         total['rgz'] += opstina['rgz']
+        total['osm'] += opstina['osm']
         total['matched'] += opstina['matched']
+        total['partially_matched_count'] += opstina['partially_matched_count']
 
     current_date = datetime.date.today().strftime('%Y-%m-%d')
     current_date_srb = datetime.date.today().strftime('%d.%m.%Y')
@@ -240,6 +250,7 @@ def main():
     # TODO: sorting in some columns should be as numbers (distance, kucni broj)
     # TODO: address should be searchable with latin only
     env = Environment(loader=FileSystemLoader(searchpath='./templates'))
+    env.globals.update(len=len)
     generate_index(env)
 
 
