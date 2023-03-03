@@ -30,7 +30,8 @@ def generate_osm_files(env, opstina_dir_path, opstina_name, naselje, df_naselje)
     osm_files = []
     osm_entities = []
     counter = 0
-    for _, address in df_naselje.sort_values(['rgz_ulica', 'rgz_kucni_broj']).iterrows():
+    only_not_found_addresses = df_naselje[pd.isna(df_naselje.conflated_osm_id) & pd.isna(df_naselje.osm_id)]
+    for _, address in only_not_found_addresses.sort_values(['rgz_ulica', 'rgz_kucni_broj']).iterrows():
         location = address['rgz_geometry'][7:-1].split(' ')
         location_lon = round(float(location[0]), 6)
         location_lat = round(float(location[1]), 6)
@@ -157,6 +158,7 @@ def generate_opstina(env, report_path, opstina_name, df_opstina, df_opstina_osm)
     opstine_dir_path = os.path.join(report_path, 'opstine')
     if not os.path.exists(opstine_dir_path):
         os.mkdir(opstine_dir_path)
+    opstina_html_path = os.path.join(opstine_dir_path, f'{opstina_name}.html')
 
     rgz_count = len(df_opstina)
     osm_count = len(df_opstina_osm)
@@ -171,6 +173,11 @@ def generate_opstina(env, report_path, opstina_name, df_opstina, df_opstina_osm)
         'matched': matched_count,
         'partially_matched_count': partially_matched_count
     }
+
+    if os.path.exists(opstina_html_path):
+        # Don't regenerate anything if html exists
+        print('skipping (exists)', end='')
+        return opstina
 
     naselja = []
 
@@ -196,8 +203,9 @@ def generate_opstina(env, report_path, opstina_name, df_opstina, df_opstina_osm)
         currentDateSrb=current_date_srb,
         naselja=naselja,
         opstina=opstina)
-    with open(os.path.join(opstine_dir_path, f'{opstina_name}.html'), 'w', encoding='utf-8') as fh:
+    with open(opstina_html_path, 'w', encoding='utf-8') as fh:
         fh.write(output)
+    print('OK', end='')
     return opstina
 
 
@@ -211,6 +219,7 @@ def generate_index(env):
     analysis_path = os.path.join(data_path, 'analysis')
     report_path = os.path.join(data_path, 'report')
     total_csvs = len(os.listdir(analysis_path))
+    index_html_path = os.path.join(report_path, 'index.html')
 
     total = {
         'rgz': 0,
@@ -220,11 +229,11 @@ def generate_index(env):
         'partially_matched_count': 0
     }
     opstine = []
-    for i, file in enumerate(os.listdir(analysis_path)):
+    for i, file in enumerate(sorted(os.listdir(analysis_path))):
         if not file.endswith(".csv"):
             continue
         opstina_name = file[:-4]
-        print(f"{i+1}/{total_csvs} Processing {opstina_name}")
+        print(f"{i+1}/{total_csvs} Processing {opstina_name}...", end='')
         df_opstina = pd.read_csv(os.path.join(analysis_path, file), dtype={'conflated_osm_housenumber': object, 'osm_housenumber': object})
         df_opstina_osm = pd.read_csv(os.path.join(osm_path, file))
         opstina = generate_opstina(env, report_path, opstina_name, df_opstina, df_opstina_osm)
@@ -234,6 +243,10 @@ def generate_index(env):
         total['osm'] += opstina['osm']
         total['matched'] += opstina['matched']
         total['partially_matched_count'] += opstina['partially_matched_count']
+        print()
+
+    if os.path.exists(index_html_path):
+        return
 
     current_date = datetime.date.today().strftime('%Y-%m-%d')
     current_date_srb = datetime.date.today().strftime('%d.%m.%Y')
@@ -242,7 +255,7 @@ def generate_index(env):
         currentDateSrb=current_date_srb,
         opstine=opstine,
         total=total)
-    with open(os.path.join(report_path, 'index.html'), 'w', encoding='utf-8') as fh:
+    with open(index_html_path, 'w', encoding='utf-8') as fh:
         fh.write(output)
 
 
