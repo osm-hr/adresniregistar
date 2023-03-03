@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import os
-import pandas as pd
-import geopandas as gpd
-from shapely import wkt
-import Levenshtein
 import math
+import os
+
+import Levenshtein
+import geopandas as gpd
+import numpy as np
+import pandas as pd
+from shapely import wkt
 
 from common import normalize_name
 
@@ -108,7 +110,8 @@ def do_analysis(opstina, data_path):
     gdf_rgz.sindex
 
     print(f"    Joining addresses in RGZ and OSM in {opstina}")
-    joined = gdf_rgz.sjoin(gdf_osm, how='left', predicate='intersects')
+    gdf_osm_no_conflated = gdf_osm[gdf_osm["ref:RS:kucni_broj"].isna()]
+    joined = gdf_rgz.sjoin(gdf_osm_no_conflated, how='left', predicate='intersects')
     joined['distance'] = joined.rgz_geometry.distance(joined.osm_geometry)
     joined.sindex
 
@@ -121,9 +124,27 @@ def do_analysis(opstina, data_path):
     joined['matching'] = joined.apply(lambda row:
         row['rgz_ulica_norm'] == row['osm_street_norm'] and row['rgz_kucni_broj_norm'] == row['osm_housenumber_norm'], axis=1)
 
+    # Now that we have matching address, we should remove them from wherever else they are showing to clear things
+    mathed_osm_id_series = joined[joined.matching].osm_id
+    for _, osm_id in mathed_osm_id_series.iteritems():
+        joined.loc[(joined.osm_id == osm_id) & (joined.matching == False), ['score']] = 0.0
+        joined.loc[(joined.osm_id == osm_id) & (joined.matching == False),
+                   ['index_right', 'osm_id', 'osm_street', 'osm_housenumber', 'ref:RS:ulica', 'ref:RS:kucni_broj', 'osm_geometry', 'osm_street_norm', 'osm_housenumber_norm', 'distance']] = np.nan
+
+    # Since we might have multiple addresses from OSM associated to various RGZ addresses,
+    # we should keep only one of those. It doesn't make sense to offer same OSM address for multiple RGZ addresses.
+    # Sort by score and take first one, reset other.
+    joined.sort_values(['osm_id', 'score'], ascending=[True, False], inplace=True)
+    joined['rank'] = 1
+    joined['rank'] = joined.groupby(['osm_id'])['rank'].shift().cumsum()
+    joined.loc[pd.notna(joined['rank']), ['score']] = 0.0
+    joined.loc[pd.notna(joined['rank']),
+               ['index_right', 'osm_id', 'osm_street', 'osm_housenumber', 'ref:RS:ulica', 'ref:RS:kucni_broj',
+                'osm_geometry', 'osm_street_norm', 'osm_housenumber_norm', 'distance']] = np.nan
+
     # Out of all these calculated pairs, we want to pick only best one. For this, we use ranking function.
     # Sort by matching and score (and osm_id to always get consistent result), and get cumulative sum rank.
-    # Once we take only rank=1, we get best candidates. This is how we remove all those RGZ-OSM pairs.
+    # Once we take only rank=1, we get best candidates. This is how we remove rest of all those RGZ-OSM pairs.
     # TODO: try to somehow exclude address that are already conflated or part of perfect match
     print(f"    Finding best matches for addresses in {opstina}")
     joined.sort_values(['rgz_kucni_broj_id', 'matching', 'score', 'osm_id'], ascending=[True, False, False, False], inplace=True)
@@ -146,7 +167,7 @@ def main():
     data_path = os.path.join(cwd, 'data/')
     rgz_csv_path = os.path.join(data_path, 'rgz/csv')
     total_csvs = len(os.listdir(rgz_csv_path))
-    for i, file in enumerate(os.listdir(rgz_csv_path)):
+    for i, file in enumerate(sorted(os.listdir(rgz_csv_path))):
         if not file.endswith(".csv"):
             continue
         opstina = file[:-4]
