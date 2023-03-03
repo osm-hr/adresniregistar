@@ -131,11 +131,6 @@ def do_analysis(opstina, data_path):
     joined.loc[(joined.osm_id.isin(mathed_osm_id)) & (joined.matching == False),
                        ['index_right', 'osm_id', 'osm_street', 'osm_housenumber', 'ref:RS:ulica', 'ref:RS:kucni_broj', 'osm_geometry', 'osm_street_norm', 'osm_housenumber_norm', 'distance']] = np.nan
 
-    for _, osm_id in mathed_osm_id_series.iteritems():
-        joined.loc[(joined.osm_id == osm_id) & (joined.matching == False), ['score']] = 0.0
-        joined.loc[(joined.osm_id == osm_id) & (joined.matching == False),
-                   ['index_right', 'osm_id', 'osm_street', 'osm_housenumber', 'ref:RS:ulica', 'ref:RS:kucni_broj', 'osm_geometry', 'osm_street_norm', 'osm_housenumber_norm', 'distance']] = np.nan
-
     # Since we might have multiple addresses from OSM associated to various RGZ addresses,
     # we should keep only one of those. It doesn't make sense to offer same OSM address for multiple RGZ addresses.
     # Sort by score and take first one, reset other.
