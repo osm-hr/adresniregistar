@@ -54,6 +54,7 @@ def calculate_score(street_rgz, housenumber_rgz, street_osm, housenumber_osm, di
 
 def do_analysis(opstina, data_path):
     if os.path.exists(os.path.join(data_path, f'analysis/{opstina}.csv')):
+        print(f"    Skipping {opstina}, already exists")
         return
 
     input_osm_file = os.path.join(data_path, f'osm/csv/{opstina}.csv')

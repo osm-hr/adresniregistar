@@ -37,17 +37,24 @@ def main():
 
     for i, row in gdf_opstine.iterrows():
         opstina = row['opstina_imel']
+        csv_filename = f"{opstina}.csv"
+        csv_file_path = os.path.join(osm_path, 'csv', csv_filename)
+        if os.path.exists(csv_file_path):
+            print(f"Skipping {opstina} as data/osm/csv/{csv_filename} already exists")
+            continue
+
         if opstina in OPSTINE_TO_SKIP:
             continue
         print(f"{i+1}/{len(gdf_opstine)} Processing {opstina}")
         addresses_in_opstina = addresses_with_opstina[addresses_with_opstina['opstina_imel'] == opstina].copy()
         addresses_in_opstina.drop(['index_right', 'opstina_maticni_broj', 'opstina_ime', 'opstina_imel',
                    'opstina_povrsina', 'okrug_sifra', 'okrug_ime', 'okrug_imel', 'wkt'], inplace=True, axis=1)
-        csv_filename = f"{opstina}.csv"
+
         if len(addresses_in_opstina) == 0:
             print(f"{opstina} doesn't seem to have any address")
             continue
-        pd.DataFrame(addresses_in_opstina).to_csv(os.path.join(osm_path, 'csv', csv_filename), index=False)
+
+        pd.DataFrame(addresses_in_opstina).to_csv(csv_file_path, index=False)
 
 
 if __name__ == '__main__':

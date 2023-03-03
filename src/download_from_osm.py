@@ -174,6 +174,11 @@ def main():
     collect_path = os.path.join(cwd, 'data/osm')
     rgz_path = os.path.join(cwd, 'data/rgz')
     pbf_file = os.path.join(collect_path, 'download/serbia.osm.pbf')
+    all_addresses_path = os.path.join(collect_path, 'addresses.csv')
+
+    if os.path.exists(all_addresses_path):
+        print("Skipping creation of data/osm/addresses.csv as it already exists")
+        return
 
     crwh = CollectRelationWaysHandler()
     crwh.apply_file(pbf_file)
@@ -190,7 +195,7 @@ def main():
     cah = CollectAddressesHandler(bnch.nodes_cache, cwnh.ways_cache)
     cah.apply_file(pbf_file)
     print(f"Collected all addresses ({len(cah.addresses)})")
-    all_addresses_path = os.path.join(collect_path, 'addresses.csv')
+
     with open(all_addresses_path, 'w', encoding="utf-8") as all_addresses_csv:
         writer = csv.DictWriter(
             all_addresses_csv,

@@ -190,6 +190,14 @@ def main():
     ** If some words ends with "ић" or "ића", we capitalize that word
     """
     cwd = os.getcwd()
+    data_path = os.path.join(cwd, 'data/')
+    rgz_csv_path = os.path.join(data_path, 'rgz/csv')
+    mapping_csv_path = os.path.join(data_path, "mapping/mapping.csv")
+
+    if os.path.exists(mapping_csv_path):
+        print("Skipping mapping generation, file data/mapping/mapping.csv already exist")
+        return
+
     curated_streets = load_curated(cwd)
     print(f"Collected all curated ({len(curated_streets)}) mappings")
 
@@ -198,9 +206,6 @@ def main():
 
     osm_mappings = load_osm_mappings(cwd)
     print(f"Collected all OSM ({len(osm_mappings)}) mappings")
-
-    data_path = os.path.join(cwd, 'data/')
-    rgz_csv_path = os.path.join(data_path, 'rgz/csv')
 
     total_csvs = len(os.listdir(rgz_csv_path))
     mapping = {}
@@ -211,7 +216,6 @@ def main():
         print(f"{i + 1}/{total_csvs} Processing {opstina}")
         process_opstina(mapping, opstina, data_path, curated_streets, ref_mappings, osm_mappings)
 
-    mapping_csv_path = os.path.join(data_path, "mapping/mapping.csv")
     with open(mapping_csv_path, 'w', encoding="utf-8") as mapping_csv:
         writer = csv.DictWriter(
             mapping_csv,
