@@ -27,7 +27,7 @@ clean_analysis: clean_report
 
 clean_report:
 	@echo "Cleaning all files from report"
-	rm -f data/report/*
+	rm -rf data/report/*
 	rm -f data/report.tar.gz
 
 download_from_rgz:
