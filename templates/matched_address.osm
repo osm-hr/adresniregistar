@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='RGZ_AR_Generator'>
+  {% for osm_node in osm_nodes %}
+  <node id='{{ osm_node.id }}' action='modify' visible='true' lat='{{ osm_node.lat }}' lon='{{ osm_node.lon }}' version='{{ osm_node.version }}' >
+    {% for k, v in osm_node.tags.items() %}
+    <tag k='{{ k }}' v='{{ v }}' />
+    {% endfor %}
+  </node>
+  {% endfor %}
+  {% for osm_way in osm_ways %}
+  <way id='{{ osm_way.id }}' action='modify' visible='true' version='{{ osm_way.version }}'>
+    {% for n in osm_way.nodes %}
+    <nd ref='{{ n }}' />
+    {% endfor %}
+    {% for k, v in osm_way.tags.items() %}
+    <tag k='{{ k }}' v='{{ v }}' />
+    {% endfor %}
+  </way>
+  {% endfor %}
+</osm>

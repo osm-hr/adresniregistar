@@ -1,17 +1,80 @@
 # -*- coding: utf-8 -*-
 
-from common import cyr2lat
-
-import os
-import sys
-from jinja2 import Environment, PackageLoader, FileSystemLoader
 import csv
-from common import normalize_name_latin
 import datetime
-import pandas as pd
+import os
 
+import osmium
+import pandas as pd
+from jinja2 import Environment, FileSystemLoader
+
+from common import cyr2lat
+from common import normalize_name_latin
 
 street_mappings = {}
+osm_entities_cache = None
+
+
+class CollectWayNodesHandler(osmium.SimpleHandler):
+    """
+    Iterates for all given ways and collects their nodes
+    """
+    def __init__(self, ways):
+        osmium.SimpleHandler.__init__(self)
+        self.ways = ways
+        self.nodes = []
+
+    def way(self, w):
+        if w.id in self.ways:
+            self.nodes += [n.ref for n in w.nodes]
+
+
+class OsmEntitiesCacheHandler(osmium.SimpleHandler):
+    def __init__(self, nodes, ways):
+        osmium.SimpleHandler.__init__(self)
+        self.nodes = nodes
+        self.ways = ways
+        self.nodes_cache = {}
+        self.ways_cache = {}
+
+    def node(self, n):
+        if n.id in self.nodes:
+            self.nodes_cache[n.id] = {
+                'lat': n.location.lat,
+                'lon': n.location.lon,
+                'tags': {t.k: t.v for t in n.tags},
+                'version': n.version
+            }
+
+    def way(self, w):
+        if w.id in self.ways:
+            self.ways_cache[w.id] = {
+                'tags': {t.k: t.v for t in w.tags},
+                'nodes': [n.ref for n in w.nodes],
+                'version': w.version
+            }
+
+
+def build_osm_entities_cache(data_path):
+    global osm_entities_cache
+    analysis_path = os.path.join(data_path, 'analysis')
+
+    pbf_file = os.path.join(data_path, 'osm/download/serbia.osm.pbf')
+    nodes_to_cache, ways_to_cache = [], []
+
+    for i, file in enumerate(sorted(os.listdir(analysis_path))):
+        if not file.endswith(".csv"):
+            continue
+        df_opstina = pd.read_csv(os.path.join(analysis_path, file), dtype={'conflated_osm_housenumber': object, 'osm_housenumber': object})
+        osm_entites_to_cache = df_opstina[pd.notna(df_opstina.osm_id) & (df_opstina.matching)]['osm_id']
+        nodes_to_cache += [int(n[1:]) for n in list(osm_entites_to_cache[osm_entites_to_cache.str.startswith('n')])]
+        ways_to_cache += [int(w[1:]) for w in list(osm_entites_to_cache[osm_entites_to_cache.str.startswith('w')])]
+
+    cwnh = CollectWayNodesHandler(set(ways_to_cache))
+    cwnh.apply_file(pbf_file)
+
+    osm_entities_cache = OsmEntitiesCacheHandler(set(nodes_to_cache).union(cwnh.nodes), set(ways_to_cache))
+    osm_entities_cache.apply_file(pbf_file)
 
 
 def load_mappings(data_path):
@@ -22,7 +85,89 @@ def load_mappings(data_path):
             street_mappings[row['rgz_name']] = row['name']
 
 
-def generate_osm_files(env, opstina_dir_path, opstina_name, naselje, df_naselje):
+def generate_osm_files_matched_addresses(env, opstina_dir_path, opstina_name, naselje, df_naselje):
+    global osm_entities_cache
+    naselje_dir_path = os.path.join(opstina_dir_path, opstina_name)
+    split_limit = 100
+
+    template = env.get_template('matched_address.osm')
+    osm_files = []
+    osm_nodes, osm_ways = [], []
+    old_counter = 0
+    counter = 0
+    only_matched_addresses = df_naselje[pd.isna(df_naselje.conflated_osm_id) & pd.notna(df_naselje.osm_id) & df_naselje.matching]
+    for _, address in only_matched_addresses.sort_values(['rgz_ulica', 'rgz_kucni_broj']).iterrows():
+        if address.osm_id[0] == 'r':
+            print(f"Encountered relation {address.osm_id}, had to be merged manually... ", end='')
+            continue
+
+        if counter > 0 and counter % split_limit == 0:
+            output = template.render(osm_nodes=osm_nodes, osm_ways=osm_ways)
+            filename = f'{naselje["name_lat"]}-matched-{counter}.osm'
+            osm_file_path = os.path.join(naselje_dir_path, filename)
+            with open(osm_file_path, 'w', encoding='utf-8') as fh:
+                fh.write(output)
+            osm_files.append(
+                {
+                    'name': f'{old_counter+1}-{counter}',
+                    'url': f'https://openstreetmap.rs/download/ar/opstine/{opstina_name}/{filename}'
+                }
+            )
+            old_counter = counter
+            osm_nodes, osm_ways = [], []
+
+        if address.osm_id[0] == 'n':
+            counter = counter + 1
+            node_id = int(address.osm_id[1:])
+            entity = osm_entities_cache.nodes_cache[node_id]
+            already_exists = any(n for n in osm_nodes if n['id'] == node_id)
+            if not already_exists:
+                osm_nodes.append({
+                    'id': node_id,
+                    'lat': entity['lat'],
+                    'lon': entity['lon'],
+                    'tags': dict(entity['tags'], **{'ref:RS:ulica': address.rgz_ulica_mb, 'ref:RS:kucni_broj': address.rgz_kucni_broj_id }),
+                    'version': entity['version']
+                })
+        elif address.osm_id[0] == 'w':
+            counter = counter + 1
+            entity = osm_entities_cache.ways_cache[int(address.osm_id[1:])]
+            osm_ways.append({
+                'id': int(address.osm_id[1:]),
+                'tags': dict(entity['tags'], **{'ref:RS:ulica': address.rgz_ulica_mb, 'ref:RS:kucni_broj': address.rgz_kucni_broj_id}),
+                'nodes': entity['nodes'],
+                'version': entity['version']
+            })
+            for node in entity['nodes']:
+                node_entity = osm_entities_cache.nodes_cache[node]
+                already_exists = any(n for n in osm_nodes if n['id'] == node)
+                if not already_exists:
+                    osm_nodes.append({
+                        'id': node,
+                        'lat': node_entity['lat'],
+                        'lon': node_entity['lon'],
+                        'tags': node_entity['tags'],
+                        'version': node_entity['version']
+                    })
+
+    # Final write
+    if len(osm_nodes) > 0 or len(osm_ways) > 0:
+        output = template.render(osm_nodes=osm_nodes, osm_ways=osm_ways)
+        filename = f'{naselje["name_lat"]}-matched-{counter}.osm'
+        osm_file_path = os.path.join(naselje_dir_path, filename)
+        with open(osm_file_path, 'w', encoding='utf-8') as fh:
+            fh.write(output)
+        osm_files.append(
+            {
+                'name': f'{old_counter + 1}-{counter}',
+                'url': f'https://openstreetmap.rs/download/ar/opstine/{opstina_name}/{filename}'
+            }
+        )
+
+    return osm_files
+
+
+def generate_osm_files_new_addresses(env, opstina_dir_path, opstina_name, naselje, df_naselje):
     global street_mappings
     naselje_dir_path = os.path.join(opstina_dir_path, opstina_name)
 
@@ -40,7 +185,7 @@ def generate_osm_files(env, opstina_dir_path, opstina_name, naselje, df_naselje)
             old_counter = counter
             counter = counter + len(osm_entities)
             output = template.render(osm_entities=osm_entities)
-            filename = f'{naselje["name_lat"]}-{counter}.osm'
+            filename = f'{naselje["name_lat"]}-new-{counter}.osm'
             osm_file_path = os.path.join(naselje_dir_path, filename)
             with open(osm_file_path, 'w', encoding='utf-8') as fh:
                 fh.write(output)
@@ -63,19 +208,20 @@ def generate_osm_files(env, opstina_dir_path, opstina_name, naselje, df_naselje)
         })
 
     # Final write
-    old_counter = counter
-    counter = counter + len(osm_entities)
-    output = template.render(osm_entities=osm_entities)
-    filename = f'{naselje["name_lat"]}-{counter}.osm'
-    osm_file_path = os.path.join(naselje_dir_path, filename)
-    with open(osm_file_path, 'w', encoding='utf-8') as fh:
-        fh.write(output)
-    osm_files.append(
-        {
-            'name': f'{old_counter + 1}-{counter}',
-            'url': f'https://openstreetmap.rs/download/ar/opstine/{opstina_name}/{filename}'
-        }
-    )
+    if len(osm_entities) > 0:
+        old_counter = counter
+        counter = counter + len(osm_entities)
+        output = template.render(osm_entities=osm_entities)
+        filename = f'{naselje["name_lat"]}-new-{counter}.osm'
+        osm_file_path = os.path.join(naselje_dir_path, filename)
+        with open(osm_file_path, 'w', encoding='utf-8') as fh:
+            fh.write(output)
+        osm_files.append(
+            {
+                'name': f'{old_counter + 1}-{counter}',
+                'url': f'https://openstreetmap.rs/download/ar/opstine/{opstina_name}/{filename}'
+            }
+        )
 
     return osm_files
 
@@ -88,7 +234,8 @@ def generate_naselje(env, opstina_dir_path, opstina_name, naselje, df_naselje):
     if not os.path.exists(naselje_dir_path):
         os.mkdir(naselje_dir_path)
 
-    osm_files = generate_osm_files(env, opstina_dir_path, opstina_name, naselje, df_naselje)
+    osm_files_new_addresses = generate_osm_files_new_addresses(env, opstina_dir_path, opstina_name, naselje, df_naselje)
+    osm_files_matched_addresses = generate_osm_files_matched_addresses(env, opstina_dir_path, opstina_name, naselje, df_naselje)
 
     naselje_path = os.path.join(naselje_dir_path, f'{naselje["name_lat"]}.html')
 
@@ -146,12 +293,14 @@ def generate_naselje(env, opstina_dir_path, opstina_name, naselje, df_naselje):
         addresses=addresses,
         naselje=naselje,
         opstina_name=opstina_name,
-        osm_files=osm_files)
+        osm_files_new_addresses=osm_files_new_addresses,
+        osm_files_matched_addresses=osm_files_matched_addresses)
     with open(naselje_path, 'w', encoding='utf-8') as fh:
         fh.write(output)
 
 
-def generate_opstina(env, report_path, opstina_name, df_opstina, df_opstina_osm):
+def generate_opstina(env, data_path, opstina_name, df_opstina, df_opstina_osm):
+    report_path = os.path.join(data_path, 'report')
     template = env.get_template('opstina.html')
     current_date = datetime.date.today().strftime('%Y-%m-%d')
     current_date_srb = datetime.date.today().strftime('%d.%m.%Y')
@@ -214,7 +363,13 @@ def generate_index(env):
 
     cwd = os.getcwd()
     data_path = os.path.join(cwd, 'data')
+
+    print("Building cache of OSM entities")
+    build_osm_entities_cache(data_path)
+
+    print("Loading normalized street names mapping")
     load_mappings(data_path)
+
     osm_path = os.path.join(data_path, 'osm', 'csv')
     analysis_path = os.path.join(data_path, 'analysis')
     report_path = os.path.join(data_path, 'report')
@@ -236,7 +391,7 @@ def generate_index(env):
         print(f"{i+1}/{total_csvs} Processing {opstina_name}...", end='')
         df_opstina = pd.read_csv(os.path.join(analysis_path, file), dtype={'conflated_osm_housenumber': object, 'osm_housenumber': object})
         df_opstina_osm = pd.read_csv(os.path.join(osm_path, file))
-        opstina = generate_opstina(env, report_path, opstina_name, df_opstina, df_opstina_osm)
+        opstina = generate_opstina(env, data_path, opstina_name, df_opstina, df_opstina_osm)
         opstine.append(opstina)
         total['conflated'] += opstina['conflated']
         total['rgz'] += opstina['rgz']

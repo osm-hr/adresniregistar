@@ -60,22 +60,49 @@
     </script>
 
 
-{% if len(osm_files) > 0 %}
-<div>
-	<p>
+{% if len(osm_files_new_addresses) > 0  or len(osm_files_matched_addresses) > 0 %}
+<div class="row">
+	{% if len(osm_files_new_addresses) > 0 %}
+	<div class="col-sm">
 	  <a class="btn btn-primary" data-toggle="collapse" href="#collapseOsmFilesNew" role="button" aria-expanded="false" aria-controls="collapseOsmFilesNew">
 		Lista fajlova za import (samo nove adrese!)
 	  </a>
-	</p>
+	</div>
+	{% endif %}
+	{% if len(osm_files_new_addresses) > 0 %}
+	<div class="col-sm">
+	  <a class="btn btn-primary" data-toggle="collapse" href="#collapseOsmFilesMatched" role="button" aria-expanded="false" aria-controls="collapseOsmFilesMatched">
+		Lista fajlova za import (100% poklopljene adrese)
+	  </a>
+	</div>
+	{% endif %}
 </div>
+{% endif %}
 
+{% if len(osm_files_new_addresses) > 0 %}
 <div class="collapse" id="collapseOsmFilesNew">
   Pre bilo kakvog importa, <b>obavezno</b> pročitati <a href="https://wiki.openstreetmap.org/wiki/Serbia/Projekti/Adresni_registar#Uputstvo_za_import" target="_blank">uputstvo</a>!
   <div class="card card-body">
 	  <div class="row row-cols-5">
-	  	{% for osm_file in osm_files %}
+	  	{% for osm_file in osm_files_new_addresses %}
 	  		<div class="col-sm">
-	  			<a href="http://localhost:8111/import?changeset_tags=source=RGZ_AR_Import&new_layer=true&layer_name={{ naselje.name_lat }}-{{ osm_file.name }}&url={{ osm_file.url }}" target="_blank">{{ osm_file.name }}</a>
+	  			<a href="http://localhost:8111/import?changeset_tags=source=RGZ_AR&new_layer=true&layer_name={{ naselje.name_lat }}-{{ osm_file.name }}&url={{ osm_file.url }}" target="_blank">{{ osm_file.name }}</a>
+			</div>
+	  	{% endfor %}
+	  </div>
+  </div>
+</div>
+<br/><br/>
+{% endif %}
+
+{% if len(osm_files_matched_addresses) > 0 %}
+<div class="collapse" id="collapseOsmFilesMatched">
+  Pre bilo kakvog importa, <b>obavezno</b> pročitati <a href="https://wiki.openstreetmap.org/wiki/Serbia/Projekti/Adresni_registar#Uputstvo_za_import" target="_blank">uputstvo</a>!
+  <div class="card card-body">
+	  <div class="row row-cols-5">
+	  	{% for osm_file in osm_files_matched_addresses %}
+	  		<div class="col-sm">
+	  			<a href="http://localhost:8111/import?changeset_tags=source=RGZ_AR&new_layer=true&layer_name={{ naselje.name_lat }}-{{ osm_file.name }}&url={{ osm_file.url }}" target="_blank">{{ osm_file.name }}</a>
 			</div>
 	  	{% endfor %}
 	  </div>
