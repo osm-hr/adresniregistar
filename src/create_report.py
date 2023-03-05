@@ -2,6 +2,7 @@
 
 import csv
 import datetime
+import json
 import os
 
 import osmium
@@ -250,7 +251,7 @@ def generate_naselje(env, opstina_dir_path, opstina_name, naselje, df_naselje):
         conflated_osm_link, conflated_osm_street, conflated_osm_housenumber, score, distance = '', '', '', '', ''
         is_conflated = type(address['conflated_osm_id']) == str
         if is_conflated:
-            osm_type = 'node' if address['conflated_osm_id'][0] == 'n' else 'way' if address['osm_id'][0] == 'w' else 'relation'
+            osm_type = 'node' if address['conflated_osm_id'][0] == 'n' else 'way' if address['conflated_osm_id'][0] == 'w' else 'relation'
             conflated_osm_link = f'https://www.openstreetmap.org/{osm_type}/{address["conflated_osm_id"][1:]}'
             conflated_osm_street = address['conflated_osm_street']
             conflated_osm_housenumber = address['conflated_osm_housenumber']
@@ -358,10 +359,9 @@ def generate_opstina(env, data_path, opstina_name, df_opstina, df_opstina_osm):
     return opstina
 
 
-def generate_index(env):
-    template = env.get_template('index.html')
+def generate_report(env, cwd):
+    template = env.get_template('report.html')
 
-    cwd = os.getcwd()
     data_path = os.path.join(cwd, 'data')
 
     print("Building cache of OSM entities")
@@ -374,7 +374,7 @@ def generate_index(env):
     analysis_path = os.path.join(data_path, 'analysis')
     report_path = os.path.join(data_path, 'report')
     total_csvs = len(os.listdir(analysis_path))
-    index_html_path = os.path.join(report_path, 'index.html')
+    report_html_path = os.path.join(report_path, 'report.html')
 
     total = {
         'rgz': 0,
@@ -400,7 +400,7 @@ def generate_index(env):
         total['partially_matched_count'] += opstina['partially_matched_count']
         print()
 
-    if os.path.exists(index_html_path):
+    if os.path.exists(report_html_path):
         return
 
     current_date = datetime.date.today().strftime('%Y-%m-%d')
@@ -410,16 +410,97 @@ def generate_index(env):
         currentDateSrb=current_date_srb,
         opstine=opstine,
         total=total)
-    with open(index_html_path, 'w', encoding='utf-8') as fh:
+    with open(report_html_path, 'w', encoding='utf-8') as fh:
+        fh.write(output)
+
+
+def generate_qa_duplicated_refs(env, cwd):
+    current_date = datetime.date.today().strftime('%Y-%m-%d')
+    current_date_srb = datetime.date.today().strftime('%d.%m.%Y')
+    qa_path = os.path.join(cwd, 'data/qa')
+    report_path = os.path.join(cwd, 'data/report')
+    json_file_path = os.path.join(qa_path, 'duplicated_refs.json')
+    html_path = os.path.join(report_path, 'duplicated_refs.html')
+    if os.path.exists(html_path):
+        print("Page data/report/duplicated_refs.html already exists")
+        return
+
+    print("Generating data/report/duplicated_refs.html")
+    with open(json_file_path, encoding='utf-8') as fh:
+        addresses = json.load(fh)
+
+    duplicates = []
+    for address in addresses:
+        links = []
+        for dup in address['duplicates']:
+            street_name = dup['tags']['addr:street'] if 'addr:street' in dup['tags'] else ''
+            housenumber = dup['tags']['addr:housenumber'] if 'addr:housenumber' in dup['tags'] else ''
+            links.append({
+                'href': f'https://www.openstreetmap.org/{dup["type"]}/{dup["id"]}',
+                'name': f'{street_name} {housenumber}' if len(street_name) > 0 or len(housenumber) > 0 else f'{dup["type"]}'
+            })
+        duplicates.append({
+            'id': address['ref:RS:kucni_broj'],
+            'links': links
+        })
+    template = env.get_template('duplicated_refs.html')
+    output = template.render(
+        duplicates=duplicates,
+        currentDate=current_date,
+        currentDateSrb=current_date_srb
+    )
+    with open(html_path, 'w', encoding='utf-8') as fh:
+        fh.write(output)
+
+
+def generate_qa(env, cwd):
+    current_date = datetime.date.today().strftime('%Y-%m-%d')
+    current_date_srb = datetime.date.today().strftime('%d.%m.%Y')
+    print("Generating QA pages")
+
+    generate_qa_duplicated_refs(env, cwd)
+
+    report_path = os.path.join(cwd, 'data/report')
+    html_path = os.path.join(report_path, 'qa.html')
+    if os.path.exists(html_path):
+        print("Page data/report/qa.html already exists")
+        return
+
+    print("Generating data/report/qa.html")
+    template = env.get_template('qa.html')
+    output = template.render(
+        currentDate=current_date,
+        currentDateSrb=current_date_srb
+    )
+    with open(html_path, 'w', encoding='utf-8') as fh:
         fh.write(output)
 
 
 def main():
+    current_date = datetime.date.today().strftime('%Y-%m-%d')
+    current_date_srb = datetime.date.today().strftime('%d.%m.%Y')
     # TODO: sorting in some columns should be as numbers (distance, kucni broj)
     # TODO: address should be searchable with latin only
     env = Environment(loader=FileSystemLoader(searchpath='./templates'))
     env.globals.update(len=len)
-    generate_index(env)
+    cwd = os.getcwd()
+    generate_qa(env, cwd)
+    generate_report(env, cwd)
+
+    report_path = os.path.join(cwd, 'data/report')
+    index_html_path = os.path.join(report_path, 'index.html')
+    if os.path.exists(index_html_path):
+        print("Page data/report/index.html already exists")
+        return
+
+    print("Generating data/report/index.html")
+    template = env.get_template('index.html')
+    output = template.render(
+        currentDate=current_date,
+        currentDateSrb=current_date_srb
+    )
+    with open(index_html_path, 'w', encoding='utf-8') as fh:
+        fh.write(output)
 
 
 if __name__ == '__main__':

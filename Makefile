@@ -25,6 +25,10 @@ clean_analysis: clean_report
 	@echo "Cleaning all analysis files"
 	rm -f data/analysis/*
 
+clean_quality_assurance: clean_report
+	@echo "Cleaning QA files"
+	rm -f data/qa/duplicate_refs.json
+
 clean_report:
 	@echo "Cleaning all files from report"
 	rm -rf data/report/*
@@ -58,7 +62,12 @@ analyze: download_from_osm normalize_street_names
 	mkdir -p data/analysis
 	python3 src/create_analysis.py
 
-report: analyze
+quality_assurance: download_from_osm
+	@echo "Doing quality assurance"
+	mkdir -p data/qa
+	python3 src/quality_assurance.py
+
+report: analyze quality_assurance
 	@echo "Generating report"
 	mkdir -p data/report
 	mkdir -p data/report/opstine

@@ -12,9 +12,9 @@
         </button>
       </div>
       <div class="modal-body">
-          Odaberite izveštaj da vidite sve opštine, naselja i adrese i da li su nađene u OSM-u.
-          <br/>
-          Odaberite QA da vidite razne QA analize na osnovu RGZ i OSM podataka.
+		  Ovde su izlistane sve adrese iz OSM-a kojima je "ref:RS:kucni_broj" dupliciran, tj. više OSM adresa deli istu referencu ka RGZ adresi.
+		  <br/>
+		  Ovo ne sme da se dešava i verovatno je samo jedna adresa iz OSM-a "prava", tj. dobra dok su ostale greška.
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Zatvori</button>
@@ -25,7 +25,9 @@
 
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
-	  <li class="breadcrumb-item" aria-current="page">Početna</li>
+	  <li class="breadcrumb-item" aria-current="page"><a href="index.html">Početna</a></li>
+	  <li class="breadcrumb-item" aria-current="page"><a href="qa.html">QA</a></li>
+	  <li class="breadcrumb-item active" aria-current="page">ref:RS:kucni_broj duplikati</li>
   </ol>
 </nav>
 
@@ -36,11 +38,51 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 <script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
+<script>
+$(document).ready( function () {
+	$('#list').DataTable({
+		stateSave: true,
+		order: [[0, 'asc']],
+		lengthMenu: [ [10, 100, -1], [10, 50, "All"] ],
+		columnDefs: [
+			//{ targets: [10, 11, 12, 13, 14], "orderable": false},
+			//{ targets: [1], visible: false },
+			{ targets: [2, 3, 4, 5], className: 'text-right' },
+			//{ targets: '_all', visible: false }
+		]
+	});
+} );
+</script>
 
+
+{% if len(duplicates) > 0 %}
+<table id="list" class="table table-sm table-striped table-bordered table-hover" style="width:100%">
+<thead class="thead-dark sticky-top">
+	<tr>
+		<th>ref:RS:kucni_broj</th>
+		<th>Duplikati</th>
+	</tr>
+</thead>
+<tbody>
+	{% for duplicate in duplicates %}
+	<tr>
+		<td>{{ duplicate.id }}</td>
+		<td>
+			{% for link in duplicate.links %}
+			<a href="{{ link.href }}" target="_blank">{{ link.name }}</a>
+			<br/>
+			{% endfor %}
+		</td>
+	</tr>
+	{% endfor %}
+</tbody>
+</table>
+{% endif %}
+
+{% if len(duplicates) == 0 %}
 <div class="text-center">
-    <h1><a href="report.html">Izveštaj / Report</a></h1>
-    <br/>
-    <h1><a href="qa.html">Quality assurance</a></h1>
+	<h2>Nema duplikata!</h2>
 </div>
+{% endif %}
 
 {% endblock %}

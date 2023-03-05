@@ -31,7 +31,8 @@
 
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
-    <li class="breadcrumb-item" aria-current="page"><a href="../../index.html">Serbia</a></li>
+	  <li class="breadcrumb-item" aria-current="page"><a href="../../index.html">Početna</a></li>
+	  <li class="breadcrumb-item" aria-current="page"><a href="../../report.html">Izveštaj</a></li>
 	  <li class="breadcrumb-item active" aria-current="page"><a href="../{{ opstina_name }}.html">{{ opstina_name }}</a></li>
 	  <li class="breadcrumb-item active" aria-current="page">{{ naselje.name_lat }}</li>
   </ol>
@@ -69,7 +70,7 @@
 	  </a>
 	</div>
 	{% endif %}
-	{% if len(osm_files_new_addresses) > 0 %}
+	{% if len(osm_files_matched_addresses) > 0 %}
 	<div class="col-sm">
 	  <a class="btn btn-primary" data-toggle="collapse" href="#collapseOsmFilesMatched" role="button" aria-expanded="false" aria-controls="collapseOsmFilesMatched">
 		Lista fajlova za import (100% poklopljene adrese)
@@ -156,5 +157,5 @@
 	{% endfor %}
 </tbody>
 </table>
-</main>
+
 {% endblock %}

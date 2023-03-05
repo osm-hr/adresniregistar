@@ -14,6 +14,7 @@
       <div class="modal-body">
 		<ul>
 			<li><b># RGZ</b> &mdash; Ukupan broj adresa u RGZ-u</li>
+			<li><b># OSM</b> &mdash; Ukupan broj adresa u OSM-u (tek treba implementirati)</li>
 			<li><b>% Konflacija</b> &mdash; Procenat adresa koje su povezane između RGZ-a i OSM-a. Da bi adrese bile povezane, adresa u OSM-u treba da ima "ref:RS:kucni_broj" tag</li>
 			<li><b># Konflacija</b> &mdash; Isto kao procenat, samo izraženo kao apsolutni broj, zgodno ako treba sortirati po ovome</li>
 			<li><b>% Pronađeno</b> &mdash; Procenat adresa iz OSM-a koje se savršeno poklapaju (i ime ulice i kućni broj) sa adresama iz RGZ-a. Ove adrese su potencijalni najbolji kandidati za konflaciju.</li>
@@ -30,9 +31,8 @@
 
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
-	  <li class="breadcrumb-item" aria-current="page"><a href="../index.html">Početna</a></li>
-	  <li class="breadcrumb-item" aria-current="page"><a href="../report.html">Izveštaj</a></li>
-	  <li class="breadcrumb-item active" aria-current="page">{{ opstina.name }}</li>
+	  <li class="breadcrumb-item" aria-current="page"><a href="index.html">Početna</a></li>
+	  <li class="breadcrumb-item" aria-current="page">Izveštaj</li>
   </ol>
 </nav>
     <!-- Optional JavaScript -->
@@ -60,8 +60,9 @@
 <table id="list" class="table table-sm table-striped table-bordered table-hover" style="width:100%">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>Naselje</th>
+		<th>Opština</th>
 		<th>#RGZ</th>
+		<th class="d-none d-sm-table-cell">#OSM</th>
 		<th class="d-none d-sm-table-cell">% Konflacija</th>
 		<th class="d-none d-sm-table-cell"># Konflacija</th>
 		<th class="d-none d-lg-table-cell">% Pronađeno</th>
@@ -70,27 +71,29 @@
 	</tr>
 </thead>
 <tbody>
-	{% for naselje in naselja %}
+	{% for opstina in opstine %}
 	<tr>
-		<td><a href="{{ opstina.name }}/{{ naselje.name_lat }}.html">{{ naselje.name_lat }}</a></td>
-		<td>{{ naselje.rgz }}</td>
-		<td>{{ '{0:0.2f}'.format((100.0 * naselje.conflated) / naselje.rgz) }}</td>
-		<td>{{ naselje.conflated }}</td>
-		<td>{{ '{0:0.2f}'.format((100.0 * naselje.matched) / naselje.rgz) }}</td>
-		<td>{{ naselje.matched }}</td>
-		<td>{{ naselje.rgz - naselje.matched }}</td>
+		<td><a href="opstine/{{ opstina.name }}.html">{{ opstina.name }}</a></td>
+		<td>{{ opstina.rgz }}</td>
+		<td>{{ opstina.osm }}</td>
+		<td>{{ '{0:0.2f}'.format((100.0 * opstina.conflated) / opstina.rgz) }}</td>
+		<td>{{ opstina.conflated }}</td>
+		<td>{{ '{0:0.2f}'.format((100.0 * opstina.matched) / opstina.rgz) }}</td>
+		<td>{{ opstina.matched }}</td>
+		<td>{{ opstina.rgz - opstina.matched }}</td>
 	</tr>
 	{% endfor %}
 </tbody>
 <tfoot>
 	<tr>
-		<th>{{ opstina.name }} TOTAL:</th>
-		<th class="d-none d-sm-table-cell">{{ opstina.rgz }}</th>
-		<th class="d-none d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * opstina.conflated) / opstina.rgz) }}</th>
-		<th class="d-none d-sm-table-cell">{{ opstina.conflated }}</th>
-		<th class="d-none d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * opstina.matched) / opstina.rgz) }}</th>
-		<th class="d-none d-lg-table-cell">{{ opstina.matched }}</th>
-		<th class="d-none d-lg-table-cell">{{ opstina.rgz - opstina.matched }}</th>
+		<th>Serbia TOTAL:</th>
+		<th class="d-none d-sm-table-cell">{{ total.rgz }}</th>
+		<th class="d-none d-sm-table-cell">{{ total.osm }}</th>
+		<th class="d-none d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.conflated) / total.rgz) }}</th>
+		<th class="d-none d-sm-table-cell">{{ total.conflated }}</th>
+		<th class="d-none d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.matched) / total.rgz) }}</th>
+		<th class="d-none d-lg-table-cell">{{ total.matched }}</th>
+		<th class="d-none d-lg-table-cell">{{ total.rgz - total.matched }}</th>
 	</tr>
 </tfoot>
 </table>

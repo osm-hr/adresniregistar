@@ -12,9 +12,7 @@
         </button>
       </div>
       <div class="modal-body">
-          Odaberite izveštaj da vidite sve opštine, naselja i adrese i da li su nađene u OSM-u.
-          <br/>
-          Odaberite QA da vidite razne QA analize na osnovu RGZ i OSM podataka.
+		Odaberite neku od dostupnih analiza ispod
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Zatvori</button>
@@ -25,7 +23,8 @@
 
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
-	  <li class="breadcrumb-item" aria-current="page">Početna</li>
+	  <li class="breadcrumb-item" aria-current="page"><a href="index.html">Početna</a></li>
+      <li class="breadcrumb-item" aria-current="page">QA</li>
   </ol>
 </nav>
 
@@ -38,9 +37,10 @@
 <script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
 
 <div class="text-center">
-    <h1><a href="report.html">Izveštaj / Report</a></h1>
+    <h1>Quality assurance</h1>
     <br/>
-    <h1><a href="qa.html">Quality assurance</a></h1>
+    <br/>
+    <h2><a href="duplicated_refs.html">ref:RS:kucni_broj duplikati</a></h2>
 </div>
 
 {% endblock %}
