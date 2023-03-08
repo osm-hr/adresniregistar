@@ -453,12 +453,102 @@ def generate_qa_duplicated_refs(env, cwd):
         fh.write(output)
 
 
+def generate_addresses_in_buildings(env, cwd):
+    current_date = datetime.date.today().strftime('%Y-%m-%d')
+    current_date_srb = datetime.date.today().strftime('%d.%m.%Y')
+    qa_path = os.path.join(cwd, 'data/qa')
+    report_path = os.path.join(cwd, 'data/report')
+    report_qa_address_path = os.path.join(report_path, 'qa_addresses')
+    html_path = os.path.join(report_path, 'addresses_in_buildings.html')
+
+    if not os.path.exists(report_qa_address_path):
+        os.mkdir(report_qa_address_path)
+
+    df_addresses_in_buildings = pd.read_csv(os.path.join(qa_path, 'addresses_in_buildings_per_opstina.csv'))
+
+    opstine = []
+    total = {
+        'count': 0
+    }
+    for opstina_name, df_opstina in df_addresses_in_buildings.sort_values('opstina_imel').groupby('opstina_imel'):
+        count = len(df_opstina)
+        total['count'] += count
+        opstine.append({
+            'name': opstina_name,
+            'count': count
+        })
+        addresses = []
+        opstina_html_path = os.path.join(report_qa_address_path, f'{opstina_name}.html')
+        if os.path.exists(opstina_html_path):
+            print(f"Page data/report/qa_addresses/{opstina_name}.html already exists")
+            continue
+
+        print(f"Generating data/report/qa_addresses/{opstina_name}.html")
+
+        for osm_id_right, df_address in df_opstina.groupby('osm_id_right'):
+            building_address = ''
+            street = df_address['osm_street_right'].values[0]
+            house_number = df_address['osm_housenumber_right'].values[0]
+            if pd.notna(street) or pd.notna(house_number):
+                building_address = f"{street if pd.notna(street) else ''} {house_number if pd.notna(house_number) else ''}"
+
+            osm_type = 'way' if osm_id_right[0] == 'w' else 'relation' if osm_id_right[0] == 'r' else 'node'
+            address = {
+                'building_osm_link': f'https://openstreetmap.org/{osm_type}/{osm_id_right[1:]}',
+                'building_text': osm_id_right,
+                'building_address': building_address,
+                'building_has_ref': pd.notna(df_address['ref:RS:kucni_broj_right'].values[0]),
+                'nodes': []
+            }
+            for _, node in df_address.iterrows():
+                node_text = node['osm_id_left']
+                if pd.notna(node['osm_street_left']) or pd.notna(node['osm_housenumber_left']):
+                    node_text = f"{node['osm_street_left'] if pd.notna(node['osm_street_left']) else ''} {node['osm_housenumber_left'] if pd.notna(node['osm_housenumber_left']) else ''}"
+
+                osm_type = 'way' if node['osm_id_left'][0] == 'w' else 'relation' if node['osm_id_left'][0] == 'r' else 'node'
+                address['nodes'].append({
+                    'link': f"https://openstreetmap.org/{osm_type}/{ node['osm_id_left'][1:]}",
+                    'text': node_text,
+                    'has_ref': pd.notna(node['ref:RS:kucni_broj_right'])
+                })
+            addresses.append(address)
+
+        template = env.get_template('addresses_in_buildings_opstina.html')
+        output = template.render(
+            addresses=addresses,
+            opstina_name=opstina_name,
+            currentDate=current_date,
+            currentDateSrb=current_date_srb
+        )
+
+        with open(opstina_html_path, 'w', encoding='utf-8') as fh:
+            fh.write(output)
+
+    if os.path.exists(html_path):
+        print("Page data/report/addresses_in_buildings.html already exists")
+        return
+
+    print("Generating data/report/addresses_in_buildings.html")
+
+    template = env.get_template('addresses_in_buildings.html')
+    output = template.render(
+        opstine=opstine,
+        total=total,
+        currentDate=current_date,
+        currentDateSrb=current_date_srb
+    )
+
+    with open(html_path, 'w', encoding='utf-8') as fh:
+        fh.write(output)
+
+
 def generate_qa(env, cwd):
     current_date = datetime.date.today().strftime('%Y-%m-%d')
     current_date_srb = datetime.date.today().strftime('%d.%m.%Y')
     print("Generating QA pages")
 
     generate_qa_duplicated_refs(env, cwd)
+    generate_addresses_in_buildings(env, cwd)
 
     report_path = os.path.join(cwd, 'data/report')
     html_path = os.path.join(report_path, 'qa.html')
