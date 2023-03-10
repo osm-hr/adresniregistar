@@ -168,6 +168,9 @@ def main():
     data_path = os.path.join(cwd, 'data/')
     rgz_csv_path = os.path.join(data_path, 'rgz/csv')
     total_csvs = len(os.listdir(rgz_csv_path))
+    if total_csvs < 168:
+        raise Exception("Some or all RGZ files missing! Bailing out")
+
     for i, file in enumerate(sorted(os.listdir(rgz_csv_path))):
         if not file.endswith(".csv"):
             continue

@@ -64,6 +64,8 @@ def main():
     download_path = os.path.join(rgz_path, 'download/')
     collect_path = os.path.join(rgz_path, 'csv/')
     all_addresses_path = os.path.join(rgz_path, 'addresses.csv')
+
+    need_address_collection = True
     if os.path.exists(all_addresses_path):
         need_address_collection = False
 

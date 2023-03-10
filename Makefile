@@ -6,10 +6,7 @@ help:
 clean: clean_rgz clean_osm
 
 clean_rgz:
-	@echo "Removing RGZ data"
-	rm -f data/rgz/download/*
-	rm -f data/rgz/csv/*
-	rm -f data/rgz/addresses.csv
+	@./src/clean_rgz.sh
 
 clean_osm: clean_normalize_street_names clean_analysis
 	@echo "Removing OSM data"

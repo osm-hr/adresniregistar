@@ -7,4 +7,4 @@ echo $current_date
 tar -czf data/report$current_date.tar.gz -C data/report/ .
 scp data/report$current_date.tar.gz kokanovic:/home/branko/ar
 ssh kokanovic "tar -xzf ar/report$current_date.tar.gz -C /var/www/sites/openstreetmap.rs/download/ar/"
-rm data/$current_date.tar.gz
+
