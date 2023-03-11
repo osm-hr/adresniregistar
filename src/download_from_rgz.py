@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from common import OPSTINE_TO_SKIP
 import json
 import os
 import time
+from enum import Enum
 
 from selenium import webdriver
 from selenium.common.exceptions import ElementClickInterceptedException
@@ -11,9 +11,21 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from seleniumwire import webdriver
 
+from common import OPSTINE_TO_SKIP
+
 SLEEP_TIME = 1
 
 OPSTINE_TO_SKIP_UNHANDLED = ['UB', 'TOPOLA', 'RAČA']
+
+
+class EntityType(Enum):
+    ULICE = 1
+    KUCNI_BROJEVI = 2
+
+
+class DataFormat(Enum):
+    CSV = 1
+    SHAPEFILE = 2
 
 
 def login(driver, rgz_username, rgz_password):
@@ -49,7 +61,8 @@ def select_kucni_broj(driver):
     time.sleep(SLEEP_TIME)
 
 
-def download_all_from_rgz(rgz_username, rgz_password, download_path):
+def download_all_from_rgz(rgz_username, rgz_password, download_path,
+                          entity_type=EntityType.KUCNI_BROJEVI, dataFormat = DataFormat.CSV):
     profile = webdriver.FirefoxProfile()
     profile.set_preference("browser.download.folderList", 2)
     profile.set_preference("browser.download.manager.showWhenStarting", False)
@@ -61,7 +74,8 @@ def download_all_from_rgz(rgz_username, rgz_password, download_path):
 
     login(driver, rgz_username, rgz_password)
     click_novo_preuzimanje(driver)
-    select_kucni_broj(driver)
+    if entity_type == EntityType.KUCNI_BROJEVI:
+        select_kucni_broj(driver)
 
     all_opstine = []
     for request in driver.requests:
@@ -95,6 +109,15 @@ def download_all_from_rgz(rgz_username, rgz_password, download_path):
         time.sleep(SLEEP_TIME)
         driver.find_element(By.CSS_SELECTOR, 'input.p-inputtext[placeholder="Naziv fajla"]').clear()
         driver.find_element(By.CSS_SELECTOR, 'input.p-inputtext[placeholder="Naziv fajla"]').send_keys(opstina_name)
+
+        if dataFormat == DataFormat.SHAPEFILE:
+            time.sleep(SLEEP_TIME)
+            format_tb = driver.find_elements(By.CSS_SELECTOR, 'p-dropdown.p-inputwrapper')[2]
+            format_tb.click()
+            time.sleep(SLEEP_TIME)
+            format_tb.find_element(By.CSS_SELECTOR, 'input.p-component').clear()
+            format_tb.find_element(By.CSS_SELECTOR, 'input.p-component').send_keys("Shape" + Keys.DOWN + Keys.ENTER)
+
         time.sleep(SLEEP_TIME)
         driver.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
         time.sleep(SLEEP_TIME * 5)
