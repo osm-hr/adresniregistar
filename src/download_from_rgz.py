@@ -6,7 +6,7 @@ import time
 from enum import Enum
 
 from selenium import webdriver
-from selenium.common.exceptions import ElementClickInterceptedException
+from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from seleniumwire import webdriver
@@ -14,8 +14,6 @@ from seleniumwire import webdriver
 from common import OPSTINE_TO_SKIP
 
 SLEEP_TIME = 1
-
-OPSTINE_TO_SKIP_UNHANDLED = ['UB', 'TOPOLA', 'RAČA']
 
 
 class EntityType(Enum):
@@ -49,6 +47,46 @@ def click_novo_preuzimanje(driver):
             time.sleep(SLEEP_TIME)
             break
         except ElementClickInterceptedException as e:
+            retries += 1
+            if retries == 3:
+                raise e
+
+
+def select_opstina(driver, opstina_name):
+    time.sleep(SLEEP_TIME)
+    opstina = driver.find_elements(By.CSS_SELECTOR, 'p-dropdown.p-inputwrapper')[0]
+    opstina.click()
+
+    opstina.find_element(By.CSS_SELECTOR, 'input.p-component').clear()
+    opstina.find_element(By.CSS_SELECTOR, 'input.p-component').send_keys(opstina_name)
+    counter = 0
+    while True:
+        counter += 1
+        if counter > 100:
+            # This is too much iterations...
+            raise Exception("Cannot select opstina")
+
+        opstina.find_element(By.CSS_SELECTOR, 'input.p-component').send_keys(Keys.DOWN)
+        time.sleep(SLEEP_TIME)
+        if opstina.find_element(By.CSS_SELECTOR, 'span').text in opstina_name:
+            opstina.find_element(By.CSS_SELECTOR, 'input.p-component').send_keys(Keys.ENTER)
+            break
+
+    time.sleep(SLEEP_TIME)
+
+
+def select_data_format(driver, text="Shape"):
+    retries = 0
+    while True:
+        try:
+            time.sleep(SLEEP_TIME)
+            text_element = driver.find_elements(By.CSS_SELECTOR, 'p-dropdown.p-inputwrapper')[2]
+            text_element.click()
+            time.sleep(SLEEP_TIME)
+            text_element.find_element(By.CSS_SELECTOR, 'input.p-component').clear()
+            text_element.find_element(By.CSS_SELECTOR, 'input.p-component').send_keys(text + Keys.DOWN + Keys.ENTER)
+            break
+        except NoSuchElementException as e:
             retries += 1
             if retries == 3:
                 raise e
@@ -96,27 +134,13 @@ def download_all_from_rgz(rgz_username, rgz_password, download_path,
         if opstina_name in OPSTINE_TO_SKIP:
             print(f'Skipping opstina {opstina_name}, Kosovo is not in RGZ')
             continue
-        if opstina_name in OPSTINE_TO_SKIP_UNHANDLED:
-            print(f'Skipping opstina {opstina_name}, have to be downloaded manually')
-            continue
 
-        time.sleep(SLEEP_TIME)
-        opstina = driver.find_elements(By.CSS_SELECTOR, 'p-dropdown.p-inputwrapper')[0]
-        opstina.click()
-        time.sleep(SLEEP_TIME)
-        opstina.find_element(By.CSS_SELECTOR, 'input.p-component').clear()
-        opstina.find_element(By.CSS_SELECTOR, 'input.p-component').send_keys(opstina_name + Keys.DOWN + Keys.ENTER)
-        time.sleep(SLEEP_TIME)
+        select_opstina(driver, opstina_name)
         driver.find_element(By.CSS_SELECTOR, 'input.p-inputtext[placeholder="Naziv fajla"]').clear()
         driver.find_element(By.CSS_SELECTOR, 'input.p-inputtext[placeholder="Naziv fajla"]').send_keys(opstina_name)
 
         if dataFormat == DataFormat.SHAPEFILE:
-            time.sleep(SLEEP_TIME)
-            format_tb = driver.find_elements(By.CSS_SELECTOR, 'p-dropdown.p-inputwrapper')[2]
-            format_tb.click()
-            time.sleep(SLEEP_TIME)
-            format_tb.find_element(By.CSS_SELECTOR, 'input.p-component').clear()
-            format_tb.find_element(By.CSS_SELECTOR, 'input.p-component').send_keys("Shape" + Keys.DOWN + Keys.ENTER)
+            select_data_format(driver, "Shape")
 
         time.sleep(SLEEP_TIME)
         driver.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
@@ -128,10 +152,6 @@ def download_all_from_rgz(rgz_username, rgz_password, download_path,
             click_novo_preuzimanje(driver)
             select_kucni_broj(driver)
             total_downloaded = 0
-    os.remove(os.path.join(download_path, 'UB.zip'))
-    os.remove(os.path.join(download_path, 'TOPOLA.zip'))
-    os.remove(os.path.join(download_path, 'RAČA.zip'))
-    print("Download UB, TOPOLA and RAČA manually")
     driver.quit()
 
 
