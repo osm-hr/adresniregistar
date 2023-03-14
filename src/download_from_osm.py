@@ -13,7 +13,7 @@ def main():
     pbf_file = os.path.join(collect_path, 'download/serbia.osm.pbf')
     all_addresses_path = os.path.join(collect_path, 'addresses.csv')
 
-    if os.path.exists(all_addresses_path):
+    if os.path.exists(all_addresses_path) and os.path.getsize(all_addresses_path) > 1024 * 1024:
         print("Skipping creation of data/osm/addresses.csv as it already exists")
         return
 
@@ -36,7 +36,7 @@ def main():
     with open(all_addresses_path, 'w', encoding="utf-8") as all_addresses_csv:
         writer = csv.DictWriter(
             all_addresses_csv,
-            fieldnames=['osm_id', 'osm_country', 'osm_city', 'osm_postcode', 'osm_street', 'osm_housenumber', 'ref:RS:ulica', 'ref:RS:kucni_broj', 'osm_geometry'])
+            fieldnames=['osm_id', 'osm_country', 'osm_city', 'osm_postcode', 'osm_street', 'osm_housenumber', 'ref:RS:ulica', 'ref:RS:kucni_broj', 'tags', 'osm_geometry'])
         writer.writeheader()
         for address in ceh.entities:
             writer.writerow(address)
