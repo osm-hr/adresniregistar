@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import math
-
+from enum import Enum
 import osmium
 from shapely import geometry
 
@@ -10,6 +10,28 @@ OPSTINE_TO_SKIP = ['VITINA', 'VUČITRN', 'GLOGOVAC', 'GNJILANE', 'GORA', 'DEČAN
                    'KOSOVO POLJE', 'KOSOVSKA KAMENICA', 'LEPOSAVIĆ', 'LIPLJAN', 'NOVO BRDO',
                    'OBILIĆ', 'ORAHOVAC', 'PEĆ', 'PODUJEVO', 'PRIŠTINA', 'PRIZREN', 'SRBICA',
                    'SUVA REKA', 'UROŠEVAC', 'ŠTIMLJE', 'ŠTRPCE']
+
+
+class AddressInBuildingResolution(Enum):
+    # Everything is fine, no action needed. Used internally, user should not see this
+    NO_ACTION = 1
+    # Case where there is single POI and we think POI can be moved to building way
+    # If street or housenumber on POI is null, take it from building
+    MERGE_POI_TO_BUILDING = 2
+    # Case where there is/are address(es) and we think it can be moved to building way.
+    # If street or housenumber on address is null, take it from building
+    MERGE_ADDRESS_TO_BUILDING = 3
+    # Case where we don't move POI(s) to building, but there is single address and it can be copied to building way too
+    COPY_POI_ADDRESS_TO_BUILDING = 4
+    # There are multiple addresses and they should be attached to building way
+    ATTACH_ADDRESSES_TO_BUILDING = 5
+    # There are already different addresses in nodes, no need for address in building
+    REMOVE_ADDRESS_FROM_BUILDING = 6
+    # Addresses in building and in POIs/nodes do not match, need human to resolve manually
+    ADDRESSES_NOT_MATCHING = 7
+    # There are too many POIs and/or simple addresses inside one building to create meaningful resolution, human need to take a look
+    CASE_TOO_COMPLEX = 8
+
 
 normalize_rules = {
     'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e',
@@ -135,10 +157,11 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
     """
     Collects all entities and their geometries
     """
-    def __init__(self, nodes_cache, ways_cache, tag_to_search, collect_only_nodes=False):
+    def __init__(self, nodes_cache, ways_cache, tag_to_search, collect_only_nodes=False, collect_tags=False):
         osmium.SimpleHandler.__init__(self)
         self.tag_to_search = tag_to_search
         self.collect_only_nodes = collect_only_nodes
+        self.collect_tags = collect_tags
         self.nodes_cache = nodes_cache
         self.ways_cache = ways_cache
         self.entities = []
@@ -199,6 +222,7 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
                 'osm_housenumber': n.tags.get('addr:housenumber'),
                 'ref:RS:ulica': n.tags.get('ref:RS:ulica'),
                 'ref:RS:kucni_broj': n.tags.get('ref:RS:kucni_broj'),
+                'tags': '{}' if not self.collect_tags else {k: v for k, v in n.tags},
                 'osm_geometry': point
             })
 
@@ -221,6 +245,7 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
                 'osm_housenumber': housenumber,
                 'ref:RS:ulica': w.tags.get('ref:RS:ulica'),
                 'ref:RS:kucni_broj': w.tags.get('ref:RS:kucni_broj'),
+                'tags': '{}' if not self.collect_tags else {k: v for k, v in w.tags},
                 'osm_geometry': geom
             })
 
@@ -243,5 +268,6 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
                 'osm_housenumber': housenumber,
                 'ref:RS:ulica': r.tags.get('ref:RS:ulica'),
                 'ref:RS:kucni_broj': r.tags.get('ref:RS:kucni_broj'),
+                'tags': '{}' if not self.collect_tags else {k: v for k, v in r.tags},
                 'osm_geometry': geom
             })

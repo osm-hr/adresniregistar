@@ -8,7 +8,153 @@ import osmium
 import pandas as pd
 from shapely import wkt
 
-from common import CollectRelationWaysHandler, CollectWayNodesHandler, BuildNodesCacheHandler, CollectEntitiesHandler
+from common import CollectRelationWaysHandler, CollectWayNodesHandler, BuildNodesCacheHandler, CollectEntitiesHandler,\
+    AddressInBuildingResolution
+
+
+def is_simple_address(tags):
+    common_tags = ['note', 'description', 'entrance', 'door', 'survey:date', 'survey_date', 'area',
+                   'TEXT_ANGLE', 'TEXT_SIZE', 'OBJECTID', 'ref:RS:ulica', 'ref:RS:kucni_broj',
+                   'building', 'building:levels', 'old_name', 'alt_name', 'source:addr', 'roof:levels',
+                   'old_addr:street', 'old_addr:housenumber', 'access']
+    for k in tags.keys():
+        if not k.startswith("addr:") and k not in common_tags:
+            return False
+    return True
+
+
+def is_poi(tags):
+    poi_tags = ['shop', 'amenity', 'office', 'healthcare', 'tourism', 'leisure', 'craft', 'sport', 'power',
+                'name', 'name:sr-Latn', 'wikidata', 'image', 'disused:shop', 'disused:amenity']
+    for k in tags.keys():
+        if k in poi_tags:
+            return True
+    return False
+
+
+def do_resolution(input):
+    # if building has address:
+    #   if 1 POI and 0 addresses:
+    #       if same address:
+    #           POI to be moved to building
+    #       else:
+    #           weird situation, human to resolve
+    #   if 1 address and 0 POI:
+    #       if same address:
+    #           we should remove address from building
+    #       else:
+    #           weird situation, human to resolve which address is correct (test if building has only partial address, like only street)
+    #   if POI > 1 and 0 addresses:
+    #       if all have same address between them and as building:
+    #           all correct
+    #       else:
+    #           we should remove address from building
+    #   if addresses > 1 and 0 POI:
+    #       if all have same address between them and as building:
+    #           delete all addresses, only building should remain
+    #       else if all have same address between them and not as building:
+    #           human should check
+    #       else if they have different address between them:
+    #           we should remove address from building
+    #   if POI > 1 and addresses > 1:
+    #       if all have same address between them and as building:
+    #           delete all addresses, keep POI
+    #       else if all have same address between them and not as building:
+    #           human should check, human to resolve which address is correct
+    #       else if they have different address between them:
+    #           we should remove address from building
+
+    # if building do not have address:
+    #   if 1 POI and 0 addresses:
+    #       POI to be moved to building
+    #   if 1 address and 0 POI:
+    #       we should remove address from building
+    #   if POI > 1 and 0 addresses:
+    #       if all have same address:
+    #           put address on building too
+    #       else:
+    #           all correct
+    #   if addresses > 1 and 0 POI:
+    #       if all have same address between them:
+    #           delete all addresses, only building should remain
+    #       else:
+    #           all correct
+    #   if POI > 1 and addresses > 1:
+    #       if all have same address between them:
+    #           delete all addresses, put it on building, keep POI
+    #       else:
+    #           all correct
+    building_has_address = input.building_has_address.iloc[0]
+    poi_count = int(input.count_poi.iloc[0])
+    address_count = int(input.count_addresses.iloc[0])
+
+    if building_has_address:
+        addresses_match = input.addresses_match.min()
+
+        if poi_count == 1 and address_count == 0:
+            if addresses_match:
+                return AddressInBuildingResolution.MERGE_POI_TO_BUILDING
+            else:
+                return AddressInBuildingResolution.ADDRESSES_NOT_MATCHING
+        if poi_count == 0 and address_count == 1:
+            if addresses_match:
+                return AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING
+            else:
+                osm_street_right = input['osm_street_right'].iloc[0]
+                osm_housenumber_right = input['osm_housenumber_right'].iloc[0]
+                osm_street_left = input['osm_street_left'].iloc[0]
+                osm_housenumber_left = input['osm_housenumber_left'].iloc[0]
+                if pd.notna(osm_street_right) and pd.notna(osm_street_left) and osm_street_left == osm_street_right:
+                    if pd.isna(osm_housenumber_left) or pd.isna(osm_housenumber_right):
+                        return AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING
+                    else:
+                        return AddressInBuildingResolution.ADDRESSES_NOT_MATCHING
+                elif pd.notna(osm_housenumber_left) and pd.notna(osm_housenumber_right) and osm_housenumber_left == osm_housenumber_right:
+                    if pd.isna(osm_street_left) or pd.isna(osm_street_right):
+                        return AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING
+                    else:
+                        return AddressInBuildingResolution.ADDRESSES_NOT_MATCHING
+        if poi_count > 1 and address_count == 0:
+            different_address_count = len(input[['osm_street_left', 'osm_housenumber_left']].value_counts(dropna=False))
+            if different_address_count == 1 and addresses_match:
+                return AddressInBuildingResolution.NO_ACTION
+            if different_address_count == 1 and not addresses_match:
+                return AddressInBuildingResolution.ADDRESSES_NOT_MATCHING
+            if different_address_count > 1:
+                return AddressInBuildingResolution.REMOVE_ADDRESS_FROM_BUILDING
+            raise Exception("cannot reach here")
+        if poi_count == 0 and address_count > 1:
+            different_address_count = len(input[['osm_street_left', 'osm_housenumber_left']].value_counts(dropna=False))
+            if different_address_count == 1 and addresses_match:
+                return AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING
+            if different_address_count == 1 and not addresses_match:
+                return AddressInBuildingResolution.ADDRESSES_NOT_MATCHING
+            if different_address_count > 1:
+                return AddressInBuildingResolution.REMOVE_ADDRESS_FROM_BUILDING
+            raise Exception("cannot reach here")
+        if poi_count >= 1 and address_count >= 1:
+            return AddressInBuildingResolution.CASE_TOO_COMPLEX
+
+    # case where building don't have address
+    if poi_count == 1 and address_count == 0:
+        return AddressInBuildingResolution.MERGE_POI_TO_BUILDING
+    if poi_count == 0 and address_count == 1:
+        return AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING
+    if poi_count > 1 and address_count == 0:
+        different_address_count = len(input[['osm_street_left', 'osm_housenumber_left']].value_counts(dropna=False))
+        if different_address_count == 1:
+            return AddressInBuildingResolution.COPY_POI_ADDRESS_TO_BUILDING
+        else:
+            return AddressInBuildingResolution.NO_ACTION
+    if poi_count == 0 and address_count > 1:
+        different_address_count = len(input[['osm_street_left', 'osm_housenumber_left']].value_counts(dropna=False))
+        if different_address_count == 1:
+            return AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING
+        else:
+            return AddressInBuildingResolution.ATTACH_ADDRESSES_TO_BUILDING
+    if poi_count >= 1 and address_count >= 1:
+        return AddressInBuildingResolution.CASE_TOO_COMPLEX
+    raise Exception("cannot reach here")
 
 
 class CollectRefAddressesHandler(osmium.SimpleHandler):
@@ -72,7 +218,7 @@ def find_addresses_in_buildings(cwd):
     bnch.apply_file(pbf_file)
     print(f"Found coordinates for all nodes ({len(bnch.nodes_cache)}) for all buildings")
 
-    ceh = CollectEntitiesHandler(bnch.nodes_cache, cwnh.ways_cache, 'building')
+    ceh = CollectEntitiesHandler(bnch.nodes_cache, cwnh.ways_cache, 'building', collect_tags=True)
     ceh.apply_file(pbf_file)
     gdf_buildings = gpd.GeoDataFrame(ceh.entities, geometry='osm_geometry', crs="EPSG:4326")
     gdf_buildings.sindex
@@ -86,7 +232,8 @@ def find_addresses_in_buildings(cwd):
     # gdf_buildings.sindex
 
     # # Build node geometries
-    ceh = CollectEntitiesHandler(nodes_cache=set(), ways_cache=set(), tag_to_search='addr:housenumber', collect_only_nodes=True)
+    ceh = CollectEntitiesHandler(nodes_cache=set(), ways_cache=set(), tag_to_search='addr:housenumber',
+                                 collect_only_nodes=True, collect_tags=True)
     ceh.apply_file(pbf_file)
     gdf_addresses = gpd.GeoDataFrame(ceh.entities, geometry='osm_geometry', crs="EPSG:4326")
     gdf_addresses.sindex
@@ -115,7 +262,53 @@ def find_addresses_in_buildings(cwd):
 
     addresses_in_buildings_per_opstina = addresses_per_opstina.sjoin(gdf_buildings, how='inner', predicate='within')
     addresses_in_buildings_per_opstina.drop(['osm_country', 'osm_city', 'osm_postcode'], inplace=True, axis=1)
-    pd.DataFrame(addresses_in_buildings_per_opstina).to_csv(os.path.join(qa_path, 'addresses_in_buildings_per_opstina.csv'), index=False)
+
+    # Calculate resolution (what to report, what not, what should be merged, what should be removed...)
+    df = addresses_in_buildings_per_opstina
+    df['building_has_address'] = df.apply(
+        lambda row: pd.notna(row.osm_street_right) or pd.notna(row.osm_housenumber_right), axis=1)
+    df['addresses_match'] = df.apply(lambda row:
+                                     row.osm_street_left == row.osm_street_right and
+                                     row.osm_housenumber_left == row.osm_housenumber_right, axis=1)
+    # df['tags_left'] = df.apply(lambda row: ast.literal_eval(row.tags_left), axis=1)
+    df['node_is_simple_address'] = df.apply(lambda row: is_simple_address(row.tags_left), axis=1)
+    df['node_is_poi'] = df.apply(lambda row: is_poi(row.tags_left), axis=1)
+
+    both_false = df[(df.node_is_simple_address == False) & (df.node_is_poi == False)]
+    both_true = df[(df.node_is_simple_address == True) & (df.node_is_poi == True)]
+    if len(both_false) > 0:
+        print(f"There are {len(both_false)} entities which are neither simple address nor POI, take a look")
+    if len(both_true) > 0:
+        print(f"There are {len(both_true)} entities which are both simple addresses and POIs, take a look")
+
+    # Very convoluted way to count POIs for each group
+    count_poi_df = df[df.node_is_poi == True].groupby(['osm_id_right'])['osm_id_right'].transform('count')
+    count_poi_df = count_poi_df.to_frame()
+    count_poi_df.rename(columns={'osm_id_right': 'count_poi'}, inplace=True)
+    df = df.join(count_poi_df)
+    df.fillna(value={'count_poi': 0}, inplace=True)
+    df['count_poi'] = df.groupby(['osm_id_right'])['count_poi'].transform('max')
+
+    # Very convoluted way to count addresses for each group
+    count_addresses_df = df[df.node_is_simple_address==True].groupby(['osm_id_right'])['osm_id_right'].transform('count')
+    count_addresses_df = count_addresses_df.to_frame()
+    count_addresses_df.rename(columns={'osm_id_right': 'count_addresses'}, inplace=True)
+    df = df.join(count_addresses_df)
+    df.fillna(value={'count_addresses': 0}, inplace=True)
+    df['count_addresses'] = df.groupby(['osm_id_right'])['count_addresses'].transform('max')
+
+    df['addresses_match'] = df.apply(
+        lambda row:
+        ((row.osm_street_left == row.osm_street_right) or (pd.isna(row.osm_street_left) and pd.isna(row.osm_street_right)))
+        and
+        ((row.osm_housenumber_left == row.osm_housenumber_right) or (pd.isna(row.osm_housenumber_left) and pd.isna(row.osm_housenumber_right))),
+        axis=1)
+
+    resolutions = df.groupby(['osm_id_right']).apply(do_resolution)
+    df = df.join(resolutions.rename('resolution'), on='osm_id_right')
+
+    pd.DataFrame(df).to_csv(os.path.join(qa_path, 'addresses_in_buildings_per_opstina.csv'), index=False)
+    print("Created addresses_in_buildings_per_opstina.csv")
 
 
 def find_duplicated_refs(cwd):
