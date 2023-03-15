@@ -93,7 +93,7 @@ def do_resolution(input):
 
         if poi_count == 1 and address_count == 0:
             if addresses_match:
-                return AddressInBuildingResolution.MERGE_POI_TO_BUILDING
+                return AddressInBuildingResolution.NO_ACTION
             else:
                 return AddressInBuildingResolution.ADDRESSES_NOT_MATCHING
         if poi_count == 0 and address_count == 1:
@@ -306,6 +306,8 @@ def find_addresses_in_buildings(cwd):
 
     resolutions = df.groupby(['osm_id_right']).apply(do_resolution)
     df = df.join(resolutions.rename('resolution'), on='osm_id_right')
+    df['resolution'] = df['resolution'].apply(lambda x: x.value)
+    df = df[df.resolution != AddressInBuildingResolution.NO_ACTION.value]
 
     pd.DataFrame(df).to_csv(os.path.join(qa_path, 'addresses_in_buildings_per_opstina.csv'), index=False)
     print("Created addresses_in_buildings_per_opstina.csv")

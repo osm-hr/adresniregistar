@@ -11,6 +11,7 @@ from jinja2 import Environment, FileSystemLoader
 
 from common import cyr2lat
 from common import normalize_name_latin
+from common import AddressInBuildingResolution
 
 street_mappings = {}
 osm_entities_cache = None
@@ -465,11 +466,23 @@ def generate_addresses_in_buildings(env, cwd):
         os.mkdir(report_qa_address_path)
 
     df_addresses_in_buildings = pd.read_csv(os.path.join(qa_path, 'addresses_in_buildings_per_opstina.csv'))
+    df_addresses_in_buildings['resolution'] = df_addresses_in_buildings['resolution'].apply(lambda x: AddressInBuildingResolution(x))
 
     opstine = []
     total = {
         'count': 0
     }
+    resolution_stats = {
+        AddressInBuildingResolution.NO_ACTION: 0,
+        AddressInBuildingResolution.MERGE_POI_TO_BUILDING: 0,
+        AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING: 0,
+        AddressInBuildingResolution.COPY_POI_ADDRESS_TO_BUILDING: 0,
+        AddressInBuildingResolution.ATTACH_ADDRESSES_TO_BUILDING: 0,
+        AddressInBuildingResolution.REMOVE_ADDRESS_FROM_BUILDING: 0,
+        AddressInBuildingResolution.ADDRESSES_NOT_MATCHING: 0,
+        AddressInBuildingResolution.CASE_TOO_COMPLEX: 0
+    }
+
     for opstina_name, df_opstina in df_addresses_in_buildings.sort_values('opstina_imel').groupby('opstina_imel'):
         count = len(df_opstina)
         total['count'] += count
@@ -478,6 +491,17 @@ def generate_addresses_in_buildings(env, cwd):
             'count': count
         })
         addresses = []
+        opstina_resolution_stats = {
+            AddressInBuildingResolution.NO_ACTION: 0,
+            AddressInBuildingResolution.MERGE_POI_TO_BUILDING: 0,
+            AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING: 0,
+            AddressInBuildingResolution.COPY_POI_ADDRESS_TO_BUILDING: 0,
+            AddressInBuildingResolution.ATTACH_ADDRESSES_TO_BUILDING: 0,
+            AddressInBuildingResolution.REMOVE_ADDRESS_FROM_BUILDING: 0,
+            AddressInBuildingResolution.ADDRESSES_NOT_MATCHING: 0,
+            AddressInBuildingResolution.CASE_TOO_COMPLEX: 0
+        }
+
         opstina_html_path = os.path.join(report_qa_address_path, f'{opstina_name}.html')
         if os.path.exists(opstina_html_path):
             print(f"Page data/report/qa_addresses/{opstina_name}.html already exists")
@@ -493,12 +517,14 @@ def generate_addresses_in_buildings(env, cwd):
                 building_address = f"{street if pd.notna(street) else ''} {house_number if pd.notna(house_number) else ''}"
 
             osm_type = 'way' if osm_id_right[0] == 'w' else 'relation' if osm_id_right[0] == 'r' else 'node'
+            resolution = df_address['resolution'].iloc[0]
             address = {
                 'building_osm_link': f'https://openstreetmap.org/{osm_type}/{osm_id_right[1:]}',
                 'building_text': osm_id_right,
                 'building_address': building_address,
                 'building_has_ref': pd.notna(df_address['ref:RS:kucni_broj_right'].values[0]),
-                'nodes': []
+                'nodes': [],
+                'resolution': df_address['resolution'].iloc[0]
             }
             for _, node in df_address.iterrows():
                 node_text = node['osm_id_left']
@@ -512,14 +538,19 @@ def generate_addresses_in_buildings(env, cwd):
                     'has_ref': pd.notna(node['ref:RS:kucni_broj_right'])
                 })
             addresses.append(address)
+            opstina_resolution_stats[resolution] += 1
 
         template = env.get_template('addresses_in_buildings_opstina.html')
         output = template.render(
             addresses=addresses,
             opstina_name=opstina_name,
             currentDate=current_date,
-            currentDateSrb=current_date_srb
+            currentDateSrb=current_date_srb,
+            resolution_stats=opstina_resolution_stats
         )
+
+        for resolution, count in opstina_resolution_stats.items():
+            resolution_stats[resolution] += count
 
         with open(opstina_html_path, 'w', encoding='utf-8') as fh:
             fh.write(output)
@@ -534,6 +565,7 @@ def generate_addresses_in_buildings(env, cwd):
     output = template.render(
         opstine=opstine,
         total=total,
+        resolution_stats=resolution_stats,
         currentDate=current_date,
         currentDateSrb=current_date_srb
     )
@@ -572,7 +604,7 @@ def main():
     # TODO: sorting in some columns should be as numbers (distance, kucni broj)
     # TODO: address should be searchable with latin only
     env = Environment(loader=FileSystemLoader(searchpath='./templates'))
-    env.globals.update(len=len)
+    env.globals.update(len=len, AddressInBuildingResolution=AddressInBuildingResolution)
     cwd = os.getcwd()
     generate_qa(env, cwd)
     generate_report(env, cwd)

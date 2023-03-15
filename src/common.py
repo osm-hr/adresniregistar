@@ -215,10 +215,10 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
             point = geometry.Point((n.location.lon, n.location.lat))
             self.entities.append({
                 'osm_id': 'n' + str(n.id),
-                'osm_country': n.tags.get('addr:country') or '',
-                'osm_city': n.tags.get('addr:city') or '',
-                'osm_postcode': n.tags.get('addr:postcode') or '',
-                'osm_street': n.tags.get('addr:street') or '',
+                'osm_country': n.tags.get('addr:country'),
+                'osm_city': n.tags.get('addr:city'),
+                'osm_postcode': n.tags.get('addr:postcode'),
+                'osm_street': n.tags.get('addr:street'),
                 'osm_housenumber': n.tags.get('addr:housenumber'),
                 'ref:RS:ulica': n.tags.get('ref:RS:ulica'),
                 'ref:RS:kucni_broj': n.tags.get('ref:RS:kucni_broj'),
@@ -230,17 +230,17 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
         if self.collect_only_nodes:
             return
         if w.tags.get(self.tag_to_search):
-            street = w.tags.get('addr:street') or ''
+            street = w.tags.get('addr:street')
             housenumber = w.tags.get('addr:housenumber')
             geom = self.geometry_from_way([n.ref for n in w.nodes])
             if not geom:
-                print(f"Dropping way {w.id} ({street} {housenumber}) as its geometry cannot be calculated")
+                print(f"Dropping way {w.id} ({street or ''} {housenumber}) as its geometry cannot be calculated")
                 return
             self.entities.append({
                 'osm_id': 'w' + str(w.id),
-                'osm_country': w.tags.get('addr:country') or '',
-                'osm_city': w.tags.get('addr:city') or '',
-                'osm_postcode': w.tags.get('addr:postcode') or '',
+                'osm_country': w.tags.get('addr:country'),
+                'osm_city': w.tags.get('addr:city'),
+                'osm_postcode': w.tags.get('addr:postcode'),
                 'osm_street': street,
                 'osm_housenumber': housenumber,
                 'ref:RS:ulica': w.tags.get('ref:RS:ulica'),
@@ -253,7 +253,7 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
         if self.collect_only_nodes:
             return
         if r.tags.get(self.tag_to_search):
-            street = r.tags.get('addr:street') or ''
+            street = r.tags.get('addr:street')
             housenumber = r.tags.get('addr:housenumber')
             geom = self.geometry_from_relation(r)
             if not geom:
@@ -261,9 +261,9 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
                 return
             self.entities.append({
                 'osm_id': 'r' + str(r.id),
-                'osm_country': r.tags.get('addr:country') or '',
-                'osm_city': r.tags.get('addr:city') or '',
-                'osm_postcode': r.tags.get('addr:postcode') or '',
+                'osm_country': r.tags.get('addr:country'),
+                'osm_city': r.tags.get('addr:city'),
+                'osm_postcode': r.tags.get('addr:postcode'),
                 'osm_street': street,
                 'osm_housenumber': housenumber,
                 'ref:RS:ulica': r.tags.get('ref:RS:ulica'),
