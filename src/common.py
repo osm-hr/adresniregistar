@@ -31,6 +31,8 @@ class AddressInBuildingResolution(Enum):
     ADDRESSES_NOT_MATCHING = 7
     # There are too many POIs and/or simple addresses inside one building to create meaningful resolution, human need to take a look
     CASE_TOO_COMPLEX = 8
+    # Building is not a building at all, it is a node wih building tag, tag should be removed
+    BUILDING_IS_NODE = 9
 
 
 normalize_rules = {

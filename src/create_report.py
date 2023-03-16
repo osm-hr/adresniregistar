@@ -480,7 +480,8 @@ def generate_addresses_in_buildings(env, cwd):
         AddressInBuildingResolution.ATTACH_ADDRESSES_TO_BUILDING: 0,
         AddressInBuildingResolution.REMOVE_ADDRESS_FROM_BUILDING: 0,
         AddressInBuildingResolution.ADDRESSES_NOT_MATCHING: 0,
-        AddressInBuildingResolution.CASE_TOO_COMPLEX: 0
+        AddressInBuildingResolution.CASE_TOO_COMPLEX: 0,
+        AddressInBuildingResolution.BUILDING_IS_NODE: 0
     }
 
     for opstina_name, df_opstina in df_addresses_in_buildings.sort_values('opstina_imel').groupby('opstina_imel'):
@@ -499,7 +500,8 @@ def generate_addresses_in_buildings(env, cwd):
             AddressInBuildingResolution.ATTACH_ADDRESSES_TO_BUILDING: 0,
             AddressInBuildingResolution.REMOVE_ADDRESS_FROM_BUILDING: 0,
             AddressInBuildingResolution.ADDRESSES_NOT_MATCHING: 0,
-            AddressInBuildingResolution.CASE_TOO_COMPLEX: 0
+            AddressInBuildingResolution.CASE_TOO_COMPLEX: 0,
+            AddressInBuildingResolution.BUILDING_IS_NODE: 0
         }
 
         opstina_html_path = os.path.join(report_qa_address_path, f'{opstina_name}.html')

@@ -117,6 +117,8 @@
             Adrese unutar zgrade i na zgradi se ne poklapaju, razrešite ručno
             {% elif resolution == AddressInBuildingResolution.CASE_TOO_COMPLEX %}
             Mešavina POI-a i adresa unutar zgrade, razrešite ručno
+            {% elif resolution == AddressInBuildingResolution.BUILDING_IS_NODE %}
+            Ova zgrada je zapravo čvor sa tagom "building", treba izbrisati "building" tag
             {% else %}
             Slučaj nepoznat
             {% endif %}
