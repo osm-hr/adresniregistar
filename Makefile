@@ -25,6 +25,7 @@ clean_analysis: clean_report
 clean_quality_assurance: clean_report
 	@echo "Cleaning QA files"
 	rm -f data/qa/duplicate_refs.json
+	rm -f data/qa/addresses_in_buildings_per_opstina.csv
 
 clean_report:
 	@echo "Cleaning all files from report"
