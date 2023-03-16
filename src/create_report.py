@@ -9,8 +9,7 @@ import osmium
 import pandas as pd
 from jinja2 import Environment, FileSystemLoader
 
-from common import cyr2lat
-from common import normalize_name_latin
+from common import cyr2lat, normalize_name_latin, xml_escape
 from common import AddressInBuildingResolution
 
 street_mappings = {}
@@ -60,10 +59,12 @@ class OsmEntitiesCacheHandler(osmium.SimpleHandler):
 def build_osm_entities_cache(data_path):
     global osm_entities_cache
     analysis_path = os.path.join(data_path, 'analysis')
+    qa_path = os.path.join(data_path, 'qa')
 
     pbf_file = os.path.join(data_path, 'osm/download/serbia.osm.pbf')
     nodes_to_cache, ways_to_cache = [], []
 
+    # Collects nodes and ways from analysis
     for i, file in enumerate(sorted(os.listdir(analysis_path))):
         if not file.endswith(".csv"):
             continue
@@ -71,6 +72,12 @@ def build_osm_entities_cache(data_path):
         osm_entites_to_cache = df_opstina[pd.notna(df_opstina.osm_id) & (df_opstina.matching)]['osm_id']
         nodes_to_cache += [int(n[1:]) for n in list(osm_entites_to_cache[osm_entites_to_cache.str.startswith('n')])]
         ways_to_cache += [int(w[1:]) for w in list(osm_entites_to_cache[osm_entites_to_cache.str.startswith('w')])]
+
+    # Collects nodes and ways from qa/addresses_in_buildings_per_opstina.csv
+    df_addresses_in_buildings_per_opstina = pd.read_csv(os.path.join(qa_path, 'addresses_in_buildings_per_opstina.csv'))
+    df_addresses_in_buildings_per_opstina = df_addresses_in_buildings_per_opstina[df_addresses_in_buildings_per_opstina.resolution == AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING.value]
+    nodes_to_cache += [int(n[1:]) for n in list(df_addresses_in_buildings_per_opstina['osm_id_left']) if n[0] == 'n']
+    ways_to_cache += [int(w[1:]) for w in list(df_addresses_in_buildings_per_opstina['osm_id_right']) if w[0] == 'w']
 
     cwnh = CollectWayNodesHandler(set(ways_to_cache))
     cwnh.apply_file(pbf_file)
@@ -124,19 +131,21 @@ def generate_osm_files_matched_addresses(env, opstina_dir_path, opstina_name, na
             entity = osm_entities_cache.nodes_cache[node_id]
             already_exists = any(n for n in osm_nodes if n['id'] == node_id)
             if not already_exists:
+                new_tags = dict(entity['tags'], **{'ref:RS:ulica': address.rgz_ulica_mb, 'ref:RS:kucni_broj': address.rgz_kucni_broj_id })
                 osm_nodes.append({
                     'id': node_id,
                     'lat': entity['lat'],
                     'lon': entity['lon'],
-                    'tags': dict(entity['tags'], **{'ref:RS:ulica': address.rgz_ulica_mb, 'ref:RS:kucni_broj': address.rgz_kucni_broj_id }),
+                    'tags': {k: xml_escape(v) for k, v in new_tags.items()},
                     'version': entity['version']
                 })
         elif address.osm_id[0] == 'w':
             counter = counter + 1
             entity = osm_entities_cache.ways_cache[int(address.osm_id[1:])]
+            new_tags = dict(entity['tags'], **{'ref:RS:ulica': address.rgz_ulica_mb, 'ref:RS:kucni_broj': address.rgz_kucni_broj_id})
             osm_ways.append({
                 'id': int(address.osm_id[1:]),
-                'tags': dict(entity['tags'], **{'ref:RS:ulica': address.rgz_ulica_mb, 'ref:RS:kucni_broj': address.rgz_kucni_broj_id}),
+                'tags': {k: xml_escape(v) for k, v in new_tags.items()},
                 'nodes': entity['nodes'],
                 'version': entity['version']
             })
@@ -148,7 +157,7 @@ def generate_osm_files_matched_addresses(env, opstina_dir_path, opstina_name, na
                         'id': node,
                         'lat': node_entity['lat'],
                         'lon': node_entity['lon'],
-                        'tags': node_entity['tags'],
+                        'tags': {k: xml_escape(v) for k, v in node_entity['tags'].items()},
                         'version': node_entity['version']
                     })
 
@@ -222,6 +231,109 @@ def generate_osm_files_new_addresses(env, opstina_dir_path, opstina_name, naselj
             {
                 'name': f'{old_counter + 1}-{counter}',
                 'url': f'https://openstreetmap.rs/download/ar/opstine/{opstina_name}/{filename}'
+            }
+        )
+
+    return osm_files
+
+
+def generate_osm_files_move_address_to_building(env, report_qa_address_path, opstina_name, df_opstina):
+    global osm_entities_cache
+    split_limit = 10
+
+    template = env.get_template('move_address_to_building.osm')
+    osm_files = []
+    osm_nodes, osm_nodes_to_delete, osm_ways = [], [], []
+    old_counter = 0
+    counter = 0
+    df_buildings = df_opstina[df_opstina.resolution == AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING]
+    for osm_id_right, df_building in df_buildings.groupby('osm_id_right'):
+        if osm_id_right[0] == 'n':
+            print(f"Encountered node {osm_id_right}, had to be merged manually... ", end='')
+            continue
+        if osm_id_right[0] == 'r':
+            print(f"Encountered relation {osm_id_right}, had to be merged manually... ", end='')
+            continue
+
+        if counter > 0 and counter % split_limit == 0:
+            output = template.render(osm_nodes=osm_nodes, osm_nodes_to_delete=osm_nodes_to_delete, osm_ways=osm_ways)
+            filename = f'{opstina_name}-address_to_building-{counter}.osm'
+            osm_file_path = os.path.join(report_qa_address_path, filename)
+            with open(osm_file_path, 'w', encoding='utf-8') as fh:
+                fh.write(output)
+            osm_files.append(
+                {
+                    'name': f'{old_counter+1}-{counter}',
+                    'url': f'https://openstreetmap.rs/download/ar/qa_addresses/{filename}'
+                }
+            )
+            old_counter = counter
+            osm_nodes, osm_nodes_to_delete, osm_ways = [], [], []
+
+        # Collect all tags from all nodes. If there are multiple values for same tag, add them all separated with ';'
+        node_tags = {}
+        for _, address in df_building.iterrows():
+            node_id = int(address['osm_id_left'][1:])
+            entity = osm_entities_cache.nodes_cache[node_id]
+            osm_nodes_to_delete.append({
+                'id': node_id,
+                'version': entity['version'],
+                'tags': {k: xml_escape(v) for k, v in entity['tags'].items()},
+                'lat': entity['lat'],
+                'lon': entity['lon'],
+            })
+            for k, v in entity['tags'].items():
+                if k not in node_tags:
+                    node_tags[k] = v
+                all_values = node_tags[k].split(';')
+                if v not in all_values:
+                    node_tags[k] = node_tags[k] + ';' + v
+
+        way_id = int(osm_id_right[1:])
+        entity = osm_entities_cache.ways_cache[way_id]
+        counter = counter + 1
+
+        # Merge tags from node(s) to building tags. If tag exist in building, add them separated with ';'
+        new_tags = entity['tags']
+        for k, v in node_tags.items():
+            if k not in new_tags:
+                new_tags[k] = v
+            if k.startswith('addr:') or k in ['building', 'building:levels', 'roof:levels', 'survey:date']:
+                # Don't add multiple values for these tags, just keep whatever is on the building
+                continue
+            all_values = new_tags[k].split(';')
+            if v not in all_values:
+                new_tags[k] = new_tags[k] + ';' + v
+
+        osm_ways.append({
+            'id': way_id,
+            'tags': {k: xml_escape(v) for k, v in new_tags.items()},
+            'nodes': entity['nodes'],
+            'version': entity['version']
+        })
+        for node in entity['nodes']:
+            node_entity = osm_entities_cache.nodes_cache[node]
+            already_exists = any(n for n in osm_nodes if n['id'] == node)
+            if not already_exists:
+                osm_nodes.append({
+                    'id': node,
+                    'lat': node_entity['lat'],
+                    'lon': node_entity['lon'],
+                    'tags': {k: xml_escape(v) for k, v in node_entity['tags'].items()},
+                    'version': node_entity['version']
+                })
+
+    # Final write
+    if len(osm_nodes) > 0 or len(osm_nodes_to_delete) > 0 or len(osm_ways) > 0:
+        output = template.render(osm_nodes=osm_nodes, osm_nodes_to_delete=osm_nodes_to_delete, osm_ways=osm_ways)
+        filename = f'{opstina_name}-address_to_building-{counter}.osm'
+        osm_file_path = os.path.join(report_qa_address_path, filename)
+        with open(osm_file_path, 'w', encoding='utf-8') as fh:
+            fh.write(output)
+        osm_files.append(
+            {
+                'name': f'{old_counter + 1}-{counter}',
+                'url': f'https://openstreetmap.rs/download/ar/qa_addresses/{filename}'
             }
         )
 
@@ -362,11 +474,7 @@ def generate_opstina(env, data_path, opstina_name, df_opstina, df_opstina_osm):
 
 def generate_report(env, cwd):
     template = env.get_template('report.html')
-
     data_path = os.path.join(cwd, 'data')
-
-    print("Building cache of OSM entities")
-    build_osm_entities_cache(data_path)
 
     print("Loading normalized street names mapping")
     load_mappings(data_path)
@@ -457,10 +565,12 @@ def generate_qa_duplicated_refs(env, cwd):
 def generate_addresses_in_buildings(env, cwd):
     current_date = datetime.date.today().strftime('%Y-%m-%d')
     current_date_srb = datetime.date.today().strftime('%d.%m.%Y')
+    analysis_path = os.path.join(cwd, 'data/analysis')
     qa_path = os.path.join(cwd, 'data/qa')
     report_path = os.path.join(cwd, 'data/report')
     report_qa_address_path = os.path.join(report_path, 'qa_addresses')
     html_path = os.path.join(report_path, 'addresses_in_buildings.html')
+    template = env.get_template('addresses_in_buildings_opstina.html')
 
     if not os.path.exists(report_qa_address_path):
         os.mkdir(report_qa_address_path)
@@ -511,6 +621,8 @@ def generate_addresses_in_buildings(env, cwd):
 
         print(f"Generating data/report/qa_addresses/{opstina_name}.html")
 
+        osm_files_move_address_to_building = generate_osm_files_move_address_to_building(env, report_qa_address_path, opstina_name, df_opstina)
+
         for osm_id_right, df_address in df_opstina.groupby('osm_id_right'):
             building_address = ''
             street = df_address['osm_street_right'].values[0]
@@ -542,13 +654,13 @@ def generate_addresses_in_buildings(env, cwd):
             addresses.append(address)
             opstina_resolution_stats[resolution] += 1
 
-        template = env.get_template('addresses_in_buildings_opstina.html')
         output = template.render(
             addresses=addresses,
             opstina_name=opstina_name,
             currentDate=current_date,
             currentDateSrb=current_date_srb,
-            resolution_stats=opstina_resolution_stats
+            resolution_stats=opstina_resolution_stats,
+            osm_files_move_address_to_building=osm_files_move_address_to_building
         )
 
         for resolution, count in opstina_resolution_stats.items():
@@ -562,6 +674,27 @@ def generate_addresses_in_buildings(env, cwd):
         return
 
     print("Generating data/report/addresses_in_buildings.html")
+
+    for i, file in enumerate(sorted(os.listdir(analysis_path))):
+        if not file.endswith(".csv"):
+            continue
+        opstina_name = file[:-4]
+        if not any(o for o in opstine if o['name'] == opstina_name):
+            opstine.append({
+                'name': opstina_name,
+                'count': 0
+            })
+            output = template.render(
+                addresses=[],
+                opstina_name=opstina_name,
+                currentDate=current_date,
+                currentDateSrb=current_date_srb,
+                resolution_stats={},
+                osm_files_move_address_to_building=[]
+            )
+            opstina_html_path = os.path.join(report_qa_address_path, f'{opstina_name}.html')
+            with open(opstina_html_path, 'w', encoding='utf-8') as fh:
+                fh.write(output)
 
     template = env.get_template('addresses_in_buildings.html')
     output = template.render(
@@ -608,6 +741,11 @@ def main():
     env = Environment(loader=FileSystemLoader(searchpath='./templates'))
     env.globals.update(len=len, AddressInBuildingResolution=AddressInBuildingResolution)
     cwd = os.getcwd()
+
+    data_path = os.path.join(cwd, 'data')
+    print("Building cache of OSM entities")
+    build_osm_entities_cache(data_path)
+
     generate_qa(env, cwd)
     generate_report(env, cwd)
 

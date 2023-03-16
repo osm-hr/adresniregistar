@@ -65,6 +65,30 @@
 	} );
     </script>
 
+{% if len(osm_files_move_address_to_building) > 0 %}
+<div class="row">
+	<div class="col-sm">
+	  <a class="btn btn-primary" data-toggle="collapse" href="#collapseOsmFilesNew" role="button" aria-expanded="false" aria-controls="collapseOsmFilesNew">
+		Lista fajlova za import (slučaj prebacivanja adrese sa čvora na zgradu!)
+	  </a>
+	</div>
+</div>
+
+<div class="collapse" id="collapseOsmFilesNew">
+  Pre bilo kakvog importa, <b>obavezno</b> pročitati <a href="https://wiki.openstreetmap.org/wiki/Serbia/Projekti/Adresni_registar#Uputstvo_za_import" target="_blank">uputstvo</a>!
+  <div class="card card-body">
+	  <div class="row row-cols-5">
+	  	{% for osm_file in osm_files_move_address_to_building %}
+	  		<div class="col-sm">
+	  			<a href="http://localhost:8111/import?changeset_tags=source=RGZ_AR&new_layer=true&layer_name={{ osm_file.name }}&url={{ osm_file.url }}" target="_blank">{{ osm_file.name }}</a>
+			</div>
+	  	{% endfor %}
+	  </div>
+  </div>
+</div>
+<br/><br/>
+{% endif %}
+
 <h2>Spisak adresa unutar zgrade</h2>
 
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-75">
@@ -107,7 +131,7 @@
             {% elif address.resolution == AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING %}
             Adresa unutar zgrade treba da se premesti na zgradu. Pogledajte fajlove iznad za ovo.
             {% elif address.resolution == AddressInBuildingResolution.COPY_POI_ADDRESS_TO_BUILDING %}
-            Adresa POI-a može da se prekopira i na zgradu. Pogledajte fajlove iznad za ovo.
+            Adresa POI-a može da se prekopira i na zgradu.
             {% elif address.resolution == AddressInBuildingResolution.ATTACH_ADDRESSES_TO_BUILDING %}
             Zakačiti čvorove adrese(a) na zgradu
             {% elif address.resolution == AddressInBuildingResolution.REMOVE_ADDRESS_FROM_BUILDING %}
@@ -153,7 +177,7 @@
             {% elif resolution == AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING %}
             Adresa unutar zgrade treba da se premesti na zgradu. Pogledajte fajlove iznad za ovo.
             {% elif resolution == AddressInBuildingResolution.COPY_POI_ADDRESS_TO_BUILDING %}
-            Adresa POI-a može da se prekopira i na zgradu. Pogledajte fajlove iznad za ovo.
+            Adresa POI-a može da se prekopira i na zgradu.
             {% elif resolution == AddressInBuildingResolution.ATTACH_ADDRESSES_TO_BUILDING %}
             Zakačiti čvorove adrese(a) na zgradu
             {% elif resolution == AddressInBuildingResolution.REMOVE_ADDRESS_FROM_BUILDING %}

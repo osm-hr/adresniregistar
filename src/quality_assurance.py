@@ -84,6 +84,10 @@ def do_resolution(input):
     #           delete all addresses, put it on building, keep POI
     #       else:
     #           all correct
+    if input['osm_id_right'].iloc[0][0] == 'n':
+        # This is node, just bail out
+        return AddressInBuildingResolution.BUILDING_IS_NODE
+
     building_has_address = input.building_has_address.iloc[0]
     poi_count = int(input.count_poi.iloc[0])
     address_count = int(input.count_addresses.iloc[0])
@@ -204,6 +208,9 @@ def find_addresses_in_buildings(cwd):
     rgz_path = os.path.join(cwd, 'data/rgz')
     qa_path = os.path.join(cwd, 'data/qa')
     pbf_file = os.path.join(osm_path, 'download/serbia.osm.pbf')
+
+    if os.path.exists(os.path.join(qa_path, 'addresses_in_buildings_per_opstina.csv')):
+        return
 
     # Build building geometries
     crwh = CollectRelationWaysHandler('building')
