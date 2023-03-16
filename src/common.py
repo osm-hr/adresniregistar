@@ -33,6 +33,8 @@ class AddressInBuildingResolution(Enum):
     CASE_TOO_COMPLEX = 8
     # Building is not a building at all, it is a node wih building tag, tag should be removed
     BUILDING_IS_NODE = 9
+    # Either building or addresses/POIs have "note" tag and are eligable for any changes
+    NOTE_PRESENT = 10
 
 
 normalize_rules = {

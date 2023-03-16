@@ -247,7 +247,7 @@ def generate_osm_files_move_address_to_building(env, report_qa_address_path, ops
     old_counter = 0
     counter = 0
     df_buildings = df_opstina[df_opstina.resolution == AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING]
-    for osm_id_right, df_building in df_buildings.groupby('osm_id_right'):
+    for osm_id_right, df_building in df_buildings.sort_values(['osm_street_left', 'osm_housenumber_left']).groupby('osm_id_right'):
         if osm_id_right[0] == 'n':
             print(f"Encountered node {osm_id_right}, had to be merged manually... ", end='')
             continue
@@ -591,7 +591,8 @@ def generate_addresses_in_buildings(env, cwd):
         AddressInBuildingResolution.REMOVE_ADDRESS_FROM_BUILDING: 0,
         AddressInBuildingResolution.ADDRESSES_NOT_MATCHING: 0,
         AddressInBuildingResolution.CASE_TOO_COMPLEX: 0,
-        AddressInBuildingResolution.BUILDING_IS_NODE: 0
+        AddressInBuildingResolution.BUILDING_IS_NODE: 0,
+        AddressInBuildingResolution.NOTE_PRESENT: 0
     }
 
     for opstina_name, df_opstina in df_addresses_in_buildings.sort_values('opstina_imel').groupby('opstina_imel'):
@@ -611,7 +612,8 @@ def generate_addresses_in_buildings(env, cwd):
             AddressInBuildingResolution.REMOVE_ADDRESS_FROM_BUILDING: 0,
             AddressInBuildingResolution.ADDRESSES_NOT_MATCHING: 0,
             AddressInBuildingResolution.CASE_TOO_COMPLEX: 0,
-            AddressInBuildingResolution.BUILDING_IS_NODE: 0
+            AddressInBuildingResolution.BUILDING_IS_NODE: 0,
+            AddressInBuildingResolution.NOTE_PRESENT: 0
         }
 
         opstina_html_path = os.path.join(report_qa_address_path, f'{opstina_name}.html')

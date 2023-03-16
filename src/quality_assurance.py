@@ -32,6 +32,10 @@ def is_poi(tags):
     return False
 
 
+def result_or_note(has_note, potential_result):
+    return potential_result if not has_note else AddressInBuildingResolution.NOTE_PRESENT
+
+
 def do_resolution(input):
     # if building has address:
     #   if 1 POI and 0 addresses:
@@ -88,6 +92,9 @@ def do_resolution(input):
         # This is node, just bail out
         return AddressInBuildingResolution.BUILDING_IS_NODE
 
+    has_note = input['tags_left'].apply(lambda x: 'note' in x).any() or\
+               input['tags_right'].apply(lambda x: 'note' in x).any()
+
     building_has_address = input.building_has_address.iloc[0]
     poi_count = int(input.count_poi.iloc[0])
     address_count = int(input.count_addresses.iloc[0])
@@ -99,10 +106,10 @@ def do_resolution(input):
             if addresses_match:
                 return AddressInBuildingResolution.NO_ACTION
             else:
-                return AddressInBuildingResolution.ADDRESSES_NOT_MATCHING
+                return result_or_note(has_note, AddressInBuildingResolution.ADDRESSES_NOT_MATCHING)
         if poi_count == 0 and address_count == 1:
             if addresses_match:
-                return AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING
+                return result_or_note(has_note, AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING)
             else:
                 osm_street_right = input['osm_street_right'].iloc[0]
                 osm_housenumber_right = input['osm_housenumber_right'].iloc[0]
@@ -110,54 +117,54 @@ def do_resolution(input):
                 osm_housenumber_left = input['osm_housenumber_left'].iloc[0]
                 if pd.notna(osm_street_right) and pd.notna(osm_street_left) and osm_street_left == osm_street_right:
                     if pd.isna(osm_housenumber_left) or pd.isna(osm_housenumber_right):
-                        return AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING
+                        return result_or_note(has_note, AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING)
                     else:
-                        return AddressInBuildingResolution.ADDRESSES_NOT_MATCHING
+                        return result_or_note(has_note, AddressInBuildingResolution.ADDRESSES_NOT_MATCHING)
                 elif pd.notna(osm_housenumber_left) and pd.notna(osm_housenumber_right) and osm_housenumber_left == osm_housenumber_right:
                     if pd.isna(osm_street_left) or pd.isna(osm_street_right):
-                        return AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING
+                        return result_or_note(has_note, AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING)
                     else:
-                        return AddressInBuildingResolution.ADDRESSES_NOT_MATCHING
+                        return result_or_note(has_note, AddressInBuildingResolution.ADDRESSES_NOT_MATCHING)
         if poi_count > 1 and address_count == 0:
             different_address_count = len(input[['osm_street_left', 'osm_housenumber_left']].value_counts(dropna=False))
             if different_address_count == 1 and addresses_match:
                 return AddressInBuildingResolution.NO_ACTION
             if different_address_count == 1 and not addresses_match:
-                return AddressInBuildingResolution.ADDRESSES_NOT_MATCHING
+                return result_or_note(has_note, AddressInBuildingResolution.ADDRESSES_NOT_MATCHING)
             if different_address_count > 1:
-                return AddressInBuildingResolution.REMOVE_ADDRESS_FROM_BUILDING
+                return result_or_note(has_note, AddressInBuildingResolution.REMOVE_ADDRESS_FROM_BUILDING)
             raise Exception("cannot reach here")
         if poi_count == 0 and address_count > 1:
             different_address_count = len(input[['osm_street_left', 'osm_housenumber_left']].value_counts(dropna=False))
             if different_address_count == 1 and addresses_match:
-                return AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING
+                return result_or_note(has_note, AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING)
             if different_address_count == 1 and not addresses_match:
-                return AddressInBuildingResolution.ADDRESSES_NOT_MATCHING
+                return result_or_note(has_note, AddressInBuildingResolution.ADDRESSES_NOT_MATCHING)
             if different_address_count > 1:
-                return AddressInBuildingResolution.REMOVE_ADDRESS_FROM_BUILDING
+                return result_or_note(has_note, AddressInBuildingResolution.REMOVE_ADDRESS_FROM_BUILDING)
             raise Exception("cannot reach here")
         if poi_count >= 1 and address_count >= 1:
-            return AddressInBuildingResolution.CASE_TOO_COMPLEX
+            return result_or_note(has_note, AddressInBuildingResolution.CASE_TOO_COMPLEX)
 
     # case where building don't have address
     if poi_count == 1 and address_count == 0:
-        return AddressInBuildingResolution.MERGE_POI_TO_BUILDING
+        return result_or_note(has_note, AddressInBuildingResolution.MERGE_POI_TO_BUILDING)
     if poi_count == 0 and address_count == 1:
-        return AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING
+        return result_or_note(has_note, AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING)
     if poi_count > 1 and address_count == 0:
         different_address_count = len(input[['osm_street_left', 'osm_housenumber_left']].value_counts(dropna=False))
         if different_address_count == 1:
-            return AddressInBuildingResolution.COPY_POI_ADDRESS_TO_BUILDING
+            return result_or_note(has_note, AddressInBuildingResolution.COPY_POI_ADDRESS_TO_BUILDING)
         else:
             return AddressInBuildingResolution.NO_ACTION
     if poi_count == 0 and address_count > 1:
         different_address_count = len(input[['osm_street_left', 'osm_housenumber_left']].value_counts(dropna=False))
         if different_address_count == 1:
-            return AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING
+            return result_or_note(has_note, AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING)
         else:
-            return AddressInBuildingResolution.ATTACH_ADDRESSES_TO_BUILDING
+            return result_or_note(has_note, AddressInBuildingResolution.ATTACH_ADDRESSES_TO_BUILDING)
     if poi_count >= 1 and address_count >= 1:
-        return AddressInBuildingResolution.CASE_TOO_COMPLEX
+        return result_or_note(has_note, AddressInBuildingResolution.CASE_TOO_COMPLEX)
     raise Exception("cannot reach here")
 
 
