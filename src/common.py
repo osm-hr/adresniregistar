@@ -102,7 +102,9 @@ def cyr2lat(text):
     return out
 
 
-def xml_escape(str_xml: str):
+def xml_escape(str_xml):
+    if type(str_xml) == int:
+        return str
     str_xml = str_xml.replace("&", "&amp;")
     str_xml = str_xml.replace("<", "&lt;")
     str_xml = str_xml.replace(">", "&gt;")
@@ -233,7 +235,6 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
                 'osm_postcode': n.tags.get('addr:postcode'),
                 'osm_street': n.tags.get('addr:street'),
                 'osm_housenumber': n.tags.get('addr:housenumber'),
-                'ref:RS:ulica': n.tags.get('ref:RS:ulica'),
                 'ref:RS:kucni_broj': n.tags.get('ref:RS:kucni_broj'),
                 'tags': '{}' if not self.collect_tags else {k: v for k, v in n.tags},
                 'osm_geometry': point
@@ -256,7 +257,6 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
                 'osm_postcode': w.tags.get('addr:postcode'),
                 'osm_street': street,
                 'osm_housenumber': housenumber,
-                'ref:RS:ulica': w.tags.get('ref:RS:ulica'),
                 'ref:RS:kucni_broj': w.tags.get('ref:RS:kucni_broj'),
                 'tags': '{}' if not self.collect_tags else {k: v for k, v in w.tags},
                 'osm_geometry': geom
@@ -279,7 +279,6 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
                 'osm_postcode': r.tags.get('addr:postcode'),
                 'osm_street': street,
                 'osm_housenumber': housenumber,
-                'ref:RS:ulica': r.tags.get('ref:RS:ulica'),
                 'ref:RS:kucni_broj': r.tags.get('ref:RS:kucni_broj'),
                 'tags': '{}' if not self.collect_tags else {k: v for k, v in r.tags},
                 'osm_geometry': geom

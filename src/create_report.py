@@ -131,7 +131,7 @@ def generate_osm_files_matched_addresses(env, opstina_dir_path, opstina_name, na
             entity = osm_entities_cache.nodes_cache[node_id]
             already_exists = any(n for n in osm_nodes if n['id'] == node_id)
             if not already_exists:
-                new_tags = dict(entity['tags'], **{'ref:RS:ulica': address.rgz_ulica_mb, 'ref:RS:kucni_broj': address.rgz_kucni_broj_id })
+                new_tags = dict(entity['tags'], **{'ref:RS:kucni_broj': address.rgz_kucni_broj_id })
                 osm_nodes.append({
                     'id': node_id,
                     'lat': entity['lat'],
@@ -142,7 +142,7 @@ def generate_osm_files_matched_addresses(env, opstina_dir_path, opstina_name, na
         elif address.osm_id[0] == 'w':
             counter = counter + 1
             entity = osm_entities_cache.ways_cache[int(address.osm_id[1:])]
-            new_tags = dict(entity['tags'], **{'ref:RS:ulica': address.rgz_ulica_mb, 'ref:RS:kucni_broj': address.rgz_kucni_broj_id})
+            new_tags = dict(entity['tags'], **{'ref:RS:kucni_broj': address.rgz_kucni_broj_id})
             osm_ways.append({
                 'id': int(address.osm_id[1:]),
                 'tags': {k: xml_escape(v) for k, v in new_tags.items()},
