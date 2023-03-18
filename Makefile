@@ -8,7 +8,7 @@ clean: clean_rgz clean_osm
 clean_rgz:
 	@./src/clean_rgz.sh
 
-clean_osm: clean_normalize_street_names clean_analysis
+clean_osm: clean_normalize_street_names clean_analysis clean_quality_assurance
 	@echo "Removing OSM data"
 	rm -f data/osm/download/serbia.osm.pbf
 	rm -f data/osm/csv/*
@@ -24,7 +24,7 @@ clean_analysis: clean_report
 
 clean_quality_assurance: clean_report
 	@echo "Cleaning QA files"
-	rm -f data/qa/duplicate_refs.json
+	rm -f data/qa/duplicated_refs.json
 	rm -f data/qa/addresses_in_buildings_per_opstina.csv
 
 clean_report:
