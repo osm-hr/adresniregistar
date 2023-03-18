@@ -20,7 +20,7 @@
                 <li><b>Broj adresa</b> &mdash; Ukupan broj pronađenih adresa unutar zgrade</li>
                 <li><b>Adresa(e)</b> &mdash; OSM adresa unutar zgrade</li>
                 <li><b>Adresa(e) imaju ref:RS:kucni_broj</b> &mdash; Da li na adresama unutar zgrade postoji dodeljen ref:RS:kucni_broj tag</li>
-                <li><b>Slučaj</b> &mdash; Opisuje koji je slučaj u pitanju i kako može da se reši</li>
+                <li><b>Kategorija</b> &mdash; Opisuje kategorizaciju, tj. koji je slučaj u pitanju i kako eventualno može da se reši</li>
             </ul>
         </div>
         <div class="modal-footer">
@@ -65,31 +65,18 @@
 	} );
     </script>
 
-{% if len(osm_files_move_address_to_building) > 0 %}
-<div class="row">
-	<div class="col-sm">
-	  <a class="btn btn-primary" data-toggle="collapse" href="#collapseOsmFilesNew" role="button" aria-expanded="false" aria-controls="collapseOsmFilesNew">
-		Lista fajlova za import (slučaj prebacivanja adrese sa čvora na zgradu!)
-	  </a>
-	</div>
-</div>
+<h2>Adrese unutar zgrade za "{{ opstina_name }}"</h2>
+<br/>
+<p>Ovde možete videti sve zgrade sa svim adresama unutar njihovih poligona, kao i pokušaj njihove kategorizacije.
+    Neke od ovih kategorija se mogu rešiti automatizacijim.
+    {% if len(osm_files_move_address_to_building) > 0 %}
+    U dnu se nalazi spisak fajlova.
+    {% endif %}
+    U gornjem desnom uglu je filtriranje. Klikom na "Pomoć" u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.
+    </p>
+<br/>
+<br/>
 
-<div class="collapse" id="collapseOsmFilesNew">
-  Pre bilo kakvog importa, <b>obavezno</b> pročitati <a href="https://wiki.openstreetmap.org/wiki/Serbia/Projekti/Adresni_registar#Uputstvo_za_import" target="_blank">uputstvo</a>!
-  <div class="card card-body">
-	  <div class="row row-cols-5">
-	  	{% for osm_file in osm_files_move_address_to_building %}
-	  		<div class="col-sm">
-	  			<a href="http://localhost:8111/import?changeset_tags=source=RGZ_AR&new_layer=true&layer_name={{ osm_file.name }}&url={{ osm_file.url }}" target="_blank">{{ osm_file.name }}</a>
-			</div>
-	  	{% endfor %}
-	  </div>
-  </div>
-</div>
-<br/><br/>
-{% endif %}
-
-<h2>Spisak adresa unutar zgrade</h2>
 
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-75">
 <thead class="thead-dark sticky-top">
@@ -100,7 +87,7 @@
         <th>Broj adresa</th>
         <th>Adresa(e)</th>
         <th>Adresa(e) ima ref:RS:kucni_broj</th>
-        <th>Slučaj</th>
+        <th>Kategorija</th>
 	</tr>
 </thead>
 <tbody>
@@ -145,7 +132,7 @@
             {% elif resolution == AddressInBuildingResolution.NOTE_PRESENT %}
             Nešto nije u redu, ali postoji "note" tag na zgradi, adresi ili POI-u i ništa se ne automatizuje
             {% else %}
-            Slučaj nepoznat
+            Kategorija nepoznata
             {% endif %}
         </td>
 	</tr>
@@ -153,16 +140,55 @@
 </tbody>
 </table>
 
+{% if len(osm_files_move_address_to_building) > 0 %}
+<h2>Lista fajlova za import</h2>
+
+<div class="row">
+	<div class="col-sm">
+	  <a class="btn btn-primary" data-toggle="collapse" href="#collapseOsmFilesNew" role="button" aria-expanded="false" aria-controls="collapseOsmFilesNew">
+		Kategorija - prebacivanja adrese sa čvora na zgradu!
+	  </a>
+	</div>
+</div>
+
+<div class="collapse" id="collapseOsmFilesNew">
+  Ovde su fajlovi za brisanje adresa kao čvorova i prebacivanje svih njihovih tagova na poligon zgrade.
+    Morate imati otvoren JOSM pre nego što kliknete na fajl.
+	Klikom na fajl ćete ga učitati u JOSM.
+	Fajlovi su grupisani u grupe od po najviše 10 adresa.
+	<br/>
+    <br/>
+	<b>Pre bilo kakve automatizacije, <b>obavezno</b> pročitati <a href="https://wiki.openstreetmap.org/wiki/Serbia/Projekti/Adresni_registar#Uputstvo_za_import" target="_blank">uputstvo</a></b>!
+    <br/>
+  <div class="card card-body">
+	  <div class="row row-cols-5">
+	  	{% for osm_file in osm_files_move_address_to_building %}
+	  		<div class="col-sm">
+	  			<a href="http://localhost:8111/import?changeset_tags=source=RGZ_AR&new_layer=true&layer_name={{ osm_file.name }}&url={{ osm_file.url }}" target="_blank">{{ osm_file.name }}</a>
+			</div>
+	  	{% endfor %}
+	  </div>
+  </div>
+</div>
+<br/><br/>
+{% endif %}
+
 <br/>
 <br/>
 <br/>
 <hr/>
 
-<h2>Broj različitih slučajeva</h2>
+<h2>Broj različitih kategorija</h2>
+<br/>
+<p>Ovde možete videti ukupan broj adresa koje se nalaze unutar zgrada, po kategorijama unutar opštine "{{ opstina_name }}".
+    Neke od kategorija se mogu rešiti automatizacijom, ali većina zahteva ljudsku pažnju.</p>
+<br/>
+<br/>
+
 <table id="list_resolution" class="table table-sm table-striped table-bordered table-hover w-25">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>Slučaj</th>
+		<th>Kategorija</th>
         <th>Broj pojavljivanja</th>
 	</tr>
 </thead>
@@ -193,7 +219,7 @@
             {% elif resolution == AddressInBuildingResolution.NOTE_PRESENT %}
             Nešto nije u redu, ali postoji "note" tag na zgradi, adresi ili POI-u i ništa se ne automatizuje
             {% else %}
-            Slučaj nepoznat
+            Kategorija nepoznata
             {% endif %}
         </td>
         <td>{{ count }}</td>
