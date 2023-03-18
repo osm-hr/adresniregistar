@@ -54,6 +54,15 @@ Sve komande se izvršavaju sa `make <komanda>`. Dostupne su sledeće komande:
   data/analasis direktorijum.
 
 
+* `quality_assurance`
+
+  Ova komanda radi razne analize koje se posle koriste prilikom generisanja report-a. Trenutno se rade dve analize:
+  * ref:RS:kucni_broj duplikati - nalazimo sve kućne brojeve koji imaju dupli `ref:RS:kucni_broj` tag
+  * analiza adresa unutar zgrada. Ukoliko imamo adresu ili POI koji je unutar zgrade (way-a building-a), detektujemo ga
+  ovde i pokušavamo da uradimo kategorizaciju, tj. da vidimo da li je ovo OK ili nije, i ako nije, šta možemo da uradimo
+  ovo ovoga.
+
+
 * `report`
 
   Ova komanda generiše HTML fajlove u `data/report` direktorijumu na osnovu prethodno urađene analize. Izgenerisani
