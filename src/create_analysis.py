@@ -126,10 +126,10 @@ def do_analysis(opstina, data_path):
         row['rgz_ulica_norm'] == row['osm_street_norm'] and row['rgz_kucni_broj_norm'] == row['osm_housenumber_norm'], axis=1)
 
     # Now that we have matching address, we should remove them from wherever else they are showing to clear things
-    mathed_osm_id = joined[joined.matching].osm_id
-    print(f"    Removing {len(mathed_osm_id)} perfectly matched address as partially matched in {opstina}")
-    joined.loc[(joined.osm_id.isin(mathed_osm_id)) & (joined.matching == False), ['score']] = 0.0
-    joined.loc[(joined.osm_id.isin(mathed_osm_id)) & (joined.matching == False),
+    matched_osm_id = joined[joined.matching].osm_id
+    print(f"    Removing {len(matched_osm_id)} perfectly matched address as partially matched in {opstina}")
+    joined.loc[(joined.osm_id.isin(matched_osm_id)) & (joined.matching == False), ['score']] = 0.0
+    joined.loc[(joined.osm_id.isin(matched_osm_id)) & (joined.matching == False),
                        ['index_right', 'osm_id', 'osm_street', 'osm_housenumber', 'ref:RS:ulica', 'ref:RS:kucni_broj', 'osm_geometry', 'osm_street_norm', 'osm_housenumber_norm', 'distance']] = np.nan
 
     # Since we might have multiple addresses from OSM associated to various RGZ addresses,
