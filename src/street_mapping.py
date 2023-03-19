@@ -134,22 +134,18 @@ def best_effort_decapitalize(name):
 def convert_rgz_name_to_osm_name(rgz_id, rgz_name, curated_streets, ref_mappings, osm_mappings):
     # Find first in curated list
     if rgz_name in curated_streets:
-        return curated_streets[rgz_name], 'curated'
+        return curated_streets[rgz_name], 'curated', ''
 
     # Find in ref:RS:ulica mappings next
     if rgz_id in ref_mappings:
         if len(ref_mappings[rgz_id]) == 1:
             return ref_mappings[rgz_id][0]['name'], 'ref:RS:ulica', ','.join(ref_mappings[rgz_id][0]['refs'])
-        else:
-            pass
 
     # Find from latin normalized name
     normalized_name = normalize_name_latin(rgz_name)
     if normalized_name in osm_mappings:
         if len(osm_mappings[normalized_name]) == 1:
             return osm_mappings[normalized_name][0]['name'], 'OSM', ','.join(osm_mappings[normalized_name][0]['refs'])
-        else:
-            pass
 
     best_effort = best_effort_decapitalize(rgz_name)
     return best_effort, 'BestEffort', ''
