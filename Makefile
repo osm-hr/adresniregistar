@@ -58,7 +58,7 @@ normalize_street_names:
 analyze: download_from_osm normalize_street_names
 	@echo "Analysing"
 	mkdir -p data/analysis
-	python3 src/create_analysis.py
+	ls -S data/rgz/csv/*.csv | parallel python3 src/create_analysis.py --opstina={/.}
 
 quality_assurance: download_from_osm
 	@echo "Doing quality assurance"

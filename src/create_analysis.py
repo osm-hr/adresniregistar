@@ -8,6 +8,7 @@ import geopandas as gpd
 import numpy as np
 import pandas as pd
 from shapely import wkt
+import argparse
 
 from common import normalize_name
 
@@ -163,10 +164,7 @@ def do_analysis(opstina, data_path):
     pd.DataFrame(joined).to_csv(os.path.join(data_path, f'analysis/{opstina}.csv'), index=False)
 
 
-def main():
-    cwd = os.getcwd()
-    data_path = os.path.join(cwd, 'data/')
-    rgz_csv_path = os.path.join(data_path, 'rgz/csv')
+def process_all_opstina(data_path, rgz_csv_path):
     total_csvs = len(os.listdir(rgz_csv_path))
     if total_csvs < 168:
         raise Exception("Some or all RGZ files missing! Bailing out")
@@ -177,6 +175,24 @@ def main():
         opstina = file[:-4]
         print(f"{i + 1}/{total_csvs} Processing {opstina}")
         do_analysis(opstina, data_path)
+
+
+def main():
+    cwd = os.getcwd()
+    data_path = os.path.join(cwd, 'data/')
+    rgz_csv_path = os.path.join(data_path, 'rgz/csv')
+
+    parser = argparse.ArgumentParser(
+        description='create_analysis.py - Analyses opstine')
+    parser.add_argument('--opstina', default=None, required=False, help='Opstina to process')
+    args = parser.parse_args()
+    if not args.opstina:
+        process_all_opstina(data_path, rgz_csv_path)
+    else:
+        if not os.path.exists(os.path.join(rgz_csv_path, f'{args.opstina}.csv')):
+            parser.error(f"File data/rgz/csv/{args.opstina}.csv do not exist")
+            return
+        do_analysis(args.opstina, data_path)
 
 
 if __name__ == '__main__':

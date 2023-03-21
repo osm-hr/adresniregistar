@@ -6,6 +6,8 @@ Pokrenuti `python3 -m pip install -r requirements.txt` za instalaciju svih zavis
 
 Treba skinuti i [`geckodriver` binary](https://github.com/mozilla/geckodriver/releases) i staviti ga u root projekta.
 
+Treba da imate i `parallel` program (na Debian-u se prosto instalira sa `sudo apt install parallel`).
+
 Za sad treba skinuti i opstina.zip sa https://opendata.geosrbija.rs (dok se ne automatizuje) i otpakovati opstina.csv u data/rgz direktorijum.
 
 ## Korišćenje
