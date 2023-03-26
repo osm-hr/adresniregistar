@@ -70,11 +70,11 @@
 	<tr>
 		<th>Naselje</th>
 		<th>#RGZ</th>
-		<th class="d-none d-sm-table-cell">% Konflacija</th>
-		<th class="d-none d-sm-table-cell"># Konflacija</th>
-		<th class="d-none d-lg-table-cell">% Pronađeno</th>
-		<th class="d-none d-lg-table-cell"># Pronađeno</th>
-		<th class="d-none d-lg-table-cell"># Nepronađeno</th>
+		<th class="d-sm-table-cell">% Konflacija</th>
+		<th class="d-sm-table-cell"># Konflacija</th>
+		<th class="d-lg-table-cell">% Pronađeno</th>
+		<th class="d-lg-table-cell"># Pronađeno</th>
+		<th class="d-lg-table-cell"># Nepronađeno</th>
 	</tr>
 </thead>
 <tbody>
@@ -93,12 +93,12 @@
 <tfoot>
 	<tr>
 		<th>{{ opstina.name }} TOTAL:</th>
-		<th class="d-none d-sm-table-cell">{{ opstina.rgz }}</th>
-		<th class="d-none d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * opstina.conflated) / opstina.rgz) }}</th>
-		<th class="d-none d-sm-table-cell">{{ opstina.conflated }}</th>
-		<th class="d-none d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * opstina.matched) / opstina.rgz) }}</th>
-		<th class="d-none d-lg-table-cell">{{ opstina.matched }}</th>
-		<th class="d-none d-lg-table-cell">{{ opstina.rgz - opstina.matched }}</th>
+		<th class="d-sm-table-cell">{{ opstina.rgz }}</th>
+		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * opstina.conflated) / opstina.rgz) }}</th>
+		<th class="d-sm-table-cell">{{ opstina.conflated }}</th>
+		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * opstina.matched) / opstina.rgz) }}</th>
+		<th class="d-lg-table-cell">{{ opstina.matched }}</th>
+		<th class="d-lg-table-cell">{{ opstina.rgz - opstina.matched }}</th>
 	</tr>
 </tfoot>
 </table>

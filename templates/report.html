@@ -69,12 +69,12 @@
 	<tr>
 		<th>Opština</th>
 		<th>#RGZ</th>
-		<th class="d-none d-sm-table-cell">#OSM</th>
-		<th class="d-none d-sm-table-cell">% Konflacija</th>
-		<th class="d-none d-sm-table-cell"># Konflacija</th>
-		<th class="d-none d-lg-table-cell">% Pronađeno</th>
-		<th class="d-none d-lg-table-cell"># Pronađeno</th>
-		<th class="d-none d-lg-table-cell"># Nepronađeno</th>
+		<th class="d-sm-table-cell">#OSM</th>
+		<th class="d-sm-table-cell">% Konflacija</th>
+		<th class="d-sm-table-cell"># Konflacija</th>
+		<th class="d-lg-table-cell">% Pronađeno</th>
+		<th class="d-lg-table-cell"># Pronađeno</th>
+		<th class="d-lg-table-cell"># Nepronađeno</th>
 	</tr>
 </thead>
 <tbody>
@@ -94,13 +94,13 @@
 <tfoot>
 	<tr>
 		<th>Serbia TOTAL:</th>
-		<th class="d-none d-sm-table-cell">{{ total.rgz }}</th>
-		<th class="d-none d-sm-table-cell">{{ total.osm }}</th>
-		<th class="d-none d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.conflated) / total.rgz) }}</th>
-		<th class="d-none d-sm-table-cell">{{ total.conflated }}</th>
-		<th class="d-none d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.matched) / total.rgz) }}</th>
-		<th class="d-none d-lg-table-cell">{{ total.matched }}</th>
-		<th class="d-none d-lg-table-cell">{{ total.rgz - total.matched }}</th>
+		<th class="d-sm-table-cell">{{ total.rgz }}</th>
+		<th class="d-sm-table-cell">{{ total.osm }}</th>
+		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.conflated) / total.rgz) }}</th>
+		<th class="d-sm-table-cell">{{ total.conflated }}</th>
+		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.matched) / total.rgz) }}</th>
+		<th class="d-lg-table-cell">{{ total.matched }}</th>
+		<th class="d-lg-table-cell">{{ total.rgz - total.matched }}</th>
 	</tr>
 </tfoot>
 </table>
