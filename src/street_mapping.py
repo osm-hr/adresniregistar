@@ -132,6 +132,7 @@ def best_effort_decapitalize(name):
 
 
 def convert_rgz_name_to_osm_name(rgz_id, rgz_name, curated_streets, ref_mappings, osm_mappings):
+    rgz_name = rgz_name.strip().replace('    ', ' ').replace('   ', ' ').replace('  ', ' ')
     # Find first in curated list
     if rgz_name in curated_streets:
         return curated_streets[rgz_name], 'curated', ''
