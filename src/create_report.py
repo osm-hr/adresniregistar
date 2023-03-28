@@ -9,7 +9,7 @@ import osmium
 import pandas as pd
 from jinja2 import Environment, FileSystemLoader
 
-from common import cyr2lat, normalize_name_latin, xml_escape
+from common import cyr2lat, normalize_name, normalize_name_latin, xml_escape
 from common import AddressInBuildingResolution
 
 street_mappings = {}
@@ -112,7 +112,7 @@ def generate_osm_files_matched_addresses(env, opstina_dir_path, opstina_name, na
 
         if counter > 0 and counter % split_limit == 0:
             output = template.render(osm_nodes=osm_nodes, osm_ways=osm_ways)
-            filename = f'{naselje["name_lat"]}-matched-{counter}.osm'
+            filename = f'{normalize_name(naselje["name_lat"])}-matched-{counter}.osm'
             osm_file_path = os.path.join(naselje_dir_path, filename)
             with open(osm_file_path, 'w', encoding='utf-8') as fh:
                 fh.write(output)
@@ -164,7 +164,7 @@ def generate_osm_files_matched_addresses(env, opstina_dir_path, opstina_name, na
     # Final write
     if len(osm_nodes) > 0 or len(osm_ways) > 0:
         output = template.render(osm_nodes=osm_nodes, osm_ways=osm_ways)
-        filename = f'{naselje["name_lat"]}-matched-{counter}.osm'
+        filename = f'{normalize_name(naselje["name_lat"])}-matched-{counter}.osm'
         osm_file_path = os.path.join(naselje_dir_path, filename)
         with open(osm_file_path, 'w', encoding='utf-8') as fh:
             fh.write(output)
@@ -196,7 +196,7 @@ def generate_osm_files_new_addresses(env, opstina_dir_path, opstina_name, naselj
             old_counter = counter
             counter = counter + len(osm_entities)
             output = template.render(osm_entities=osm_entities)
-            filename = f'{naselje["name_lat"]}-new-{counter}.osm'
+            filename = f'{normalize_name(naselje["name_lat"])}-new-{counter}.osm'
             osm_file_path = os.path.join(naselje_dir_path, filename)
             with open(osm_file_path, 'w', encoding='utf-8') as fh:
                 fh.write(output)
@@ -223,7 +223,7 @@ def generate_osm_files_new_addresses(env, opstina_dir_path, opstina_name, naselj
         old_counter = counter
         counter = counter + len(osm_entities)
         output = template.render(osm_entities=osm_entities)
-        filename = f'{naselje["name_lat"]}-new-{counter}.osm'
+        filename = f'{normalize_name(naselje["name_lat"])}-new-{counter}.osm'
         osm_file_path = os.path.join(naselje_dir_path, filename)
         with open(osm_file_path, 'w', encoding='utf-8') as fh:
             fh.write(output)
@@ -240,6 +240,7 @@ def generate_osm_files_new_addresses(env, opstina_dir_path, opstina_name, naselj
 def generate_osm_files_move_address_to_building(env, report_qa_address_path, opstina_name, df_opstina):
     global osm_entities_cache
     split_limit = 10
+    opstina_name_norm = normalize_name(opstina_name)
 
     template = env.get_template('move_address_to_building.osm')
     osm_files = []
@@ -257,7 +258,7 @@ def generate_osm_files_move_address_to_building(env, report_qa_address_path, ops
 
         if counter > 0 and counter % split_limit == 0:
             output = template.render(osm_nodes=osm_nodes, osm_nodes_to_delete=osm_nodes_to_delete, osm_ways=osm_ways)
-            filename = f'{opstina_name}-address_to_building-{counter}.osm'
+            filename = f'{opstina_name_norm}-address_to_building-{counter}.osm'
             osm_file_path = os.path.join(report_qa_address_path, filename)
             with open(osm_file_path, 'w', encoding='utf-8') as fh:
                 fh.write(output)
@@ -326,7 +327,7 @@ def generate_osm_files_move_address_to_building(env, report_qa_address_path, ops
     # Final write
     if len(osm_nodes) > 0 or len(osm_nodes_to_delete) > 0 or len(osm_ways) > 0:
         output = template.render(osm_nodes=osm_nodes, osm_nodes_to_delete=osm_nodes_to_delete, osm_ways=osm_ways)
-        filename = f'{opstina_name}-address_to_building-{counter}.osm'
+        filename = f'{opstina_name_norm}-address_to_building-{counter}.osm'
         osm_file_path = os.path.join(report_qa_address_path, filename)
         with open(osm_file_path, 'w', encoding='utf-8') as fh:
             fh.write(output)
@@ -344,12 +345,13 @@ def generate_naselje(env, opstina_dir_path, opstina_name, naselje, df_naselje):
     template = env.get_template('naselje.html')
     current_date = datetime.date.today().strftime('%Y-%m-%d')
     current_date_srb = datetime.date.today().strftime('%d.%m.%Y')
-    naselje_dir_path = os.path.join(opstina_dir_path, opstina_name)
+    opstina_name_norm = normalize_name(opstina_name)
+    naselje_dir_path = os.path.join(opstina_dir_path, opstina_name_norm)
     if not os.path.exists(naselje_dir_path):
         os.mkdir(naselje_dir_path)
 
-    osm_files_new_addresses = generate_osm_files_new_addresses(env, opstina_dir_path, opstina_name, naselje, df_naselje)
-    osm_files_matched_addresses = generate_osm_files_matched_addresses(env, opstina_dir_path, opstina_name, naselje, df_naselje)
+    osm_files_new_addresses = generate_osm_files_new_addresses(env, opstina_dir_path, opstina_name_norm, naselje, df_naselje)
+    osm_files_matched_addresses = generate_osm_files_matched_addresses(env, opstina_dir_path, opstina_name_norm, naselje, df_naselje)
 
     naselje_path = os.path.join(naselje_dir_path, f'{naselje["name_lat"]}.html')
 
@@ -430,6 +432,7 @@ def generate_opstina(env, data_path, opstina_name, df_opstina, df_opstina_osm):
     partially_matched_count = len(df_opstina[(pd.notna(df_opstina.osm_id)) & (df_opstina.matching == False)])
     opstina = {
         'name': opstina_name,
+        'name_norm': normalize_name(opstina_name),
         'rgz': rgz_count,
         'osm': osm_count,
         'conflated': conflated_count,

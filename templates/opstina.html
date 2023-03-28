@@ -80,7 +80,7 @@
 <tbody>
 	{% for naselje in naselja %}
 	<tr>
-		<td><a href="{{ opstina.name }}/{{ naselje.name_lat }}.html">{{ naselje.name_lat }}</a></td>
+		<td><a href="{{ opstina.name_norm }}/{{ naselje.name_lat }}.html">{{ naselje.name_lat }}</a></td>
 		<td>{{ naselje.rgz }}</td>
 		<td>{{ '{0:0.2f}'.format((100.0 * naselje.conflated) / naselje.rgz) }}</td>
 		<td>{{ naselje.conflated }}</td>
