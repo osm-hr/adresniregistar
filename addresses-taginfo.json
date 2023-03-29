@@ -1,0 +1,33 @@
+{
+     "data_format": 1,
+     "data_url": "https://gitlab.com/osm-serbia/adresniregistar/-/raw/main/addresses-taginfo.json",
+     "project": {
+         "name": "Serbia address import (RGZ)",
+         "description": "Import of RGZ addresses in Serbia",
+         "project_url": "https://openstreetmap.rs/download/ar/",
+         "doc_url": "https://wiki.openstreetmap.org/wiki/Serbia/Projekti/Adresni_registar",
+         "icon_url": "https://github.com/openstreetmap-polska/aed-mapa/raw/main/web/favicon/favicon-16x16.png",
+         "contact_name": "Branko Kokanovic",
+         "contact_email": "taginfo@kokanovic.org"
+     },
+     "tags": [
+       {
+         "key": "addr:street",
+         "object_types": ["node", "area", "relation"],
+         "doc_url": "https://wiki.openstreetmap.org/wiki/Serbia/Adresses",
+         "description": "House number, with lowercase suffixes, in Latin script"
+       },
+       {
+         "key": "addr:housenumber",
+         "object_types": ["node", "area", "relation"],
+         "doc_url": "https://wiki.openstreetmap.org/wiki/Serbia/Adresses",
+         "description": "Street name, in Cyrillic script (both names in bilingual regions, separated by '/')"
+       },
+       {
+         "key": "ref:RS:kucni_broj",
+         "object_types": ["node", "area", "relation"],
+         "doc_url": "https://wiki.openstreetmap.org/wiki/Serbia/Adresses",
+         "description": "Id from RGZ for future updates"
+       }
+     ]
+ }
