@@ -70,6 +70,7 @@ report: analyze quality_assurance
 	mkdir -p data/report
 	mkdir -p data/report/opstine
 	python3 src/create_report.py
+	python3 src/create_report_qa.py
 
 upload_report: report
 	@./src/upload_report.sh
