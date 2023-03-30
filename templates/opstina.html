@@ -86,7 +86,7 @@
 		<td>{{ naselje.conflated }}</td>
 		<td>{{ '{0:0.2f}'.format((100.0 * naselje.matched) / naselje.rgz) }}</td>
 		<td>{{ naselje.matched }}</td>
-		<td>{{ naselje.rgz - naselje.matched }}</td>
+		<td>{{ naselje.rgz - (naselje.conflated + naselje.matched) }}</td>
 	</tr>
 	{% endfor %}
 </tbody>
@@ -98,7 +98,7 @@
 		<th class="d-sm-table-cell">{{ opstina.conflated }}</th>
 		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * opstina.matched) / opstina.rgz) }}</th>
 		<th class="d-lg-table-cell">{{ opstina.matched }}</th>
-		<th class="d-lg-table-cell">{{ opstina.rgz - opstina.matched }}</th>
+		<th class="d-lg-table-cell">{{ opstina.rgz - (opstina.conflated + opstina.matched)  }}</th>
 	</tr>
 </tfoot>
 </table>
