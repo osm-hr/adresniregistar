@@ -68,8 +68,9 @@ def build_osm_entities_cache(data_path):
             continue
         df_opstina = pd.read_csv(os.path.join(analysis_path, file), dtype={'conflated_osm_housenumber': object, 'osm_housenumber': object})
         osm_entites_to_cache = df_opstina[pd.notna(df_opstina.osm_id) & (df_opstina.matching)]['osm_id']
-        nodes_to_cache += [int(n[1:]) for n in list(osm_entites_to_cache[osm_entites_to_cache.str.startswith('n')])]
-        ways_to_cache += [int(w[1:]) for w in list(osm_entites_to_cache[osm_entites_to_cache.str.startswith('w')])]
+        if len(osm_entites_to_cache) > 0:
+            nodes_to_cache += [int(n[1:]) for n in list(osm_entites_to_cache[osm_entites_to_cache.str.startswith('n')])]
+            ways_to_cache += [int(w[1:]) for w in list(osm_entites_to_cache[osm_entites_to_cache.str.startswith('w')])]
 
     # Collects nodes and ways from qa/addresses_in_buildings_per_opstina.csv
     df_addresses_in_buildings_per_opstina = pd.read_csv(os.path.join(qa_path, 'addresses_in_buildings_per_opstina.csv'))
