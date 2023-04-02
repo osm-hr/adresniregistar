@@ -50,17 +50,14 @@
 
 
 <main role="main" class="pt-3 container-fluid">
-<div class="alert alert-warning" role="alert">
-  For evaluation purposes - do NOT import anything yet!
-</div>
 {% block body %}{% endblock %}
-
 </main>
 
 <footer class="footer">
 	<div class="container-fluid py-1 mt-3 mb-0 bg-light">
 		<small class="text-secondary text-center">
-			Data &copy; <a href="https://opendata.geosrbija.rs/">RGZ</a> &amp; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, podaci izgenerisani {{ currentDateSrb }}
+			Data &copy; <a href="https://opendata.geosrbija.rs/">RGZ</a> &amp; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, <br/>
+			OSM podaci od {{ osmDataDate }}, izveštaj generisan u {{ reportDate }}
 		</small>
 	</div>
 </footer>

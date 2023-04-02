@@ -1,5 +1,6 @@
 .idea/
 data/
+overpass_db/
 rgz_creds
 idp_creds
 geckodriver

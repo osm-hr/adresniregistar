@@ -41,11 +41,7 @@ download_from_rgz:
 	@echo "Created data/rgz/addresses.csv"
 
 download_from_osm:
-	@echo "Download Serbia PBF from geofabrik"
-	mkdir -p data/osm/download
-	test -f data/osm/download/serbia.osm.pbf || wget http://download.geofabrik.de/europe/serbia-latest.osm.pbf -O data/osm/download/serbia.osm.pbf -q --show-progress
-	@echo "Extracting addresses from PBF"
-	python3 src/download_from_osm.py
+	@./src/download_from_osm.sh
 	@echo "Preparing OSM data for analysis"
 	mkdir -p data/osm/csv
 	python3 src/prepare_osm_data.py

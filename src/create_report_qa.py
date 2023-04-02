@@ -12,7 +12,10 @@ from common import AddressInBuildingResolution
 from create_report import build_osm_entities_cache
 
 
-def generate_osm_files_move_address_to_building(env, osm_entities_cache, report_qa_address_path, opstina_name, df_opstina):
+def generate_osm_files_move_address_to_building(context, report_qa_address_path, opstina_name, df_opstina):
+    env = context['env']
+    osm_entities_cache = context['osm_entities_cache']
+
     split_limit = 10
     opstina_name_norm = normalize_name(opstina_name)
 
@@ -49,6 +52,9 @@ def generate_osm_files_move_address_to_building(env, osm_entities_cache, report_
         node_tags = {}
         for _, address in df_building.iterrows():
             node_id = int(address['osm_id_left'][1:])
+            if node_id not in osm_entities_cache.nodes_cache:
+                print(f"Node {node_id} seems deleted, skipping one building to move address")
+                continue
             entity = osm_entities_cache.nodes_cache[node_id]
             osm_nodes_to_delete.append({
                 'id': node_id,
@@ -115,9 +121,10 @@ def generate_osm_files_move_address_to_building(env, osm_entities_cache, report_
     return osm_files
 
 
-def generate_qa_duplicated_refs(env, cwd):
-    current_date = datetime.date.today().strftime('%Y-%m-%d')
-    current_date_srb = datetime.date.today().strftime('%d.%m.%Y')
+def generate_qa_duplicated_refs(context):
+    env = context['env']
+    cwd = context['cwd']
+
     qa_path = os.path.join(cwd, 'data/qa')
     report_path = os.path.join(cwd, 'data/report')
     json_file_path = os.path.join(qa_path, 'duplicated_refs.json')
@@ -146,15 +153,18 @@ def generate_qa_duplicated_refs(env, cwd):
         })
     template = env.get_template('duplicated_refs.html')
     output = template.render(
-        duplicates=duplicates,
-        currentDate=current_date,
-        currentDateSrb=current_date_srb
+        currentDate=context['dates']['short'],
+        reportDate=context['dates']['report'],
+        osmDataDate=context['dates']['osm_data']
     )
     with open(html_path, 'w', encoding='utf-8') as fh:
         fh.write(output)
 
 
-def generate_addresses_in_buildings(env, cwd, osm_entities_cache):
+def generate_addresses_in_buildings(context):
+    env = context['env']
+    cwd = context['cwd']
+
     current_date = datetime.date.today().strftime('%Y-%m-%d')
     current_date_srb = datetime.date.today().strftime('%d.%m.%Y')
     analysis_path = os.path.join(cwd, 'data/analysis')
@@ -215,7 +225,7 @@ def generate_addresses_in_buildings(env, cwd, osm_entities_cache):
 
         print(f"Generating data/report/qa_addresses/{opstina_name}.html")
 
-        osm_files_move_address_to_building = generate_osm_files_move_address_to_building(env, osm_entities_cache, report_qa_address_path, opstina_name, df_opstina)
+        osm_files_move_address_to_building = generate_osm_files_move_address_to_building(context, report_qa_address_path, opstina_name, df_opstina)
 
         for osm_id_right, df_address in df_opstina.groupby('osm_id_right'):
             building_address = ''
@@ -249,10 +259,11 @@ def generate_addresses_in_buildings(env, cwd, osm_entities_cache):
             opstina_resolution_stats[resolution] += 1
 
         output = template.render(
+            currentDate=context['dates']['short'],
+            reportDate=context['dates']['report'],
+            osmDataDate=context['dates']['osm_data'],
             addresses=addresses,
             opstina_name=opstina_name,
-            currentDate=current_date,
-            currentDateSrb=current_date_srb,
             resolution_stats=opstina_resolution_stats,
             osm_files_move_address_to_building=osm_files_move_address_to_building
         )
@@ -303,13 +314,14 @@ def generate_addresses_in_buildings(env, cwd, osm_entities_cache):
         fh.write(output)
 
 
-def generate_qa(env, cwd, osm_entities_cache):
-    current_date = datetime.date.today().strftime('%Y-%m-%d')
-    current_date_srb = datetime.date.today().strftime('%d.%m.%Y')
+def generate_qa(context):
+    env = context['env']
+    cwd = context['cwd']
+
     print("Generating QA pages")
 
-    generate_qa_duplicated_refs(env, cwd)
-    generate_addresses_in_buildings(env, cwd, osm_entities_cache)
+    generate_qa_duplicated_refs(context)
+    generate_addresses_in_buildings(context)
 
     report_path = os.path.join(cwd, 'data/report')
     html_path = os.path.join(report_path, 'qa.html')
@@ -320,8 +332,9 @@ def generate_qa(env, cwd, osm_entities_cache):
     print("Generating data/report/qa.html")
     template = env.get_template('qa.html')
     output = template.render(
-        currentDate=current_date,
-        currentDateSrb=current_date_srb
+        currentDate=context['dates']['short'],
+        reportDate=context['dates']['report'],
+        osmDataDate=context['dates']['osm_data']
     )
     with open(html_path, 'w', encoding='utf-8') as fh:
         fh.write(output)
@@ -340,7 +353,26 @@ def main():
     print("Building cache of OSM entities")
     osm_entities_cache = build_osm_entities_cache(data_path)
 
-    generate_qa(env, cwd, osm_entities_cache)
+    running_file = os.path.join(data_path, 'running')
+    if not os.path.exists(running_file):
+        raise Exception("File data/running missing, no way to determine date when OSM data was retrived")
+    with open(running_file, 'r') as file:
+        file_content = file.read().rstrip()
+        osm_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y %H:%M')
+
+    context = {
+        'env': env,
+        'cwd': cwd,
+        'data_path': data_path,
+        'dates': {
+            'short': datetime.date.today().strftime('%Y-%m-%d'),
+            'report': datetime.datetime.now().strftime('%d.%m.%Y %H:%M'),
+            'osm_data': osm_data_timestamp
+        },
+        'osm_entities_cache': osm_entities_cache
+    }
+
+    generate_qa(context)
 
 
 if __name__ == '__main__':

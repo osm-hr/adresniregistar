@@ -2,17 +2,15 @@
 
 import csv
 import datetime
-import json
 import os
 
 import osmium
+import overpy
 import pandas as pd
 from jinja2 import Environment, FileSystemLoader
 
-from common import cyr2lat, normalize_name, normalize_name_latin, xml_escape
 from common import AddressInBuildingResolution
-
-street_mappings = {}
+from common import cyr2lat, normalize_name, normalize_name_latin, xml_escape
 
 
 class CollectWayNodesHandler(osmium.SimpleHandler):
@@ -55,6 +53,72 @@ class OsmEntitiesCacheHandler(osmium.SimpleHandler):
             }
 
 
+class OsmEntitiesOverpassCacheHandler:
+    """
+    Same thing as OsmEntitiesCacheHandler, just uses Overpass to create cache
+    """
+    def __init__(self, nodes, ways):
+        self.nodes = list(nodes)
+        self.ways = list(ways)
+        self.nodes_cache = {}
+        self.ways_cache = {}
+
+    def apply_file(self, _):
+        CHUNK_SIZE = 10000
+        overpass_api = overpy.Overpass(url='http://localhost:12346/api/interpreter')
+        for i in range(0, len(self.nodes) // CHUNK_SIZE + 1):
+            print(f"Creating node cache - chunk {i + 1}/{len(self.nodes) // CHUNK_SIZE + 1}")
+            chunk = self.nodes[i*CHUNK_SIZE:(i + 1) * CHUNK_SIZE]
+            node_id_list = ','.join([str(n) for n in chunk])
+            response = overpass_api.query(f"""
+                [out:json];
+                area["name"="Србија"]["admin_level"=2]->.c;
+                (
+                    node(id:{node_id_list});
+                );
+                out meta;
+                // &contact=https://gitlab.com/osm-serbia/adresniregistar
+            """)
+            for n in response.nodes:
+                if n.id not in self.nodes_cache:
+                    self.nodes_cache[n.id] = {
+                        'lat': n.lat,
+                        'lon': n.lon,
+                        'tags': n.tags.copy(),
+                        'version': n.attributes['version']
+                    }
+        CHUNK_SIZE = 5000
+        for i in range(0, len(self.ways) // CHUNK_SIZE + 1):
+            print(f"Creating ways cache - chunk {i + 1}/{len(self.ways) // CHUNK_SIZE + 1}")
+            chunk = self.ways[i*CHUNK_SIZE:(i + 1) * CHUNK_SIZE]
+            way_id_list = ','.join([str(w) for w in chunk])
+            response = overpass_api.query(f"""
+                [out:json];
+                area["name"="Србија"]["admin_level"=2]->.c;
+                (
+                    way(id:{way_id_list});
+                );
+                (._;>;);
+                out meta;
+                // &contact=https://gitlab.com/osm-serbia/adresniregistar
+            """)
+            for n in response.nodes:
+                if n.id not in self.nodes_cache:
+                    self.nodes_cache[n.id] = {
+                        'lat': n.lat,
+                        'lon': n.lon,
+                        'tags': n.tags.copy(),
+                        'version': n.attributes['version']
+                    }
+            for w in response.ways:
+                if w.id not in self.ways_cache:
+                    self.ways_cache[w.id] = {
+                        'tags': w.tags.copy(),
+                        'nodes': [n.id for n in w.nodes],
+                        'version': w.attributes['version']
+                    }
+
+
 def build_osm_entities_cache(data_path):
     analysis_path = os.path.join(data_path, 'analysis')
     qa_path = os.path.join(data_path, 'qa')
@@ -78,23 +142,33 @@ def build_osm_entities_cache(data_path):
     nodes_to_cache += [int(n[1:]) for n in list(df_addresses_in_buildings_per_opstina['osm_id_left']) if n[0] == 'n']
     ways_to_cache += [int(w[1:]) for w in list(df_addresses_in_buildings_per_opstina['osm_id_right']) if w[0] == 'w']
 
-    cwnh = CollectWayNodesHandler(set(ways_to_cache))
-    cwnh.apply_file(pbf_file)
+    if os.environ.get('AR_INCREMENTAL_UPDATE', None) == "1":
+        print("Using overpass to build cache")
+        osm_entities_cache = OsmEntitiesOverpassCacheHandler(set(nodes_to_cache), set(ways_to_cache))
+    else:
+        print("Using PBF to build cache")
+        cwnh = CollectWayNodesHandler(set(ways_to_cache))
+        cwnh.apply_file(pbf_file)
 
-    osm_entities_cache = OsmEntitiesCacheHandler(set(nodes_to_cache).union(cwnh.nodes), set(ways_to_cache))
+        osm_entities_cache = OsmEntitiesCacheHandler(set(nodes_to_cache).union(cwnh.nodes), set(ways_to_cache))
+
     osm_entities_cache.apply_file(pbf_file)
     return osm_entities_cache
 
 
 def load_mappings(data_path):
-    global street_mappings
+    street_mappings = {}
     with open(os.path.join(data_path, 'mapping', 'mapping.csv'), encoding='utf-8') as mapping_csv_file:
         reader = csv.DictReader(mapping_csv_file)
         for row in reader:
             street_mappings[row['rgz_name']] = row['name']
+    return street_mappings
 
 
-def generate_osm_files_matched_addresses(env, osm_entities_cache, opstina_dir_path, opstina_name, naselje, df_naselje):
+def generate_osm_files_matched_addresses(context, opstina_dir_path, opstina_name, naselje, df_naselje):
+    env = context['env']
+    osm_entities_cache = context['osm_entities_cache']
+
     naselje_dir_path = os.path.join(opstina_dir_path, opstina_name)
     split_limit = 100
 
@@ -127,7 +201,7 @@ def generate_osm_files_matched_addresses(env, osm_entities_cache, opstina_dir_pa
         if address.osm_id[0] == 'n':
             counter = counter + 1
             node_id = int(address.osm_id[1:])
-            entity = osm_entities_cache.nodes_cache[node_id]
+            entity = context['osm_entities_cache'].nodes_cache[node_id]
             already_exists = any(n for n in osm_nodes if n['id'] == node_id)
             if not already_exists:
                 new_tags = dict(entity['tags'], **{'ref:RS:kucni_broj': str(address.rgz_kucni_broj_id)})
@@ -177,8 +251,10 @@ def generate_osm_files_matched_addresses(env, osm_entities_cache, opstina_dir_pa
     return osm_files
 
 
-def generate_osm_files_new_addresses(env, opstina_dir_path, opstina_name, naselje, df_naselje):
-    global street_mappings
+def generate_osm_files_new_addresses(context, opstina_dir_path, opstina_name, naselje, df_naselje):
+    env = context['env']
+    street_mappings = context['street_mappings']
+
     naselje_dir_path = os.path.join(opstina_dir_path, opstina_name)
 
     template = env.get_template('new_address.osm')
@@ -236,17 +312,19 @@ def generate_osm_files_new_addresses(env, opstina_dir_path, opstina_name, naselj
     return osm_files
 
 
-def generate_naselje(env, osm_entities_cache, opstina_dir_path, opstina_name, naselje, df_naselje):
+def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselje):
+    env = context['env']
+
     template = env.get_template('naselje.html')
     current_date = datetime.date.today().strftime('%Y-%m-%d')
-    current_date_srb = datetime.date.today().strftime('%d.%m.%Y')
+    report_date = datetime.date.today().strftime('%d.%m.%Y %H:%M')
     opstina_name_norm = normalize_name(opstina_name)
     naselje_dir_path = os.path.join(opstina_dir_path, opstina_name_norm)
     if not os.path.exists(naselje_dir_path):
         os.mkdir(naselje_dir_path)
 
-    osm_files_new_addresses = generate_osm_files_new_addresses(env, opstina_dir_path, opstina_name_norm, naselje, df_naselje)
-    osm_files_matched_addresses = generate_osm_files_matched_addresses(env, osm_entities_cache, opstina_dir_path, opstina_name_norm, naselje, df_naselje)
+    osm_files_new_addresses = generate_osm_files_new_addresses(context, opstina_dir_path, opstina_name_norm, naselje, df_naselje)
+    osm_files_matched_addresses = generate_osm_files_matched_addresses(context, opstina_dir_path, opstina_name_norm, naselje, df_naselje)
 
     naselje_path = os.path.join(naselje_dir_path, f'{naselje["name_lat"]}.html')
 
@@ -299,8 +377,9 @@ def generate_naselje(env, osm_entities_cache, opstina_dir_path, opstina_name, na
         })
 
     output = template.render(
-        currentDate=current_date,
-        currentDateSrb=current_date_srb,
+        currentDate=context['dates']['short'],
+        reportDate=context['dates']['report'],
+        osmDataDate=context['dates']['osm_data'],
         addresses=addresses,
         naselje=naselje,
         opstina_name=opstina_name,
@@ -310,11 +389,14 @@ def generate_naselje(env, osm_entities_cache, opstina_dir_path, opstina_name, na
         fh.write(output)
 
 
-def generate_opstina(env, osm_entities_cache, data_path, opstina_name, df_opstina, df_opstina_osm):
+def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
+    env = context['env']
+    data_path = context['data_path']
+
     report_path = os.path.join(data_path, 'report')
     template = env.get_template('opstina.html')
     current_date = datetime.date.today().strftime('%Y-%m-%d')
-    current_date_srb = datetime.date.today().strftime('%d.%m.%Y')
+    report_date = datetime.date.today().strftime('%d.%m.%Y %H:%M')
     opstine_dir_path = os.path.join(report_path, 'opstine')
     if not os.path.exists(opstine_dir_path):
         os.mkdir(opstine_dir_path)
@@ -355,13 +437,14 @@ def generate_opstina(env, osm_entities_cache, data_path, opstina_name, df_opstin
             'matched': matched_count,
             'partially_matched_count': partially_matched_count
         }
-        generate_naselje(env, osm_entities_cache, opstine_dir_path, opstina_name, naselje, df_naselje)
+        generate_naselje(context, opstine_dir_path, opstina_name, naselje, df_naselje)
 
         naselja.append(naselje)
 
     output = template.render(
-        currentDate=current_date,
-        currentDateSrb=current_date_srb,
+        currentDate=context['dates']['short'],
+        reportDate=context['dates']['report'],
+        osmDataDate=context['dates']['osm_data'],
         naselja=naselja,
         opstina=opstina)
     with open(opstina_html_path, 'w', encoding='utf-8') as fh:
@@ -370,12 +453,13 @@ def generate_opstina(env, osm_entities_cache, data_path, opstina_name, df_opstin
     return opstina
 
 
-def generate_report(env, cwd, osm_entities_cache):
-    template = env.get_template('report.html')
-    data_path = os.path.join(cwd, 'data')
+def generate_report(context):
+    env = context['env']
+    cwd = context['cwd']
 
-    print("Loading normalized street names mapping")
-    load_mappings(data_path)
+    template = env.get_template('report.html')
+
+    data_path = context['data_path']
 
     osm_path = os.path.join(data_path, 'osm', 'csv')
     analysis_path = os.path.join(data_path, 'analysis')
@@ -398,7 +482,7 @@ def generate_report(env, cwd, osm_entities_cache):
         print(f"{i+1}/{total_csvs} Processing {opstina_name}...", end='')
         df_opstina = pd.read_csv(os.path.join(analysis_path, file), dtype={'conflated_osm_housenumber': object, 'osm_housenumber': object})
         df_opstina_osm = pd.read_csv(os.path.join(osm_path, file))
-        opstina = generate_opstina(env, osm_entities_cache, data_path, opstina_name, df_opstina, df_opstina_osm)
+        opstina = generate_opstina(context, opstina_name, df_opstina, df_opstina_osm)
         opstine.append(opstina)
         total['conflated'] += opstina['conflated']
         total['rgz'] += opstina['rgz']
@@ -411,10 +495,11 @@ def generate_report(env, cwd, osm_entities_cache):
         return
 
     current_date = datetime.date.today().strftime('%Y-%m-%d')
-    current_date_srb = datetime.date.today().strftime('%d.%m.%Y')
+    report_date = datetime.date.today().strftime('%d.%m.%Y %H:%M')
     output = template.render(
-        currentDate=current_date,
-        currentDateSrb=current_date_srb,
+        currentDate=context['dates']['short'],
+        reportDate=context['dates']['report'],
+        osmDataDate=context['dates']['osm_data'],
         opstine=opstine,
         total=total)
     with open(report_html_path, 'w', encoding='utf-8') as fh:
@@ -422,8 +507,6 @@ def generate_report(env, cwd, osm_entities_cache):
 
 
 def main():
-    current_date = datetime.date.today().strftime('%Y-%m-%d')
-    current_date_srb = datetime.date.today().strftime('%d.%m.%Y')
     # TODO: sorting in some columns should be as numbers (distance, kucni broj)
     # TODO: address should be searchable with latin only
     env = Environment(loader=FileSystemLoader(searchpath='./templates'))
@@ -431,10 +514,33 @@ def main():
     cwd = os.getcwd()
 
     data_path = os.path.join(cwd, 'data')
+
+    running_file = os.path.join(data_path, 'running')
+    if not os.path.exists(running_file):
+        raise Exception("File data/running missing, no way to determine date when OSM data was retrived")
+    with open(running_file, 'r') as file:
+        file_content = file.read().rstrip()
+        osm_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y %H:%M')
+
     print("Building cache of OSM entities")
     osm_entities_cache = build_osm_entities_cache(data_path)
 
-    generate_report(env, cwd, osm_entities_cache)
+    print("Loading normalized street names mapping")
+    street_mappings = load_mappings(data_path)
+
+    context = {
+        'env': env,
+        'cwd': cwd,
+        'data_path': data_path,
+        'dates': {
+            'short': datetime.date.today().strftime('%Y-%m-%d'),
+            'report': datetime.datetime.now().strftime('%d.%m.%Y %H:%M'),
+            'osm_data': osm_data_timestamp
+        },
+        'osm_entities_cache': osm_entities_cache,
+        'street_mappings': street_mappings
+    }
+    generate_report(context)
 
     report_path = os.path.join(cwd, 'data/report')
     index_html_path = os.path.join(report_path, 'index.html')
@@ -445,8 +551,9 @@ def main():
     print("Generating data/report/index.html")
     template = env.get_template('index.html')
     output = template.render(
-        currentDate=current_date,
-        currentDateSrb=current_date_srb
+        currentDate=context['dates']['short'],
+        reportDate=context['dates']['report'],
+        osmDataDate=context['dates']['osm_data']
     )
     with open(index_html_path, 'w', encoding='utf-8') as fh:
         fh.write(output)
