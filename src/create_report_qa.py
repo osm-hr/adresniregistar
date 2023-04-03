@@ -7,7 +7,7 @@ import pandas as pd
 
 from jinja2 import Environment, FileSystemLoader
 
-from common import normalize_name, xml_escape
+from common import normalize_name, normalize_name_latin, xml_escape, load_mappings
 from common import AddressInBuildingResolution
 from create_report import build_osm_entities_cache
 
@@ -314,12 +314,83 @@ def generate_addresses_in_buildings(context):
         fh.write(output)
 
 
+def generate_osm_import_qa(context):
+    env = context['env']
+    cwd = context['cwd']
+    street_mappings = context['street_mappings']
+
+    qa_path = os.path.join(cwd, 'data/qa')
+    report_path = os.path.join(cwd, 'data/report')
+    osm_import_qa_path = os.path.join(qa_path, 'osm_import_qa.csv')
+    html_path = os.path.join(report_path, 'osm_import_qa.html')
+    if os.path.exists(html_path):
+        print("Page data/report/osm_import_qa.html already exists")
+        return
+
+    print("Generating data/report/osm_import_qa.html")
+
+    osm_import_qa_problems = pd.read_csv(osm_import_qa_path)
+
+    addresses = []
+
+    for _, osm_import_qa_problem in osm_import_qa_problems.iterrows():
+        found_in_rgz = pd.notna(osm_import_qa_problem['rgz_kucni_broj_id'])
+        rgz_street_match = 1 if osm_import_qa_problem['street_perfect_match'] else 0 if osm_import_qa_problem['street_partial_match'] else -1
+        rgz_housenumber_match = 1 if osm_import_qa_problem['housenumber_perfect_match'] else 0 if osm_import_qa_problem['housenumber_partial_match'] else -1
+        if found_in_rgz:
+            location = osm_import_qa_problem['rgz_geometry'][7:-1].split(' ')
+            location_lon = round(float(location[0]), 6)
+            location_lat = round(float(location[1]), 6)
+            location_url = f'https://www.openstreetmap.org/?mlat={location_lat}&mlon={location_lon}#map=19/{location_lat}/{location_lon}'
+        else:
+            location_url = None
+
+        if not found_in_rgz:
+            priority = 1
+        elif rgz_street_match == -1:
+            priority = 2
+        elif rgz_housenumber_match == -1:
+            priority = 3
+        elif rgz_street_match == 0:
+            priority = 4
+        elif rgz_housenumber_match == 0:
+            priority = 5
+        else:
+            priority = 5
+        osm_type = 'way' if osm_import_qa_problem['osm_id'][0] == 'w' else 'relation' if osm_import_qa_problem['osm_id'][0] == 'r' else 'node'
+        addresses.append({
+            'priority': priority,
+            'osm_link': f"https://openstreetmap.org/{osm_type}/{osm_import_qa_problem['osm_id'][1:]}",
+            'osm_link_text': osm_import_qa_problem['osm_id'][1:],
+            'rgz_link': location_url,
+            'osm_street': osm_import_qa_problem['osm_street'],
+            'osm_housenumber': osm_import_qa_problem['osm_housenumber'],
+            'found_in_rgz': found_in_rgz,
+            'rgz_opstina': osm_import_qa_problem['rgz_opstina'],
+            'rgz_street': street_mappings[osm_import_qa_problem['rgz_ulica']] if found_in_rgz else '',
+            'rgz_street_match': rgz_street_match,
+            'rgz_housenumber': normalize_name_latin(osm_import_qa_problem['rgz_kucni_broj']) if found_in_rgz else '',
+            'rgz_housenumber_match': rgz_housenumber_match,
+            'distance': osm_import_qa_problem['distance']
+        })
+    template = env.get_template('osm_import_qa.html')
+    output = template.render(
+        currentDate=context['dates']['short'],
+        reportDate=context['dates']['report'],
+        osmDataDate=context['dates']['osm_data'],
+        addresses=addresses
+    )
+    with open(html_path, 'w', encoding='utf-8') as fh:
+        fh.write(output)
+
+
 def generate_qa(context):
     env = context['env']
     cwd = context['cwd']
 
     print("Generating QA pages")
 
+    generate_osm_import_qa(context)
     generate_qa_duplicated_refs(context)
     generate_addresses_in_buildings(context)
 
@@ -341,8 +412,6 @@ def generate_qa(context):
 
 
 def main():
-    current_date = datetime.date.today().strftime('%Y-%m-%d')
-    current_date_srb = datetime.date.today().strftime('%d.%m.%Y')
     # TODO: sorting in some columns should be as numbers (distance, kucni broj)
     # TODO: address should be searchable with latin only
     env = Environment(loader=FileSystemLoader(searchpath='./templates'))
@@ -352,6 +421,9 @@ def main():
     data_path = os.path.join(cwd, 'data')
     print("Building cache of OSM entities")
     osm_entities_cache = build_osm_entities_cache(data_path)
+
+    print("Loading normalized street names mapping")
+    street_mappings = load_mappings(data_path)
 
     running_file = os.path.join(data_path, 'running')
     if not os.path.exists(running_file):
@@ -369,7 +441,8 @@ def main():
             'report': datetime.datetime.now().strftime('%d.%m.%Y %H:%M'),
             'osm_data': osm_data_timestamp
         },
-        'osm_entities_cache': osm_entities_cache
+        'osm_entities_cache': osm_entities_cache,
+        'street_mappings': street_mappings
     }
 
     generate_qa(context)

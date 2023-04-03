@@ -26,6 +26,7 @@ clean_quality_assurance: clean_report
 	@echo "Cleaning QA files"
 	rm -f data/qa/duplicated_refs.json
 	rm -f data/qa/addresses_in_buildings_per_opstina.csv
+	rm -f data/qa/osm_import_qa.csv
 
 clean_report:
 	@echo "Cleaning all files from report"
@@ -60,6 +61,7 @@ quality_assurance: download_from_osm
 	@echo "Doing quality assurance"
 	mkdir -p data/qa
 	python3 src/quality_assurance.py
+	python3 src/osm_import_qa.py
 
 report: analyze quality_assurance
 	@echo "Generating report"

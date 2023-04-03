@@ -10,7 +10,7 @@ import pandas as pd
 from jinja2 import Environment, FileSystemLoader
 
 from common import AddressInBuildingResolution
-from common import cyr2lat, normalize_name, normalize_name_latin, xml_escape
+from common import cyr2lat, normalize_name, normalize_name_latin, xml_escape, load_mappings
 
 
 class CollectWayNodesHandler(osmium.SimpleHandler):
@@ -154,15 +154,6 @@ def build_osm_entities_cache(data_path):
 
     osm_entities_cache.apply_file(pbf_file)
     return osm_entities_cache
-
-
-def load_mappings(data_path):
-    street_mappings = {}
-    with open(os.path.join(data_path, 'mapping', 'mapping.csv'), encoding='utf-8') as mapping_csv_file:
-        reader = csv.DictReader(mapping_csv_file)
-        for row in reader:
-            street_mappings[row['rgz_name']] = row['name']
-    return street_mappings
 
 
 def generate_osm_files_matched_addresses(context, opstina_dir_path, opstina_name, naselje, df_naselje):

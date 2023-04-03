@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import os
+import csv
+
 import math
 from enum import Enum
 import osmium
@@ -93,6 +96,8 @@ def normalize_name_latin(name: str):
 
 
 def cyr2lat(text):
+    if type(text) == int:
+        return str(text)
     out = ''
     for c in text:
         if c in cyr_to_lat:
@@ -111,6 +116,15 @@ def xml_escape(str_xml):
     str_xml = str_xml.replace("\"", "&quot;")
     str_xml = str_xml.replace("'", "&apos;")
     return str_xml
+
+
+def load_mappings(data_path):
+    street_mappings = {}
+    with open(os.path.join(data_path, 'mapping', 'mapping.csv'), encoding='utf-8') as mapping_csv_file:
+        reader = csv.DictReader(mapping_csv_file)
+        for row in reader:
+            street_mappings[row['rgz_name']] = row['name']
+    return street_mappings
 
 
 class CollectRelationWaysHandler(osmium.SimpleHandler):

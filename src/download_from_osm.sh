@@ -44,15 +44,15 @@ mkdir -p data/osm/download
 test -f data/osm/download/serbia.osm.pbf || wget http://download.geofabrik.de/europe/serbia-latest.osm.pbf -O data/osm/download/serbia.osm.pbf -q --show-progress
 
 if [ "${AR_INCREMENTAL_UPDATE:-}" = "1" ]; then
-  current_date=`date +%Y-%m-%dT%H:%M:%SZ`
-  echo $current_date
+  $osm_data_date=`date +%Y-%m-%dT%H:%M:%SZ`
+  echo $osm_data_date
   echo $osm_data_date > data/running
 	echo "Getting all addresses from overpass"
 	python3 src/download_from_overpass.py
 else
   osm_data_date=`osmium fileinfo data/osm/download/serbia.osm.pbf | grep osmosis_replication_timestamp | cut -d"=" -f2`
   osm_data_date=${osm_data_date::-1}
-  echo $current_date
+  echo $osm_data_date
   echo $osm_data_date > data/running
 	echo "Extracting addresses from PBF"
 	python3 src/download_from_osm.py
