@@ -31,8 +31,13 @@
 
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
+	  {% if realTime %}
+	  <li class="breadcrumb-item" aria-current="page"><a href="../../../index.html">Početna</a></li>
+	  <li class="breadcrumb-item" aria-current="page"><a href="../../report.html">Real-time izveštaj</a></li>
+	  {% else %}
 	  <li class="breadcrumb-item" aria-current="page"><a href="../../index.html">Početna</a></li>
 	  <li class="breadcrumb-item" aria-current="page"><a href="../../report.html">Izveštaj</a></li>
+	  {% endif %}
 	  <li class="breadcrumb-item active" aria-current="page"><a href="../{{ opstina_name }}.html">{{ opstina_name }}</a></li>
 	  <li class="breadcrumb-item active" aria-current="page">{{ naselje.name_lat }}</li>
   </ol>
@@ -61,11 +66,15 @@
     </script>
 
 
-<h2>Izveštaj za {{ naselje.name_lat }}</h2>
+<h2>{% if realTime %}Real-time izveštaj{% else %}Izveštaj{% endif %} za {{ naselje.name_lat }}</h2>
 <br/>
+{% if realTime %}
+<p>OSM podaci od <b>{{ osmDataDate }}</b></p>
+{% else %}
 <p>Ovde možete sve zgrade unutar naselja "{{ naselje.name_lat }}" i status konflacije.
 	U gornjem desnom uglu je filtriranje.
 	Klikom na "Pomoć" u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.</p>
+{% endif %}
 <br/>
 <br/>
 
@@ -83,35 +92,17 @@
 	</tr>
 </thead>
 <tbody>
-	{% for address in addresses %}
-	<tr>
-		<td>{{ address.rgz_kucni_broj_id }}</td>
-		<td>{{ address.rgz_ulica }} {{ address.rgz_kucni_broj }}</td>
-		<td><a href="{{address.location_url }}" target="_blank">{{ address.location_text}}</a></td>
-		<td>
-			{% if address.conflated_osm_link != '' %}
-			<a href="{{address.conflated_osm_link }}" target="_blank">{{ address.conflated_osm_street }} {{ address.conflated_osm_housenumber }}</a>
-			{% endif %}
-		</td>
-		<td>
-			{% if address.osm_link != '' %}
-			<a href="{{address.osm_link }}" target="_blank">
-				{% if address.matching %}✅{% endif %} &nbsp; {{ address.osm_street }} {{ address.osm_housenumber }}
-			</a>
-			{% endif %}
-		</td>
-		<td>
-			{% if address.score != '' %}
-			{{ '{0:0.2f}%'.format(100 * address.score) }}
-			{% endif %}
-		</td>
-		<td>
-			{% if address.distance != '' %}
-			{{ '{0:0.0f}m'.format(address.distance) }}
-			{% endif %}
-		</td>
-	</tr>
-	{% endfor %}
+{% for address in addresses %}
+<tr>
+<td>{{ address.rgz_kucni_broj_id }}</td>
+<td>{{ address.rgz_ulica }} {{ address.rgz_kucni_broj }}</td>
+<td><a href="{{address.location_url }}" target="_blank">{{ address.location_text}}</a></td>
+{% if address.conflated_osm_link != '' %}<td><a href="{{address.conflated_osm_link }}" target="_blank">{{ address.conflated_osm_street }} {{ address.conflated_osm_housenumber }}</a></td>{% else %}<td/>{% endif %}
+{% if address.osm_link != '' %}<td><a href="{{address.osm_link }}" target="_blank">{% if address.matching %}✅{% endif %} &nbsp; {{ address.osm_street }} {{ address.osm_housenumber }}</a></td>{% else %}<td/>{% endif %}
+{% if address.score != '' %}<td>{{ '{0:0.2f}%'.format(100 * address.score) }}</td>{% else %}<td/>{% endif %}
+{% if address.distance != '' %}<td>{{ '{0:0.0f}m'.format(address.distance) }}</td>{% else %}<td/>{% endif %}
+</tr>
+{% endfor %}
 </tbody>
 </table>
 

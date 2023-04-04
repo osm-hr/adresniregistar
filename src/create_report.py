@@ -314,8 +314,10 @@ def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselj
     if not os.path.exists(naselje_dir_path):
         os.mkdir(naselje_dir_path)
 
-    osm_files_new_addresses = generate_osm_files_new_addresses(context, opstina_dir_path, opstina_name_norm, naselje, df_naselje)
-    osm_files_matched_addresses = generate_osm_files_matched_addresses(context, opstina_dir_path, opstina_name_norm, naselje, df_naselje)
+    osm_files_new_addresses, osm_files_matched_addresses = [], []
+    if not context['incremental_update']:
+        osm_files_new_addresses = generate_osm_files_new_addresses(context, opstina_dir_path, opstina_name_norm, naselje, df_naselje)
+        osm_files_matched_addresses = generate_osm_files_matched_addresses(context, opstina_dir_path, opstina_name_norm, naselje, df_naselje)
 
     naselje_path = os.path.join(naselje_dir_path, f'{naselje["name_lat"]}.html')
 
@@ -371,6 +373,7 @@ def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselj
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
         osmDataDate=context['dates']['osm_data'],
+        realTime=context['incremental_update'],
         addresses=addresses,
         naselje=naselje,
         opstina_name=opstina_name,
@@ -385,9 +388,10 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
     data_path = context['data_path']
 
     report_path = os.path.join(data_path, 'report')
+    if context['incremental_update']:
+        report_path = os.path.join(report_path, 'rt')
+
     template = env.get_template('opstina.html')
-    current_date = datetime.date.today().strftime('%Y-%m-%d')
-    report_date = datetime.date.today().strftime('%d.%m.%Y %H:%M')
     opstine_dir_path = os.path.join(report_path, 'opstine')
     if not os.path.exists(opstine_dir_path):
         os.mkdir(opstine_dir_path)
@@ -436,6 +440,7 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
         osmDataDate=context['dates']['osm_data'],
+        realTime=context['incremental_update'],
         naselja=naselja,
         opstina=opstina)
     with open(opstina_html_path, 'w', encoding='utf-8') as fh:
@@ -446,7 +451,6 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
 
 def generate_report(context):
     env = context['env']
-    cwd = context['cwd']
 
     template = env.get_template('report.html')
 
@@ -455,6 +459,9 @@ def generate_report(context):
     osm_path = os.path.join(data_path, 'osm', 'csv')
     analysis_path = os.path.join(data_path, 'analysis')
     report_path = os.path.join(data_path, 'report')
+    if context['incremental_update']:
+        report_path = os.path.join(report_path, 'rt')
+
     total_csvs = len(os.listdir(analysis_path))
     report_html_path = os.path.join(report_path, 'report.html')
 
@@ -472,7 +479,7 @@ def generate_report(context):
         opstina_name = file[:-4]
         print(f"{i+1}/{total_csvs} Processing {opstina_name}...", end='')
         df_opstina = pd.read_csv(os.path.join(analysis_path, file), dtype={'conflated_osm_housenumber': object, 'osm_housenumber': object})
-        df_opstina_osm = pd.read_csv(os.path.join(osm_path, file))
+        df_opstina_osm = pd.read_csv(os.path.join(osm_path, file), dtype='unicode')
         opstina = generate_opstina(context, opstina_name, df_opstina, df_opstina_osm)
         opstine.append(opstina)
         total['conflated'] += opstina['conflated']
@@ -485,12 +492,11 @@ def generate_report(context):
     if os.path.exists(report_html_path):
         return
 
-    current_date = datetime.date.today().strftime('%Y-%m-%d')
-    report_date = datetime.date.today().strftime('%d.%m.%Y %H:%M')
     output = template.render(
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
         osmDataDate=context['dates']['osm_data'],
+        realTime=context['incremental_update'],
         opstine=opstine,
         total=total)
     with open(report_html_path, 'w', encoding='utf-8') as fh:
@@ -519,10 +525,15 @@ def main():
     print("Loading normalized street names mapping")
     street_mappings = load_mappings(data_path)
 
+    incremental_update = False
+    if os.environ.get('AR_INCREMENTAL_UPDATE', None) == "1":
+        incremental_update = True
+
     context = {
         'env': env,
         'cwd': cwd,
         'data_path': data_path,
+        'incremental_update': incremental_update,
         'dates': {
             'short': datetime.date.today().strftime('%Y-%m-%d'),
             'report': datetime.datetime.now().strftime('%d.%m.%Y %H:%M'),
@@ -533,13 +544,16 @@ def main():
     }
     generate_report(context)
 
+    if incremental_update:
+        return
+
     report_path = os.path.join(cwd, 'data/report')
     index_html_path = os.path.join(report_path, 'index.html')
     if os.path.exists(index_html_path):
-        print("Page data/report/index.html already exists")
+        print(f"Page {os.path.relpath(index_html_path)} already exists")
         return
 
-    print("Generating data/report/index.html")
+    print(f"Generating {os.path.relpath(index_html_path)}")
     template = env.get_template('index.html')
     output = template.render(
         currentDate=context['dates']['short'],

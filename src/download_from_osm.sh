@@ -34,17 +34,17 @@ function start_local_instance() {
   sleep 10
 }
 
-if test -f "data/running"; then
-    echo "data/running.pid exists. Check if script is executing and delete before running again"
-    exit 1
-fi
 
 echo "Download Serbia PBF from geofabrik"
 mkdir -p data/osm/download
 test -f data/osm/download/serbia.osm.pbf || wget http://download.geofabrik.de/europe/serbia-latest.osm.pbf -O data/osm/download/serbia.osm.pbf -q --show-progress
 
 if [ "${AR_INCREMENTAL_UPDATE:-}" = "1" ]; then
-  $osm_data_date=`date +%Y-%m-%dT%H:%M:%SZ`
+  if test -f "data/running"; then
+      echo "data/running.pid exists. Check if script is executing and delete before running again"
+      exit 1
+  fi
+  osm_data_date=`date +%Y-%m-%dT%H:%M:%S`
   echo $osm_data_date
   echo $osm_data_date > data/running
 	echo "Getting all addresses from overpass"

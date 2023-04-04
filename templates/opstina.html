@@ -30,8 +30,13 @@
 
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
+	  {% if realTime %}
+	  <li class="breadcrumb-item" aria-current="page"><a href="../../index.html">Početna</a></li>
+	  <li class="breadcrumb-item" aria-current="page"><a href="../report.html">Real-time izveštaj</a></li>
+	  {% else %}
 	  <li class="breadcrumb-item" aria-current="page"><a href="../index.html">Početna</a></li>
 	  <li class="breadcrumb-item" aria-current="page"><a href="../report.html">Izveštaj</a></li>
+	  {% endif %}
 	  <li class="breadcrumb-item active" aria-current="page">{{ opstina.name }}</li>
   </ol>
 </nav>
@@ -58,10 +63,14 @@
 	} );
     </script>
 
-<h2>Izveštaj po naselju</h2>
+<h2>{% if realTime %}Real-time izveštaj{% else %}Izveštaj{% endif %} po naselju</h2>
 <br/>
+{% if realTime %}
+<p>OSM podaci od <b>{{ osmDataDate }}</b></p>
+{% else %}
 <p>Ovde možete videti statistike po naselju u okviru opštine {{ opstina.name }}". Klikom na naselje dobijate podatke za to naselje.
 	U gornjem desnom uglu je filtriranje. Klikom na "Pomoć" u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.</p>
+{% endif %}
 <br/>
 <br/>
 

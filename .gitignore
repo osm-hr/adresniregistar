@@ -7,4 +7,6 @@ osm-password
 geckodriver
 geckodriver.log
 clean.log
+rt-clean.log
 upload.log
+rt-upload.log

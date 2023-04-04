@@ -10,26 +10,50 @@ clean_rgz:
 
 clean_osm: clean_normalize_street_names clean_analysis clean_quality_assurance
 	@echo "Removing OSM data"
-	rm -f data/osm/download/serbia.osm.pbf
+	@if [ "$(AR_INCREMENTAL_UPDATE)" != "1" ]; then\
+		rm -f data/osm/download/serbia.osm.pbf;\
+	fi
+	@if [ "$(AR_INCREMENTAL_UPDATE)" = "1" ]; then\
+		if test -f "data/running"; then\
+			echo "data/running.pid exists. Check if script is executing and delete before running again";\
+			exit 1;\
+		fi;\
+	fi
 	rm -f data/osm/csv/*
 	rm -f data/osm/addresses.csv
 
 clean_normalize_street_names:
 	@echo "Cleaning all normalization mappings"
-	rm -f data/mapping/mapping.csv
+	@if [ "$(AR_INCREMENTAL_UPDATE)" != "1" ]; then\
+		rm -f data/mapping/mapping.csv;\
+	fi
 
 clean_analysis: clean_report
 	@echo "Cleaning all analysis files"
+	@if [ "$(AR_INCREMENTAL_UPDATE)" = "1" ]; then\
+		if test -f "data/running"; then\
+			echo "data/running.pid exists. Check if script is executing and delete before running again";\
+			exit 1;\
+		fi;\
+	fi
 	rm -f data/analysis/*
 
 clean_quality_assurance: clean_report
 	@echo "Cleaning QA files"
-	rm -f data/qa/duplicated_refs.json
-	rm -f data/qa/addresses_in_buildings_per_opstina.csv
-	rm -f data/qa/osm_import_qa.csv
+	@if [ "$(AR_INCREMENTAL_UPDATE)" != "1" ]; then\
+		rm -f data/qa/duplicated_refs.json;\
+		rm -f data/qa/addresses_in_buildings_per_opstina.csv;\
+		rm -f data/qa/osm_import_qa.csv;\
+	fi
 
 clean_report:
 	@echo "Cleaning all files from report"
+	@if [ "$(AR_INCREMENTAL_UPDATE)" = "1" ]; then\
+		if test -f "data/running"; then\
+			echo "data/running.pid exists. Check if script is executing and delete before running again";\
+			exit 1;\
+		fi;\
+	fi
 	rm -rf data/report/*
 	rm -f data/report.tar.gz
 
@@ -49,26 +73,44 @@ download_from_osm:
 
 normalize_street_names:
 	@echo "Normalizing street names"
-	mkdir -p data/mapping
-	python3 src/street_mapping.py
+	@if [ "$(AR_INCREMENTAL_UPDATE)" != "1" ]; then\
+		mkdir -p data/mapping;\
+		python3 src/street_mapping.py;\
+	fi
 
 analyze: download_from_osm normalize_street_names
 	@echo "Analysing"
 	mkdir -p data/analysis
-	ls -S data/rgz/csv/*.csv | parallel python3 src/create_analysis.py --opstina={/.}
+	ls -S data/osm/csv/*.csv | parallel python3 src/create_analysis.py --opstina={/.}
 
 quality_assurance: download_from_osm
 	@echo "Doing quality assurance"
-	mkdir -p data/qa
-	python3 src/quality_assurance.py
-	python3 src/osm_import_qa.py
+	@if [ "$(AR_INCREMENTAL_UPDATE)" != "1" ]; then\
+		mkdir -p data/qa;\
+		python3 src/quality_assurance.py;\
+		python3 src/osm_import_qa.py;\
+	fi
 
 report: analyze quality_assurance
 	@echo "Generating report"
 	mkdir -p data/report
-	mkdir -p data/report/opstine
+	@if [ "$(AR_INCREMENTAL_UPDATE)" = "1" ]; then\
+		mkdir -p data/report/rt;\
+	else\
+		mkdir -p data/report/opstine;\
+	fi
 	python3 src/create_report.py
-	python3 src/create_report_qa.py
+	@if [ "$(AR_INCREMENTAL_UPDATE)" != "1" ]; then\
+		python3 src/create_report_qa.py;\
+	fi
 
 upload_report: report
-	@./src/upload_report.sh
+	echo "Uploading report"
+	@if [ "$(AR_INCREMENTAL_UPDATE)" != "1" ]; then\
+		echo "full update";\
+		./src/upload_report.sh;\
+	fi
+	@if [ "$(AR_INCREMENTAL_UPDATE)" = "1" ]; then\
+	    echo "incremental update";\
+	    ./src/upload_rt_report.sh;\
+	fi

@@ -19,7 +19,7 @@ def main():
         return
 
     print("Load opstine geometries")
-    df_opstine = pd.read_csv(os.path.join(rgz_path, 'opstina.csv'))
+    df_opstine = pd.read_csv(os.path.join(rgz_path, 'opstina.csv'), dtype='unicode')
     df_opstine['geometry'] = df_opstine.wkt.apply(wkt.loads)
     gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs="EPSG:32634")
     gdf_opstine.to_crs("EPSG:4326", inplace=True)
