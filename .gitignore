@@ -3,6 +3,7 @@ data/
 overpass_db/
 rgz_creds
 idp_creds
+osm-password
 geckodriver
 geckodriver.log
 clean.log
