@@ -400,8 +400,8 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
     rgz_count = len(df_opstina)
     osm_count = len(df_opstina_osm)
     conflated_count = len(df_opstina[df_opstina['conflated_osm_id'].notnull()])
-    matched_count = len(df_opstina[df_opstina['matching'] == True])
-    partially_matched_count = len(df_opstina[(pd.notna(df_opstina.osm_id)) & (df_opstina.matching == False)])
+    matched_count = len(df_opstina[(df_opstina['matching'] == True) & (pd.isna(df_opstina['conflated_osm_id']))])
+    partially_matched_count = len(df_opstina[(pd.notna(df_opstina.osm_id)) & (df_opstina.matching == False) & (pd.isna(df_opstina['conflated_osm_id']))])
     opstina = {
         'name': opstina_name,
         'name_norm': normalize_name(opstina_name),
@@ -422,8 +422,8 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
     for naselje_name, df_naselje in df_opstina.groupby('rgz_naselje'):
         rgz_count = len(df_naselje)
         conflated_count = len(df_naselje[df_naselje['conflated_osm_id'].notnull()])
-        matched_count = len(df_naselje[df_naselje['matching'] == True])
-        partially_matched_count = len(df_opstina[(pd.notna(df_opstina.osm_id)) & (df_opstina.matching == False)])
+        matched_count = len(df_naselje[(df_naselje['matching'] == True) & (pd.isna(df_naselje['conflated_osm_id']))])
+        partially_matched_count = len(df_opstina[(pd.notna(df_opstina.osm_id)) & (df_opstina.matching == False) & (pd.isna(df_naselje['conflated_osm_id']))])
         naselje = {
             'name': naselje_name,
             'name_lat': cyr2lat(naselje_name),
