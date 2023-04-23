@@ -34,6 +34,9 @@ def do_opstina(data_path, street_mappings, opstina):
             if address.osm_id[0] == 'r':
                 print(f"Encountered relation {address.osm_id}, had to be merged manually... ", end='')
                 continue
+            if address.distance > 50:
+                print(f"Distance is {address.distance}m - too much, skipping")
+                continue
             entity_id = int(address.osm_id[1:])
             rgz_kucni_broj = str(address.rgz_kucni_broj_id)
             if address.osm_id[0] == 'n':
