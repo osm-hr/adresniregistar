@@ -8,7 +8,11 @@ function start_local_instance() {
     return
   fi
 
-  mkdir -p overpass_db/
+  rm -rf data/overpass_db/
+  docker stop overpass_serbia_rt
+  docker rm overpass_serbia_rt
+
+  mkdir -p data/overpass_db/
 
   docker run \
     -e OVERPASS_META=yes \
@@ -17,15 +21,15 @@ function start_local_instance() {
     -e OVERPASS_DIFF_URL=https://planet.openstreetmap.org/replication/minute/ \
     -e OVERPASS_RULES_LOAD=10 \
     -e OVERPASS_PLANET_PREPROCESS='mv /db/planet.osm.bz2 /db/planet.osm.pbf && osmium cat -o /db/planet.osm.bz2 /db/planet.osm.pbf && rm /db/planet.osm.pbf' \
-    -v overpass_db/:/db \
+    -v `$pwd`/data/overpass_db/:/db \
     -p 12346:80 \
     -i \
     --name overpass_serbia_rt wiktorn/overpass-api
 
-  docker start overpass_serbia
+  docker start overpass_serbia_rt
 
   echo "Waiting for container to boot up"
-  until [ "`docker inspect -f {{.State.Health.Status}} overpass_serbia`" == "healthy" ]; do
+  until [ "`docker inspect -f {{.State.Health.Status}} overpass_serbia_rt`" == "healthy" ]; do
       date
       echo "Still waiting for container to boot up"
       sleep 5
