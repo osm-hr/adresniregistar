@@ -210,6 +210,65 @@ class CollectRefAddressesHandler(osmium.SimpleHandler):
             })
 
 
+def find_unaccounted_osm_addresses(cwd):
+    osm_path = os.path.join(cwd, 'data/osm')
+    rgz_path = os.path.join(cwd, 'data/rgz')
+    qa_path = os.path.join(cwd, 'data/qa')
+    pbf_file = os.path.join(osm_path, 'download/serbia.osm.pbf')
+
+    if os.path.exists(os.path.join(qa_path, 'unaccounted_osm_addresses.csv')):
+        return
+
+    # Build building geometries
+    crwh = CollectRelationWaysHandler('addr:housenumber')
+    crwh.apply_file(pbf_file)
+    print(f"Collected all ways ({len(crwh.ways)}) from building relations")
+
+    cwnh = CollectWayNodesHandler(crwh.ways, 'addr:housenumber')
+    cwnh.apply_file(pbf_file)
+    print(f"Collected all nodes ({len(cwnh.nodes)}) from building ways")
+
+    bnch = BuildNodesCacheHandler(set(cwnh.nodes))
+    bnch.apply_file(pbf_file)
+    print(f"Found coordinates for all nodes ({len(bnch.nodes_cache)}) for all addr:housenumber")
+
+    ceh = CollectEntitiesHandler(bnch.nodes_cache, cwnh.ways_cache, 'addr:housenumber', collect_tags=True)
+    ceh.apply_file(pbf_file)
+    gdf_osm_addresses = gpd.GeoDataFrame(ceh.entities, geometry='osm_geometry', crs="EPSG:4326")
+    gdf_osm_addresses = gdf_osm_addresses[pd.isna(gdf_osm_addresses['ref:RS:kucni_broj'])]
+    gdf_osm_addresses.sindex
+    print(f"Found all building geometries ({len(ceh.entities)}) from PBF")
+
+    # For testing purposes, save and load gdf_buildings like this
+    # pd.DataFrame(gdf_osm_addresses).to_csv('/home/branko/src/adresniregistar/data/gdf_osm_addresses.csv', index=False)
+    # gdf_osm_addresses = pd.read_csv('/home/branko/src/adresniregistar/data/gdf_osm_addresses.csv')
+    # gdf_osm_addresses['osm_geometry'] = gdf_osm_addresses.osm_geometry.apply(wkt.loads)
+    # gdf_osm_addresses = gpd.GeoDataFrame(gdf_osm_addresses, geometry='osm_geometry', crs="EPSG:4326")
+    # gdf_osm_addresses.sindex
+
+    df_opstine = pd.read_csv(os.path.join(rgz_path, 'opstina.csv'))
+    df_opstine['geometry'] = df_opstine.wkt.apply(wkt.loads)
+    gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs="EPSG:32634")
+    gdf_opstine.to_crs("EPSG:4326", inplace=True)
+    gdf_opstine.sindex
+    print(f"Loaded all opstine geometries ({len(gdf_opstine)})")
+
+    addresses_per_opstina = gdf_osm_addresses.sjoin(gdf_opstine, how='inner', predicate='intersects')
+    addresses_per_opstina.sindex
+    addresses_per_opstina['name'] = addresses_per_opstina['tags'].apply(lambda x: x['name'] if 'name' in x else '')
+    addresses_per_opstina['amenity'] = addresses_per_opstina['tags'].apply(lambda x: x['amenity'] if 'amenity' in x else '')
+    addresses_per_opstina['shop'] = addresses_per_opstina['tags'].apply(lambda x: x['shop'] if 'shop' in x else '')
+
+    addresses_per_opstina.drop(['osm_country', 'osm_city', 'osm_postcode', 'ref:RS:kucni_broj', 'tags', 'index_right',
+                                'opstina_maticni_broj', 'opstina_ime', 'opstina_povrsina', 'okrug_sifra', 'okrug_ime',
+                                'okrug_imel', 'wkt'],
+                               inplace=True, axis=1)
+    print("Split all addresses per opstina")
+
+    pd.DataFrame(addresses_per_opstina).to_csv(os.path.join(qa_path, 'unaccounted_osm_addresses.csv'), index=False)
+    print("Created unaccounted_osm_addresses.csv")
+
+
 def find_addresses_in_buildings(cwd):
     osm_path = os.path.join(cwd, 'data/osm')
     rgz_path = os.path.join(cwd, 'data/rgz')
@@ -358,6 +417,7 @@ def main():
     cwd = os.getcwd()
     find_addresses_in_buildings(cwd)
     find_duplicated_refs(cwd)
+    find_unaccounted_osm_addresses(cwd)
 
 
 if __name__ == '__main__':

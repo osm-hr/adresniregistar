@@ -314,6 +314,113 @@ def generate_addresses_in_buildings(context):
         fh.write(output)
 
 
+def generate_unaccounted_osm_qa(context):
+    env = context['env']
+    cwd = context['cwd']
+
+    current_date = datetime.date.today().strftime('%Y-%m-%d')
+    current_date_srb = datetime.date.today().strftime('%d.%m.%Y')
+
+    qa_path = os.path.join(cwd, 'data/qa')
+    analysis_path = os.path.join(cwd, 'data/analysis')
+    report_path = os.path.join(cwd, 'data/report')
+    html_path = os.path.join(report_path, 'unaccounted_osm_addresses.html')
+    report_osm_address_path = os.path.join(report_path, 'osm_addresses')
+
+    template = env.get_template('unaccounted_osm_addresses_opstina.html')
+
+    if not os.path.exists(report_osm_address_path):
+        os.mkdir(report_osm_address_path)
+
+    df_unaccounted_osm_addresses = pd.read_csv(os.path.join(qa_path, 'unaccounted_osm_addresses.csv'))
+
+    opstine = []
+    total = {
+        'count': 0
+    }
+
+    for opstina_name, df_addresses_in_opstina in df_unaccounted_osm_addresses.sort_values('opstina_imel').groupby('opstina_imel'):
+        count = len(df_addresses_in_opstina)
+        total['count'] += count
+        opstine.append({
+            'name': opstina_name,
+            'count': count
+        })
+        addresses = []
+
+        opstina_html_path = os.path.join(report_osm_address_path, f'{opstina_name}.html')
+        if os.path.exists(opstina_html_path):
+            print(f"Page data/report/osm_addresses/{opstina_name}.html already exists")
+            continue
+
+        print(f"Generating data/report/osm_addresses/{opstina_name}.html")
+
+        for _, df_address in df_addresses_in_opstina.iterrows():
+            address_text = ''
+            osm_id = df_address['osm_id']
+            street = df_address['osm_street']
+            house_number = df_address['osm_housenumber']
+
+            osm_type = 'way' if osm_id[0] == 'w' else 'relation' if osm_id[0] == 'r' else 'node'
+            address = {
+                'osm_link': f'https://openstreetmap.org/{osm_type}/{osm_id[1:]}',
+                'osm_id': osm_id,
+                'street': df_address['osm_street'] if pd.notna(df_address['osm_street']) else '',
+                'housenumber': df_address['osm_housenumber'] if pd.notna(df_address['osm_housenumber']) else '',
+                'name': df_address['name'] if pd.notna(df_address['name']) else '',
+                'amenity': df_address['amenity'] if pd.notna(df_address['amenity']) else '',
+                'shop': df_address['shop'] if pd.notna(df_address['shop']) else '',
+            }
+            addresses.append(address)
+
+        output = template.render(
+            currentDate=context['dates']['short'],
+            reportDate=context['dates']['report'],
+            osmDataDate=context['dates']['osm_data'],
+            addresses=addresses,
+            opstina_name=opstina_name
+        )
+
+        with open(opstina_html_path, 'w', encoding='utf-8') as fh:
+            fh.write(output)
+
+    if os.path.exists(html_path):
+        print("Page data/report/unaccounted_osm_addresses.html already exists")
+        return
+
+    print("Generating data/report/unaccounted_osm_addresses.html")
+
+    for i, file in enumerate(sorted(os.listdir(analysis_path))):
+        if not file.endswith(".csv"):
+            continue
+        opstina_name = file[:-4]
+        if not any(o for o in opstine if o['name'] == opstina_name):
+            opstine.append({
+                'name': opstina_name,
+                'count': 0
+            })
+            output = template.render(
+                addresses=[],
+                opstina_name=opstina_name,
+                currentDate=current_date,
+                currentDateSrb=current_date_srb
+            )
+            opstina_html_path = os.path.join(report_osm_address_path, f'{opstina_name}.html')
+            with open(opstina_html_path, 'w', encoding='utf-8') as fh:
+                fh.write(output)
+
+    template = env.get_template('unaccounted_osm_addresses.html')
+    output = template.render(
+        opstine=opstine,
+        total=total,
+        currentDate=current_date,
+        currentDateSrb=current_date_srb
+    )
+
+    with open(html_path, 'w', encoding='utf-8') as fh:
+        fh.write(output)
+
+
 def generate_osm_import_qa(context):
     env = context['env']
     cwd = context['cwd']
@@ -393,6 +500,7 @@ def generate_qa(context):
     generate_osm_import_qa(context)
     generate_qa_duplicated_refs(context)
     generate_addresses_in_buildings(context)
+    generate_unaccounted_osm_qa(context)
 
     report_path = os.path.join(cwd, 'data/report')
     html_path = os.path.join(report_path, 'qa.html')
