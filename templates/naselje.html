@@ -98,7 +98,7 @@
 <td>{{ address.rgz_ulica }} {{ address.rgz_kucni_broj }}</td>
 <td><a href="{{address.location_url }}" target="_blank">{{ address.location_text}}</a></td>
 {% if address.conflated_osm_link != '' %}<td><a href="{{address.conflated_osm_link }}" target="_blank">{{ address.conflated_osm_street }} {{ address.conflated_osm_housenumber }}</a></td>{% else %}<td/>{% endif %}
-{% if address.osm_link != '' %}<td><a href="{{address.osm_link }}" target="_blank">{% if address.matching %}✅{% endif %} &nbsp; {{ address.osm_street }} {{ address.osm_housenumber }}</a></td>{% else %}<td/>{% endif %}
+{% if address.osm_link != '' %}<td><a href="{{address.osm_link }}" target="_blank">{% if address.matching %}✅&nbsp;{% endif %}{{ address.osm_street }} {{ address.osm_housenumber }}</a></td>{% else %}<td/>{% endif %}
 {% if address.score != '' %}<td>{{ '{0:0.2f}%'.format(100 * address.score) }}</td>{% else %}<td/>{% endif %}
 {% if address.distance != '' %}<td>{{ '{0:0.0f}m'.format(address.distance) }}</td>{% else %}<td/>{% endif %}
 </tr>
