@@ -44,6 +44,7 @@ clean_quality_assurance: clean_report
 		rm -f data/qa/duplicated_refs.json;\
 		rm -f data/qa/addresses_in_buildings_per_opstina.csv;\
 		rm -f data/qa/osm_import_qa.csv;\
+		rm -f data/qa/unaccounted_osm_addresses.csv;\
 	fi
 
 clean_report:
