@@ -10,7 +10,7 @@ import pandas as pd
 from shapely import wkt
 import argparse
 
-from common import normalize_name
+from common import normalize_name, load_mappings
 
 
 def calculate_housenumber_diff(housenumber_rgz, housenumber_osm):
@@ -53,7 +53,7 @@ def calculate_score(street_rgz, housenumber_rgz, street_osm, housenumber_osm, di
     return 0.33 * street_diff + 0.33 * housenumber_diff + 0.33 * distance_diff
 
 
-def do_analysis(opstina, data_path):
+def do_analysis(opstina, data_path, street_mappings):
     if os.path.exists(os.path.join(data_path, f'analysis/{opstina}.csv')):
         print(f"    Skipping {opstina}, already exists")
         return
@@ -85,7 +85,7 @@ def do_analysis(opstina, data_path):
     gdf_rgz = gpd.GeoDataFrame(df_rgz, geometry='rgz_geometry', crs="EPSG:4326")
     gdf_rgz.to_crs("EPSG:32634", inplace=True)
     gdf_rgz.drop(['rgz_opstina_mb', 'rgz_opstina'], inplace=True, axis=1)
-    gdf_rgz['rgz_ulica_norm'] = gdf_rgz.rgz_ulica.apply(normalize_name)
+    gdf_rgz['rgz_ulica_norm'] = gdf_rgz.rgz_ulica.apply(lambda x: normalize_name(street_mappings[x] if x in street_mappings else x))
     gdf_rgz['rgz_kucni_broj_norm'] = gdf_rgz.rgz_kucni_broj.apply(normalize_name)
     gdf_rgz.sindex
 
@@ -164,7 +164,7 @@ def do_analysis(opstina, data_path):
     pd.DataFrame(joined).to_csv(os.path.join(data_path, f'analysis/{opstina}.csv'), index=False)
 
 
-def process_all_opstina(data_path, rgz_csv_path):
+def process_all_opstina(data_path, rgz_csv_path, street_mappings):
     total_csvs = len(os.listdir(rgz_csv_path))
     if total_csvs < 168:
         raise Exception("Some or all RGZ files missing! Bailing out")
@@ -174,7 +174,7 @@ def process_all_opstina(data_path, rgz_csv_path):
             continue
         opstina = file[:-4]
         print(f"{i + 1}/{total_csvs} Processing {opstina}")
-        do_analysis(opstina, data_path)
+        do_analysis(opstina, data_path, street_mappings)
 
 
 def main():
@@ -182,17 +182,19 @@ def main():
     data_path = os.path.join(cwd, 'data/')
     rgz_csv_path = os.path.join(data_path, 'rgz/csv')
 
+    street_mappings = load_mappings(data_path)
+
     parser = argparse.ArgumentParser(
         description='create_analysis.py - Analyses opstine')
     parser.add_argument('--opstina', default=None, required=False, help='Opstina to process')
     args = parser.parse_args()
     if not args.opstina:
-        process_all_opstina(data_path, rgz_csv_path)
+        process_all_opstina(data_path, rgz_csv_path, street_mappings)
     else:
         if not os.path.exists(os.path.join(rgz_csv_path, f'{args.opstina}.csv')):
             parser.error(f"File data/rgz/csv/{args.opstina}.csv do not exist")
             return
-        do_analysis(args.opstina, data_path)
+        do_analysis(args.opstina, data_path, street_mappings)
 
 
 if __name__ == '__main__':
