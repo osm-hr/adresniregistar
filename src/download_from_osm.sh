@@ -8,9 +8,9 @@ function start_local_instance() {
     return
   fi
 
-  rm -rf data/overpass_db/
   docker stop overpass_serbia_rt
   docker rm overpass_serbia_rt
+  rm -rf data/overpass_db/
 
   mkdir -p data/overpass_db/
 
