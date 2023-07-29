@@ -151,7 +151,7 @@ def generate_qa_duplicated_refs(context):
             'id': address['ref:RS:kucni_broj'],
             'links': links
         })
-    template = env.get_template('duplicated_refs.html')
+    template = env.get_template('qa/duplicated_refs.html.tpl')
     output = template.render(
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
@@ -172,7 +172,7 @@ def generate_addresses_in_buildings(context):
     report_path = os.path.join(cwd, 'data/report')
     report_qa_address_path = os.path.join(report_path, 'qa_addresses')
     html_path = os.path.join(report_path, 'addresses_in_buildings.html')
-    template = env.get_template('addresses_in_buildings_opstina.html')
+    template = env.get_template('qa/addresses_in_buildings_opstina.html.tpl')
 
     if not os.path.exists(report_qa_address_path):
         os.mkdir(report_qa_address_path)
@@ -301,7 +301,7 @@ def generate_addresses_in_buildings(context):
             with open(opstina_html_path, 'w', encoding='utf-8') as fh:
                 fh.write(output)
 
-    template = env.get_template('addresses_in_buildings.html')
+    template = env.get_template('qa/addresses_in_buildings.html.tpl')
     output = template.render(
         opstine=opstine,
         total=total,
@@ -327,7 +327,7 @@ def generate_unaccounted_osm_qa(context):
     html_path = os.path.join(report_path, 'unaccounted_osm_addresses.html')
     report_osm_address_path = os.path.join(report_path, 'osm_addresses')
 
-    template = env.get_template('unaccounted_osm_addresses_opstina.html')
+    template = env.get_template('qa/unaccounted_osm_addresses_opstina.html.tpl')
 
     if not os.path.exists(report_osm_address_path):
         os.mkdir(report_osm_address_path)
@@ -409,7 +409,7 @@ def generate_unaccounted_osm_qa(context):
             with open(opstina_html_path, 'w', encoding='utf-8') as fh:
                 fh.write(output)
 
-    template = env.get_template('unaccounted_osm_addresses.html')
+    template = env.get_template('qa/unaccounted_osm_addresses.html.tpl')
     output = template.render(
         opstine=opstine,
         total=total,
@@ -480,7 +480,7 @@ def generate_osm_import_qa(context):
             'rgz_housenumber_match': rgz_housenumber_match,
             'distance': osm_import_qa_problem['distance']
         })
-    template = env.get_template('osm_import_qa.html')
+    template = env.get_template('qa/osm_import_qa.html.tpl')
     output = template.render(
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
