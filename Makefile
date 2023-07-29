@@ -8,7 +8,7 @@ clean: clean_rgz clean_osm
 clean_rgz:
 	@./src/clean_rgz.sh
 
-clean_osm: clean_normalize_street_names clean_analysis clean_quality_assurance
+clean_osm: clean_normalize_street_names clean_analysis clean_quality_assurance clean_generate_b_hn_ratio
 	@echo "Removing OSM data"
 	@if [ "$(AR_INCREMENTAL_UPDATE)" != "1" ]; then\
 		rm -f data/osm/download/serbia.osm.pbf;\
@@ -45,6 +45,12 @@ clean_quality_assurance: clean_report
 		rm -f data/qa/addresses_in_buildings_per_opstina.csv;\
 		rm -f data/qa/osm_import_qa.csv;\
 		rm -f data/qa/unaccounted_osm_addresses.csv;\
+	fi
+
+clean_generate_b_hn_ratio: clean_report
+	@echo "Cleaning building housenumber ratio"
+	@if [ "$(AR_INCREMENTAL_UPDATE)" != "1" ]; then\
+		rm -f data/b-hn/building_housenumber_per_naselje.csv;\
 	fi
 
 clean_report:
@@ -92,6 +98,13 @@ quality_assurance: download_from_osm
 		python3 src/osm_import_qa.py;\
 	fi
 
+generate_b_hn_ratio: download_from_osm
+	@echo "Generating building / housenumber ratio"
+	@if [ "$(AR_INCREMENTAL_UPDATE)" != "1" ]; then\
+		mkdir -p data/b-hn;\
+		python3 src/generate_building_addresses_ratio.py;\
+	fi
+
 report: analyze quality_assurance
 	@echo "Generating report"
 	mkdir -p data/report
@@ -99,6 +112,7 @@ report: analyze quality_assurance
 		mkdir -p data/report/rt;\
 	else\
 		mkdir -p data/report/opstine;\
+		mkdir -p data/report/b-hn;\
 	fi
 	python3 src/create_report.py
 	@if [ "$(AR_INCREMENTAL_UPDATE)" != "1" ]; then\

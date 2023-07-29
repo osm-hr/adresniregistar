@@ -491,6 +491,102 @@ def generate_osm_import_qa(context):
         fh.write(output)
 
 
+def generate_building_addresses_ratio_opstina(context, df_opstina, opstina):
+    env = context['env']
+    cwd = context['cwd']
+
+    stats_report_path = os.path.join(cwd, 'data/report/b-hn')
+    html_path = os.path.join(stats_report_path, f'{opstina}.html')
+    if os.path.exists(html_path):
+        print(f"Page data/report/b-hn/{opstina}.html already exists")
+        return
+
+    naselja = []
+    for _, df_naselje in df_opstina.iterrows():
+        building_count = df_naselje['building_count']
+        addresses_count = df_naselje['addresses_count']
+        if addresses_count > 0:
+            ratio_str = 100 * building_count / addresses_count
+            ratio = f'{ratio_str:.2f} %'
+            ratio_order = 100 * building_count / addresses_count
+            if ratio_order > 100000:
+                ratio_order = 100000
+        else:
+            ratio = '+∞ %'
+            ratio_order = 100001
+
+        naselja.append({
+            'naselje': df_naselje['naselje_imel'],
+            'building_count': building_count,
+            'addresses_count': addresses_count,
+            'ratio': ratio,
+            'ratio_order': ratio_order
+        })
+
+    print(f"Generating data/report/b-hn/{opstina}.html")
+    template = env.get_template('qa/b_hn_stats_opstina.html.tpl')
+    output = template.render(
+        currentDate=context['dates']['short'],
+        reportDate=context['dates']['report'],
+        osmDataDate=context['dates']['osm_data'],
+        opstina=opstina,
+        naselja=naselja
+    )
+
+    with open(html_path, 'w', encoding='utf-8') as fh:
+        fh.write(output)
+
+
+def generate_building_addresses_ratio(context):
+    env = context['env']
+    cwd = context['cwd']
+    data_path = context['data_path']
+
+    df_naselja = pd.read_csv(os.path.join(data_path, 'building_housenumber_per_naselje.csv'))
+    for opstina in df_naselja.opstina_imel.unique():
+        generate_building_addresses_ratio_opstina(context, df_naselja[df_naselja.opstina_imel == opstina], opstina)
+
+    # Generate index.html
+    stats_report_path = os.path.join(cwd, 'data/report/b-hn')
+    html_path = os.path.join(stats_report_path, 'index.html')
+    if os.path.exists(html_path):
+        print("Page data/report/b-hn/index.html already exists")
+        return
+
+    opstine = []
+    for opstina, df_opstina in df_naselja.groupby('opstina_imel').agg({'building_count': 'sum', 'addresses_count': 'sum'}).iterrows():
+        building_count = df_opstina['building_count']
+        addresses_count = df_opstina['addresses_count']
+        if addresses_count > 0:
+            ratio_str = 100 * building_count / addresses_count
+            ratio = f'{ratio_str:.2f} %'
+            ratio_order = 100 * building_count / addresses_count
+            if ratio_order > 100000:
+                ratio_order = 100000
+        else:
+            ratio = '+∞ %'
+            ratio_order = 100001
+
+        opstine.append({
+            'opstina': opstina,
+            'building_count': building_count,
+            'addresses_count': addresses_count,
+            'ratio': ratio,
+            'ratio_order': ratio_order
+        })
+
+    print("Generating data/report/b-hn/index.html")
+    template = env.get_template('qa/b_hn_stats.html.tpl')
+    output = template.render(
+        currentDate=context['dates']['short'],
+        reportDate=context['dates']['report'],
+        osmDataDate=context['dates']['osm_data'],
+        opstine=opstine
+    )
+    with open(html_path, 'w', encoding='utf-8') as fh:
+        fh.write(output)
+
+
 def generate_qa(context):
     env = context['env']
     cwd = context['cwd']
@@ -501,6 +597,7 @@ def generate_qa(context):
     generate_qa_duplicated_refs(context)
     generate_addresses_in_buildings(context)
     generate_unaccounted_osm_qa(context)
+    generate_building_addresses_ratio(context)
 
     report_path = os.path.join(cwd, 'data/report')
     html_path = os.path.join(report_path, 'qa.html')
@@ -535,7 +632,7 @@ def main():
 
     running_file = os.path.join(data_path, 'running')
     if not os.path.exists(running_file):
-        raise Exception("File data/running missing, no way to determine date when OSM data was retrived")
+        raise Exception("File data/running missing, no way to determine date when OSM data was retrieved")
     with open(running_file, 'r') as file:
         file_content = file.read().rstrip()
         osm_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y %H:%M')
