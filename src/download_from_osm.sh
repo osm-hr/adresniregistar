@@ -39,10 +39,6 @@ function start_local_instance() {
 }
 
 
-echo "Download Serbia PBF from geofabrik"
-mkdir -p data/osm/download
-test -f data/osm/download/serbia.osm.pbf || wget http://download.geofabrik.de/europe/serbia-latest.osm.pbf -O data/osm/download/serbia.osm.pbf -q --show-progress
-
 if [ "${AR_INCREMENTAL_UPDATE:-}" = "1" ]; then
   if test -f "data/running"; then
       echo "data/running.pid exists. Check if script is executing and delete before running again"
@@ -54,6 +50,10 @@ if [ "${AR_INCREMENTAL_UPDATE:-}" = "1" ]; then
 	echo "Getting all addresses from overpass"
 	python3 src/download_from_overpass.py
 else
+  echo "Download Serbia PBF from geofabrik"
+  mkdir -p data/osm/download
+  test -f data/osm/download/serbia.osm.pbf || wget http://download.geofabrik.de/europe/serbia-latest.osm.pbf -O data/osm/download/serbia.osm.pbf -q --show-progress
+
   osm_data_date=`osmium fileinfo data/osm/download/serbia.osm.pbf | grep osmosis_replication_timestamp | cut -d"=" -f2`
   osm_data_date=${osm_data_date::-1}
   echo $osm_data_date
