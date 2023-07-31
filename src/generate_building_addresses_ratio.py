@@ -40,54 +40,53 @@ def get_naselje_boundaries(cwd):
     return gdf_naselje
 
 
-counter = 1
-gdf_rgz_cache = {}
-
-
-def count_addresses(data_path, opstina, naselje_geom):
-    global counter
-    print(f'{counter} - {opstina}')
-    counter = counter + 1
-
-    input_rgz_file = os.path.join(data_path, f'rgz/csv/{opstina}.csv')
-    if not os.path.exists(input_rgz_file):
-        print(f"    Missing file {input_rgz_file}, cannot process opstina {opstina}")
-        return None
-
-    global gdf_rgz_cache
-    if opstina in gdf_rgz_cache:
-        gdf_opstina_addresses = gdf_rgz_cache[opstina]
-    else:
-        df_opstina_addresses = pd.read_csv(input_rgz_file)
-        df_opstina_addresses['rgz_geometry'] = df_opstina_addresses.rgz_geometry.apply(wkt.loads)
-        gdf_opstina_addresses = gpd.GeoDataFrame(df_opstina_addresses, geometry='rgz_geometry', crs="EPSG:4326")
-        gdf_opstina_addresses.sindex
-        gdf_rgz_cache[opstina] = gdf_opstina_addresses
-
-    naselje_gdf = gpd.GeoDataFrame([{'geometry': naselje_geom}], crs="EPSG:4326")
-    naselje_gdf.sindex
-    only_naselje_addresses = gdf_opstina_addresses.sjoin(naselje_gdf, how='inner', predicate='intersects')
-
-    return len(only_naselje_addresses)
-
-
 def main():
     cwd = os.getcwd()
     data_path = os.path.join(cwd, 'data')
     osm_path = os.path.join(cwd, 'data/osm')
+    rgz_csv_path = os.path.join(cwd, 'data/rgz/csv')
 
     pbf_file = os.path.join(osm_path, 'download/serbia.osm.pbf')
 
     gdf_naselje = get_naselje_boundaries(cwd)
 
-    # Calculate addresses per opstina
-    gdf_naselje['addresses_count'] = gdf_naselje.apply(lambda row: count_addresses(data_path, row.opstina_imel, row.geometry), axis=1)
-    gdf_naselje = gdf_naselje[pd.notna(gdf_naselje.addresses_count)]
-    print(len(gdf_naselje))
-    if len(gdf_naselje) != 4721:
+    # Calculate addresses per naselje
+    # First union all addresses in RGZ for whole of Serbia in variable `gdf_rgz_addresses`,
+    # then do spatial join and count them per naselje
+    total_csvs = len(os.listdir(rgz_csv_path))
+    if total_csvs < 168:
         raise Exception("Some or all RGZ files missing! Bailing out")
 
+    df_rgz_per_opstina = []
+    for i, file in enumerate(sorted(os.listdir(rgz_csv_path))):
+        if not file.endswith(".csv"):
+            continue
+        input_rgz_file = os.path.join(rgz_csv_path, f'{file[:-4]}.csv')
+        df_rgz = pd.read_csv(input_rgz_file, dtype={'rgz_kucni_broj_id': str})
+        df_rgz.drop(['rgz_opstina_mb', 'rgz_opstina'], inplace=True, axis=1)
+        df_rgz_per_opstina.append(df_rgz)
+    df_rgz = pd.concat(df_rgz_per_opstina)
+    df_rgz['rgz_geometry'] = df_rgz.rgz_geometry.apply(wkt.loads)
+    gdf_rgz_addresses = gpd.GeoDataFrame(df_rgz, geometry='rgz_geometry', crs="EPSG:4326")
+    gdf_rgz_addresses.sindex
+
+    # For testing purposes, save and load addresses like this
+    # pd.DataFrame(gdf_rgz).to_csv('/home/branko/src/adresniregistar/data/temp_gdf_rgz_addresses.csv', index=False)
+    # gdf_rgz_addresses = pd.read_csv('/home/branko/src/adresniregistar/data/temp_gdf_rgz_addresses.csv')
+    # gdf_rgz_addresses['rgz_geometry'] = gdf_rgz_addresses.rgz_geometry.apply(wkt.loads)
+    # gdf_rgz_addresses = gpd.GeoDataFrame(gdf_rgz_addresses, geometry='rgz_geometry', crs="EPSG:4326")
+    # gdf_rgz_addresses.sindex
+
+    rgz_addresses_with_naselje = gdf_rgz_addresses.sjoin(gdf_naselje, how='inner', predicate='intersects')
+    rgz_addresses_count_per_naselje = rgz_addresses_with_naselje.groupby(['naselje_imel', 'opstina_imel'])['naselje_imel', 'opstina_imel'].count()
+    gdf_naselje = gdf_naselje.join(rgz_addresses_count_per_naselje, how='left', on=['naselje_imel', 'opstina_imel'], rsuffix='_addresses_count')
+    gdf_naselje.rename(columns={'naselje_imel_addresses_count': 'addresses_count'}, inplace=True)
+    gdf_naselje.drop(['opstina_imel_addresses_count'], inplace=True, axis=1)
+    gdf_naselje.fillna(value={'addresses_count': 0}, inplace=True, )
+    gdf_naselje['addresses_count'] = gdf_naselje['addresses_count'].astype(int)
+
     # Calculate buildings per opstina
+    # Get all OSM buildings from PBF, then do spatial join and count them per naselje
     gdf_buildings = get_all_buildings(pbf_file)
 
     # For testing purposes, save and load gdf_buildings like this
@@ -102,6 +101,7 @@ def main():
     buildings_with_naselje.drop(['index_right', 'naselje_maticni_broj', 'naselje_ime', 'naselje_povrsina',
                                  'opstina_maticni_broj', 'opstina_ime', 'wkt'],
                                 inplace=True, axis=1)
+
     # For testing purposes, save and load buildings_with_naselje like this
     # pd.DataFrame(buildings_with_naselje).to_csv('/home/branko/src/adresniregistar/data/temp_buildings_with_naselje.csv', index=False)
     # buildings_with_naselje = pd.read_csv('/home/branko/src/adresniregistar/data/temp_buildings_with_naselje.csv')

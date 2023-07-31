@@ -105,7 +105,7 @@ generate_b_hn_ratio: download_from_osm
 		python3 src/generate_building_addresses_ratio.py;\
 	fi
 
-report: analyze quality_assurance
+report: analyze quality_assurance generate_b_hn_ratio
 	@echo "Generating report"
 	mkdir -p data/report
 	@if [ "$(AR_INCREMENTAL_UPDATE)" = "1" ]; then\
