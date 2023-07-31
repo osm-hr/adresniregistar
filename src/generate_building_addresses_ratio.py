@@ -57,6 +57,7 @@ def main():
     if total_csvs < 168:
         raise Exception("Some or all RGZ files missing! Bailing out")
 
+    print("Getting all RGZ addresses")
     df_rgz_per_opstina = []
     for i, file in enumerate(sorted(os.listdir(rgz_csv_path))):
         if not file.endswith(".csv"):
@@ -77,6 +78,7 @@ def main():
     # gdf_rgz_addresses = gpd.GeoDataFrame(gdf_rgz_addresses, geometry='rgz_geometry', crs="EPSG:4326")
     # gdf_rgz_addresses.sindex
 
+    print("Calculating address count per naselje")
     rgz_addresses_with_naselje = gdf_rgz_addresses.sjoin(gdf_naselje, how='inner', predicate='intersects')
     rgz_addresses_count_per_naselje = rgz_addresses_with_naselje.groupby(['naselje_imel', 'opstina_imel'])['naselje_imel', 'opstina_imel'].count()
     gdf_naselje = gdf_naselje.join(rgz_addresses_count_per_naselje, how='left', on=['naselje_imel', 'opstina_imel'], rsuffix='_addresses_count')
@@ -87,6 +89,7 @@ def main():
 
     # Calculate buildings per opstina
     # Get all OSM buildings from PBF, then do spatial join and count them per naselje
+    print("Getting all OSM buildings")
     gdf_buildings = get_all_buildings(pbf_file)
 
     # For testing purposes, save and load gdf_buildings like this
@@ -96,7 +99,7 @@ def main():
     #gdf_buildings = gpd.GeoDataFrame(gdf_buildings, geometry='osm_geometry', crs="EPSG:4326")
     #gdf_buildings.sindex
 
-    print("Finding naselje for each building")
+    print("Calculating building count per naselje")
     buildings_with_naselje = gdf_buildings.sjoin(gdf_naselje, how='inner', predicate='intersects')
     buildings_with_naselje.drop(['index_right', 'naselje_maticni_broj', 'naselje_ime', 'naselje_povrsina',
                                  'opstina_maticni_broj', 'opstina_ime', 'wkt'],
@@ -117,6 +120,7 @@ def main():
     gdf_naselje['building_count'] = gdf_naselje['building_count'].astype(int)
 
     # Prepare for export
+    print("Exporting building / housenumber ratio to CSV")
     gdf_naselje.drop(['naselje_ime', 'naselje_povrsina', 'opstina_maticni_broj', 'opstina_ime', 'geometry', 'wkt'],
                      inplace=True, axis=1)
     pd.DataFrame(gdf_naselje).to_csv(os.path.join(data_path, 'b-hn/building_housenumber_per_naselje.csv'),
