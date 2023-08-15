@@ -13,7 +13,7 @@ from seleniumwire import webdriver
 
 from common import OPSTINE_TO_SKIP
 
-SLEEP_TIME = 1
+SLEEP_TIME = 2
 
 
 class EntityType(Enum):
@@ -101,13 +101,13 @@ def select_kucni_broj(driver):
 
 def download_all_from_rgz(rgz_username, rgz_password, download_path,
                           entity_type=EntityType.KUCNI_BROJEVI, dataFormat = DataFormat.CSV):
-    profile = webdriver.FirefoxProfile()
+    profile = webdriver.FirefoxOptions()
     profile.set_preference("browser.download.folderList", 2)
     profile.set_preference("browser.download.manager.showWhenStarting", False)
     profile.set_preference("browser.download.dir", download_path)
     profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-gzip")
 
-    driver = webdriver.Firefox(firefox_profile=profile)
+    driver = webdriver.Firefox(options=profile)
     driver.implicitly_wait(10)
 
     login(driver, rgz_username, rgz_password)
