@@ -22,7 +22,7 @@ project = pyproj.Transformer.from_crs(wgs84, utm, always_xy=True).transform
 
 def load_addresses(addresses_csv_path):
     results = {}
-    with open(addresses_csv_path) as addresses_csv_file:
+    with open(addresses_csv_path, encoding='utf=8') as addresses_csv_file:
         reader = csv.DictReader(addresses_csv_file)
 
         for row in reader:
@@ -80,7 +80,7 @@ def fix_deleted_to_added(rgz_path):
 
     print('Loading added addresses')
     new_addresses = []
-    with open(os.path.join(rgz_path, 'addresses-added.csv')) as addresses_new_file:
+    with open(os.path.join(rgz_path, 'addresses-added.csv'), encoding='utf=8') as addresses_new_file:
         reader = csv.DictReader(addresses_new_file)
 
         for row in reader:
@@ -98,7 +98,7 @@ def fix_deleted_to_added(rgz_path):
 
     print('Loading removed addresses')
     old_addresses = []
-    with open(os.path.join(rgz_path, 'addresses-removed.csv')) as addresses_old_file:
+    with open(os.path.join(rgz_path, 'addresses-removed.csv'), encoding='utf=8') as addresses_old_file:
         reader = csv.DictReader(addresses_old_file)
 
         for row in reader:
@@ -119,7 +119,7 @@ def fix_deleted_to_added(rgz_path):
             print(f"{i_progress}/{len(old_addresses)}")
         osm_entities_found = get_ref_kucni_broj_from_overpass(overpass_api, old_address['kucni_broj_id'])
         if len(osm_entities_found) == 0:
-            #print(f'Skipping {old_address["ulica"]} {old_address["kucni_broj"]} - do not exist in OSM')
+            # print(f'Skipping {old_address["ulica"]} {old_address["kucni_broj"]} - do not exist in OSM')
             continue
 
         candidate_new_address = find_in_new_addresses(new_addresses, old_address['ulica'], old_address['kucni_broj'], old_address['geometry'])
@@ -135,12 +135,15 @@ def fix_deleted_to_added(rgz_path):
 
                 entity['tag']['ref:RS:kucni_broj'] = candidate_new_address["kucni_broj_id"]
                 print(f'Updated ref:RS:kucni_broj of {osm_entity_found} from {old_address["kucni_broj_id"]} to {candidate_new_address["kucni_broj_id"]}')
+                for k in entity['tag']:
+                    print(f'    {k}={entity["tag"][k]}')
                 if osm_entity_found[0] == 'n':
                     api.NodeUpdate(entity)
                 elif osm_entity_found[0] == 'w':
                     api.WayUpdate(entity)
                 else:
                     api.RelationUpdate(entity)
+            time.sleep(1)
         else:
             print(f'bogus for {old_address["opstina"]} - {old_address["ulica"]} {old_address["kucni_broj"]}')
     api.flush()
@@ -156,7 +159,7 @@ def fix_changed(rgz_path, street_mappings):
 
     print('Loading changed addresses')
     changed_addresses = []
-    with open(os.path.join(rgz_path, 'addresses-changed.csv')) as addresses_changed_file:
+    with open(os.path.join(rgz_path, 'addresses-changed.csv'), encoding='utf=8') as addresses_changed_file:
         reader = csv.DictReader(addresses_changed_file)
 
         for row in reader:
@@ -177,7 +180,7 @@ def fix_changed(rgz_path, street_mappings):
         if i % 100 == 0:
             print(f'{i}/{len(changed_addresses)}')
         if changed_address["ulica_old"] == changed_address["ulica_new"] and changed_address["kucni_broj_old"] == changed_address["kucni_broj_new"]:
-            print("Nothing to change")
+            # print("Nothing to change")
             continue
 
         osm_entities_found = get_ref_kucni_broj_from_overpass(overpass_api, changed_address['kucni_broj_id'])
@@ -201,13 +204,14 @@ def fix_changed(rgz_path, street_mappings):
             if addrstreet == newstreet and addrhousenumber == newhousenumber:
                 print(f"Already fixed ('{changed_address['ulica_old']} {changed_address['kucni_broj_old']}' => '{changed_address['ulica_old']} {changed_address['kucni_broj_new']}')")
                 continue
+            for k in entity['tag']:
+                print(f'    {k}={entity["tag"][k]}')
             print(f"Changing '{addrstreet} {addrhousenumber}' => '{newstreet} {newhousenumber}'")
             response = '' #input()
             if response != '' and response.lower() != 'y' and response.lower() != u'з':
                 continue
             entity['tag']['addr:street'] = newstreet
             entity['tag']['addr:housenumber'] = newhousenumber
-            time.sleep(0.1)
 
             if osm_entity_found[0] == 'n':
                 api.NodeUpdate(entity)
@@ -215,6 +219,7 @@ def fix_changed(rgz_path, street_mappings):
                 api.WayUpdate(entity)
             else:
                 api.RelationUpdate(entity)
+            time.sleep(1)
     api.flush()
 
 
@@ -231,7 +236,7 @@ def create_csv_files(rgz_path):
         if rgz_kucni_broj_id not in addresses_old:
             new_addresses.append(addresses_new[rgz_kucni_broj_id])
 
-    with open(os.path.join(rgz_path, 'addresses-added.csv'), 'w') as addresses_added_file:
+    with open(os.path.join(rgz_path, 'addresses-added.csv'), 'w', encoding='utf=8') as addresses_added_file:
         writer = csv.DictWriter(
             addresses_added_file, fieldnames=['kucni_broj_id', 'opstina_mb', 'opstina',
                                            'naselje_mb', 'naselje', 'ulica_mb', 'ulica',
@@ -247,7 +252,7 @@ def create_csv_files(rgz_path):
         if rgz_kucni_broj_id not in addresses_new:
             removed_addresses.append(addresses_old[rgz_kucni_broj_id])
 
-    with open(os.path.join(rgz_path, 'addresses-removed.csv'), 'w') as addresses_removed_file:
+    with open(os.path.join(rgz_path, 'addresses-removed.csv'), 'w', encoding='utf=8') as addresses_removed_file:
         writer = csv.DictWriter(
             addresses_removed_file, fieldnames=['kucni_broj_id', 'opstina_mb', 'opstina',
                                               'naselje_mb', 'naselje', 'ulica_mb', 'ulica',
@@ -304,9 +309,9 @@ def create_csv_files(rgz_path):
                 'geometry_changed_meters': geometry_changed
             })
 
-    with open(os.path.join(rgz_path, 'addresses-changed.csv'), 'w') as addresses_chanfed_file:
+    with open(os.path.join(rgz_path, 'addresses-changed.csv'), 'w', encoding='utf=8') as addresses_changed_file:
         writer = csv.DictWriter(
-            addresses_chanfed_file, fieldnames=[
+            addresses_changed_file, fieldnames=[
                 'kucni_broj_id', 'opstina_mb', 'opstina',
                 'naselje_mb_old', 'naselje_mb_new', 'naselje_mb_changed',
                 'naselje_old', 'naselje_new', 'naselje_changed',
@@ -329,7 +334,7 @@ def main():
     street_mappings = load_mappings(data_path)
 
     #create_csv_files(rgz_path)
-    #fix_deleted_to_added(rgz_path, street_mappings)
+    #fix_deleted_to_added(rgz_path)
     fix_changed(rgz_path, street_mappings)
 
 
