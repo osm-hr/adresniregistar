@@ -19,6 +19,9 @@ wgs84 = pyproj.CRS('EPSG:4326')
 utm = pyproj.CRS('EPSG:32634')
 project = pyproj.Transformer.from_crs(wgs84, utm, always_xy=True).transform
 
+# Set this to date when RGZ was refreshed
+RGZ_LAST_UPDATE = None
+
 
 def load_addresses(addresses_csv_path):
     results = {}
@@ -72,7 +75,7 @@ def fix_deleted_to_added(rgz_path):
     sa istim imenom ulice i kucnim brojom i unutar 100m i update-uje im ref:RS:kucni_broj
     """
     api = osmapi.OsmApi(passwordfile='osm-password', changesetauto=True, changesetautosize=100, changesetautotags={
-        "comment": f"RGZ address import (updating ref:RS:kucni_broj after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html)",
+        "comment": f"RGZ address import (updating ref:RS:kucni_broj after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html",
         "tag": "mechanical=yes",
         "source": "RGZ_AR"
     })
@@ -123,35 +126,54 @@ def fix_deleted_to_added(rgz_path):
             continue
 
         candidate_new_address = find_in_new_addresses(new_addresses, old_address['ulica'], old_address['kucni_broj'], old_address['geometry'])
-        if candidate_new_address:
-            print(f'{old_address["opstina"]} - {old_address["ulica"]} {old_address["kucni_broj"]} - distance {round(candidate_new_address["geometry"].distance(old_address["geometry"]))}m')
-            for osm_entity_found in osm_entities_found:
-                if osm_entity_found[0] == 'n':
-                    entity = api.NodeGet(osm_entity_found[1:])
-                elif osm_entity_found[0] == 'w':
-                    entity = api.WayGet(osm_entity_found[1:])
-                else:
-                    entity = api.RelationGet(osm_entity_found[1:])
 
+        for osm_entity_found in osm_entities_found:
+            if osm_entity_found[0] == 'n':
+                entity = api.NodeGet(osm_entity_found[1:])
+            elif osm_entity_found[0] == 'w':
+                entity = api.WayGet(osm_entity_found[1:])
+            else:
+                entity = api.RelationGet(osm_entity_found[1:])
+
+            if candidate_new_address:
+                print(f'{old_address["opstina"]} - {old_address["ulica"]} {old_address["kucni_broj"]} - distance {round(candidate_new_address["geometry"].distance(old_address["geometry"]))}m')
+            else:
+                print(f'Not found for {old_address["opstina"]} - {old_address["ulica"]} {old_address["kucni_broj"]}')
+
+            for k in entity['tag']:
+                print(f'    {k}={entity["tag"][k]}')
+
+            if candidate_new_address:
                 entity['tag']['ref:RS:kucni_broj'] = candidate_new_address["kucni_broj_id"]
-                print(f'Updated ref:RS:kucni_broj of {osm_entity_found} from {old_address["kucni_broj_id"]} to {candidate_new_address["kucni_broj_id"]}')
-                for k in entity['tag']:
-                    print(f'    {k}={entity["tag"][k]}')
-                if osm_entity_found[0] == 'n':
-                    api.NodeUpdate(entity)
-                elif osm_entity_found[0] == 'w':
-                    api.WayUpdate(entity)
+            else:
+                entity['tag']['removed:ref:RS:kucni_broj'] = entity['tag']['ref:RS:kucni_broj']
+                note_text = f'Izbrisano iz RGZ-a ' + RGZ_LAST_UPDATE
+                if 'note' not in entity['tag']:
+                    entity['tag']['note'] = note_text
                 else:
-                    api.RelationUpdate(entity)
+                    entity['tag']['note'] = entity['tag']['note'] + ';' + note_text
+                del entity['tag']['ref:RS:kucni_broj']
+
+            if osm_entity_found[0] == 'n':
+                api.NodeUpdate(entity)
+            elif osm_entity_found[0] == 'w':
+                api.WayUpdate(entity)
+            else:
+                api.RelationUpdate(entity)
+
+            if candidate_new_address:
+                print(f'Updated ref:RS:kucni_broj of {osm_entity_found} from {old_address["kucni_broj_id"]} to {candidate_new_address["kucni_broj_id"]}')
+            else:
+                print(f'Removed ref:RS:kucni_broj of {osm_entity_found} and added removed:ref:RS:kucni_broj')
             time.sleep(1)
-        else:
-            print(f'bogus for {old_address["opstina"]} - {old_address["ulica"]} {old_address["kucni_broj"]}')
+
+        time.sleep(1)
     api.flush()
 
 
 def fix_changed(rgz_path, street_mappings):
     api = osmapi.OsmApi(passwordfile='osm-password', changesetauto=True, changesetautosize=100, changesetautotags={
-        "comment": f"RGZ address import (updating street and housenumber after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html)",
+        "comment": f"RGZ address import (updating street and housenumber after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html",
         "tag": "mechanical=yes",
         "source": "RGZ_AR"
     })
@@ -326,6 +348,8 @@ def create_csv_files(rgz_path):
 
 
 def main():
+    if not RGZ_LAST_UPDATE:
+        raise Exception("Set RGZ_LAST_UPDATE to date when RGZ was refreshed, like '2023-08-15'")
     cwd = os.getcwd()
     data_path = os.path.join(cwd, 'data/')
     rgz_path = os.path.join(cwd, 'data/rgz')
@@ -333,8 +357,8 @@ def main():
     print("Loading normalized street names mapping")
     street_mappings = load_mappings(data_path)
 
-    #create_csv_files(rgz_path)
-    #fix_deleted_to_added(rgz_path)
+    create_csv_files(rgz_path)
+    fix_deleted_to_added(rgz_path)
     fix_changed(rgz_path, street_mappings)
 
 
