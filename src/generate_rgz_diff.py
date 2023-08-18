@@ -19,7 +19,7 @@ wgs84 = pyproj.CRS('EPSG:4326')
 utm = pyproj.CRS('EPSG:32634')
 project = pyproj.Transformer.from_crs(wgs84, utm, always_xy=True).transform
 
-# Set this to date when RGZ was refreshed
+# Set this to date when RGZ was refreshed, something like '2023-08-15'
 RGZ_LAST_UPDATE = None
 
 
