@@ -45,6 +45,7 @@ clean_quality_assurance: clean_report
 		rm -f data/qa/addresses_in_buildings_per_opstina.csv;\
 		rm -f data/qa/osm_import_qa.csv;\
 		rm -f data/qa/unaccounted_osm_addresses.csv;\
+		rm -f data/qa/removed_addresses.csv;\
 	fi
 
 clean_generate_b_hn_ratio: clean_report
@@ -96,6 +97,7 @@ quality_assurance: download_from_osm
 		mkdir -p data/qa;\
 		python3 src/quality_assurance.py;\
 		python3 src/osm_import_qa.py;\
+		python3 src/generate_removed_addresses_qa.py;\
 	fi
 
 generate_b_hn_ratio: download_from_osm
@@ -113,6 +115,7 @@ report: analyze quality_assurance generate_b_hn_ratio
 	else\
 		mkdir -p data/report/opstine;\
 		mkdir -p data/report/b-hn;\
+		mkdir -p data/report/removed_addresses;\
 	fi
 	python3 src/create_report.py
 	@if [ "$(AR_INCREMENTAL_UPDATE)" != "1" ]; then\

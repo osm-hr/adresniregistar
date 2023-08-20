@@ -293,7 +293,6 @@ def generate_addresses_in_buildings(context):
                 addresses=[],
                 opstina_name=opstina_name,
                 currentDate=current_date,
-                currentDateSrb=current_date_srb,
                 resolution_stats={},
                 osm_files_move_address_to_building=[]
             )
@@ -307,7 +306,6 @@ def generate_addresses_in_buildings(context):
         total=total,
         resolution_stats=resolution_stats,
         currentDate=current_date,
-        currentDateSrb=current_date_srb
     )
 
     with open(html_path, 'w', encoding='utf-8') as fh:
@@ -403,7 +401,6 @@ def generate_unaccounted_osm_qa(context):
                 addresses=[],
                 opstina_name=opstina_name,
                 currentDate=current_date,
-                currentDateSrb=current_date_srb
             )
             opstina_html_path = os.path.join(report_osm_address_path, f'{opstina_name}.html')
             with open(opstina_html_path, 'w', encoding='utf-8') as fh:
@@ -414,7 +411,6 @@ def generate_unaccounted_osm_qa(context):
         opstine=opstine,
         total=total,
         currentDate=current_date,
-        currentDateSrb=current_date_srb
     )
 
     with open(html_path, 'w', encoding='utf-8') as fh:
@@ -541,8 +537,9 @@ def generate_building_addresses_ratio(context):
     env = context['env']
     cwd = context['cwd']
     data_path = context['data_path']
+    bhn_path = os.path.join(data_path, 'b-hn')
 
-    df_naselja = pd.read_csv(os.path.join(data_path, 'building_housenumber_per_naselje.csv'))
+    df_naselja = pd.read_csv(os.path.join(bhn_path, 'building_housenumber_per_naselje.csv'))
     for opstina in df_naselja.opstina_imel.unique():
         generate_building_addresses_ratio_opstina(context, df_naselja[df_naselja.opstina_imel == opstina], opstina)
 
@@ -587,6 +584,109 @@ def generate_building_addresses_ratio(context):
         fh.write(output)
 
 
+def generate_removed_addresses(context):
+    env = context['env']
+    cwd = context['cwd']
+
+    qa_path = os.path.join(cwd, 'data/qa')
+    analysis_path = os.path.join(cwd, 'data/analysis')
+    report_path = os.path.join(cwd, 'data/report')
+    html_path = os.path.join(report_path, 'removed_addresses.html')
+    report_removed_address_path = os.path.join(report_path, 'removed_addresses')
+
+    template = env.get_template('qa/removed_addresses_opstina.html.tpl')
+
+    if not os.path.exists(report_removed_address_path):
+        os.mkdir(report_removed_address_path)
+
+    df_removed_osm_addresses = pd.read_csv(os.path.join(qa_path, 'removed_addresses.csv'))
+
+    opstine = []
+    total = {
+        'count': 0
+    }
+
+    for opstina_name, df_addresses_in_opstina in df_removed_osm_addresses.sort_values('opstina_imel').groupby('opstina_imel'):
+        count = len(df_addresses_in_opstina)
+        total['count'] += count
+        opstine.append({
+            'name': opstina_name,
+            'count': count
+        })
+        addresses = []
+
+        opstina_html_path = os.path.join(report_removed_address_path, f'{opstina_name}.html')
+        if os.path.exists(opstina_html_path):
+            print(f"Page data/report/removed_addresses/{opstina_name}.html already exists")
+            continue
+
+        print(f"Generating data/report/removed_addresses/{opstina_name}.html")
+
+        for _, df_address in df_addresses_in_opstina.iterrows():
+            address_text = ''
+            osm_id = df_address['osm_id']
+            street = df_address['osm_street']
+            house_number = df_address['osm_housenumber']
+
+            osm_type = 'way' if osm_id[0] == 'w' else 'relation' if osm_id[0] == 'r' else 'node'
+            address = {
+                'osm_link': f'https://openstreetmap.org/{osm_type}/{osm_id[1:]}',
+                'osm_id': osm_id,
+                'street': df_address['osm_street'] if pd.notna(df_address['osm_street']) else '',
+                'housenumber': df_address['osm_housenumber'] if pd.notna(df_address['osm_housenumber']) else '',
+                'removal_date': df_address['removal_date'] if pd.notna(df_address['removal_date']) else '',
+                'rgz_id': df_address['removed:ref:RS:kucni_broj'] if pd.notna(df_address['removed:ref:RS:kucni_broj']) else '',
+            }
+            addresses.append(address)
+
+        output = template.render(
+            currentDate=context['dates']['short'],
+            reportDate=context['dates']['report'],
+            osmDataDate=context['dates']['osm_data'],
+            addresses=addresses,
+            opstina_name=opstina_name
+        )
+
+        with open(opstina_html_path, 'w', encoding='utf-8') as fh:
+            fh.write(output)
+
+    if os.path.exists(html_path):
+        print("Page data/report/removed_addresses.html already exists")
+        return
+
+    print("Generating data/report/removed_addresses.html")
+
+    for i, file in enumerate(sorted(os.listdir(analysis_path))):
+        if not file.endswith(".csv"):
+            continue
+        opstina_name = file[:-4]
+        if not any(o for o in opstine if o['name'] == opstina_name):
+            opstine.append({
+                'name': opstina_name,
+                'count': 0
+            })
+            output = template.render(
+                addresses=[],
+                opstina_name=opstina_name,
+                currentDate=context['dates']['short']
+            )
+            opstina_html_path = os.path.join(report_removed_address_path, f'{opstina_name}.html')
+            with open(opstina_html_path, 'w', encoding='utf-8') as fh:
+                fh.write(output)
+
+    template = env.get_template('qa/removed_addresses.html.tpl')
+    output = template.render(
+        opstine=opstine,
+        total=total,
+        reportDate=context['dates']['report'],
+        osmDataDate=context['dates']['osm_data'],
+        currentDate=context['dates']['short']
+    )
+
+    with open(html_path, 'w', encoding='utf-8') as fh:
+        fh.write(output)
+
+
 def generate_qa(context):
     env = context['env']
     cwd = context['cwd']
@@ -598,6 +698,7 @@ def generate_qa(context):
     generate_addresses_in_buildings(context)
     generate_unaccounted_osm_qa(context)
     generate_building_addresses_ratio(context)
+    generate_removed_addresses(context)
 
     report_path = os.path.join(cwd, 'data/report')
     html_path = os.path.join(report_path, 'qa.html')
@@ -632,10 +733,10 @@ def main():
 
     running_file = os.path.join(data_path, 'running')
     if not os.path.exists(running_file):
-        raise Exception("File data/running missing, no way to determine date when OSM data was retrieved")
+       raise Exception("File data/running missing, no way to determine date when OSM data was retrieved")
     with open(running_file, 'r') as file:
-        file_content = file.read().rstrip()
-        osm_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y %H:%M')
+       file_content = file.read().rstrip()
+       osm_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y %H:%M')
 
     context = {
         'env': env,
