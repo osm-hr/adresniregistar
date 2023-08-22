@@ -166,8 +166,6 @@ def generate_addresses_in_buildings(context):
     env = context['env']
     cwd = context['cwd']
 
-    current_date = datetime.date.today().strftime('%Y-%m-%d')
-    current_date_srb = datetime.date.today().strftime('%d.%m.%Y')
     analysis_path = os.path.join(cwd, 'data/analysis')
     qa_path = os.path.join(cwd, 'data/qa')
     report_path = os.path.join(cwd, 'data/report')
@@ -291,11 +289,13 @@ def generate_addresses_in_buildings(context):
                 'count': 0
             })
             output = template.render(
+                currentDate=context['dates']['short'],
+                reportDate=context['dates']['report'],
+                osmDataDate=context['dates']['osm_data'],
                 addresses=[],
                 opstina_name=opstina_name,
-                currentDate=current_date,
                 resolution_stats={},
-                osm_files_move_address_to_building=[]
+                osm_files_move_address_to_building=[],
             )
             opstina_html_path = os.path.join(report_qa_address_path, f'{opstina_name}.html')
             with open(opstina_html_path, 'w', encoding='utf-8') as fh:
@@ -303,10 +303,12 @@ def generate_addresses_in_buildings(context):
 
     template = env.get_template('qa/addresses_in_buildings.html.tpl')
     output = template.render(
+        currentDate=context['dates']['short'],
+        reportDate=context['dates']['report'],
+        osmDataDate=context['dates']['osm_data'],
         opstine=opstine,
         total=total,
         resolution_stats=resolution_stats,
-        currentDate=current_date,
     )
 
     with open(html_path, 'w', encoding='utf-8') as fh:
@@ -316,9 +318,6 @@ def generate_addresses_in_buildings(context):
 def generate_unaccounted_osm_qa(context):
     env = context['env']
     cwd = context['cwd']
-
-    current_date = datetime.date.today().strftime('%Y-%m-%d')
-    current_date_srb = datetime.date.today().strftime('%d.%m.%Y')
 
     qa_path = os.path.join(cwd, 'data/qa')
     analysis_path = os.path.join(cwd, 'data/analysis')
@@ -399,9 +398,11 @@ def generate_unaccounted_osm_qa(context):
                 'count': 0
             })
             output = template.render(
+                currentDate=context['dates']['short'],
+                reportDate=context['dates']['report'],
+                osmDataDate=context['dates']['osm_data'],
                 addresses=[],
                 opstina_name=opstina_name,
-                currentDate=current_date,
             )
             opstina_html_path = os.path.join(report_osm_address_path, f'{opstina_name}.html')
             with open(opstina_html_path, 'w', encoding='utf-8') as fh:
@@ -409,9 +410,11 @@ def generate_unaccounted_osm_qa(context):
 
     template = env.get_template('qa/unaccounted_osm_addresses.html.tpl')
     output = template.render(
+        currentDate=context['dates']['short'],
+        reportDate=context['dates']['report'],
+        osmDataDate=context['dates']['osm_data'],
         opstine=opstine,
         total=total,
-        currentDate=current_date,
     )
 
     with open(html_path, 'w', encoding='utf-8') as fh:
@@ -667,9 +670,11 @@ def generate_removed_addresses(context):
                 'count': 0
             })
             output = template.render(
+                currentDate=context['dates']['short'],
+                reportDate=context['dates']['report'],
+                osmDataDate=context['dates']['osm_data'],
                 addresses=[],
                 opstina_name=opstina_name,
-                currentDate=context['dates']['short']
             )
             opstina_html_path = os.path.join(report_removed_address_path, f'{opstina_name}.html')
             with open(opstina_html_path, 'w', encoding='utf-8') as fh:
@@ -677,11 +682,11 @@ def generate_removed_addresses(context):
 
     template = env.get_template('qa/removed_addresses.html.tpl')
     output = template.render(
-        opstine=opstine,
-        total=total,
         reportDate=context['dates']['report'],
         osmDataDate=context['dates']['osm_data'],
-        currentDate=context['dates']['short']
+        currentDate=context['dates']['short'],
+        opstine=opstine,
+        total=total,
     )
 
     with open(html_path, 'w', encoding='utf-8') as fh:
