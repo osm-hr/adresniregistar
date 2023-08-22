@@ -403,7 +403,12 @@ def find_duplicated_refs(cwd):
 
     output_dict = []
     for k, v in crah.addresses.items():
-        if len(v) > 1:
+        streets_set = set([s['tags']['addr:street'] if 'addr:street' in s['tags'] else '' for s in v])
+        housenumbers_set = set([s['tags']['addr:housenumber'] if 'addr:housenumber' in s['tags'] else '' for s in v])
+        streets_same = len(streets_set) == 1 or '' in streets_set
+        housenumbers_same = len(housenumbers_set) == 1 or '' in housenumbers_set
+        different_addresses = not streets_same or not housenumbers_same
+        if different_addresses:
             output_dict.append({
                 'ref:RS:kucni_broj': k,
                 'duplicates': v
