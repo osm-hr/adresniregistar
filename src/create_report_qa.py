@@ -145,7 +145,7 @@ def generate_qa_duplicated_refs(context):
             housenumber = dup['tags']['addr:housenumber'] if 'addr:housenumber' in dup['tags'] else ''
             links.append({
                 'href': f'https://www.openstreetmap.org/{dup["type"]}/{dup["id"]}',
-                'name': f'{street_name} {housenumber}' if len(street_name) > 0 or len(housenumber) > 0 else f'{dup["type"]}'
+                'name': f'{street_name} {housenumber}' if len(street_name) > 0 or len(housenumber) > 0 else f'{dup["type"]} {dup["id"]}'
             })
         duplicates.append({
             'id': address['ref:RS:kucni_broj'],
@@ -153,6 +153,7 @@ def generate_qa_duplicated_refs(context):
         })
     template = env.get_template('qa/duplicated_refs.html.tpl')
     output = template.render(
+        duplicates=duplicates,
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
         osmDataDate=context['dates']['osm_data']

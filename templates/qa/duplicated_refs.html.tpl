@@ -45,10 +45,6 @@ $(document).ready( function () {
 		order: [[0, 'asc']],
 		lengthMenu: [ [10, 100, -1], [10, 50, "All"] ],
 		columnDefs: [
-			//{ targets: [10, 11, 12, 13, 14], "orderable": false},
-			//{ targets: [1], visible: false },
-			{ targets: [2, 3, 4, 5], className: 'text-right' },
-			//{ targets: '_all', visible: false }
 		]
 	});
 } );
@@ -56,7 +52,7 @@ $(document).ready( function () {
 
 
 {% if len(duplicates) > 0 %}
-<table id="list" class="table table-sm table-striped table-bordered table-hover" style="width:100%">
+<table id="list" class="table table-sm table-striped table-bordered table-hover w-50">
 <thead class="thead-dark sticky-top">
 	<tr>
 		<th>ref:RS:kucni_broj</th>
