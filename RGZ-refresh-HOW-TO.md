@@ -33,6 +33,8 @@ i ako obrisana adresa ima istu ulicu i broj kao neka novododata, onda menja `ref
 Tile server generiše korisnik mpele, ali treba mu izgenerisati novi .shp fajl. Otvori se QGIS, učita se
 data/rgz/addresses.csv (Layer->Add layer->Add Delimited Text Layer). Stavi se WKT i autodetect i EPSG:4326.
 
-Sad treba snimiti ovo kao .shp. Desni klik na sloj, pa Export->Save Features As. Odabrati "ESRI Shapefile" i
+Treba sad uraditi reproject u EPSG:3857.
+
+Sad treba novi sloj snimiti kao .shp. Desni klik na sloj, pa Export->Save Features As. Odabrati "ESRI Shapefile" i
 odštiklirati sve osim "rgz_ulica" i "rgz_kucni_broj". Zipuju se svi dobijeni fajlovi (treba da bude oko 50MB) i pošalje
 mpeletu (okači se link na forum).
