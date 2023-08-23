@@ -239,6 +239,10 @@ def find_unaccounted_osm_addresses(cwd):
     gdf_osm_addresses.sindex
     print(f"Found all building geometries ({len(ceh.entities)}) from PBF")
 
+    # Remove those with "removed:ref:RS:kucni_broj" tag, as they are counted differently (as removed)
+    gdf_osm_addresses['is_removed'] = gdf_osm_addresses['tags'].apply(lambda tags: True if 'removed:ref:RS:kucni_broj' in tags else False)
+    gdf_osm_addresses = gdf_osm_addresses[~gdf_osm_addresses.is_removed]
+
     # For testing purposes, save and load gdf_buildings like this
     # pd.DataFrame(gdf_osm_addresses).to_csv('/home/branko/src/adresniregistar/data/gdf_osm_addresses.csv', index=False)
     # gdf_osm_addresses = pd.read_csv('/home/branko/src/adresniregistar/data/gdf_osm_addresses.csv')
@@ -261,7 +265,7 @@ def find_unaccounted_osm_addresses(cwd):
 
     addresses_per_opstina.drop(['osm_country', 'osm_city', 'osm_postcode', 'ref:RS:kucni_broj', 'tags', 'index_right',
                                 'opstina_maticni_broj', 'opstina_ime', 'opstina_povrsina', 'okrug_sifra', 'okrug_ime',
-                                'okrug_imel', 'wkt'],
+                                'okrug_imel', 'wkt', 'is_removed'],
                                inplace=True, axis=1)
     print("Split all addresses per opstina")
 
