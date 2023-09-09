@@ -22,7 +22,7 @@ def do_opstina(data_path, street_mappings, opstina):
         naselje_name_lat = cyr2lat(naselje_name)
         print(f"Processing municipality {opstina} and settlement {naselje_name_lat}")
         api = osmapi.OsmApi(passwordfile='osm-password', changesetauto=True, changesetautosize=100, changesetautotags={
-            "comment": f"RS address import in {opstina}/{naselje_name_lat} (adding ref:RS:kucni_broj to existing addresses, https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html)",
+            "comment": f"RGZ address import in {opstina}/{naselje_name_lat} (adding ref:RS:kucni_broj to existing addresses, https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html)",
             "tag": "mechanical=yes",
             "source": "RGZ_AR"
         })

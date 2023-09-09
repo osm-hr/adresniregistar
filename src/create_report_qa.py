@@ -16,7 +16,7 @@ def generate_osm_files_move_address_to_building(context, report_qa_address_path,
     env = context['env']
     osm_entities_cache = context['osm_entities_cache']
 
-    split_limit = 10
+    split_limit = 100
     opstina_name_norm = normalize_name(opstina_name)
 
     template = env.get_template('move_address_to_building.osm')

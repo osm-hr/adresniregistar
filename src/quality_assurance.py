@@ -244,8 +244,8 @@ def find_unaccounted_osm_addresses(cwd):
     gdf_osm_addresses = gdf_osm_addresses[~gdf_osm_addresses.is_removed]
 
     # For testing purposes, save and load gdf_buildings like this
-    # pd.DataFrame(gdf_osm_addresses).to_csv('/home/branko/src/adresniregistar/data/gdf_osm_addresses.csv', index=False)
-    # gdf_osm_addresses = pd.read_csv('/home/branko/src/adresniregistar/data/gdf_osm_addresses.csv')
+    # pd.DataFrame(gdf_osm_addresses).to_csv('~/src/adresniregistar/ar/data/gdf_osm_addresses.csv', index=False)
+    # gdf_osm_addresses = pd.read_csv('~/src/adresniregistar/ar/data/gdf_osm_addresses.csv')
     # gdf_osm_addresses['osm_geometry'] = gdf_osm_addresses.osm_geometry.apply(wkt.loads)
     # gdf_osm_addresses = gpd.GeoDataFrame(gdf_osm_addresses, geometry='osm_geometry', crs="EPSG:4326")
     # gdf_osm_addresses.sindex
@@ -302,8 +302,8 @@ def find_addresses_in_buildings(cwd):
     print(f"Found all building geometries ({len(ceh.entities)}) from PBF")
 
     # For testing purposes, save and load gdf_buildings like this
-    # pd.DataFrame(gdf_buildings).to_csv('/home/branko/src/adresniregistar/data/gdf_buildings.csv', index=False)
-    # gdf_buildings = pd.read_csv('/home/branko/src/adresniregistar/data/gdf_buildings.csv')
+    # pd.DataFrame(gdf_buildings).to_csv('~/src/adresniregistar/ar/data/gdf_buildings.csv', index=False)
+    # gdf_buildings = pd.read_csv('~/src/adresniregistar/ar/data/gdf_buildings.csv')
     # gdf_buildings['osm_geometry'] = gdf_buildings.osm_geometry.apply(wkt.loads)
     # gdf_buildings = gpd.GeoDataFrame(gdf_buildings, geometry='osm_geometry', crs="EPSG:4326")
     # gdf_buildings.sindex
@@ -331,8 +331,8 @@ def find_addresses_in_buildings(cwd):
     print("Split all addresses per opstina")
 
     # For testing purposes, save and load addresses_per_opstina like this
-    # pd.DataFrame(addresses_per_opstina).to_csv('/home/branko/src/adresniregistar/data/addresses_per_opstina.csv', index=False)
-    # addresses_per_opstina = pd.read_csv('/home/branko/src/adresniregistar/data/addresses_per_opstina.csv')
+    # pd.DataFrame(addresses_per_opstina).to_csv('~/src/adresniregistar/ar/data/addresses_per_opstina.csv', index=False)
+    # addresses_per_opstina = pd.read_csv('~/src/adresniregistar/ar/data/addresses_per_opstina.csv')
     # addresses_per_opstina['osm_geometry'] = addresses_per_opstina.osm_geometry.apply(wkt.loads)
     # addresses_per_opstina = gpd.GeoDataFrame(addresses_per_opstina, geometry='osm_geometry', crs="EPSG:4326")
     # addresses_per_opstina.sindex

@@ -72,8 +72,8 @@ def main():
     gdf_rgz_addresses.sindex
 
     # For testing purposes, save and load addresses like this
-    # pd.DataFrame(gdf_rgz).to_csv('/home/branko/src/adresniregistar/data/temp_gdf_rgz_addresses.csv', index=False)
-    # gdf_rgz_addresses = pd.read_csv('/home/branko/src/adresniregistar/data/temp_gdf_rgz_addresses.csv')
+    # pd.DataFrame(gdf_rgz).to_csv('~/src/adresniregistar/ar/data/temp_gdf_rgz_addresses.csv', index=False)
+    # gdf_rgz_addresses = pd.read_csv('~/src/adresniregistar/ar/data/temp_gdf_rgz_addresses.csv')
     # gdf_rgz_addresses['rgz_geometry'] = gdf_rgz_addresses.rgz_geometry.apply(wkt.loads)
     # gdf_rgz_addresses = gpd.GeoDataFrame(gdf_rgz_addresses, geometry='rgz_geometry', crs="EPSG:4326")
     # gdf_rgz_addresses.sindex
@@ -93,8 +93,8 @@ def main():
     gdf_buildings = get_all_buildings(pbf_file)
 
     # For testing purposes, save and load gdf_buildings like this
-    #pd.DataFrame(gdf_buildings).to_csv('/home/branko/src/adresniregistar/data/temp_gdf_buildings.csv', index=False)
-    #gdf_buildings = pd.read_csv('/home/branko/src/adresniregistar/data/temp_gdf_buildings.csv')
+    #pd.DataFrame(gdf_buildings).to_csv('~/src/adresniregistar/ar/data/temp_gdf_buildings.csv', index=False)
+    #gdf_buildings = pd.read_csv('~/src/adresniregistar/ar/data/temp_gdf_buildings.csv')
     #gdf_buildings['osm_geometry'] = gdf_buildings.osm_geometry.apply(wkt.loads)
     #gdf_buildings = gpd.GeoDataFrame(gdf_buildings, geometry='osm_geometry', crs="EPSG:4326")
     #gdf_buildings.sindex
@@ -106,8 +106,8 @@ def main():
                                 inplace=True, axis=1)
 
     # For testing purposes, save and load buildings_with_naselje like this
-    # pd.DataFrame(buildings_with_naselje).to_csv('/home/branko/src/adresniregistar/data/temp_buildings_with_naselje.csv', index=False)
-    # buildings_with_naselje = pd.read_csv('/home/branko/src/adresniregistar/data/temp_buildings_with_naselje.csv')
+    # pd.DataFrame(buildings_with_naselje).to_csv('~/adresniregistar/ar/data/temp_buildings_with_naselje.csv', index=False)
+    # buildings_with_naselje = pd.read_csv('~/src/adresniregistar/ar/data/temp_buildings_with_naselje.csv')
     # buildings_with_naselje['osm_geometry'] = buildings_with_naselje.osm_geometry.apply(wkt.loads)
     # buildings_with_naselje = gpd.GeoDataFrame(buildings_with_naselje, geometry='osm_geometry', crs="EPSG:4326")
     # buildings_with_naselje.sindex

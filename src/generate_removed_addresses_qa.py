@@ -38,8 +38,8 @@ def load_removed_addresses_from_osm(cwd):
     print(f"Found all removed geometries ({len(ceh.entities)}) from PBF")
 
     # For testing purposes, save and load gdf_buildings like this
-    # pd.DataFrame(gdf_removed_addresses).to_csv('/home/branko/src/adresniregistar/data/gdf_removed_addresses.csv', index=False)
-    # gdf_removed_addresses = pd.read_csv('/home/branko/src/adresniregistar/data/gdf_removed_addresses.csv')
+    # pd.DataFrame(gdf_removed_addresses).to_csv('~/src/adresniregistar/ar/data/gdf_removed_addresses.csv', index=False)
+    # gdf_removed_addresses = pd.read_csv('~/src/adresniregistar/ar/data/gdf_removed_addresses.csv')
     # gdf_removed_addresses['osm_geometry'] = gdf_removed_addresses.osm_geometry.apply(wkt.loads)
     # gdf_removed_addresses = gpd.GeoDataFrame(gdf_removed_addresses, geometry='osm_geometry', crs="EPSG:4326")
     # gdf_removed_addresses.sindex
