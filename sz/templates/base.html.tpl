@@ -22,10 +22,10 @@
 	<div class="collapse navbar-collapse" id="navbarsExample03">
 	<ul class="navbar-nav mr-auto">
 		<li class="nav-item">
-			<a class="nav-link" href="https://openstreetmap.rs/download/ar/">Početna</a>
+			<a class="nav-link" href="https://dina.openstreetmap.rs/sz/">Početna</a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" href="https://opendata.openstreetmap.rs/">Otvoreni podaci</a>
+			<a class="nav-link" href="https://dina.openstreetmap.rs/">DINA platforma</a>
 		</li>
 		<li class="nav-item">
 			<a class="nav-link" href="https://community.openstreetmap.org/t/registar-stambenih-zajednica-otvoreni-podaci/87583">Forum</a>
@@ -49,7 +49,7 @@
 	<div class="container-fluid py-1 mt-3 mb-0 bg-light">
 		<small class="text-secondary text-center">
 			Data &copy; <a href="https://opendata.geosrbija.rs/">RGZ</a> &amp; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, <br/>
-			OSM podaci od {{ osmDataDate }}, izveštaj generisan u {{ reportDate }}
+			Izveštaj generisan u {{ reportDate }}
 		</small>
 	</div>
 </footer>

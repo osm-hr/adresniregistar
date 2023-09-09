@@ -14,10 +14,11 @@ from common import cyr2lat, ApartmentResolution
 def generate_report(context):
     env = context['env']
     cwd = context['cwd']
+    data_path = os.path.join(cwd, 'data/')
     report_path = os.path.join(cwd, 'output/')
     template = env.get_template('index-opstina.html.tpl')
 
-    df_data = pd.read_csv(os.path.join(cwd, 'sz_analysis.csv'))
+    df_data = pd.read_csv(os.path.join(data_path, 'sz_analysis.csv'))
     df_data['resolution'] = df_data['resolution'].apply(lambda x: ApartmentResolution(x) if pd.notna(x) else np.nan)
 
     opstine = []

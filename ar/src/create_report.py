@@ -183,7 +183,7 @@ def generate_osm_files_matched_addresses(context, opstina_dir_path, opstina_name
             osm_files.append(
                 {
                     'name': f'{old_counter+1}-{counter}',
-                    'url': f'https://openstreetmap.rs/download/ar/opstine/{opstina_name}/{filename}'
+                    'url': f'https://dina.openstreetmap.rs/ar/opstine/{opstina_name}/{filename}'
                 }
             )
             old_counter = counter
@@ -235,7 +235,7 @@ def generate_osm_files_matched_addresses(context, opstina_dir_path, opstina_name
         osm_files.append(
             {
                 'name': f'{old_counter + 1}-{counter}',
-                'url': f'https://openstreetmap.rs/download/ar/opstine/{opstina_name}/{filename}'
+                'url': f'https://dina.openstreetmap.rs/ar/opstine/{opstina_name}/{filename}'
             }
         )
 
@@ -269,7 +269,7 @@ def generate_osm_files_new_addresses(context, opstina_dir_path, opstina_name, na
             osm_files.append(
                 {
                     'name': f'{old_counter+1}-{counter}',
-                    'url': f'https://openstreetmap.rs/download/ar/opstine/{opstina_name}/{filename}'
+                    'url': f'https://dina.openstreetmap.rs/ar/opstine/{opstina_name}/{filename}'
                 }
             )
             osm_entities = []
@@ -296,7 +296,7 @@ def generate_osm_files_new_addresses(context, opstina_dir_path, opstina_name, na
         osm_files.append(
             {
                 'name': f'{old_counter + 1}-{counter}',
-                'url': f'https://openstreetmap.rs/download/ar/opstine/{opstina_name}/{filename}'
+                'url': f'https://dina.openstreetmap.rs/ar/opstine/{opstina_name}/{filename}'
             }
         )
 

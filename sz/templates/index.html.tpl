@@ -168,7 +168,7 @@ stambene zajednice iz adresnog registra.
 <br/>
 <br/>
 Sledeći korak je pronalaženje tog identifikatora unutar OSM-a na osnovu
-<a href="https://openstreetmap.rs/download/ar/index.html" target="_blank">uvoza RGZ adresa</a>. Ukoliko se adresa ne pronađe, odustajemo i čekamo
+<a href="https://dina.openstreetmap.rs/ar" target="_blank">uvoza RGZ adresa</a>. Ukoliko se adresa ne pronađe, odustajemo i čekamo
 da bude uneta u uvozu. Ako je pronađena, videćemo je u koloni <b>„Pronađeno u OSM-u”.</b>. Time smo dobili OSM entitet.
 <br/>
 <br/>

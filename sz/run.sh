@@ -15,7 +15,7 @@ scp temp-report$current_date.tar.gz kokanovic:/home/branko/dina/sz-report$curren
 ssh kokanovic "tar -xzf /home/branko/dina/sz-report$current_date.tar.gz -C /var/www/sites/dina.openstreetmap.rs/sz/"
 ssh kokanovic "rm -f /home/branko/dina/sz-report$current_date.tar.gz"
 
-mv temp-report$current_date.tar.gz sz-report$current_date.tar.gz
+mv temp-report$current_date.tar.gz data/sz-report$current_date.tar.gz
 
 curl -X POST \
         -H 'Content-Type: application/json' \

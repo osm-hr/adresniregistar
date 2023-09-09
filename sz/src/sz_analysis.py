@@ -171,12 +171,17 @@ def join_dz_rgz_osm(ar_data_path: str, df_sz, opstina):
 
 
 def main(ar_data_path: str):
-    if os.path.exists('sz_analysis.csv'):
-        print('File sz_analysis.csv already exist')
+    cwd = os.getcwd()
+    data_path = os.path.join(cwd, 'data/')
+    registar_sz_csv_path = os.path.join(data_path, 'registarstambenihzajednica.csv')
+    analysis_csv_path = os.path.join(data_path, 'sz_analysis.csv')
+
+    if os.path.exists(analysis_csv_path):
+        print('File data/sz_analysis.csv already exist')
         return
 
     # Take stambene zajednice and normalize for join
-    df_sz = pd.read_csv('registarstambenihzajednica.csv')
+    df_sz = pd.read_csv(registar_sz_csv_path)
     df_sz.rename(columns={
             'OkrugNaziv1': 'sz_okrug',
             'OpstinaNaziv1': 'sz_opstina',
@@ -220,7 +225,7 @@ def main(ar_data_path: str):
     df_sz_rgz_osm['resolution'] = df_sz_rgz_osm.resolution.apply(lambda x: x.value if pd.notna(x) else np.nan)
 
     # dump to report
-    df_sz_rgz_osm.to_csv(os.path.join('sz_analysis.csv'), index=False)
+    df_sz_rgz_osm.to_csv(analysis_csv_path, index=False)
 
 
 if __name__ == '__main__':

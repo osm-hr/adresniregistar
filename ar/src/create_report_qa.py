@@ -42,7 +42,7 @@ def generate_osm_files_move_address_to_building(context, report_qa_address_path,
             osm_files.append(
                 {
                     'name': f'{old_counter+1}-{counter}',
-                    'url': f'https://openstreetmap.rs/download/ar/qa_addresses/{filename}'
+                    'url': f'https://dina.openstreetmap.rs/ar/qa_addresses/{filename}'
                 }
             )
             old_counter = counter
@@ -114,7 +114,7 @@ def generate_osm_files_move_address_to_building(context, report_qa_address_path,
         osm_files.append(
             {
                 'name': f'{old_counter + 1}-{counter}',
-                'url': f'https://openstreetmap.rs/download/ar/qa_addresses/{filename}'
+                'url': f'https://dina.openstreetmap.rs/ar/qa_addresses/{filename}'
             }
         )
 
