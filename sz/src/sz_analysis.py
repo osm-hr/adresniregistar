@@ -191,6 +191,8 @@ def main(ar_data_path: str):
         }, inplace=True)
     df_sz['sz_ulica_norm'] = df_sz.sz_ulica.apply(lambda x: normalize_street(x))
     df_sz['sz_kucni_broj'] = df_sz['sz_kucni_broj'].astype('string')
+    # sometimes there are duplicates in original dataset, remove them
+    df_sz.drop_duplicates(subset=['sz_opstina', 'sz_ulica', 'sz_kucni_broj'], keep='first', inplace=True)
 
     # Join with RGZ and OSM data per opstina
     df_sz_rgz_osms = []
