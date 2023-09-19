@@ -56,6 +56,7 @@ $(document).ready( function () {
 <thead class="thead-dark sticky-top">
 	<tr>
 		<th>ref:RS:kucni_broj</th>
+		<th>Opština</th>
 		<th>Duplikati</th>
 	</tr>
 </thead>
@@ -63,6 +64,7 @@ $(document).ready( function () {
 	{% for duplicate in duplicates %}
 	<tr>
 		<td>{{ duplicate.id }}</td>
+		<td>{{ duplicate.opstina }}</td>
 		<td>
 			{% for link in duplicate.links %}
 			<a href="{{ link.href }}" target="_blank">{{ link.name }}</a>

@@ -8,8 +8,8 @@ import osmium
 import pandas as pd
 from shapely import wkt
 
-from common import CollectRelationWaysHandler, CollectWayNodesHandler, BuildNodesCacheHandler, CollectEntitiesHandler,\
-    AddressInBuildingResolution
+from common import CollectRelationWaysHandler, CollectWayNodesHandler, BuildNodesCacheHandler, CollectEntitiesHandler, \
+    AddressInBuildingResolution, cyr2lat
 
 
 def is_simple_address(tags):
@@ -393,6 +393,7 @@ def find_addresses_in_buildings(cwd):
 def find_duplicated_refs(cwd):
     # Finds addresses which have same ref:RS:kucni_broj reference
     osm_path = os.path.join(cwd, 'data/osm')
+    rgz_path = os.path.join(cwd, 'data/rgz')
     pbf_file = os.path.join(osm_path, 'download/serbia.osm.pbf')
     qa_path = os.path.join(cwd, 'data/qa')
     json_file_path = os.path.join(qa_path, 'duplicated_refs.json')
@@ -417,6 +418,19 @@ def find_duplicated_refs(cwd):
                 'ref:RS:kucni_broj': k,
                 'duplicates': v
             })
+
+    input_rgz_file = os.path.join(rgz_path, 'addresses.csv')
+    if not os.path.exists(input_rgz_file):
+        print(f"    Missing file {input_rgz_file}, cannot load RGZ addresses")
+        return
+    df_rgz = pd.read_csv(input_rgz_file, dtype={'rgz_kucni_broj_id': str})
+    for dup in output_dict:
+        ref = dup['ref:RS:kucni_broj']
+        founed_entries = df_rgz[df_rgz.rgz_kucni_broj_id == ref]
+        if len(founed_entries) > 0:
+            dup['opstina_imel'] = cyr2lat(founed_entries.iloc[0]['rgz_opstina'])
+        else:
+            dup['opstina_imel'] = 'N/A'
 
     with open(json_file_path, 'w', encoding='utf-8') as json_file:
         json.dump(output_dict, json_file, ensure_ascii=False)

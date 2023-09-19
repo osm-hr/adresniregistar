@@ -149,6 +149,7 @@ def generate_qa_duplicated_refs(context):
             })
         duplicates.append({
             'id': address['ref:RS:kucni_broj'],
+            'opstina': address['opstina_imel'],
             'links': links
         })
     template = env.get_template('qa/duplicated_refs.html.tpl')
