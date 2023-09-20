@@ -12,7 +12,7 @@ ssh kokanovic "rm -f /home/branko/ar/report$current_date.tar.gz"
 if [ "${AR_INCREMENTAL_UPDATE:-}" = "1" ]; then
   rm data/temp-report$current_date.tar.gz
 else
-  cp data/temp-report$current_date.tar.gz data/report$current_date.tar.gz
+  mv data/temp-report$current_date.tar.gz data/report$current_date.tar.gz
 fi
 
 rm -f data/running
