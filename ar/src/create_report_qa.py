@@ -198,7 +198,7 @@ def generate_addresses_in_buildings(context):
     }
 
     for opstina_name, df_opstina in df_addresses_in_buildings.sort_values('opstina_imel').groupby('opstina_imel'):
-        count = len(df_opstina)
+        count = len(df_opstina['osm_id_right'].value_counts())
         total['count'] += count
         opstine.append({
             'name': opstina_name,
