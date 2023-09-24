@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 
-import csv
 import datetime
 import os
 
+import geopandas as gpd
 import osmium
 import overpy
 import pandas as pd
 from jinja2 import Environment, FileSystemLoader
+from shapely import wkt
 
 from common import AddressInBuildingResolution
-from common import cyr2lat, normalize_name, normalize_name_latin, xml_escape, load_mappings
+from common import cyr2lat, normalize_name, normalize_name_latin, xml_escape, load_mappings, geojson2js
 
 
 class CollectWayNodesHandler(osmium.SimpleHandler):
@@ -436,6 +437,25 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
 
         naselja.append(naselje)
 
+    # Generate naselja js
+    naselja_js_path = os.path.join(opstine_dir_path, f'{opstina["name_norm"]}.js')
+    if os.path.exists(naselja_js_path):
+        return
+
+    df_calc_naselja = pd.DataFrame(naselja)
+    df_calc_naselja['ratio'] = df_calc_naselja.apply(lambda row: 100 * row.conflated / row.rgz, axis=1)
+
+    gdf_naselja = context['gdf_naselja']
+    gdf_naselje = gdf_naselja[gdf_naselja.opstina_imel == opstina_name]
+
+    gdf_naselje = gdf_naselje.merge(df_calc_naselja[['name_lat', 'ratio']], left_on='naselje_imel', right_on='name_lat')
+    assert len(gdf_naselje) == len(df_calc_naselja)
+    gdf_naselje.drop(['opstina_imel', 'name_lat'], inplace=True, axis=1)
+    gdf_naselje.to_file(naselja_js_path, driver='GeoJSON')
+    opstina['bounds'] = gdf_naselje.unary_union.bounds
+
+    geojson2js(naselja_js_path, 'naselja')
+
     output = template.render(
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
@@ -445,6 +465,7 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
         opstina=opstina)
     with open(opstina_html_path, 'w', encoding='utf-8') as fh:
         fh.write(output)
+
     print('OK', end='')
     return opstina
 
@@ -457,6 +478,7 @@ def generate_report(context):
     data_path = context['data_path']
 
     osm_path = os.path.join(data_path, 'osm', 'csv')
+    rgz_path = os.path.join(data_path, 'rgz')
     analysis_path = os.path.join(data_path, 'analysis')
     report_path = os.path.join(data_path, 'report')
     if context['incremental_update']:
@@ -489,18 +511,45 @@ def generate_report(context):
         total['partially_matched_count'] += opstina['partially_matched_count']
         print()
 
-    if os.path.exists(report_html_path):
+    if not os.path.exists(report_html_path):
+        output = template.render(
+            currentDate=context['dates']['short'],
+            reportDate=context['dates']['report'],
+            osmDataDate=context['dates']['osm_data'],
+            realTime=context['incremental_update'],
+            opstine=opstine,
+            total=total)
+        with open(report_html_path, 'w', encoding='utf-8') as fh:
+            fh.write(output)
+
+    opstine_js_path = os.path.join(report_path, 'opstine.js')
+    if os.path.exists(opstine_js_path):
         return
 
-    output = template.render(
-        currentDate=context['dates']['short'],
-        reportDate=context['dates']['report'],
-        osmDataDate=context['dates']['osm_data'],
-        realTime=context['incremental_update'],
-        opstine=opstine,
-        total=total)
-    with open(report_html_path, 'w', encoding='utf-8') as fh:
-        fh.write(output)
+    df_calc_opstine = pd.DataFrame(opstine)
+    df_calc_opstine['ratio'] = df_calc_opstine.apply(lambda row: 100 * row.conflated / row.rgz, axis=1)
+    df_opstine = pd.read_csv(os.path.join(rgz_path, 'opstina.csv'))
+    df_opstine['geometry'] = df_opstine.wkt.apply(wkt.loads)
+    df_opstine = df_opstine[~df_opstine.okrug_sifra.isin([25, 26, 27, 28, 29])]  # remove kosovo
+    df_opstine = df_opstine.merge(df_calc_opstine[['name', 'ratio']], left_on='opstina_imel', right_on='name')
+    df_opstine.drop(['name', 'opstina_maticni_broj', 'opstina_ime', 'opstina_povrsina', 'okrug_sifra', 'okrug_ime', 'okrug_imel', 'wkt'], inplace=True, axis=1)
+    gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs="EPSG:32634")
+    gdf_opstine.to_crs("EPSG:4326", inplace=True)
+    gdf_opstine['geometry'] = gdf_opstine.simplify(tolerance=0.0005)
+    gdf_opstine.to_file(opstine_js_path, driver='GeoJSON')
+
+    geojson2js(opstine_js_path, 'opstine')
+
+
+def load_naselja_boundaries(rgz_path):
+    df_naselja = pd.read_csv(os.path.join(rgz_path, 'naselje.csv'))
+    df_naselja['geometry'] = df_naselja.wkt.apply(wkt.loads)
+    df_naselja.drop(['objectid', 'naselje_maticni_broj', 'naselje_ime', 'naselje_povrsina', 'opstina_maticni_broj',
+                     'opstina_ime', 'wkt'], inplace=True, axis=1)
+    gdf_naselja = gpd.GeoDataFrame(df_naselja, geometry='geometry', crs="EPSG:32634")
+    gdf_naselja.to_crs("EPSG:4326", inplace=True)
+    gdf_naselja['geometry'] = gdf_naselja.simplify(tolerance=0.0001)
+    return gdf_naselja
 
 
 def main():
@@ -511,6 +560,7 @@ def main():
     cwd = os.getcwd()
 
     data_path = os.path.join(cwd, 'data')
+    rgz_path = os.path.join(data_path, 'rgz')
 
     running_file = os.path.join(data_path, 'running')
     if not os.path.exists(running_file):
@@ -524,6 +574,9 @@ def main():
 
     print("Loading normalized street names mapping")
     street_mappings = load_mappings(data_path)
+
+    print("Loading boundaries of naselja")
+    gdf_naselja = load_naselja_boundaries(rgz_path)
 
     incremental_update = False
     if os.environ.get('AR_INCREMENTAL_UPDATE', None) == "1":
@@ -540,7 +593,8 @@ def main():
             'osm_data': osm_data_timestamp
         },
         'osm_entities_cache': osm_entities_cache,
-        'street_mappings': street_mappings
+        'street_mappings': street_mappings,
+        'gdf_naselja': gdf_naselja
     }
     generate_report(context)
 

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import os
 import csv
-
+import json
 import math
+import os
 from enum import Enum
+
 import osmium
 from shapely import geometry
 
@@ -125,6 +126,26 @@ def load_mappings(data_path):
         for row in reader:
             street_mappings[row['rgz_name']] = row['name']
     return street_mappings
+
+
+def geojson2js(js_path, variable_name):
+    with open(js_path, 'r') as f:
+        js_data = json.load(f)
+    for f in js_data['features']:
+        geom = f['geometry']
+        if geom['type'] != 'Polygon':
+            continue
+        new_coord_list = []
+        for p in geom['coordinates']:
+            new_coords = []
+            for x, y in p:
+                new_coords.append([round(x, 4), round(y, 4)])
+            new_coord_list.append(new_coords)
+        geom['coordinates'] = new_coord_list
+    js_file_content = json.dumps(js_data)
+    js_file_content = f'var {variable_name} = {js_file_content}'
+    with open(js_path, 'w') as f:
+        f.write(js_file_content)
 
 
 class CollectRelationWaysHandler(osmium.SimpleHandler):
