@@ -165,7 +165,8 @@ def do_resolution(input):
             return result_or_note(has_note, AddressInBuildingResolution.ATTACH_ADDRESSES_TO_BUILDING)
     if poi_count >= 1 and address_count >= 1:
         return result_or_note(has_note, AddressInBuildingResolution.CASE_TOO_COMPLEX)
-    raise Exception("cannot reach here")
+    return AddressInBuildingResolution.CASE_TOO_COMPLEX
+    # raise Exception(f"cannot reach here - {','.join(list(input['osm_id_left']))}")
 
 
 class CollectRefAddressesHandler(osmium.SimpleHandler):
@@ -354,9 +355,9 @@ def find_addresses_in_buildings(cwd):
     both_false = df[(df.node_is_simple_address == False) & (df.node_is_poi == False)]
     both_true = df[(df.node_is_simple_address == True) & (df.node_is_poi == True)]
     if len(both_false) > 0:
-        print(f"There are {len(both_false)} entities which are neither simple address nor POI, take a look")
+        print(f"There are {len(both_false)} entities which are neither simple address nor POI, take a look - {','.join(list(both_false['osm_id_left']))}")
     if len(both_true) > 0:
-        print(f"There are {len(both_true)} entities which are both simple addresses and POIs, take a look")
+        print(f"There are {len(both_true)} entities which are both simple addresses and POIs, take a look - {','.join(list(both_false['osm_id_left']))}")
 
     # Very convoluted way to count POIs for each group
     count_poi_df = df[df.node_is_poi == True].groupby(['osm_id_right'])['osm_id_right'].transform('count')
