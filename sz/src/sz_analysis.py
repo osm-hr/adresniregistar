@@ -4,6 +4,7 @@ import argparse
 import json
 import os.path
 import pickle
+import ast
 
 import numpy as np
 import osmium
@@ -68,7 +69,7 @@ def get_resolution_single_entity(cah: CollectApartmentsHandler, df_addresses_in_
             if len(nodes_inside_building) == 0:
                 return ApartmentResolution.NODE_DETACHED
             else:
-                tags = json.loads(list(nodes_inside_building['tags_right'])[0].replace('"', '\\"').replace("'", '"'))
+                tags = ast.literal_eval(list(nodes_inside_building['tags_right'])[0])
                 if 'building' not in tags:
                     return ApartmentResolution.OSM_ENTITY_NOT_BUILDING
                 elif tags['building'] != 'apartments':

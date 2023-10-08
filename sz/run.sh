@@ -3,7 +3,7 @@
 set -euo pipefail
 
 rm -f output/*
-rm -f sz_analysis.csv
+rm -f data/sz_analysis.csv
 
 python3 src/sz_analysis.py --data-path $1
 python3 src/report.py
