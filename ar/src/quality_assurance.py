@@ -4,6 +4,7 @@ import json
 import os
 
 import geopandas as gpd
+import numpy as np
 import osmium
 import pandas as pd
 from shapely import wkt
@@ -34,6 +35,44 @@ def is_poi(tags):
 
 def result_or_note(has_note, potential_result):
     return potential_result if not has_note else AddressInBuildingResolution.NOTE_PRESENT
+
+
+def numbered_housenumber(housenumber):
+    if pd.isna(housenumber):
+        return -1
+    if housenumber.isdigit():
+        return int(housenumber)
+    if housenumber[:-1].isdigit():
+        return int(housenumber[:-1])
+    else:
+        return np.nan
+
+
+def address_number_match(street_left, street_right, housenumber_left, housenumber_right):
+    street_match = (street_left == street_right) or (pd.isna(street_left) and pd.isna(street_right))
+
+    if pd.isna(housenumber_left):
+        numbered_hn_left = -1
+    elif housenumber_left.isdigit():
+        numbered_hn_left = int(housenumber_left)
+    else:
+        if housenumber_left[:-1].isdigit():
+            numbered_hn_left = int(housenumber_left[:-1])
+        else:
+            numbered_hn_left = None
+
+    if pd.isna(housenumber_right):
+        numbered_hn_right = -1
+    elif housenumber_right.isdigit():
+        numbered_hn_right = int(housenumber_right)
+    else:
+        if housenumber_right[:-1].isdigit():
+            numbered_hn_right = int(housenumber_right[:-1])
+        else:
+            numbered_hn_right = None
+
+    numbers_match = numbered_hn_left is not None and numbered_hn_right is not None and numbered_hn_left == numbered_hn_right
+    return street_match and numbers_match
 
 
 def do_resolution(input):
@@ -101,6 +140,7 @@ def do_resolution(input):
 
     if building_has_address:
         addresses_match = input.addresses_match.min()
+        addresses_number_match = input.addresses_number_match.min()
 
         if poi_count == 1 and address_count == 0:
             if addresses_match:
@@ -126,21 +166,54 @@ def do_resolution(input):
                     else:
                         return result_or_note(has_note, AddressInBuildingResolution.ADDRESSES_NOT_MATCHING)
         if poi_count > 1 and address_count == 0:
-            different_address_count = len(input[['osm_street_left', 'osm_housenumber_left']].value_counts(dropna=False))
-            if different_address_count == 1 and addresses_match:
+            # TODO: handle cases where "71a" and "71a" are cyrillic and latin and "71A" and "71a" (normalize osm_housenumber_left)
+            different_address_count = len(input[['osm_street_left']].value_counts(dropna=False))
+            different_address_housenumber_count = len(input[['osm_street_left', 'osm_housenumber_left']].value_counts(dropna=False))
+            different_address_number_count = len(input['osm_housenumber_left'].apply(numbered_housenumber).value_counts(dropna=False))
+
+            if different_address_housenumber_count == 1 and addresses_match:
                 return AddressInBuildingResolution.NO_ACTION
-            if different_address_count == 1 and not addresses_match:
+            if different_address_count == 1 and different_address_number_count == 1 and addresses_number_match:
+                # Some addresses are "1a", "1b"... so treat it as OK
+                any_housenumber_same = len(input[input.osm_housenumber_left == input['osm_housenumber_right'].iloc[0]]) > 0
+                if different_address_count == 1 and any_housenumber_same:
+                    # Some address on node is same as address on building, report as removing address from building
+                    return result_or_note(has_note, AddressInBuildingResolution.REMOVE_ADDRESS_FROM_BUILDING)
+                if (different_address_housenumber_count < len(input)) and different_address_housenumber_count > 1:
+                    # Some addresses in nodes are same, but some are not
+                    return result_or_note(has_note, AddressInBuildingResolution.ADDRESSES_NOT_MATCHING)
+                if not input['osm_housenumber_right'].iloc[0].isdigit():
+                    # Number of building is having alphanumeric character, report as not matching anyway
+                    return result_or_note(has_note, AddressInBuildingResolution.ADDRESSES_NOT_MATCHING)
+                return AddressInBuildingResolution.NO_ACTION
+            if different_address_housenumber_count == 1 and not addresses_match:
                 return result_or_note(has_note, AddressInBuildingResolution.ADDRESSES_NOT_MATCHING)
-            if different_address_count > 1:
+            if different_address_housenumber_count > 1:
                 return result_or_note(has_note, AddressInBuildingResolution.REMOVE_ADDRESS_FROM_BUILDING)
             raise Exception("cannot reach here")
         if poi_count == 0 and address_count > 1:
-            different_address_count = len(input[['osm_street_left', 'osm_housenumber_left']].value_counts(dropna=False))
-            if different_address_count == 1 and addresses_match:
+            different_address_count = len(input[['osm_street_left']].value_counts(dropna=False))
+            different_address_housenumber_count = len(input[['osm_street_left', 'osm_housenumber_left']].value_counts(dropna=False))
+            different_address_number_count = len(input['osm_housenumber_left'].apply(numbered_housenumber).value_counts(dropna=False))
+
+            if different_address_housenumber_count == 1 and addresses_match:
                 return result_or_note(has_note, AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING)
-            if different_address_count == 1 and not addresses_match:
+            if different_address_count == 1 and different_address_number_count == 1 and addresses_number_match:
+                # Some addresses are "1a", "1b"... so treat it as OK
+                any_housenumber_same = len(input[input.osm_housenumber_left == input['osm_housenumber_right'].iloc[0]]) > 0
+                if different_address_count == 1 and any_housenumber_same:
+                    # Some address on node is same as address on building, report as not matching and not as OK
+                    return result_or_note(has_note, AddressInBuildingResolution.ADDRESSES_NOT_MATCHING)
+                if (different_address_housenumber_count < len(input)) and different_address_housenumber_count > 1:
+                    # Some addresses in nodes are same, but some are not
+                    return result_or_note(has_note, AddressInBuildingResolution.ADDRESSES_NOT_MATCHING)
+                if not input['osm_housenumber_right'].iloc[0].isdigit():
+                    # Number of building is having alphanumeric character, report as not matching anyway
+                    return result_or_note(has_note, AddressInBuildingResolution.ADDRESSES_NOT_MATCHING)
+                return AddressInBuildingResolution.NO_ACTION
+            if different_address_housenumber_count == 1 and not addresses_match:
                 return result_or_note(has_note, AddressInBuildingResolution.ADDRESSES_NOT_MATCHING)
-            if different_address_count > 1:
+            if different_address_housenumber_count > 1:
                 return result_or_note(has_note, AddressInBuildingResolution.REMOVE_ADDRESS_FROM_BUILDING)
             raise Exception("cannot reach here")
         if poi_count >= 1 and address_count >= 1:
@@ -281,6 +354,7 @@ def find_addresses_in_buildings(cwd):
     pbf_file = os.path.join(osm_path, 'download/serbia.osm.pbf')
 
     if os.path.exists(os.path.join(qa_path, 'addresses_in_buildings_per_opstina.csv')):
+        print("File data/qa/addresses_in_buildings_per_opstina.csv already exists")
         return
 
     # Build building geometries
@@ -336,6 +410,8 @@ def find_addresses_in_buildings(cwd):
     # addresses_per_opstina = pd.read_csv('~/src/adresniregistar/ar/data/addresses_per_opstina.csv')
     # addresses_per_opstina['osm_geometry'] = addresses_per_opstina.osm_geometry.apply(wkt.loads)
     # addresses_per_opstina = gpd.GeoDataFrame(addresses_per_opstina, geometry='osm_geometry', crs="EPSG:4326")
+    # import ast
+    # addresses_per_opstina['tags'] = addresses_per_opstina.apply(lambda row: ast.literal_eval(row.tags), axis=1)
     # addresses_per_opstina.sindex
 
     addresses_in_buildings_per_opstina = addresses_per_opstina.sjoin(gdf_buildings, how='inner', predicate='within')
@@ -381,6 +457,7 @@ def find_addresses_in_buildings(cwd):
         and
         ((row.osm_housenumber_left == row.osm_housenumber_right) or (pd.isna(row.osm_housenumber_left) and pd.isna(row.osm_housenumber_right))),
         axis=1)
+    df['addresses_number_match'] = df.apply(lambda row: address_number_match(row.osm_street_left, row.osm_street_right, row.osm_housenumber_left, row.osm_housenumber_right), axis=1)
 
     resolutions = df.groupby(['osm_id_right']).apply(do_resolution)
     df = df.join(resolutions.rename('resolution'), on='osm_id_right')
