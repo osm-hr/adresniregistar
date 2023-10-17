@@ -75,6 +75,7 @@ def do_analysis(data_path, street_mappings):
         ~joined.housenumber_perfect_match |
         ~joined.housenumber_partial_match
     ]
+    filtered_addresses.sort_values(['rgz_opstina', 'rgz_ulica', 'rgz_kucni_broj', 'osm_id'], inplace=True)
     pd.DataFrame(filtered_addresses).to_csv(os.path.join(qa_path, 'osm_import_qa.csv'), index=False)
     print(f"done")
 
