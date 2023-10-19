@@ -132,7 +132,7 @@ def best_effort_decapitalize(name):
 
 
 def convert_rgz_name_to_osm_name(rgz_id, rgz_name, curated_streets, ref_mappings, osm_mappings):
-    rgz_name = rgz_name.strip().replace('    ', ' ').replace('   ', ' ').replace('  ', ' ')
+    rgz_name = rgz_name.rstrip().replace('    ', ' ').replace('   ', ' ').replace('  ', ' ')
     # Find first in curated list
     if rgz_name in curated_streets:
         return curated_streets[rgz_name], 'curated', ''
@@ -193,7 +193,7 @@ def main():
 
     if os.path.exists(mapping_csv_path):
         print("Skipping mapping generation, file data/mapping/mapping.csv already exist")
-        return
+        #return
 
     curated_streets = load_curated(cwd)
     print(f"Collected all curated ({len(curated_streets)}) mappings")
@@ -218,7 +218,8 @@ def main():
             mapping_csv,
             fieldnames=['rgz_name', 'name', 'source', 'refs'])
         writer.writeheader()
-        for rgz_name in mapping.keys():
+        sorted_keys = sorted(mapping.keys())
+        for rgz_name in sorted_keys:
             writer.writerow({
                 'rgz_name': rgz_name,
                 'name': mapping[rgz_name]['name'],
@@ -228,5 +229,37 @@ def main():
     print(f"All {len(mapping)} mappings written to data/mapping/mapping.csv")
 
 
+def fix_framacalc():
+    framacalc_csv = []
+    with open('tgux01sydx-9ztp.csv', encoding="utf-8") as framacalc_csv_file:
+        reader = csv.DictReader(framacalc_csv_file)
+        for row in reader:
+            rgz_name = row['rgz']
+            osm_name = row['name']
+            ispravka = row['ispravka']
+            if ispravka != '' and ispravka != '-':
+                proper_name = ispravka
+            else:
+                proper_name = osm_name
+            if proper_name != '':
+                framacalc_csv.append({'rgz_name': rgz_name, 'name': proper_name})
+
+    with open('curated_streets.csv', 'w', encoding="utf-8") as curated_streets_csv_file:
+        writer = csv.DictWriter(
+            curated_streets_csv_file,
+            fieldnames=['rgz_name', 'name'])
+        writer.writeheader()
+        framacalc_csv = sorted(framacalc_csv, key=lambda x: x['rgz_name'])
+        for entry in framacalc_csv:
+            if entry['rgz_name'] == '':
+                continue
+                raise Exception()
+            writer.writerow({
+                'rgz_name': entry['rgz_name'],
+                'name': entry['name']
+            })
+
+
 if __name__ == '__main__':
     main()
+    #fix_framacalc()
