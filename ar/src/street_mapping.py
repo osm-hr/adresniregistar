@@ -193,7 +193,7 @@ def main():
 
     if os.path.exists(mapping_csv_path):
         print("Skipping mapping generation, file data/mapping/mapping.csv already exist")
-        #return
+        return
 
     curated_streets = load_curated(cwd)
     print(f"Collected all curated ({len(curated_streets)}) mappings")
