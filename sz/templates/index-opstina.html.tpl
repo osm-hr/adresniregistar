@@ -169,7 +169,7 @@ Klikom na "Pomoć" u gornjem meniju dobićete više informacija o kolonama u ovo
 		</td>
 		<td>
 		    {% if address.resolution == ApartmentResolution.OSM_ENTITY_NOT_FOUND %}
-		    ❌ Grеška u traženju OSM entiteta (verovatno je nedavno dodat ili obrisan
+		    ❌ Grеška u traženju OSM entiteta (verovatno je nedavno dodat ili obrisan)
 		    {% elif address.resolution == ApartmentResolution.NODE_DETACHED %}
 		    ❌ Čvor van zgrade
 		    {% elif address.resolution == ApartmentResolution.OSM_ENTITY_NOT_BUILDING %}
