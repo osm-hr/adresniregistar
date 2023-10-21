@@ -11,7 +11,8 @@ from jinja2 import Environment, FileSystemLoader
 from shapely import wkt
 
 from common import AddressInBuildingResolution
-from common import cyr2lat, normalize_name, normalize_name_latin, xml_escape, load_mappings, geojson2js
+from common import cyr2lat, normalize_name, normalize_name_latin, xml_escape, geojson2js
+from street_mapping import StreetMapping
 
 
 class CollectWayNodesHandler(osmium.SimpleHandler):
@@ -245,7 +246,7 @@ def generate_osm_files_matched_addresses(context, opstina_dir_path, opstina_name
 
 def generate_osm_files_new_addresses(context, opstina_dir_path, opstina_name, naselje, df_naselje):
     env = context['env']
-    street_mappings = context['street_mappings']
+    street_mappings: StreetMapping = context['street_mappings']
 
     naselje_dir_path = os.path.join(opstina_dir_path, opstina_name)
 
@@ -279,7 +280,7 @@ def generate_osm_files_new_addresses(context, opstina_dir_path, opstina_name, na
             'id': 0 - (len(osm_entities) + 1),
             'lat': location_lat,
             'lon': location_lon,
-            'street': street_mappings[address['rgz_ulica']],
+            'street': street_mappings.get_name(address['rgz_ulica'], address['rgz_opstina']),
             'housenumber': normalize_name_latin(address['rgz_kucni_broj']),
             'ulica': address['rgz_ulica_mb'],
             'kucni_broj': address['rgz_kucni_broj_id']
@@ -573,7 +574,7 @@ def main():
     osm_entities_cache = build_osm_entities_cache(data_path)
 
     print("Loading normalized street names mapping")
-    street_mappings = load_mappings(data_path)
+    street_mappings = StreetMapping(cwd)
 
     print("Loading boundaries of naselja")
     gdf_naselja = load_naselja_boundaries(rgz_path)

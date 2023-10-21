@@ -287,6 +287,25 @@ class StreetMapping:
         """
         return self.street_mappings[rgz_name]
 
+    def get_name(self, rgz_name, opstina, default_value=''):
+        """
+        Gets name for given RGZ name and opstina
+        """
+        if rgz_name not in self.street_mappings:
+            print(f"WARNING: street {rgz_name} not found in street mappings!")
+            return default_value
+
+        all_names = self.street_mappings[rgz_name]
+        if len(all_names) == 1:
+            return all_names[0]['name']
+        else:
+            opstina_name = [n for n in all_names if n['opstina'] == opstina]
+            if len(opstina_name) > 0:
+                return opstina_name[0]['name']
+            else:
+                default_name = [n for n in all_names if n['opstina'] == '']
+                return default_name[0]['name']
+
 
 if __name__ == '__main__':
     main()

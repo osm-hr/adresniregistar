@@ -7,10 +7,11 @@ import geopandas as gpd
 import pandas as pd
 from shapely import wkt
 
-from common import normalize_name, normalize_name_latin, cyr2lat, load_mappings
+from common import normalize_name, normalize_name_latin, cyr2lat
+from street_mapping import StreetMapping
 
 
-def do_analysis(data_path, street_mappings):
+def do_analysis(data_path, street_mappings: StreetMapping):
     qa_path = os.path.join(data_path, 'qa')
 
     if os.path.exists(os.path.join(qa_path, 'osm_import_qa.csv')):
@@ -46,10 +47,10 @@ def do_analysis(data_path, street_mappings):
     gdf_rgz = gpd.GeoDataFrame(df_rgz, geometry='rgz_geometry', crs="EPSG:4326")
     gdf_rgz.to_crs("EPSG:32634", inplace=True)
     gdf_rgz.drop(['rgz_opstina_mb', 'rgz_opstina_mb', 'rgz_naselje_mb', 'rgz_naselje'], inplace=True, axis=1)
-    gdf_rgz['rgz_opstina'] = gdf_rgz['rgz_opstina'].apply(lambda x: cyr2lat(x))
-    gdf_rgz['rgz_ulica_proper'] = gdf_rgz['rgz_ulica'].apply(lambda x: street_mappings[x])
+    gdf_rgz['rgz_ulica_proper'] = gdf_rgz[['rgz_opstina', 'rgz_ulica']].apply(lambda x: street_mappings.get_name(x['rgz_ulica'], x['rgz_opstina']), axis=1)
     gdf_rgz['rgz_ulica_norm'] = gdf_rgz.rgz_ulica_proper.apply(normalize_name)
     gdf_rgz['rgz_kucni_broj_norm'] = gdf_rgz.rgz_kucni_broj.apply(lambda x: normalize_name_latin(x))
+    gdf_rgz['rgz_opstina_lat'] = gdf_rgz['rgz_opstina'].apply(lambda x: cyr2lat(x))
     gdf_rgz.sindex
     print(f"found {len(gdf_rgz)} addresses in RGZ")
 
@@ -85,7 +86,7 @@ def main():
     data_path = os.path.join(cwd, 'data/')
 
     print("Loading normalized street names mapping")
-    street_mappings = load_mappings(data_path)
+    street_mappings = StreetMapping(cwd)
 
     do_analysis(data_path, street_mappings)
 

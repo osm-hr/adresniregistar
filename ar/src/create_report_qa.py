@@ -8,7 +8,7 @@ import pandas as pd
 from jinja2 import Environment, FileSystemLoader
 
 from common import AddressInBuildingResolution
-from common import normalize_name, normalize_name_latin, xml_escape, load_mappings
+from common import normalize_name, normalize_name_latin, xml_escape
 from create_report import build_osm_entities_cache
 from street_mapping import StreetMapping
 
@@ -426,7 +426,7 @@ def generate_unaccounted_osm_qa(context):
 def generate_osm_import_qa(context):
     env = context['env']
     cwd = context['cwd']
-    street_mappings = context['street_mappings']
+    street_mappings: StreetMapping = context['street_mappings']
 
     qa_path = os.path.join(cwd, 'data/qa')
     report_path = os.path.join(cwd, 'data/report')
@@ -475,8 +475,8 @@ def generate_osm_import_qa(context):
             'osm_street': osm_import_qa_problem['osm_street'],
             'osm_housenumber': osm_import_qa_problem['osm_housenumber'],
             'found_in_rgz': found_in_rgz,
-            'rgz_opstina': osm_import_qa_problem['rgz_opstina'],
-            'rgz_street': street_mappings[osm_import_qa_problem['rgz_ulica']] if found_in_rgz else '',
+            'rgz_opstina': osm_import_qa_problem['rgz_opstina_lat'],
+            'rgz_street': street_mappings.get_name(osm_import_qa_problem['rgz_ulica'], osm_import_qa_problem['rgz_opstina']),
             'rgz_street_match': rgz_street_match,
             'rgz_housenumber': normalize_name_latin(osm_import_qa_problem['rgz_kucni_broj']) if found_in_rgz else '',
             'rgz_housenumber_match': rgz_housenumber_match,
@@ -708,7 +708,7 @@ def generate_street_mapping(context):
 
     print("Generating data/report/street_mapping.html")
 
-    street_mappings = StreetMapping(cwd)
+    street_mappings: StreetMapping = context['street_mappings']
     all_rgz_names = street_mappings.get_all_rgz_names()
 
     letter_values = {
@@ -804,7 +804,7 @@ def main():
     osm_entities_cache = build_osm_entities_cache(data_path)
 
     print("Loading normalized street names mapping")
-    street_mappings = load_mappings(data_path)
+    street_mappings = StreetMapping(cwd)
 
     running_file = os.path.join(data_path, 'running')
     if not os.path.exists(running_file):

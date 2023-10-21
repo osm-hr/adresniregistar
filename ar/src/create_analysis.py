@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import argparse
 import math
 import os
 
@@ -8,9 +9,9 @@ import geopandas as gpd
 import numpy as np
 import pandas as pd
 from shapely import wkt
-import argparse
 
-from common import normalize_name, load_mappings
+from common import normalize_name
+from street_mapping import StreetMapping
 
 
 def calculate_housenumber_diff(housenumber_rgz, housenumber_osm):
@@ -53,7 +54,7 @@ def calculate_score(street_rgz, housenumber_rgz, street_osm, housenumber_osm, di
     return 0.33 * street_diff + 0.33 * housenumber_diff + 0.33 * distance_diff
 
 
-def do_analysis(opstina, data_path, street_mappings):
+def do_analysis(opstina, data_path, street_mappings: StreetMapping):
     if os.path.exists(os.path.join(data_path, f'analysis/{opstina}.csv')):
         print(f"    Skipping {opstina}, already exists")
         return
@@ -84,8 +85,8 @@ def do_analysis(opstina, data_path, street_mappings):
     df_rgz['rgz_geometry'] = df_rgz.rgz_geometry.apply(wkt.loads)
     gdf_rgz = gpd.GeoDataFrame(df_rgz, geometry='rgz_geometry', crs="EPSG:4326")
     gdf_rgz.to_crs("EPSG:32634", inplace=True)
-    gdf_rgz.drop(['rgz_opstina_mb', 'rgz_opstina'], inplace=True, axis=1)
-    gdf_rgz['rgz_ulica_norm'] = gdf_rgz.rgz_ulica.apply(lambda x: normalize_name(street_mappings[x] if x in street_mappings else x))
+    gdf_rgz['rgz_ulica_norm'] = gdf_rgz[['rgz_ulica', 'rgz_opstina']].apply(lambda x: normalize_name(street_mappings.get_name(x['rgz_ulica'], x['rgz_opstina'], default_value=x['rgz_ulica'])), axis=1)
+    gdf_rgz.drop(['rgz_opstina_mb'], inplace=True, axis=1)
     gdf_rgz['rgz_kucni_broj_norm'] = gdf_rgz.rgz_kucni_broj.apply(normalize_name)
     gdf_rgz.sindex
 
@@ -182,7 +183,7 @@ def main():
     data_path = os.path.join(cwd, 'data/')
     rgz_csv_path = os.path.join(data_path, 'rgz/csv')
 
-    street_mappings = load_mappings(data_path)
+    street_mappings = StreetMapping(cwd)
 
     parser = argparse.ArgumentParser(
         description='create_analysis.py - Analyses opstine')
