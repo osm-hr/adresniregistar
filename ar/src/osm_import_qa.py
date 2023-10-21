@@ -48,7 +48,7 @@ def do_analysis(data_path, street_mappings):
     gdf_rgz.drop(['rgz_opstina_mb', 'rgz_opstina_mb', 'rgz_naselje_mb', 'rgz_naselje'], inplace=True, axis=1)
     gdf_rgz['rgz_opstina'] = gdf_rgz['rgz_opstina'].apply(lambda x: cyr2lat(x))
     gdf_rgz['rgz_ulica_proper'] = gdf_rgz['rgz_ulica'].apply(lambda x: street_mappings[x])
-    gdf_rgz['rgz_ulica_norm'] = gdf_rgz.rgz_ulica.apply(normalize_name)
+    gdf_rgz['rgz_ulica_norm'] = gdf_rgz.rgz_ulica_proper.apply(normalize_name)
     gdf_rgz['rgz_kucni_broj_norm'] = gdf_rgz.rgz_kucni_broj.apply(lambda x: normalize_name_latin(x))
     gdf_rgz.sindex
     print(f"found {len(gdf_rgz)} addresses in RGZ")
