@@ -86,9 +86,10 @@
     <br/>
     Može biti da u RGZ-u nema te reference, da je ulica delimično (⚠️) ili potpuno (❌) pogrešna, da je kućni broj delimično (⚠️) ili potpuno (❌) pogrešan ili da je udaljenost između adrese u OSM-u i RGZ-u preko 30 metara.
     <br/>
-    Nisu sve stvari isto bitne, pa postoji i kolona prioritet.
+    Nisu sve stvari isto bitne, pa postoji i kolona prioritet. Sa gornje desne strane tabele je filter kojim može da se isfiltrira tip greške.
     <br/>
     Ukoliko je adresa ili kućni broj <i>delimično</i> pogrešna, to znači da je ima neko veliko ili malo slovo drugačije, ili da je napisana pogrešnim pismom ili da ima neke interpunkcijske znake viška ili manjka.
+    Da vidite koje su trenutno ispravna imena ulica, pogledajte stranu sa <a href="street_mapping.html">pravilnim imenima ulica</a>.
 </p>
 <br/>
 <br/>
