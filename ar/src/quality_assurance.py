@@ -478,7 +478,7 @@ def find_duplicated_refs(cwd):
 
     crah = CollectRefAddressesHandler()
     crah.apply_file(pbf_file)
-    print(f"Found all addresses with refs ({len(crah.addresses)} from PBF")
+    print(f"Found all addresses with refs ({len(crah.addresses)}) from PBF")
 
     if os.path.exists(json_file_path):
         print("File data/qa/duplicated_refs.json already exists")
