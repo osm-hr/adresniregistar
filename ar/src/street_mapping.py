@@ -260,6 +260,34 @@ def fix_framacalc():
             })
 
 
+class StreetMapping:
+    def __init__(self, cwd):
+        self.street_mappings = {}
+        with open(os.path.join(cwd, 'data', 'mapping', 'mapping.csv'), encoding='utf-8') as mapping_csv_file:
+            reader = csv.DictReader(mapping_csv_file)
+            for row in reader:
+                self.street_mappings[row['rgz_name']] = [{'name': row['name'], 'source': row['source'], 'refs': row['refs'], 'opstina': ''}]
+        with open(os.path.join(cwd, 'cureted_streets_per_opstina.csv'), encoding='utf-8') as mapping_csv_file:
+            reader = csv.DictReader(mapping_csv_file)
+            for row in reader:
+                rgz_name = row['rgz_name']
+                if rgz_name not in self.street_mappings:
+                    raise Exception(f"Street {rgz_name} present in opstina overrides, but not in main mapping, quitting")
+                self.street_mappings[rgz_name].append({'name': row['name'], 'source': 'curated', 'refs': '', 'opstina': row['opstina']})
+
+    def get_all_rgz_names(self):
+        """
+        Gets a list with all RGZ names known
+        """
+        return self.street_mappings.keys()
+
+    def get_all_names_for_rgz_name(self, rgz_name):
+        """
+        Gets array with all OSM names for a given RGZ name, with additional data (source, refs)
+        """
+        return self.street_mappings[rgz_name]
+
+
 if __name__ == '__main__':
     main()
     #fix_framacalc()

@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 
-import os
 import datetime
 import json
-import pandas as pd
+import os
 
+import pandas as pd
 from jinja2 import Environment, FileSystemLoader
 
-from common import normalize_name, normalize_name_latin, xml_escape, load_mappings
 from common import AddressInBuildingResolution
+from common import normalize_name, normalize_name_latin, xml_escape, load_mappings
 from create_report import build_osm_entities_cache
+from street_mapping import StreetMapping
 
 
 def generate_osm_files_move_address_to_building(context, report_qa_address_path, opstina_name, df_opstina):
@@ -694,6 +695,72 @@ def generate_removed_addresses(context):
         fh.write(output)
 
 
+def generate_street_mapping(context):
+    env = context['env']
+    cwd = context['cwd']
+
+    report_path = os.path.join(cwd, 'data/report')
+    html_path = os.path.join(report_path, 'street_mapping.html')
+
+    if os.path.exists(html_path):
+        print("Page data/report/street_mapping.html already exists")
+        #return
+
+    print("Generating data/report/street_mapping.html")
+
+    street_mappings = StreetMapping(cwd)
+    all_rgz_names = street_mappings.get_all_rgz_names()
+
+    letter_values = {
+        'А': 1, 'Б': 2, 'В': 3, 'Г': 4, 'Д': 5, 'Ђ': 6, 'Е': 7, 'Ж': 8, 'З': 9, 'И': 10,
+        'Ј': 11, 'К': 12, 'Л': 13, 'Љ': 14, 'М': 15, 'Н': 16, 'Њ': 17, 'О': 18, 'П': 19, 'Р': 20,
+        'С': 21, 'Т': 22, 'Ћ': 23, 'У': 24, 'Ф': 25, 'Х': 26, 'Ц': 27, 'Ч': 28, 'Џ': 29, 'Ш': 30,
+    }
+
+    rgz_names_sorted = sorted(all_rgz_names, key=lambda x: [(1000+letter_values[c]) if c in letter_values else ord(c) for c in x.upper()])
+    street_names = []
+    for rgz_name in rgz_names_sorted:
+        names = street_mappings.get_all_names_for_rgz_name(rgz_name)
+        default_name = next(n for n in names if n['opstina'] == '')
+        osm_name = default_name['name']
+        default_source = default_name['source']
+        default_refs = default_name['refs']
+        refs = []
+        for osm_id in default_refs.split(','):
+            if len(osm_id) < 2:
+                continue
+            osm_type = 'way' if osm_id[0] == 'w' else 'relation' if osm_id[0] == 'r' else 'node'
+            osm_link = f'https://openstreetmap.org/{osm_type}/{osm_id[1:]}'
+            refs.append({'osm_id': osm_id, 'osm_link': osm_link})
+        refs_count = len(refs)
+        refs = refs[0:5]
+        exceptions = [n for n in names if n['opstina'] != '']
+        rgz_name_html = rgz_name
+        if rgz_name_html.startswith(' '):
+            rgz_name_html = '␣' + rgz_name_html[1:]
+        if rgz_name_html.endswith(' '):
+            rgz_name_html = rgz_name_html[:-1] + '␣'
+        street_names.append({
+            'rgz_name': rgz_name_html,
+            'name': osm_name,
+            'source': default_source,
+            'refs': refs,
+            'refs_count': refs_count,
+            'exceptions': exceptions
+        })
+
+    template = env.get_template('qa/street_mapping_qa.html.tpl')
+    output = template.render(
+        reportDate=context['dates']['report'],
+        osmDataDate=context['dates']['osm_data'],
+        currentDate=context['dates']['short'],
+        street_names=street_names,
+    )
+
+    with open(html_path, 'w', encoding='utf-8') as fh:
+        fh.write(output)
+
+
 def generate_qa(context):
     env = context['env']
     cwd = context['cwd']
@@ -706,6 +773,7 @@ def generate_qa(context):
     generate_unaccounted_osm_qa(context)
     generate_building_addresses_ratio(context)
     generate_removed_addresses(context)
+    generate_street_mapping(context)
 
     report_path = os.path.join(cwd, 'data/report')
     html_path = os.path.join(report_path, 'qa.html')
