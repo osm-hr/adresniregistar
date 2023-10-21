@@ -8,7 +8,7 @@ import pandas as pd
 from jinja2 import Environment, FileSystemLoader
 
 from common import AddressInBuildingResolution
-from common import normalize_name, normalize_name_latin, xml_escape
+from common import normalize_name, normalize_name_latin, xml_escape, housenumber_to_float
 from create_report import build_osm_entities_cache
 from street_mapping import StreetMapping
 
@@ -479,6 +479,7 @@ def generate_osm_import_qa(context):
             'rgz_street': street_mappings.get_name(osm_import_qa_problem['rgz_ulica'], osm_import_qa_problem['rgz_opstina']),
             'rgz_street_match': rgz_street_match,
             'rgz_housenumber': normalize_name_latin(osm_import_qa_problem['rgz_kucni_broj']) if found_in_rgz else '',
+            'rgz_housenumber_order': housenumber_to_float(osm_import_qa_problem['rgz_kucni_broj']) if found_in_rgz else 0,
             'rgz_housenumber_match': rgz_housenumber_match,
             'distance': osm_import_qa_problem['distance']
         })

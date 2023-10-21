@@ -63,6 +63,12 @@ cyr_to_lat = {
     'х': 'h', 'ц': 'c', 'ч': 'č', 'џ': 'dž', 'ш': 'š', 'ђ': 'đ'
 }
 
+housenumber_order = {
+    'a': 1, 'b': 2, 'v': 3, 'g': 4, 'd': 5, 'đ': 6, 'e': 7, 'ž': 8, 'z': 9, 'i': 10,
+    'j': 11, 'k': 12, 'l': 13, 'lj': 14, 'm': 15, 'n': 16, 'nj': 17, 'o': 18, 'p': 19, 'r': 20,
+    's': 21, 't': 22, 'ć': 23, 'u': 24, 'f': 25, 'h': 26, 'c': 27, 'č': 28, 'dž': 29, 'š': 30,
+}
+
 
 def normalize_name(name: str):
     if type(name) == float and math.isnan(name):
@@ -146,6 +152,39 @@ def geojson2js(js_path, variable_name):
     js_file_content = f'var {variable_name} = {js_file_content}'
     with open(js_path, 'w') as f:
         f.write(js_file_content)
+
+
+def housenumber_to_float(housenumber):
+    if type(housenumber) != str:
+        return 0
+
+    if len(housenumber) == 0:
+        return 0
+
+    if housenumber[-1].isdigit():
+        return int(housenumber)
+
+    if len(housenumber) > 1:
+        if housenumber[-2].isdigit():
+            # Case of only one letter, "12a"
+            number = int(housenumber[0:-1])
+            letter = housenumber[-1]
+        else:
+            # Case with two letters, "12lj"
+            number = housenumber[0:-2]
+            letter = housenumber[-2:]
+    else:
+        if housenumber[0].isdigit():
+            # Case with one char, "1"
+            return int(housenumber)
+        else:
+            # Case with one char, letter, "a"
+            number = 0
+            letter = housenumber[0]
+    if letter in housenumber_order:
+        return round(number + housenumber_order[letter]/30, 3)
+    else:
+        return number
 
 
 class CollectRelationWaysHandler(osmium.SimpleHandler):

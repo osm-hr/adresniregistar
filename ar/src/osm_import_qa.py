@@ -71,8 +71,8 @@ def do_analysis(data_path, street_mappings: StreetMapping):
     filtered_addresses = joined[
         pd.isna(joined.rgz_ulica_mb) |
         (joined['distance'] > 50) |
-        #~joined.street_perfect_match |
-        #~joined.street_partial_match |
+        ~joined.street_perfect_match |
+        ~joined.street_partial_match |
         ~joined.housenumber_perfect_match |
         ~joined.housenumber_partial_match
     ]

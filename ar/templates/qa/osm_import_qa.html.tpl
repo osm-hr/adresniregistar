@@ -40,21 +40,43 @@
     <script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
     <script>
 	$(document).ready( function () {
-	    $('#list').DataTable({
+		$.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+			let errorType = $("#errorTypeSelect option:selected").val();
+
+            let errorTypeFilter = true;
+            if (errorType === 'yes') {
+                errorTypeFilter = data[2].indexOf('✅') > -1;
+            } else if (errorType === 'street') {
+                errorTypeFilter = data[7].indexOf('❌') > -1 || data[7].indexOf('⚠') > -1;
+            } else if (errorType === 'street_complete') {
+                errorTypeFilter = data[7].indexOf('❌') > -1;
+            } else if (errorType === 'street_partial') {
+                errorTypeFilter = data[7].indexOf('⚠') > -1;
+            } else if (errorType === 'housenumber') {
+                errorTypeFilter = data[9].indexOf('❌') > -1 || data[9].indexOf('⚠') > -1;
+            } else if (errorType === 'housenumber_complete') {
+                errorTypeFilter = data[9].indexOf('❌') > -1;
+            } else if (errorType === 'housenumber_partial') {
+                errorTypeFilter = data[9].indexOf('⚠') > -1;
+            } else if (errorType === 'distance') {
+                errorTypeFilter = data[10].indexOf('❌') > -1;
+            }
+
+			return errorTypeFilter;
+		});
+
+	    var table = $('#list').DataTable({
 		    stateSave: true,
 		    order: [[0, 'asc']],
 		    lengthMenu: [ [10, 100, -1], [10, 50, "All"] ],
 		    columnDefs: [
-		        //{ targets: [10, 11, 12, 13, 14], "orderable": false},
-		        //{ targets: [1], visible: false },
 		        { targets: [1], className: 'text-right' },
-		        //{ targets: '_all', visible: false }
 		    ]
 		});
-		$('#list_resolution').DataTable({
-		    stateSave: true,
-		    order: [[1, 'desc']]
-		});
+
+        $('#errorTypeSelect').on('change', function() {
+            table.draw();
+        });
 	} );
     </script>
 
@@ -70,6 +92,20 @@
 </p>
 <br/>
 <br/>
+
+<div class="text-right">
+    <label for="errorType">Tip greške:</label>
+    <select name="errorType" id="errorTypeSelect">
+      <option value="all">Sve</option>
+      <option value="street">Adresa</option>
+      <option value="street_complete">&nbsp;&nbsp; Potpuno pogrešna</option>
+      <option value="street_partial">&nbsp;&nbsp; Delimično pogrešna</option>
+      <option value="housenumber">Kućni broj</option>
+      <option value="housenumber_complete">&nbsp;&nbsp; Potpuno pogrešan</option>
+      <option value="housenumber_partial">&nbsp;&nbsp; Delimično pogrešan</option>
+      <option value="distance">Predaleko u odnosu na RGZ-u</option>
+    </select>
+</div>
 
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-100">
 <thead class="thead-dark sticky-top">
@@ -105,7 +141,7 @@
                 {% endif %}
             {% endif %}
         </td>
-        <td>{% if address.found_in_rgz %}{{ address.rgz_housenumber }}{% endif %}</td>
+        <td data-order="{% if address.found_in_rgz %}{{ address.rgz_housenumber_order }}{% else %}0{% endif %}">{% if address.found_in_rgz %}{{ address.rgz_housenumber }}{% endif %}</td>
         <td>
             {% if address.found_in_rgz %}
                 {% if address.rgz_housenumber_match == 1 %}✅
@@ -114,7 +150,7 @@
                 {% endif %}
             {% endif %}
         </td>
-        <td>
+        <td data-order="{% if address.found_in_rgz %}{{ '{0:0.0f}'.format(address.distance) }}{% else %}0{% endif %}">
             {% if address.found_in_rgz %}
                 {% if address.distance <= 30 %}✅{% else %}❌{% endif %} &nbsp; {{ '{0:0.0f}'.format(address.distance) }}
             {% endif %}
