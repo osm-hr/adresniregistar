@@ -467,6 +467,13 @@ def generate_osm_import_qa(context):
         else:
             priority = 5
         osm_type = 'way' if osm_import_qa_problem['osm_id'][0] == 'w' else 'relation' if osm_import_qa_problem['osm_id'][0] == 'r' else 'node'
+        if pd.notna(osm_import_qa_problem['note']) and 'RGZ' in osm_import_qa_problem['note'] and 'Izbrisano iz RGZ-a' not in osm_import_qa_problem['note']:
+            note = osm_import_qa_problem['note']
+            note_short = note[0:4] + '...' if len(note) > 4 else note
+        else:
+            note = ''
+            note_short = ''
+
         addresses.append({
             'priority': priority,
             'osm_link': f"https://openstreetmap.org/{osm_type}/{osm_import_qa_problem['osm_id'][1:]}",
@@ -481,7 +488,9 @@ def generate_osm_import_qa(context):
             'rgz_housenumber': normalize_name_latin(osm_import_qa_problem['rgz_kucni_broj']) if found_in_rgz else '',
             'rgz_housenumber_order': housenumber_to_float(osm_import_qa_problem['rgz_kucni_broj']) if found_in_rgz else 0,
             'rgz_housenumber_match': rgz_housenumber_match,
-            'distance': osm_import_qa_problem['distance']
+            'distance': osm_import_qa_problem['distance'],
+            'note': note,
+            'note_short': note_short
         })
     template = env.get_template('qa/osm_import_qa.html.tpl')
     output = template.render(
@@ -705,7 +714,7 @@ def generate_street_mapping(context):
 
     if os.path.exists(html_path):
         print("Page data/report/street_mapping.html already exists")
-        #return
+        return
 
     print("Generating data/report/street_mapping.html")
 
@@ -802,7 +811,7 @@ def main():
 
     data_path = os.path.join(cwd, 'data')
     print("Building cache of OSM entities")
-    osm_entities_cache = build_osm_entities_cache(data_path)
+    osm_entities_cache = None #build_osm_entities_cache(data_path)
 
     print("Loading normalized street names mapping")
     street_mappings = StreetMapping(cwd)

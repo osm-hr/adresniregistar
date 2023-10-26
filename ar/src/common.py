@@ -311,6 +311,7 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
                 'osm_housenumber': n.tags.get('addr:housenumber'),
                 'ref:RS:kucni_broj': n.tags.get('ref:RS:kucni_broj'),
                 'tags': '{}' if not self.collect_tags else {k: v for k, v in n.tags},
+                'note': n.tags.get('note') if 'note' in n.tags else '',
                 'osm_geometry': point
             })
 
@@ -333,6 +334,7 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
                 'osm_housenumber': housenumber,
                 'ref:RS:kucni_broj': w.tags.get('ref:RS:kucni_broj'),
                 'tags': '{}' if not self.collect_tags else {k: v for k, v in w.tags},
+                'note': w.tags.get('note') if 'note' in w.tags else '',
                 'osm_geometry': geom
             })
 
@@ -355,5 +357,6 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
                 'osm_housenumber': housenumber,
                 'ref:RS:kucni_broj': r.tags.get('ref:RS:kucni_broj'),
                 'tags': '{}' if not self.collect_tags else {k: v for k, v in r.tags},
+                'note': r.tags.get('note') if 'note' in r.tags else '',
                 'osm_geometry': geom
             })

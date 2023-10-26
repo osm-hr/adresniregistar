@@ -95,7 +95,8 @@ def get_entities(overpass_api, from_lat, from_lon, to_lat, to_lon):
             'osm_housenumber': n.tags.get('addr:housenumber'),
             'ref:RS:kucni_broj': n.tags.get('ref:RS:kucni_broj'),
             'tags': '{}',
-            'osm_geometry': geom
+            'note': n.tags.get('note') if 'note' in n.tags else '',
+            'osm_geometry': geom,
         })
     for w in response.ways:
         if not w.tags.get('addr:housenumber'):
@@ -118,6 +119,7 @@ def get_entities(overpass_api, from_lat, from_lon, to_lat, to_lon):
             'osm_housenumber': w.tags.get('addr:housenumber'),
             'ref:RS:kucni_broj': w.tags.get('ref:RS:kucni_broj'),
             'tags': '{}',
+            'note': w.tags.get('note') if 'note' in w.tags else '',
             'osm_geometry': geom
         })
     for r in response.relations:
@@ -133,6 +135,7 @@ def get_entities(overpass_api, from_lat, from_lon, to_lat, to_lon):
             'osm_housenumber': r.tags.get('addr:housenumber'),
             'ref:RS:kucni_broj': r.tags.get('ref:RS:kucni_broj'),
             'tags': '{}',
+            'note': r.tags.get('note') if 'note' in r.tags else '',
             'osm_geometry': geom
         })
     return entities
@@ -175,7 +178,7 @@ def main():
     with open(all_addresses_path, 'w', encoding="utf-8") as all_addresses_csv:
         writer = csv.DictWriter(
             all_addresses_csv,
-            fieldnames=['osm_id', 'osm_country', 'osm_city', 'osm_postcode', 'osm_street', 'osm_housenumber', 'ref:RS:ulica', 'ref:RS:kucni_broj', 'tags', 'osm_geometry'])
+            fieldnames=['osm_id', 'osm_country', 'osm_city', 'osm_postcode', 'osm_street', 'osm_housenumber', 'ref:RS:ulica', 'ref:RS:kucni_broj', 'tags', 'note', 'osm_geometry'])
         writer.writeheader()
         for address in all_entities:
             writer.writerow(address)

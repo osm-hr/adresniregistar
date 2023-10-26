@@ -42,6 +42,7 @@
 	$(document).ready( function () {
 		$.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
 			let errorType = $("#errorTypeSelect option:selected").val();
+			let noteType = $("#noteTypeSelect option:selected").val();
 
             let errorTypeFilter = true;
             if (errorType === 'yes') {
@@ -62,7 +63,14 @@
                 errorTypeFilter = data[10].indexOf('❌') > -1;
             }
 
-			return errorTypeFilter;
+            let noteTypeFilter = true;
+            if (noteType === 'yes') {
+                noteTypeFilter = data[11] != '';
+            } else if (noteType === 'no') {
+                noteTypeFilter = data[11] === '';
+            }
+
+			return errorTypeFilter && noteTypeFilter;
 		});
 
 	    var table = $('#list').DataTable({
@@ -76,6 +84,13 @@
 
         $('#errorTypeSelect').on('change', function() {
             table.draw();
+        });
+        $('#noteTypeSelect').on('change', function() {
+            table.draw();
+        });
+
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
         });
 	} );
     </script>
@@ -106,6 +121,13 @@
       <option value="housenumber_partial">&nbsp;&nbsp; Delimično pogrešan</option>
       <option value="distance">Predaleko u odnosu na RGZ-u</option>
     </select>
+    <br/>
+    <label for="errorType">Ima belešku:</label>
+    <select name="noteType" id="noteTypeSelect">
+      <option value="all"></option>
+      <option value="yes">Da</option>
+      <option value="no">Ne</option>
+    </select>
 </div>
 
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-100">
@@ -122,6 +144,7 @@
         <th>RGZ kućni broj</th>
         <th>RGZ kućni broj poklapanje</th>
         <th>Udaljenost [m]</th>
+        <th>Beleška</th>
 	</tr>
 </thead>
 <tbody>
@@ -155,6 +178,8 @@
             {% if address.found_in_rgz %}
                 {% if address.distance <= 30 %}✅{% else %}❌{% endif %} &nbsp; {{ '{0:0.0f}'.format(address.distance) }}
             {% endif %}
+        </td>
+        <td>{% if address.note %}<a href="#" class="text-dark" style="text-decoration: underline;text-decoration-style: dotted;" data-toggle="tooltip" title="{{ address.note }}">{{ address.note_short }} ↗</a>{% endif %}
         </td>
 	</tr>
 	{% endfor %}
