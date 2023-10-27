@@ -811,7 +811,7 @@ def main():
 
     data_path = os.path.join(cwd, 'data')
     print("Building cache of OSM entities")
-    osm_entities_cache = None #build_osm_entities_cache(data_path)
+    osm_entities_cache = build_osm_entities_cache(data_path)
 
     print("Loading normalized street names mapping")
     street_mappings = StreetMapping(cwd)

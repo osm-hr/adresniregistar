@@ -417,7 +417,7 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
     if os.path.exists(opstina_html_path):
         # Don't regenerate anything if html exists
         print('skipping (exists)', end='')
-        return opstina
+        return opstina, []
 
     naselja = []
 
@@ -428,6 +428,7 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
         partially_matched_count = len(df_opstina[(pd.notna(df_opstina.osm_id)) & (df_opstina.matching == False) & (pd.isna(df_naselje['conflated_osm_id']))])
         naselje = {
             'name': naselje_name,
+            'opstina': opstina,
             'name_lat': cyr2lat(naselje_name),
             'rgz': rgz_count,
             'conflated': conflated_count,
@@ -441,7 +442,7 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
     # Generate naselja js
     naselja_js_path = os.path.join(opstine_dir_path, f'{opstina["name_norm"]}.js')
     if os.path.exists(naselja_js_path):
-        return
+        return opstina, []
 
     df_calc_naselja = pd.DataFrame(naselja)
     df_calc_naselja['ratio'] = df_calc_naselja.apply(lambda row: 100 * row.conflated / row.rgz, axis=1)
@@ -462,13 +463,40 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
         reportDate=context['dates']['report'],
         osmDataDate=context['dates']['osm_data'],
         realTime=context['incremental_update'],
+        showAllNaselja=False,
         naselja=naselja,
         opstina=opstina)
     with open(opstina_html_path, 'w', encoding='utf-8') as fh:
         fh.write(output)
 
     print('OK', end='')
-    return opstina
+    return opstina, naselja
+
+
+def generate_all_naselja(context, total, all_naselja):
+    env = context['env']
+    data_path = context['data_path']
+
+    report_path = os.path.join(data_path, 'report')
+    if context['incremental_update']:
+        report_path = os.path.join(report_path, 'rt')
+    template = env.get_template('opstina.html')
+    all_naselja_html_path = os.path.join(report_path, 'all_naselja.html')
+
+    if os.path.exists(all_naselja_html_path):
+        print('Skipping all_naselja.html, already exist')
+        return
+
+    output = template.render(
+        currentDate=context['dates']['short'],
+        reportDate=context['dates']['report'],
+        osmDataDate=context['dates']['osm_data'],
+        realTime=context['incremental_update'],
+        showAllNaselja=True,
+        naselja=all_naselja,
+        opstina=total)
+    with open(all_naselja_html_path, 'w', encoding='utf-8') as fh:
+        fh.write(output)
 
 
 def generate_report(context):
@@ -496,6 +524,7 @@ def generate_report(context):
         'partially_matched_count': 0
     }
     opstine = []
+    all_naselja = []
     for i, file in enumerate(sorted(os.listdir(analysis_path))):
         if not file.endswith(".csv"):
             continue
@@ -503,13 +532,15 @@ def generate_report(context):
         print(f"{i+1}/{total_csvs} Processing {opstina_name}...", end='')
         df_opstina = pd.read_csv(os.path.join(analysis_path, file), dtype={'conflated_osm_housenumber': object, 'osm_housenumber': object})
         df_opstina_osm = pd.read_csv(os.path.join(osm_path, file), dtype='unicode')
-        opstina = generate_opstina(context, opstina_name, df_opstina, df_opstina_osm)
+        opstina, naselja = generate_opstina(context, opstina_name, df_opstina, df_opstina_osm)
+        all_naselja += naselja
         opstine.append(opstina)
         total['conflated'] += opstina['conflated']
         total['rgz'] += opstina['rgz']
         total['osm'] += opstina['osm']
         total['matched'] += opstina['matched']
         total['partially_matched_count'] += opstina['partially_matched_count']
+        total['bounds'] = (0, 0, 0, 0)
         print()
 
     if not os.path.exists(report_html_path):
@@ -522,6 +553,8 @@ def generate_report(context):
             total=total)
         with open(report_html_path, 'w', encoding='utf-8') as fh:
             fh.write(output)
+
+    generate_all_naselja(context, total, all_naselja)
 
     opstine_js_path = os.path.join(report_path, 'opstine.js')
     if os.path.exists(opstine_js_path):
@@ -570,18 +603,20 @@ def main():
         file_content = file.read().rstrip()
         osm_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y %H:%M')
 
-    print("Building cache of OSM entities")
-    osm_entities_cache = build_osm_entities_cache(data_path)
+    incremental_update = False
+    if os.environ.get('AR_INCREMENTAL_UPDATE', None) == "1":
+        incremental_update = True
+
+    osm_entities_cache = None
+    if not incremental_update:
+        print("Building cache of OSM entities")
+        osm_entities_cache = build_osm_entities_cache(data_path)
 
     print("Loading normalized street names mapping")
     street_mappings = StreetMapping(cwd)
 
     print("Loading boundaries of naselja")
     gdf_naselja = load_naselja_boundaries(rgz_path)
-
-    incremental_update = False
-    if os.environ.get('AR_INCREMENTAL_UPDATE', None) == "1":
-        incremental_update = True
 
     context = {
         'env': env,

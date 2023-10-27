@@ -32,7 +32,6 @@ def load_removed_addresses_from_osm(cwd):
 
     gdf_removed_addresses = gpd.GeoDataFrame(ceh.entities, geometry='osm_geometry', crs="EPSG:4326")
     gdf_removed_addresses['removed:ref:RS:kucni_broj'] = gdf_removed_addresses.apply(lambda row: row.tags['removed:ref:RS:kucni_broj'], axis=1)
-    gdf_removed_addresses['note'] = gdf_removed_addresses.apply(lambda row: row.tags['note'], axis=1)
     gdf_removed_addresses.drop(['osm_country', 'osm_city', 'osm_postcode', 'tags'], inplace=True, axis=1)
     gdf_removed_addresses.sindex
     print(f"Found all removed geometries ({len(ceh.entities)}) from PBF")

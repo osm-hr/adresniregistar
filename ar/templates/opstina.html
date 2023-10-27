@@ -31,13 +31,17 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
 	  {% if realTime %}
-	  <li class="breadcrumb-item" aria-current="page"><a href="../../index.html">Početna</a></li>
-	  <li class="breadcrumb-item" aria-current="page"><a href="../report.html">Real-time izveštaj</a></li>
+	  <li class="breadcrumb-item" aria-current="page"><a href="{% if not showAllNaselja %}../{% endif %}../index.html">Početna</a></li>
+	  <li class="breadcrumb-item" aria-current="page"><a href="{% if not showAllNaselja %}../{% endif %}report.html">Real-time izveštaj</a></li>
 	  {% else %}
-	  <li class="breadcrumb-item" aria-current="page"><a href="../index.html">Početna</a></li>
-	  <li class="breadcrumb-item" aria-current="page"><a href="../report.html">Izveštaj</a></li>
+	  <li class="breadcrumb-item" aria-current="page"><a href="{% if not showAllNaselja %}../{% endif %}index.html">Početna</a></li>
+	  <li class="breadcrumb-item" aria-current="page"><a href="{% if not showAllNaselja %}../{% endif %}report.html">Izveštaj</a></li>
 	  {% endif %}
+	  {% if showAllNaselja %}
+	  <li class="breadcrumb-item active" aria-current="page">Sva naselja</li>
+	  {% else %}
 	  <li class="breadcrumb-item active" aria-current="page">{{ opstina.name }}</li>
+	  {% endif %}
   </ol>
 </nav>
     <!-- Optional JavaScript -->
@@ -103,25 +107,42 @@
 			]);
 		}
 
+		{% if not showAllNaselja %}
 		$(document).ready( function () {
 			loadMap();
 		});
+		{% endif %}
     </script>
 
-<h2>{% if realTime %}Real-time izveštaj{% else %}Izveštaj{% endif %} po naselju</h2>
+<h2>{% if realTime %}Real-time izveštaj{% else %}Izveštaj{% endif %} po {% if showAllNaselja %}svim naseljima{% else %}naselju{% endif %}</h2>
 <br/>
 {% if realTime %}
 <p>OSM podaci od <b>{{ osmDataDate }}</b></p>
 {% else %}
-<p>Ovde možete videti statistike po naselju u okviru opštine {{ opstina.name }}". Klikom na naselje dobijate podatke za to naselje.
-	U gornjem desnom uglu je filtriranje. Klikom na "Pomoć" u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.</p>
+	<p>
+	{% if showAllNaselja %}
+	Ovde možete videti statistike za sva naselja u Srbiji.
+	{% else %}
+	Ovde možete videti statistike po naselju u okviru opštine „{{ opstina.name }}”.
+	{% endif %}
+	Klikom na naselje dobijate podatke za to naselje.
+		U gornjem desnom uglu je filtriranje. Klikom na „Pomoć” u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.</p>
 {% endif %}
+
+{% if showAllNaselja %}
+<br/>
+Vratite se na <a href="report.html">prikaz po opštinama</a>.
+{% endif %}
+
 <br/>
 <br/>
 
 <table id="list" class="table table-sm table-striped table-bordered table-hover" style="width:100%">
 <thead class="thead-dark sticky-top">
 	<tr>
+		{% if showAllNaselja %}
+		<th>Opština</th>
+		{% endif %}
 		<th>Naselje</th>
 		<th>#RGZ</th>
 		<th class="d-sm-table-cell">% Konflacija</th>
@@ -134,7 +155,14 @@
 <tbody>
 	{% for naselje in naselja %}
 	<tr>
+		{% if showAllNaselja %}
+		<td><a href="opstine/{{ naselje.opstina.name }}.html">{{ naselje.opstina.name }}</a></td>
+		{% endif %}
+		{% if showAllNaselja %}
+		<td><a href="opstine/{{ naselje.opstina.name_norm }}/{{ naselje.name_lat }}.html">{{ naselje.name_lat }}</a></td>
+		{% else %}
 		<td><a href="{{ opstina.name_norm }}/{{ naselje.name_lat }}.html">{{ naselje.name_lat }}</a></td>
+		{% endif %}
 		<td>{{ naselje.rgz }}</td>
 		<td>{{ '{0:0.2f}'.format((100.0 * naselje.conflated) / naselje.rgz) }}</td>
 		<td>{{ naselje.conflated }}</td>
@@ -146,7 +174,11 @@
 </tbody>
 <tfoot>
 	<tr>
+		{% if showAllNaselja %}
+		<th colspan="2">{{ opstina.name }} TOTAL:</th>
+		{% else %}
 		<th>{{ opstina.name }} TOTAL:</th>
+		{% endif %}
 		<th class="d-sm-table-cell">{{ opstina.rgz }}</th>
 		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * opstina.conflated) / opstina.rgz) }}</th>
 		<th class="d-sm-table-cell">{{ opstina.conflated }}</th>
@@ -157,9 +189,11 @@
 </tfoot>
 </table>
 
+{% if not showAllNaselja %}
 <br/><br/>
 <div id="map" class="mx-auto" style="position: relative;border: 1px solid black;border-radius: 8px;height: 400px;width: min(90%, 600px);">
 </div>
+{% endif %}
 
 {% endblock %}
 
