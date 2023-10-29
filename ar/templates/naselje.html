@@ -106,14 +106,21 @@
 </tbody>
 </table>
 
-{% if len(osm_files_new_addresses) > 0  or len(osm_files_matched_addresses) > 0 %}
+{% if len(osm_files_new_addresses) > 0  or len(osm_files_new_per_street_addresses) > 0 or len(osm_files_matched_addresses) > 0 %}
 <h2>Lista fajlova za import</h2>
 
 <div class="row">
 	{% if len(osm_files_new_addresses) > 0 %}
 	<div class="col-sm">
 	  <a class="btn btn-primary" data-toggle="collapse" href="#collapseOsmFilesNew" role="button" aria-expanded="false" aria-controls="collapseOsmFilesNew">
-		Samo nove adrese!
+		Nove adrese (po 100)
+	  </a>
+	</div>
+	{% endif %}
+	{% if len(osm_files_new_per_street_addresses) > 0 %}
+	<div class="col-sm">
+	  <a class="btn btn-primary" data-toggle="collapse" href="#collapseOsmFilesNewPerStreet" role="button" aria-expanded="false" aria-controls="collapseOsmFilesNewPerStreet">
+		Nove adrese (po ulicama)
 	  </a>
 	</div>
 	{% endif %}
@@ -129,27 +136,51 @@
 
 {% if len(osm_files_new_addresses) > 0 %}
 <div class="collapse" id="collapseOsmFilesNew">
+  <br/>
   Ovde su fajlovi za import adresa iz RGZ-a koje nisu mogle da budu nađene u OSM-u. Morate imati otvoren JOSM pre nego što kliknete na fajl.
 	Klikom na fajl ćete ga učitati u JOSM. Fajlovi su grupisani u grupe od po najviše 100 adresa.
 	<br/>
 	<br/>
 	<b>Pre bilo kakvog importa, <b>obavezno</b> pročitati <a href="https://wiki.openstreetmap.org/wiki/Serbia/Projekti/Adresni_registar#Uputstvo_za_import" target="_blank">uputstvo</a></b>!
 	<br/>
-  <div class="card card-body">
-	  <div class="row row-cols-5">
-	  	{% for osm_file in osm_files_new_addresses %}
-	  		<div class="col-sm">
-	  			<a href="http://localhost:8111/import?changeset_tags=source=RGZ_AR&new_layer=true&layer_name={{ naselje.name_lat }}-{{ osm_file.name }}&url={{ osm_file.url }}" target="_blank">{{ osm_file.name }}</a>
+    <div class="card card-body">
+	  <div class="row">
+		{% for osm_file in osm_files_new_addresses %}
+			<div class="col-sm-2">
+				<a href="http://localhost:8111/import?changeset_tags=source=RGZ_AR&new_layer=true&layer_name={{ naselje.name_lat }}-{{ osm_file.name }}&url={{ osm_file.url }}" target="_blank">{{ osm_file.name }}</a>
 			</div>
-	  	{% endfor %}
+		{% endfor %}
 	  </div>
-  </div>
+    </div>
+  <br/><br/>
 </div>
-<br/><br/>
+{% endif %}
+
+{% if len(osm_files_new_per_street_addresses) > 0 %}
+<div class="collapse" id="collapseOsmFilesNewPerStreet">
+  <br/>
+  Ovde su fajlovi za import adresa iz RGZ-a koje nisu mogle da budu nađene u OSM-u. Morate imati otvoren JOSM pre nego što kliknete na fajl.
+	Klikom na fajl ćete ga učitati u JOSM. Fajlovi su grupisani po ulicama, a u zagradi je naveden broj kućnih brojeva u ulici.
+  <br/>
+  <br/>
+  <b>Pre bilo kakvog importa, <b>obavezno</b> pročitati <a href="https://wiki.openstreetmap.org/wiki/Serbia/Projekti/Adresni_registar#Uputstvo_za_import" target="_blank">uputstvo</a></b>!
+  <br/>
+  <div class="card card-body">
+    <div class="row">
+      {% for osm_file in osm_files_new_per_street_addresses %}
+      <div class="col-sm-3">
+        <a href="http://localhost:8111/import?changeset_tags=source=RGZ_AR&new_layer=true&layer_name={{ naselje.name_lat }}-{{ osm_file.name }}&url={{ osm_file.url }}" target="_blank">{{ osm_file.name }}</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <br/><br/>
+</div>
 {% endif %}
 
 {% if len(osm_files_matched_addresses) > 0 %}
 <div class="collapse" id="collapseOsmFilesMatched">
+  <br/>
   Ovde su fajlovi za import adresa iz RGZ-a koje se 100% poklapaju po adresi i kućnom broju sa adresama u OSM-u.
 	Morate imati otvoren JOSM pre nego što kliknete na fajl.
 	Klikom na fajl ćete ga učitati u JOSM.
@@ -159,16 +190,16 @@
 	<b>Pre bilo kakvog importa, <b>obavezno</b> pročitati <a href="https://wiki.openstreetmap.org/wiki/Serbia/Projekti/Adresni_registar#Uputstvo_za_import" target="_blank">uputstvo</a></b>!
 	<br/>
   <div class="card card-body">
-	  <div class="row row-cols-5">
+	  <div class="row">
 	  	{% for osm_file in osm_files_matched_addresses %}
-	  		<div class="col-sm">
+	  		<div class="col-sm-2">
 	  			<a href="http://localhost:8111/import?changeset_tags=source=RGZ_AR&new_layer=true&layer_name={{ naselje.name_lat }}-{{ osm_file.name }}&url={{ osm_file.url }}" target="_blank">{{ osm_file.name }}</a>
 			</div>
 	  	{% endfor %}
 	  </div>
   </div>
+  <br/><br/>
 </div>
-<br/><br/>
 {% endif %}
 
 {% endblock %}

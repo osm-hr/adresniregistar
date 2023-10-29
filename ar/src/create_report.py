@@ -194,7 +194,9 @@ def generate_osm_files_matched_addresses(context, opstina_dir_path, opstina_name
         if address.osm_id[0] == 'n':
             counter = counter + 1
             node_id = int(address.osm_id[1:])
-            entity = context['osm_entities_cache'].nodes_cache[node_id]
+            if node_id not in osm_entities_cache.nodes_cache:
+                continue
+            entity = osm_entities_cache.nodes_cache[node_id]
             already_exists = any(n for n in osm_nodes if n['id'] == node_id)
             if not already_exists:
                 new_tags = dict(entity['tags'], **{'ref:RS:kucni_broj': str(address.rgz_kucni_broj_id)})
@@ -207,7 +209,10 @@ def generate_osm_files_matched_addresses(context, opstina_dir_path, opstina_name
                 })
         elif address.osm_id[0] == 'w':
             counter = counter + 1
-            entity = osm_entities_cache.ways_cache[int(address.osm_id[1:])]
+            way_id = int(address.osm_id[1:])
+            if way_id not in osm_entities_cache.ways_cache:
+                continue
+            entity = osm_entities_cache.ways_cache[way_id]
             new_tags = dict(entity['tags'], **{'ref:RS:kucni_broj': str(address.rgz_kucni_broj_id)})
             osm_ways.append({
                 'id': int(address.osm_id[1:]),
@@ -305,20 +310,62 @@ def generate_osm_files_new_addresses(context, opstina_dir_path, opstina_name, na
     return osm_files
 
 
+def generate_osm_files_new_per_street_addresses(context, opstina_dir_path, opstina_name, naselje, df_naselje):
+    env = context['env']
+    street_mappings: StreetMapping = context['street_mappings']
+
+    naselje_dir_path = os.path.join(opstina_dir_path, opstina_name)
+
+    template = env.get_template('new_address.osm')
+    osm_files = []
+    only_not_found_addresses = df_naselje[pd.isna(df_naselje.conflated_osm_id) & pd.isna(df_naselje.osm_id)]
+    for rgz_opstina_ulica, df_ulica in only_not_found_addresses.groupby(['rgz_opstina', 'rgz_ulica']):
+        osm_entities = []
+        proper_street = street_mappings.get_name(rgz_opstina_ulica[1], rgz_opstina_ulica[0])
+
+        for _, address in df_ulica.iterrows():
+            location = address['rgz_geometry'][7:-1].split(' ')
+            location_lon = round(float(location[0]), 6)
+            location_lat = round(float(location[1]), 6)
+            osm_entities.append({
+                'id': 0 - (len(osm_entities) + 1),
+                'lat': location_lat,
+                'lon': location_lon,
+                'street': proper_street,
+                'housenumber': normalize_name_latin(address['rgz_kucni_broj']),
+                'ulica': address['rgz_ulica_mb'],
+                'kucni_broj': address['rgz_kucni_broj_id']
+            })
+
+        output = template.render(osm_entities=osm_entities)
+        ulica_norm = normalize_name_latin(rgz_opstina_ulica[1])
+        filename = f'{normalize_name(naselje["name_lat"])}-new-{ulica_norm}.osm'
+        osm_file_path = os.path.join(naselje_dir_path, filename)
+        with open(osm_file_path, 'w', encoding='utf-8') as fh:
+            fh.write(output)
+        osm_files.append(
+            {
+                'name': f'{proper_street} ({len(df_ulica)})',
+                'url': f'https://dina.openstreetmap.rs/ar/opstine/{opstina_name}/{filename}'
+            }
+        )
+
+    return osm_files
+
+
 def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselje):
     env = context['env']
 
     template = env.get_template('naselje.html')
-    current_date = datetime.date.today().strftime('%Y-%m-%d')
-    report_date = datetime.date.today().strftime('%d.%m.%Y %H:%M')
     opstina_name_norm = normalize_name(opstina_name)
     naselje_dir_path = os.path.join(opstina_dir_path, opstina_name_norm)
     if not os.path.exists(naselje_dir_path):
         os.mkdir(naselje_dir_path)
 
-    osm_files_new_addresses, osm_files_matched_addresses = [], []
+    osm_files_new_addresses, osm_files_new_per_street_addresses, osm_files_matched_addresses = [], [], []
     if not context['incremental_update']:
         osm_files_new_addresses = generate_osm_files_new_addresses(context, opstina_dir_path, opstina_name_norm, naselje, df_naselje)
+        osm_files_new_per_street_addresses = generate_osm_files_new_per_street_addresses(context, opstina_dir_path, opstina_name_norm, naselje, df_naselje)
         osm_files_matched_addresses = generate_osm_files_matched_addresses(context, opstina_dir_path, opstina_name_norm, naselje, df_naselje)
 
     naselje_path = os.path.join(naselje_dir_path, f'{naselje["name_lat"]}.html')
@@ -380,6 +427,7 @@ def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselj
         naselje=naselje,
         opstina_name=opstina_name,
         osm_files_new_addresses=osm_files_new_addresses,
+        osm_files_new_per_street_addresses=osm_files_new_per_street_addresses,
         osm_files_matched_addresses=osm_files_matched_addresses)
     with open(naselje_path, 'w', encoding='utf-8') as fh:
         fh.write(output)
