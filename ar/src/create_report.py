@@ -318,6 +318,7 @@ def generate_osm_files_new_per_street_addresses(context, opstina_dir_path, opsti
 
     template = env.get_template('new_address.osm')
     osm_files = []
+    counter = 1
     only_not_found_addresses = df_naselje[pd.isna(df_naselje.conflated_osm_id) & pd.isna(df_naselje.osm_id)]
     for rgz_opstina_ulica, df_ulica in only_not_found_addresses.groupby(['rgz_opstina', 'rgz_ulica']):
         osm_entities = []
@@ -339,7 +340,8 @@ def generate_osm_files_new_per_street_addresses(context, opstina_dir_path, opsti
 
         output = template.render(osm_entities=osm_entities)
         ulica_norm = normalize_name_latin(rgz_opstina_ulica[1])
-        filename = f'{normalize_name(naselje["name_lat"])}-new-{ulica_norm}.osm'
+        filename = f'{normalize_name(naselje["name_lat"])}-new-st-{counter}.osm'
+        counter = counter + 1
         osm_file_path = os.path.join(naselje_dir_path, filename)
         with open(osm_file_path, 'w', encoding='utf-8') as fh:
             fh.write(output)
