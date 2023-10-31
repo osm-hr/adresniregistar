@@ -7,6 +7,7 @@ from enum import Enum
 
 from selenium import webdriver
 from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException
+from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from seleniumwire import webdriver
@@ -107,7 +108,8 @@ def download_all_from_rgz(rgz_username, rgz_password, download_path,
     profile.set_preference("browser.download.dir", download_path)
     profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-gzip")
 
-    driver = webdriver.Firefox(options=profile)
+    service = Service(executable_path='./geckodriver')
+    driver = webdriver.Firefox(options=profile, service=service)
     driver.implicitly_wait(10)
 
     login(driver, rgz_username, rgz_password)
@@ -150,7 +152,8 @@ def download_all_from_rgz(rgz_username, rgz_password, download_path,
             driver.refresh()
             time.sleep(SLEEP_TIME * 10)
             click_novo_preuzimanje(driver)
-            select_kucni_broj(driver)
+            if entity_type == EntityType.KUCNI_BROJEVI:
+                select_kucni_broj(driver)
             total_downloaded = 0
     driver.quit()
 
