@@ -100,7 +100,7 @@
 {% if address.conflated_osm_link != '' %}<td><a href="{{address.conflated_osm_link }}" target="_blank">{{ address.conflated_osm_street }} {{ address.conflated_osm_housenumber }}</a></td>{% else %}<td/>{% endif %}
 {% if address.osm_link != '' %}<td><a href="{{address.osm_link }}" target="_blank">{% if address.matching %}✅&nbsp;{% endif %}{{ address.osm_street }} {{ address.osm_housenumber }}</a></td>{% else %}<td/>{% endif %}
 {% if address.score != '' %}<td>{{ '{0:0.2f}%'.format(100 * address.score) }}</td>{% else %}<td/>{% endif %}
-{% if address.distance != '' %}<td>{{ '{0:0.0f}m'.format(address.distance) }}</td>{% else %}<td/>{% endif %}
+{% if address.distance != '' %}<td data-order="{{ '{0:0.0f}'.format(address.distance) }}">{{ '{0:0.0f}m'.format(address.distance) }}</td>{% else %}<td data-order="-1" />{% endif %}
 </tr>
 {% endfor %}
 </tbody>
