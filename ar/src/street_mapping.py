@@ -260,6 +260,23 @@ def fix_framacalc():
             })
 
 
+def sort_curated_streets(cwd):
+    curated_streets = load_curated(cwd)
+    with open('curated_streets2.csv', 'w', encoding="utf-8") as curated_streets_csv_file:
+        writer = csv.DictWriter(
+            curated_streets_csv_file,
+            fieldnames=['rgz_name', 'name'])
+        writer.writeheader()
+        curated_streets_sorted = sorted(curated_streets)
+        for rgz_name in curated_streets_sorted:
+            if rgz_name == '':
+                raise Exception()
+            writer.writerow({
+                'rgz_name': rgz_name,
+                'name': curated_streets[rgz_name]
+            })
+
+
 class StreetMapping:
     def __init__(self, cwd):
         self.street_mappings = {}
@@ -310,3 +327,4 @@ class StreetMapping:
 if __name__ == '__main__':
     main()
     #fix_framacalc()
+    #sort_curated_streets(os.getcwd())
