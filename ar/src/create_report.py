@@ -11,7 +11,7 @@ from jinja2 import Environment, FileSystemLoader
 from shapely import wkt
 
 from common import AddressInBuildingResolution
-from common import cyr2lat, normalize_name, normalize_name_latin, xml_escape, geojson2js
+from common import cyr2lat, normalize_name, normalize_name_latin, xml_escape, geojson2js, pad_housenumber
 from street_mapping import StreetMapping
 
 
@@ -358,6 +358,12 @@ def generate_osm_files_new_per_street_addresses(context, opstina_dir_path, opsti
 def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselje):
     env = context['env']
 
+    letter_values = {
+        'А': 1, 'Б': 2, 'В': 3, 'Г': 4, 'Д': 5, 'Ђ': 6, 'Е': 7, 'Ж': 8, 'З': 9, 'И': 10,
+        'Ј': 11, 'К': 12, 'Л': 13, 'Љ': 14, 'М': 15, 'Н': 16, 'Њ': 17, 'О': 18, 'П': 19, 'Р': 20,
+        'С': 21, 'Т': 22, 'Ћ': 23, 'У': 24, 'Ф': 25, 'Х': 26, 'Ц': 27, 'Ч': 28, 'Џ': 29, 'Ш': 30,
+    }
+
     template = env.get_template('naselje.html')
     opstina_name_norm = normalize_name(opstina_name)
     naselje_dir_path = os.path.join(opstina_dir_path, opstina_name_norm)
@@ -371,6 +377,10 @@ def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselj
         osm_files_matched_addresses = generate_osm_files_matched_addresses(context, opstina_dir_path, opstina_name_norm, naselje, df_naselje)
 
     naselje_path = os.path.join(naselje_dir_path, f'{naselje["name_lat"]}.html')
+
+    naselje_rgz_names_sorted = sorted(df_naselje['rgz_ulica'].unique(), key=lambda x: [(1000+letter_values[c]) if c in letter_values else ord(c) for c in x.upper()])
+    max_digits = len(str(len(naselje_rgz_names_sorted)))
+    naselje_rgz_names_sorted_dict = {c: str(i+1).zfill(max_digits) for i, c in enumerate(naselje_rgz_names_sorted)}
 
     addresses = []
     for _, address in df_naselje.iterrows():
@@ -407,6 +417,7 @@ def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselj
             'rgz_kucni_broj_id': address['rgz_kucni_broj_id'],
             'rgz_ulica': address['rgz_ulica'],
             'rgz_kucni_broj': address['rgz_kucni_broj'],
+            'rgz_ordered': f'{naselje_rgz_names_sorted_dict[address["rgz_ulica"]]}-{pad_housenumber(address["rgz_kucni_broj"])}',
             'location_url': location_url,
             'location_text': location_text,
             'conflated_osm_link': conflated_osm_link,

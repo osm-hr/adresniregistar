@@ -172,6 +172,35 @@ def geojson2js(js_path, variable_name):
         f.write(js_file_content)
 
 
+def pad_housenumber(housenumber):
+    if type(housenumber) != str:
+        return '00000'
+    if len(housenumber) == 0:
+        return '00000'
+
+    if housenumber[-1].isdigit():
+        return f'{housenumber:>05}'
+
+    if len(housenumber) > 1:
+        if housenumber[-2].isdigit():
+            # Case of only one letter, "12a"
+            number = housenumber[0:-1]
+            letter = housenumber[-1]
+            return f'{number:>05}{letter}'
+        else:
+            # Case with two letters, "12lj"
+            number = housenumber[0:-2]
+            letter = housenumber[-2:]
+            return f'{number:>05}{letter}'
+    else:
+        if housenumber[0].isdigit():
+            # Case with one char, "1"
+            return f'{housenumber:>05}'
+        else:
+            # Case with one char, letter, "a"
+            return f'{housenumber:>05}'
+
+
 def housenumber_to_float(housenumber):
     if type(housenumber) != str:
         return 0
