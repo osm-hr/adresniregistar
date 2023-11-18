@@ -72,7 +72,7 @@
     {% if len(osm_files_move_address_to_building) > 0 %}
     U dnu se nalazi spisak fajlova.
     {% endif %}
-    U gornjem desnom uglu je filtriranje. Klikom na "Pomoć" u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.
+    U gornjem desnom uglu je filtriranje. Klikom na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.
     </p>
 <br/>
 <br/>
@@ -180,7 +180,7 @@
 
 <h2>Broj različitih kategorija</h2>
 <br/>
-<p>Ovde možete videti ukupan broj adresa koje se nalaze unutar zgrada, po kategorijama unutar opštine "{{ opstina_name }}".
+<p>Ovde možete videti ukupan broj adresa koje se nalaze unutar zgrada, po kategorijama unutar opštine „{{ opstina_name }}”.
     Neke od kategorija se mogu rešiti automatizacijom, ali većina zahteva ljudsku pažnju.</p>
 <br/>
 <br/>
@@ -215,9 +215,9 @@
             {% elif resolution == AddressInBuildingResolution.CASE_TOO_COMPLEX %}
             Mešavina POI-a i adresa unutar zgrade, razrešite ručno
             {% elif resolution == AddressInBuildingResolution.BUILDING_IS_NODE %}
-            Ova zgrada je zapravo čvor sa tagom "building", treba izbrisati "building" tag
+            Ova zgrada je zapravo čvor sa tagom „building”, treba izbrisati „building” tag
             {% elif resolution == AddressInBuildingResolution.NOTE_PRESENT %}
-            Nešto nije u redu, ali postoji "note" tag na zgradi, adresi ili POI-u i ništa se ne automatizuje
+            Nešto nije u redu, ali postoji „note” tag na zgradi, adresi ili POI-u i ništa se ne automatizuje
             {% else %}
             Kategorija nepoznata
             {% endif %}

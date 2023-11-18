@@ -14,7 +14,7 @@
       <div class="modal-body">
 		<ul>
 			<li><b>Id (RGZ)</b> &mdash; Identifikator ulice u RGZ-u (ono što se stavlja u „ref:RS:ulica” tag)</li>
-			<li><b>Ulica (RGZ)</b> &mdash; Ime ulice iz RGZ-a, a posle strelice i pravilno ime ulice kako treba uneti u OSM. Ukoliko nema imena ulice posle strelice, znači da ulice još nema u registru. Klikom na ulicu se otvara geojson.io portal na kome može da se vidi i RGZ ulica (crvenom bojom) i sve conflated OSM ulice (plavom bojom)</li>
+			<li><b>Ulica (RGZ)</b> &mdash; Ime ulice iz RGZ-a, a posle strelice i pravilno ime ulice kako treba uneti u OSM. Ukoliko nema imena ulice posle strelice, znači da ulice još nema u <a href="https://dina.openstreetmap.rs/ar/street_mapping.html" target="_blank">registru</a>. Klikom na ulicu se otvara geojson.io portal na kome može da se vidi i RGZ ulica (crvenom bojom) i sve conflated OSM ulice (plavom bojom)</li>
 			<li><b>Dužina (RGZ)</b> &mdash; Ukupna dužina ulice u RGZ-u (u metrima)</li>
 			<li><b>Conflated putevi (dužina)</b> &mdash; Spisak svih nađenih puteva u OSM-u koji su spojeni sa RGZ ulicom preko „ref:RS:ulica” taga. Za svaki je u zagradi navedena njegova dužina u OSM-u</li>
 			<li><b>Conflated - max greška (m)</b> &mdash; Najveća greška između RGZ ulice i OSM ulica (u metrima). Najveća udaljenost koju dve tačke na ovim ulicama mogu imati. Ova vrednost obično ne sme biti preko par stotina metara</li>
@@ -62,10 +62,10 @@
 <br/>
 
 <p>Ovde možete videti sve ulice unutar naselja „{{ naselje.name_lat }}” i status konflacije. U gornjem desnom uglu je filtriranje.
-<b>Podaci u poslednjoj koloni tabele prikazuju samo potencijalne vrednosti i treba ih koristiti samo kao savete. Potrebno je svaku ulicu otvoriti u editoru i obratiti pažnju prilikom uvoza!</b>
+Podaci u poslednjoj koloni tabele prikazuju <b>samo potencijalne vrednosti</b> i treba ih koristiti samo kao savete. Potrebno je svaku ulicu otvoriti u editoru i obratiti pažnju prilikom uvoza!
 </p>
 	<p>
-	Kliknite na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju da razumete kako da tumačite kolone u ovoj tabeli.
+	<b>Kliknite na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a></b> u gornjem meniju da razumete kako da tumačite kolone u ovoj tabeli.
 	</p>
 <br/>
 <br/>

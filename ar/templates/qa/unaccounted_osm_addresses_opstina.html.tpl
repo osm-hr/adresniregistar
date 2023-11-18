@@ -67,7 +67,7 @@
 <br/>
 <p>Ovde možete videti sve adrese u OpenStreetMap-ama koje nemaju ref:RS:kucni_broj oznaku.
     Ovo znači ili da nisu spojene sa RGZ podacima, ili da je teško spojiti ih sa RGZ podacima (postoje na terenu, treba izaći na teren i proveriti...).
-    U gornjem desnom uglu je filtriranje. Klikom na "Pomoć" u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.
+    U gornjem desnom uglu je filtriranje. Klikom na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.
     </p>
 <br/>
 <br/>

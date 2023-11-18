@@ -62,7 +62,7 @@
     Adresa brisanja je najranije vreme kada smo primetili da adresa više nije u RGZ-u. Ukoliko imate lokalno znanje,
     slobodno obrišite ove adrese (ili cele zgrade ukoliko više ne postoji). U suprotnom, dogovor zajednice je da ih
     ostavimo neke vreme (npr. 2 godine) jer neko može da ih koristi za navođenje ili su možda još u upotrebi.
-    U gornjem desnom uglu je filtriranje. Klikom na "Pomoć" u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.
+    U gornjem desnom uglu je filtriranje. Klikom na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.
     </p>
 <br/>
 <br/>
