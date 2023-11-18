@@ -63,6 +63,10 @@ cyr_to_lat = {
     'х': 'h', 'ц': 'c', 'ч': 'č', 'џ': 'dž', 'ш': 'š', 'ђ': 'đ'
 }
 
+cyr_to_lat_small = {
+    'Њ': 'Nj', 'Џ': 'Dž', 'Љ': 'Lj'
+}
+
 housenumber_order = {
     'a': 1, 'b': 2, 'v': 3, 'g': 4, 'd': 5, 'đ': 6, 'e': 7, 'ž': 8, 'z': 9, 'i': 10,
     'j': 11, 'k': 12, 'l': 13, 'lj': 14, 'm': 15, 'n': 16, 'nj': 17, 'o': 18, 'p': 19, 'r': 20,
@@ -108,6 +112,20 @@ def cyr2lat(text):
     out = ''
     for c in text:
         if c in cyr_to_lat:
+            out += cyr_to_lat[c]
+        else:
+            out += c
+    return out
+
+
+def cyr2lat_small(text):
+    if type(text) == int:
+        return str(text)
+    out = ''
+    for c in text:
+        if c in cyr_to_lat_small:
+            out += cyr_to_lat_small[c]
+        elif c in cyr_to_lat:
             out += cyr_to_lat[c]
         else:
             out += c

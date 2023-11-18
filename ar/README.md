@@ -8,11 +8,15 @@ Treba skinuti i [`geckodriver` binary](https://github.com/mozilla/geckodriver/re
 
 Treba da imate i `parallel` program (na Debian-u se prosto instalira sa `sudo apt install parallel`).
 
+Pored toga u direktorijum data/rgz treba skinuti sa opendata.geosrbija.rs opstina.csv i naselje.csv.
+
 Za sad treba skinuti i opstina.zip sa https://opendata.geosrbija.rs (dok se ne automatizuje) i otpakovati opstina.csv u data/rgz direktorijum.
 
 ## Korišćenje
 
 Sve komande se izvršavaju sa `make <komanda>`. Dostupne su sledeće komande:
+
+
 * `clean`
   
   Briše sve sakupljene i generisane fajlove da proces počne iz početka
@@ -70,6 +74,9 @@ Sve komande se izvršavaju sa `make <komanda>`. Dostupne su sledeće komande:
   Ova komanda generiše HTML fajlove u `data/report` direktorijumu na osnovu prethodno urađene analize. Izgenerisani
   fajlovi su statički i mogu se prebaciti na neki server. Veličina je velika, 800 MB neotpakovano, 80 MB zapakovano. 
 
+* `upload_report`
+
+  Ova komanda uploaduje izgenerisane HTML fajlove na DINA platformu.
 
 ## Licenca
 

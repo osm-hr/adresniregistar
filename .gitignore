@@ -12,3 +12,9 @@ ar/rt-upload.log
 sz/data/
 sz/output/
 sz/run.log
+st/idp_creds
+st/data/
+st/geckodriver
+st/geckodriver.log
+st/clean.log
+st/upload.log
