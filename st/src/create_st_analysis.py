@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+import ast
 import os
 
-from shapely.geometry import Point
-from shapely import distance
 import geopandas as gpd
 import pandas as pd
 from shapely import wkt
@@ -50,7 +49,9 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
     gdf_osm['osm_name_norm'] = gdf_osm.osm_name.apply(normalize_name)
     gdf_osm['osm_way_length'] = gdf_osm.length
     gdf_osm.set_geometry('osm_geometry', inplace=True)
-    gdf_osm.drop(['osm_geometry2'], inplace=True, axis=1)
+    gdf_osm['highway'] = df_osm['tags'].apply(lambda x: ast.literal_eval(x)['highway'])
+    gdf_osm = gdf_osm[~gdf_osm.highway.isin(['footway', 'cycleway', 'path', 'steps', 'proposed', 'construction', 'corridor', 'platform'])]
+    gdf_osm.drop(['osm_geometry2', 'highway'], inplace=True, axis=1)
     gdf_osm.sindex
 
     print(f"    Loading RGZ streets in {opstina}")
@@ -86,7 +87,7 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
     gdf_rgz.sindex
 
     print(f"    Buffering RGZ streets for 50m in {opstina}")
-    gdf_rgz['rgz_buffered_geometry'] = gdf_rgz.rgz_geometry.buffer(distance=30)
+    gdf_rgz['rgz_buffered_geometry'] = gdf_rgz.rgz_geometry.buffer(distance=15)
     gdf_rgz.set_geometry('rgz_buffered_geometry', inplace=True)
     gdf_rgz.sindex
 
