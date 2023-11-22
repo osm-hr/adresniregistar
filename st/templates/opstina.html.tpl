@@ -33,9 +33,10 @@
 
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
-	  <li class="breadcrumb-item" aria-current="page"><a href="../index.html">Početna</a></li>
-	  <li class="breadcrumb-item" aria-current="page"><a href="../report.html">Izveštaj</a></li>
-	  <li class="breadcrumb-item active" aria-current="page">{{ opstina.name }}</li>
+    <li class="breadcrumb-item" aria-current="page"><a href="../../index.html">DINA</a></li>
+    <li class="breadcrumb-item" aria-current="page"><a href="../index.html">Ulice</a></li>
+    <li class="breadcrumb-item" aria-current="page"><a href="../report.html">Izveštaj</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ opstina.name }}</li>
   </ol>
 </nav>
     <!-- Optional JavaScript -->

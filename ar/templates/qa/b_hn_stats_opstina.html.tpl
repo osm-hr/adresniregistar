@@ -28,10 +28,11 @@
 
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
-	  <li class="breadcrumb-item" aria-current="page"><a href="../index.html">Početna</a></li>
-	  <li class="breadcrumb-item" aria-current="page"><a href="../qa.html">Izveštaji</a></li>
-      <li class="breadcrumb-item" aria-current="page"><a href="index.html">Odnos zgrada i kućnih brojeva</a></li>
-      <li class="breadcrumb-item" aria-current="page">{{ opstina }}</li>
+    <li class="breadcrumb-item" aria-current="page"><a href="../../index.html">Adrese</a></li>
+	<li class="breadcrumb-item" aria-current="page"><a href="../index.html">Adrese</a></li>
+	<li class="breadcrumb-item" aria-current="page"><a href="../qa.html">Izveštaji</a></li>
+    <li class="breadcrumb-item" aria-current="page"><a href="index.html">Odnos zgrada i kućnih brojeva</a></li>
+    <li class="breadcrumb-item" aria-current="page">{{ opstina }}</li>
   </ol>
 </nav>
     <!-- Optional JavaScript -->

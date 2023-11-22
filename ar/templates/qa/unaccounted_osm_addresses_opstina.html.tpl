@@ -30,10 +30,11 @@
 
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
-	  <li class="breadcrumb-item" aria-current="page"><a href="../index.html">Početna</a></li>
-	  <li class="breadcrumb-item" aria-current="page"><a href="../qa.html">QA</a></li>
-      <li class="breadcrumb-item" aria-current="page"><a href="../unaccounted_osm_addresses.html">OSM adrese bez ref:RS:kucni_broj</a></li>
-      <li class="breadcrumb-item" aria-current="page">{{ opstina_name }}</li>
+    <li class="breadcrumb-item" aria-current="page"><a href="../../index.html">DINA</a></li>
+	<li class="breadcrumb-item" aria-current="page"><a href="../index.html">Adrese</a></li>
+	<li class="breadcrumb-item" aria-current="page"><a href="../qa.html">QA</a></li>
+    <li class="breadcrumb-item" aria-current="page"><a href="../unaccounted_osm_addresses.html">OSM adrese bez ref:RS:kucni_broj</a></li>
+    <li class="breadcrumb-item" aria-current="page">{{ opstina_name }}</li>
   </ol>
 </nav>
     <!-- Optional JavaScript -->

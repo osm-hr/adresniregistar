@@ -33,8 +33,9 @@
 
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
-	  <li class="breadcrumb-item" aria-current="page"><a href="index.html">Početna</a></li>
-	  <li class="breadcrumb-item" aria-current="page">{{ opstina_name }}</li>
+    <li class="breadcrumb-item" aria-current="page"><a href="../index.html">DINA</a></li>
+	<li class="breadcrumb-item" aria-current="page"><a href="index.html">Stambene zajednice</a></li>
+	<li class="breadcrumb-item" aria-current="page">{{ opstina_name }}</li>
   </ol>
 </nav>
     <!-- Optional JavaScript -->

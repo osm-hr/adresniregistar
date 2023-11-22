@@ -31,9 +31,10 @@
 
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
-	  <li class="breadcrumb-item" aria-current="page"><a href="index.html">Početna</a></li>
-	  <li class="breadcrumb-item" aria-current="page"><a href="qa.html">QA</a></li>
-	  <li class="breadcrumb-item" aria-current="page">Nazivi ulica</li>
+    <li class="breadcrumb-item" aria-current="page"><a href="../index.html">DINA</a></li>
+	<li class="breadcrumb-item" aria-current="page"><a href="index.html">Adrese</a></li>
+	<li class="breadcrumb-item" aria-current="page"><a href="qa.html">QA</a></li>
+	<li class="breadcrumb-item" aria-current="page">Nazivi ulica</li>
   </ol>
 </nav>
     <!-- Optional JavaScript -->
