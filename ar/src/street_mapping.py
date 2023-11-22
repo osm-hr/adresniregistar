@@ -204,8 +204,15 @@ def main():
     osm_mappings = load_osm_mappings(cwd)
     print(f"Collected all OSM ({len(osm_mappings)}) mappings")
 
-    total_csvs = len(os.listdir(rgz_csv_path))
     mapping = {}
+    # First add all curated streets (in reality, this is needed as some streets do not have addresses, so they are present only in ST module, in data/rgz/csv.
+    # Until this is split to be executed before both AR and ST modules, this is hack to get all addresses from curated to data/mapping/street_mapping.csv
+    for curated_street_rgz in curated_streets.keys():
+        if curated_street_rgz not in mapping:
+            mapping[curated_street_rgz] = ({'name': curated_streets[curated_street_rgz], 'source': 'curated', 'refs': ''})
+
+    total_csvs = len(os.listdir(rgz_csv_path))
+
     for i, file in enumerate(os.listdir(rgz_csv_path)):
         if not file.endswith(".csv"):
             continue
