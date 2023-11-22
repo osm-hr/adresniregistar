@@ -12,3 +12,5 @@ ssh kokanovic "rm -f /home/branko/st/report$current_date.tar.gz"
 mv data/temp-report$current_date.tar.gz data/st-report$current_date.tar.gz
 
 rm -f data/running
+
+echo "Done"

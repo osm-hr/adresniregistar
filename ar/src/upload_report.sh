@@ -16,3 +16,5 @@ else
 fi
 
 rm -f data/running
+
+echo "Done"
