@@ -803,7 +803,6 @@ def generate_qa(context):
 
 
 def main():
-    # TODO: sorting in some columns should be as numbers (distance, kucni broj)
     # TODO: address should be searchable with latin only
     env = Environment(loader=FileSystemLoader(searchpath='./templates'))
     env.globals.update(len=len, AddressInBuildingResolution=AddressInBuildingResolution)

@@ -648,7 +648,6 @@ def load_naselja_boundaries(rgz_path):
 
 
 def main():
-    # TODO: sorting in some columns should be as numbers (distance, kucni broj)
     # TODO: address should be searchable with latin only
     env = Environment(loader=FileSystemLoader(searchpath='./templates'))
     env.globals.update(len=len, AddressInBuildingResolution=AddressInBuildingResolution)
