@@ -407,3 +407,29 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
                 'note': r.tags.get('note') if 'note' in r.tags else '',
                 'osm_geometry': geom
             })
+
+
+class OsmEntitiesCacheHandler(osmium.SimpleHandler):
+    def __init__(self, nodes, ways):
+        osmium.SimpleHandler.__init__(self)
+        self.nodes = nodes
+        self.ways = ways
+        self.nodes_cache = {}
+        self.ways_cache = {}
+
+    def node(self, n):
+        if n.id in self.nodes:
+            self.nodes_cache[n.id] = {
+                'lat': n.location.lat,
+                'lon': n.location.lon,
+                'tags': {t.k: t.v for t in n.tags},
+                'version': n.version
+            }
+
+    def way(self, w):
+        if w.id in self.ways:
+            self.ways_cache[w.id] = {
+                'tags': {t.k: t.v for t in w.tags},
+                'nodes': [n.ref for n in w.nodes],
+                'version': w.version
+            }

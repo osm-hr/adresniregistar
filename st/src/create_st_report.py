@@ -4,6 +4,8 @@ import datetime
 import json
 import os
 import urllib
+from itertools import chain
+import osmium
 
 import geojson
 import geopandas as gpd
@@ -11,8 +13,140 @@ import pandas as pd
 from jinja2 import Environment, FileSystemLoader
 from shapely import wkt
 
-from common import cyr2lat, normalize_name, geojson2js
+from common import cyr2lat, normalize_name, geojson2js, xml_escape, OsmEntitiesCacheHandler
 from street_mapping import StreetMapping
+
+
+class CollectWayNodesHandler(osmium.SimpleHandler):
+    """
+    Iterates for all given ways and collects their nodes
+    """
+    def __init__(self, ways):
+        osmium.SimpleHandler.__init__(self)
+        self.ways = ways
+        self.nodes = []
+
+    def way(self, w):
+        if w.id in self.ways:
+            self.nodes += [n.ref for n in w.nodes]
+
+
+def build_osm_entities_cache(data_path):
+    analysis_path = os.path.join(data_path, 'analysis')
+
+    pbf_file = os.path.join(data_path, 'osm/download/serbia.osm.pbf')
+    nodes_to_cache, ways_to_cache = [], []
+
+    # Collects nodes and ways from analysis
+    for i, file in enumerate(sorted(os.listdir(analysis_path))):
+        if not file.endswith(".csv"):
+            continue
+        df_opstina = pd.read_csv(os.path.join(analysis_path, file))
+        osm_entites_to_cache = df_opstina[pd.notna(df_opstina.found_osm_id)]['found_osm_id']
+        if len(osm_entites_to_cache) > 0:
+            ways_to_cache_string = list(chain(*[w.split(',') for w in list(osm_entites_to_cache[osm_entites_to_cache.str.startswith('w')])]))
+            ways_to_cache += [int(w[1:]) for w in ways_to_cache_string]
+
+    print("Using PBF to build cache")
+
+    cwnh = CollectWayNodesHandler(set(ways_to_cache))
+    cwnh.apply_file(pbf_file)
+
+    osm_entities_cache = OsmEntitiesCacheHandler(set(cwnh.nodes), set(ways_to_cache))
+
+    osm_entities_cache.apply_file(pbf_file)
+    return osm_entities_cache
+
+
+def generate_osm_files_matched_streets(context, opstina_dir_path, opstina_name, naselje, df_naselje):
+    env = context['env']
+    osm_entities_cache = context['osm_entities_cache']
+
+    naselje_dir_path = os.path.join(opstina_dir_path, opstina_name)
+    split_limit = 10
+
+    template = env.get_template('matched_streets.osm')
+    osm_files = []
+    min_lat, min_lon, max_lat, max_lon = 90, 180, -90, 0
+    osm_ways = []
+    old_counter = 0
+    counter = 0
+    only_matched_addresses = df_naselje[pd.notna(df_naselje.found_osm_id)]
+    for _, address in only_matched_addresses.sort_values(['rgz_ulica']).iterrows():
+        found_any = False
+        flushed_if_needed = False
+        for found_way_id, name_match in zip(address.found_osm_id.split(','), address.name_match.split(',')):
+            if name_match != '1':
+                continue
+
+            if found_way_id[0] == 'n':
+                print(f"Encountered node {found_way_id}, not expecting this... ", end='')
+                continue
+            if found_way_id[0] == 'r':
+                print(f"Encountered relation {found_way_id}, had to be merged manually... ", end='')
+                continue
+
+            way_id = int(found_way_id[1:])
+            if way_id not in osm_entities_cache.ways_cache:
+                continue
+
+            if counter > 0 and counter % split_limit == 0 and not flushed_if_needed:
+                output = template.render(osm_ways=osm_ways, min_lat=min_lat, min_lon=min_lon, max_lat=max_lat, max_lon=max_lon)
+                filename = f'{normalize_name(naselje["name_lat"])}-matched-{counter}.osm'
+                osm_file_path = os.path.join(naselje_dir_path, filename)
+                with open(osm_file_path, 'w', encoding='utf-8') as fh:
+                    fh.write(output)
+                osm_files.append(
+                    {
+                        'name': f'{old_counter + 1}-{counter}',
+                        'url': f'https://dina.openstreetmap.rs/st/opstine/{opstina_name}/{filename}'
+                    }
+                )
+                old_counter = counter
+                osm_ways = []
+                min_lat, min_lon, max_lat, max_lon = 90, 180, -90, 0
+                flushed_if_needed = True
+
+            found_any = True
+            entity = osm_entities_cache.ways_cache[way_id]
+            new_tags = dict(entity['tags'], **{'ref:RS:ulica': str(address.rgz_ulica_mb)})
+            osm_ways.append({
+                'id': way_id,
+                'tags': {k: xml_escape(v) for k, v in new_tags.items()},
+                'nodes': entity['nodes'],
+                'version': entity['version']
+            })
+            for node_id in entity['nodes']:
+                if node_id not in osm_entities_cache.nodes_cache:
+                    continue
+                found_node = osm_entities_cache.nodes_cache[node_id]
+                if found_node['lon'] < min_lon:
+                    min_lon = found_node['lon']
+                if found_node['lon'] > max_lon:
+                    max_lon = found_node['lon']
+                if found_node['lat'] < min_lat:
+                    min_lat = found_node['lat']
+                if found_node['lat'] > max_lat:
+                    max_lat = found_node['lat']
+
+        if found_any:
+            counter = counter + 1
+
+    # Final write
+    if len(osm_ways) > 0:
+        output = template.render(osm_ways=osm_ways, min_lat=min_lat, min_lon=min_lon, max_lat=max_lat, max_lon=max_lon)
+        filename = f'{normalize_name(naselje["name_lat"])}-matched-{counter}.osm'
+        osm_file_path = os.path.join(naselje_dir_path, filename)
+        with open(osm_file_path, 'w', encoding='utf-8') as fh:
+            fh.write(output)
+        osm_files.append(
+            {
+                'name': f'{old_counter + 1}-{counter}',
+                'url': f'https://dina.openstreetmap.rs/st/opstine/{opstina_name}/{filename}'
+            }
+        )
+
+    return osm_files
 
 
 def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselje):
@@ -23,6 +157,8 @@ def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselj
     naselje_dir_path = os.path.join(opstina_dir_path, opstina_name_norm)
     if not os.path.exists(naselje_dir_path):
         os.mkdir(naselje_dir_path)
+
+    osm_files_matched_streets = generate_osm_files_matched_streets(context, opstina_dir_path, opstina_name_norm, naselje, df_naselje)
 
     naselje_path = os.path.join(naselje_dir_path, f'{naselje["name_lat"]}.html')
 
@@ -97,7 +233,9 @@ def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselj
         osmDataDate=context['dates']['osm_data'],
         streets=streets,
         naselje=naselje,
-        opstina_name=opstina_name)
+        opstina_name=opstina_name,
+        osm_files_matched_streets=osm_files_matched_streets
+    )
     with open(naselje_path, 'w', encoding='utf-8') as fh:
         fh.write(output)
 
@@ -274,6 +412,7 @@ def load_naselja_boundaries(rgz_path):
 
 def main():
     env = Environment(loader=FileSystemLoader(searchpath='./templates'))
+    env.globals.update(len=len)
     cwd = os.getcwd()
 
     data_path = os.path.join(cwd, 'data')
@@ -285,6 +424,9 @@ def main():
     with open(running_file, 'r') as file:
         file_content = file.read().rstrip()
         osm_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y %H:%M')
+
+    print("Building cache of OSM entities")
+    osm_entities_cache = build_osm_entities_cache(data_path)
 
     print("Loading normalized street names mapping")
     street_mappings = StreetMapping(os.path.join(cwd, '..', 'ar'))
@@ -301,6 +443,7 @@ def main():
             'report': datetime.datetime.now().strftime('%d.%m.%Y %H:%M'),
             'osm_data': osm_data_timestamp
         },
+        'osm_entities_cache': osm_entities_cache,
         'street_mappings': street_mappings,
         'gdf_naselja': gdf_naselja
     }

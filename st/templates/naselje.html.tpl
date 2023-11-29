@@ -179,5 +179,37 @@ Podaci u poslednjoj koloni tabele prikazuju <b>samo potencijalne vrednosti</b> i
 </tbody>
 </table>
 
+{% if len(osm_files_matched_streets) > 0 %}
+
+<h2>Lista fajlova za import</h2>
+
+<div class="col-sm">
+  <a class="btn btn-primary" data-toggle="collapse" href="#collapseOsmFilesMatched" role="button" aria-expanded="false" aria-controls="collapseOsmFilesMatched">
+    100% poklopljene ulice
+  </a>
+</div>
+
+<div class="collapse" id="collapseOsmFilesMatched">
+  <br/>
+  Ovde su fajlovi za import ulica iz RGZ-a koje se 100% poklapaju po imenu sa ulicama u OSM-u.
+	Morate imati otvoren JOSM pre nego što kliknete na fajl.
+	Klikom na fajl ćete ga učitati u JOSM.
+	Fajlovi su grupisani u grupe od po najviše 10 ulica.
+	<br/>
+	<br/>
+	<b>Pre bilo kakvog importa, <b>obavezno</b> pročitati <a href="https://wiki.openstreetmap.org/wiki/Serbia/Projekti/Adresni_registar#Uputstvo_za_import" target="_blank">uputstvo</a></b>!
+	<br/>
+  <div class="card card-body">
+	  <div class="row">
+	  	{% for osm_file in osm_files_matched_streets %}
+	  		<div class="col-sm-2">
+	  			<a href="http://localhost:8111/import?changeset_tags=source=RGZ_AR&new_layer=true&layer_name={{ naselje.name_lat }}-{{ osm_file.name }}&url={{ osm_file.url }}" target="_blank">{{ osm_file.name }}</a>
+			</div>
+	  	{% endfor %}
+	  </div>
+  </div>
+  <br/><br/>
+</div>
+{% endif %}
 
 {% endblock %}
