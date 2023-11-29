@@ -47,7 +47,33 @@
     <script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
     <script>
 	$(document).ready( function () {
-	    $('#list').DataTable({
+		$.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+		    let isConflated = $("#isConflatedSelect option:selected").val();
+			let isPotential = $("#isPotentialSelect option:selected").val();
+
+            let isConflatedFilter = true;
+            if (isConflated === 'yes') {
+                isConflatedFilter = data[3].indexOf('w') > -1;
+            } else if (isConflated === 'no') {
+                isConflatedFilter = data[3].indexOf('w') === -1;
+            }
+
+            let isPotentialFilter = true;
+            if (isPotential === 'yes') {
+                isPotentialFilter = data[5].indexOf('✅') > -1;
+            } else if (isPotential === 'partial') {
+                isPotentialFilter = data[5].indexOf('(') > -1;
+            } else if (isPotential === 'errors') {
+                isPotentialFilter = data[5].indexOf('<s>') > -1;
+            } else if (isPotential === 'no') {
+                isPotentialFilter = data[5].trim() === '';
+            }
+
+			return isConflatedFilter && isPotentialFilter;
+		});
+
+
+	    var table = $('#list').DataTable({
 		    stateSave: true,
 		    order: [[1, 'asc']],
 		    lengthMenu: [ [10, 100, -1], [10, 50, "All"] ],
@@ -55,6 +81,13 @@
 		        { targets: [2, 4], className: 'text-right' },
 		    ]
 		});
+
+        $('#isConflatedSelect').on('change', function() {
+            table.draw();
+        });
+        $('#isPotentialSelect').on('change', function() {
+            table.draw();
+        });
 	} );
     </script>
 
@@ -70,6 +103,24 @@ Podaci u poslednjoj koloni tabele prikazuju <b>samo potencijalne vrednosti</b> i
 	</p>
 <br/>
 <br/>
+
+<div class="text-right">
+    <label for="isConflated">Conflated putevi</label>
+    <select name="isConflated" id="isConflatedSelect">
+      <option value="all"></option>
+      <option value="yes">Da</option>
+      <option value="no">Ne</option>
+    </select>
+    <br/>
+    <label for="isPotential">Potencijalni putevi</label>
+    <select name="isPotential" id="isPotentialSelect">
+      <option value="all"></option>
+      <option value="yes">Bar jedno kompletno slaganje </option>
+      <option value="partial">Bar jedan potencijalni put</option>
+      <option value="errors">Bar jedna precrtana ulica</option>
+      <option value="no">Bez potencijalnih puteva</option>
+    </select>
+</div>
 
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-100">
 <thead class="thead-dark sticky-top">
