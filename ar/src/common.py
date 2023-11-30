@@ -153,7 +153,7 @@ def load_mappings(data_path):
 
 
 def geojson2js(js_path, variable_name):
-    with open(js_path, 'r') as f:
+    with open(js_path, 'r', encoding='utf-8') as f:
         js_data = json.load(f)
     for f in js_data['features']:
         geom = f['geometry']
