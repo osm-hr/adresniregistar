@@ -203,7 +203,7 @@ Podaci u poslednjoj koloni tabele prikazuju <b>samo potencijalne vrednosti</b> i
 	  <div class="row">
 	  	{% for osm_file in osm_files_matched_streets %}
 	  		<div class="col-sm-2">
-	  			<a href="http://localhost:8111/import?changeset_tags=source=RGZ_AR&new_layer=true&layer_name={{ naselje.name_lat }}-{{ osm_file.name }}&url={{ osm_file.url }}" target="_blank">{{ osm_file.name }}</a>
+	  			<a href="http://localhost:8111/import?changeset_tags=source=RGZ_ST&new_layer=true&layer_name={{ naselje.name_lat }}-{{ osm_file.name }}&url={{ osm_file.url }}" target="_blank">{{ osm_file.name }}</a>
 			</div>
 	  	{% endfor %}
 	  </div>
