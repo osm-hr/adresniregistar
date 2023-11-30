@@ -91,25 +91,38 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
     gdf_rgz.set_geometry('rgz_buffered_geometry', inplace=True)
     gdf_rgz.sindex
 
-    # TODO: add filters to naselje.html.tpl
     # TODO: buffer naselja, ulice nekada mogu da budu malo preko
     # TODO: do quality checks for far away addresses
     # TODO: do quality checks for alt_name, short_name, int_name
-    # TODO: do .osm files to add ref:RS:ulica when names match
     # TODO: detect round ways ("zaseoci")
     # TODO: refactor whole app
     # TODO: add overpass view on naselje
     """
-    [out:json][timeout:25];
-    area["name"="Србија"]["admin_level"=2]->.sr;
+    http://overpass-turbo.eu/?Q=node%5B%22amenity%22%3D%22drinking_water%22%5D(%7B%7Bbbox%7D%7D)%3B%0Aout%3B
+[out:json][timeout:25];
+area["name"="Србија"]["admin_level"=2]->.sr;
+(
+    area(area.sr)["boundary"="administrative"]["ref:RS:naselje"=801542]->.district;
     (
-        area(area.sr)["boundary"="administrative"]["ref:RS:naselje"=791067]->.district;
-        (
-            way(area.district)["highway"]["highway"!="footway"]["highway"!="proposed"]["highway"!="cycleway"]["highway"!="construction"]["highway"!="steps"];
-        );
+        way(area.district)["highway"]["highway"!="footway"]["highway"!="proposed"]["highway"!="cycleway"]["highway"!="construction"]["highway"!="steps"];
     );
-    (._;>;);
-    out;
+);
+(._;>;);
+out;
+
+{{style:
+node {
+  opacity: 0;
+  symbol-size: 0;
+  color: black;
+}
+way {
+  color:red;
+}
+way[ref:RS:ulica] {
+  color: black;
+}
+}}
     """
     gdf_osm['osm_geometry2'] = gdf_osm.osm_geometry
 
