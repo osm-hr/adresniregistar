@@ -12,7 +12,7 @@ from common import OPSTINE_TO_SKIP
 def main():
     cwd = os.getcwd()
     osm_path = os.path.join(cwd, 'data/osm')
-    rgz_path = os.path.join(cwd, '../ar/data/rgz')
+    rgz_path = os.path.join(cwd, 'data/rgz')
 
     if not os.path.exists(os.path.join(rgz_path, 'opstina.csv')):
         print("Skinite opstine.zip sa https://opendata.geosrbija.rs i otpakujte opstina.csv u data/rgz/ direktorijum")
