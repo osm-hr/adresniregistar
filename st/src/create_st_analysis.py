@@ -9,7 +9,7 @@ import pandas as pd
 from shapely import wkt
 
 from common import normalize_name
-from street_mapping import StreetMapping, best_effort_decapitalize
+from street_mapping import StreetMapping
 
 
 def collect_linestring(x):
@@ -17,7 +17,7 @@ def collect_linestring(x):
     return gpd.tools.collect(break_polygons)
 
 
-def do_analysis(opstina, data_path, street_mappings: StreetMapping):
+def do_analysis(opstina, data_path, street_mappings: StreetMapping, df_cached_circles):
     # This is how to get missing street name at new CSV
     # df_rgz = pd.read_csv(os.path.join(data_path, f'rgz/streets.csv'))
     # df_rgz['rgz_ulica_proper'] = df_rgz[['rgz_ulica', 'rgz_opstina']].apply(lambda x: street_mappings.get_name(x['rgz_ulica'], x['rgz_opstina'], default_value='foo'), axis=1)
@@ -49,9 +49,6 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
     gdf_osm['osm_name_norm'] = gdf_osm.osm_name.apply(normalize_name)
     gdf_osm['osm_way_length'] = gdf_osm.length
     gdf_osm.set_geometry('osm_geometry', inplace=True)
-    gdf_osm['highway'] = df_osm['tags'].apply(lambda x: ast.literal_eval(x)['highway'])
-    gdf_osm = gdf_osm[~gdf_osm.highway.isin(['footway', 'cycleway', 'path', 'steps', 'proposed', 'construction', 'corridor', 'platform'])]
-    gdf_osm.drop(['osm_geometry2', 'highway'], inplace=True, axis=1)
     gdf_osm.sindex
 
     print(f"    Loading RGZ streets in {opstina}")
@@ -65,6 +62,11 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
         street_mappings.get_name(x['rgz_ulica'], x['rgz_opstina'], default_value=x['rgz_ulica'])), axis=1)
     gdf_rgz['rgz_way_length'] = gdf_rgz.length
     gdf_rgz.sindex
+
+    # Join with cached streets
+    print(f"    Joining streets in RGZ and cached circles")
+    gdf_rgz = gdf_rgz.merge(df_cached_circles, on=['rgz_ulica_mb'], how='left')
+    gdf_rgz.fillna(value={'is_circle': False}, inplace=True)
 
     print(f"    Joining streets in RGZ and OSM in {opstina} by conflation (ref:RS:ulica)")
     gdf_rgz = gdf_rgz.merge(gdf_osm, how='left', left_on='rgz_ulica_mb', right_on='ref:RS:ulica')
@@ -126,7 +128,13 @@ way[ref:RS:ulica] {
     """
     gdf_osm['osm_geometry2'] = gdf_osm.osm_geometry
 
-    print(f"    Joining streets in RGZ and OSM in {opstina} that have high IoU")
+    # After ref:RS:ulica conflation, remove all unneeded footways etc
+    gdf_osm['highway'] = df_osm['tags'].apply(lambda x: ast.literal_eval(x)['highway'])
+    gdf_osm = gdf_osm[~gdf_osm.highway.isin(['footway', 'cycleway', 'path', 'steps', 'proposed', 'construction', 'corridor', 'platform'])]
+    gdf_osm.drop(['osm_geometry2', 'highway'], inplace=True, axis=1)
+
+    # Join buffered RGZ with OSM streets, filter those where 60% of length is in RGZ buffer
+    print(f"    Joining streets in RGZ and OSM in {opstina} that have high length")
     gdf_osm_no_conflated = gdf_osm[gdf_osm["ref:RS:ulica"].isna()]
     gdf_high_intersection = gdf_rgz.sjoin(gdf_osm_no_conflated, how='inner', predicate='intersects')
     gdf_high_intersection['intersection_length'] = gdf_high_intersection['rgz_buffered_geometry'].intersection(
@@ -190,7 +198,7 @@ way[ref:RS:ulica] {
     pd.DataFrame(gdf_rgz).to_csv(os.path.join(data_path, f'analysis/{opstina}.csv'), index=False)
 
 
-def process_all_opstina(data_path, rgz_csv_path, street_mappings):
+def process_all_opstina(data_path, rgz_csv_path, street_mappings, df_cached_circles):
     total_csvs = len(os.listdir(rgz_csv_path))
     if total_csvs < 168:
         raise Exception("Some or all RGZ files missing! Bailing out")
@@ -200,27 +208,31 @@ def process_all_opstina(data_path, rgz_csv_path, street_mappings):
             continue
         opstina = file[:-4]
         print(f"{i + 1}/{total_csvs} Processing {opstina}")
-        do_analysis(opstina, data_path, street_mappings)
+        do_analysis(opstina, data_path, street_mappings, df_cached_circles)
 
 
 def main():
     cwd = os.getcwd()
     data_path = os.path.join(cwd, 'data/')
-    rgz_csv_path = os.path.join(data_path, 'rgz/csv')
+    rgz_path = os.path.join(data_path, 'rgz/')
+    rgz_csv_path = os.path.join(rgz_path, 'csv/')
 
     street_mappings = StreetMapping(os.path.join(cwd, '..', 'ar'))
+
+    print("Loading cached circles")
+    df_cached_circles = pd.read_csv(os.path.join(rgz_path, 'cache_circle.csv'), dtype={'rgz_ulica_mb': str})
 
     parser = argparse.ArgumentParser(
         description='create_st_analysis.py - Analyses opstine')
     parser.add_argument('--opstina', default=None, required=False, help='Opstina to process')
     args = parser.parse_args()
     if not args.opstina:
-        process_all_opstina(data_path, rgz_csv_path, street_mappings)
+        process_all_opstina(data_path, rgz_csv_path, street_mappings, df_cached_circles)
     else:
         if not os.path.exists(os.path.join(rgz_csv_path, f'{args.opstina}.csv')):
             parser.error(f"File data/rgz/csv/{args.opstina}.csv do not exist")
             return
-        do_analysis(args.opstina, data_path, street_mappings)
+        do_analysis(args.opstina, data_path, street_mappings, df_cached_circles)
 
 
 if __name__ == '__main__':

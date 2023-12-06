@@ -225,6 +225,7 @@ def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselj
             'max_conflated_osm_way_length': max_conflated_osm_way_length,
             'found_ways': found_ways,
             'found_max_found_intersection': found_max_found_intersection,
+            'is_circle': address['is_circle'],
         })
 
     output = template.render(
@@ -252,8 +253,9 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
         os.mkdir(opstine_dir_path)
     opstina_html_path = os.path.join(opstine_dir_path, f'{opstina_name}.html')
 
-    rgz_count = len(df_opstina)
-    rgz_length = df_opstina['rgz_way_length'].sum()
+    df_opstina_no_circles = df_opstina[~df_opstina.is_circle]
+    rgz_count = len(df_opstina_no_circles)
+    rgz_length = df_opstina_no_circles['rgz_way_length'].sum()
     # Condensed way to sum all split ways into one and sum them altogether
     conflated_length = round(sum([i for i in [sum([float(i) for i in x.split(',')]) if type(x)==str else x for x in df_opstina['conflated_osm_way_length']] if pd.notna(i)]), 2)
     found_length = round(sum([i for i in [sum([float(i) for i in x.split(',')]) if type(x)==str else x for x in df_opstina['found_osm_way_length']] if pd.notna(i)]), 2)
@@ -275,8 +277,9 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
     naselja = []
 
     for naselje_name, df_naselje in df_opstina.groupby('rgz_naselje'):
-        rgz_count = len(df_naselje)
-        rgz_length = df_naselje['rgz_way_length'].sum()
+        df_naselje_no_circles = df_naselje[~df_naselje.is_circle]
+        rgz_count = len(df_naselje_no_circles)
+        rgz_length = df_naselje_no_circles['rgz_way_length'].sum()
         conflated_length = round(sum([i for i in [sum([float(i) for i in x.split(',')]) if type(x)==str else x for x in df_naselje['conflated_osm_way_length']] if pd.notna(i)]), 2)
         found_length = round(sum([i for i in [sum([float(i) for i in x.split(',')]) if type(x)==str else x for x in df_naselje['found_osm_way_length']] if pd.notna(i)]), 2)
         naselje = {

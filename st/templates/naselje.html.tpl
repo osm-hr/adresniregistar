@@ -14,7 +14,11 @@
       <div class="modal-body">
 		<ul>
 			<li><b>Id (RGZ)</b> &mdash; Identifikator ulice u RGZ-u (ono što se stavlja u „ref:RS:ulica” tag)</li>
-			<li><b>Ulica (RGZ)</b> &mdash; Ime ulice iz RGZ-a, a posle strelice i pravilno ime ulice kako treba uneti u OSM. Ukoliko nema imena ulice posle strelice, znači da ulice još nema u <a href="https://dina.openstreetmap.rs/ar/street_mapping.html" target="_blank">registru</a>. Klikom na ulicu se otvara geojson.io portal na kome može da se vidi i RGZ ulica (crvenom bojom) i sve conflated OSM ulice (plavom bojom)</li>
+			<li><b>Ulica (RGZ)</b> &mdash; Ime ulice iz RGZ-a, a posle strelice i pravilno ime ulice kako treba uneti u OSM.
+			Ukoliko nema imena ulice posle strelice, znači da ulice još nema u <a href="https://dina.openstreetmap.rs/ar/street_mapping.html" target="_blank">registru</a>.
+			Klikom na ulicu se otvara geojson.io portal na kome može da se vidi i RGZ ulica (crvenom bojom) i sve conflated OSM ulice (plavom bojom).
+			Ukoliko na početku ulice ima simbol „⭕”, algoritam je detektovao da je u pitanju zaseok, tj. virtuelna ulica (ne postoji fizički put). Ovo su ulice koje ne treba da se unose.
+			</li>
 			<li><b>Dužina (RGZ)</b> &mdash; Ukupna dužina ulice u RGZ-u (u metrima)</li>
 			<li><b>Conflated putevi (dužina)</b> &mdash; Spisak svih nađenih puteva u OSM-u koji su spojeni sa RGZ ulicom preko „ref:RS:ulica” taga. Za svaki je u zagradi navedena njegova dužina u OSM-u</li>
 			<li><b>Conflated - max greška (m)</b> &mdash; Najveća greška između RGZ ulice i OSM ulica (u metrima). Najveća udaljenost koju dve tačke na ovim ulicama mogu imati. Ova vrednost obično ne sme biti preko par stotina metara</li>
@@ -50,6 +54,7 @@
 		$.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
 		    let isConflated = $("#isConflatedSelect option:selected").val();
 			let isPotential = $("#isPotentialSelect option:selected").val();
+			let isZaseok = $("#isZaseokSelect option:selected").val();
 
             let isConflatedFilter = true;
             if (isConflated === 'yes') {
@@ -69,7 +74,14 @@
                 isPotentialFilter = data[5].trim() === '';
             }
 
-			return isConflatedFilter && isPotentialFilter;
+            let isZaseokFilter = true;
+            if (isZaseok === 'yes') {
+                isZaseokFilter = data[1].indexOf('⭕') > -1;
+            } else if (isZaseok === 'no') {
+                isZaseokFilter = data[1].indexOf('⭕') === -1;
+            }
+
+			return isConflatedFilter && isPotentialFilter && isZaseokFilter;
 		});
 
 
@@ -86,6 +98,9 @@
             table.draw();
         });
         $('#isPotentialSelect').on('change', function() {
+            table.draw();
+        });
+        $('#isZaseokSelect').on('change', function() {
             table.draw();
         });
 	} );
@@ -120,6 +135,13 @@ Podaci u poslednjoj koloni tabele prikazuju <b>samo potencijalne vrednosti</b> i
       <option value="errors">Bar jedna precrtana ulica</option>
       <option value="no">Bez potencijalnih puteva</option>
     </select>
+    <br/>
+    <label for="isZaseok">Zaseoci</label>
+    <select name="isZaseok" id="isZaseokSelect">
+      <option value="all"></option>
+      <option value="yes">Samo zaseoci</option>
+      <option value="no">Bez zaseoka</option>
+    </select>
 </div>
 
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-100">
@@ -137,7 +159,7 @@ Podaci u poslednjoj koloni tabele prikazuju <b>samo potencijalne vrednosti</b> i
     {% for street in streets %}
     <tr>
         <td>{{ street.rgz_ulica_mb }}</td>
-        <td><a href="{{ street.rgz_geojson_url }}" target="_blank">{{ street.rgz_ulica }}</a> {% if street.rgz_ulica_proper != '' %} ➝ {{ street.rgz_ulica_proper }}{% endif %} </td>
+        <td>{% if street.is_circle %}⭕ {% endif %}<a href="{{ street.rgz_geojson_url }}" target="_blank">{{ street.rgz_ulica }}</a> {% if street.rgz_ulica_proper != '' %} ➝ {{ street.rgz_ulica_proper }}{% endif %}</td>
         <td data-order="{{ street.rgz_way_length }}">{{ street.rgz_way_length }}m</td>
         <td data-order="{{ street.max_conflated_osm_way_length }}">
             {% if street.conflated_ways|length > 0 %}
