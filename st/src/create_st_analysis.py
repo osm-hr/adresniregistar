@@ -74,7 +74,7 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping, df_cached_ci
     gdf_rgz.drop(['osm_name', 'osm_name_sr', 'osm_name_sr_latn', 'osm_name_en',
                   'osm_alt_name', 'osm_alt_name_sr', 'osm_alt_name_sr_latn', 'osm_short_name', 'osm_short_name_sr',
                   'osm_short_name_sr_latn',
-                  'osm_int_name', 'ref:RS:ulica', 'note', 'osm_name_norm'], inplace=True, axis=1)
+                  'osm_int_name', 'ref:RS:ulica', 'note', 'osm_name_norm', 'osm_geometry2'], inplace=True, axis=1)
     gdf_rgz.loc[pd.isna(gdf_rgz['conflated_osm_id']), 'conflated_osm_id'] = ''
     gdf_rgz['conflated_osm_id'] = gdf_rgz.groupby(['rgz_naselje_mb', 'rgz_ulica_mb'])['conflated_osm_id'].transform(
         lambda x: ','.join(x))
@@ -125,12 +125,13 @@ way[ref:RS:ulica] {
 }
 }}
     """
-    gdf_osm['osm_geometry2'] = gdf_osm.osm_geometry
 
     # After ref:RS:ulica conflation, remove all unneeded footways etc
     gdf_osm['highway'] = df_osm['tags'].apply(lambda x: ast.literal_eval(x)['highway'])
     gdf_osm = gdf_osm[~gdf_osm.highway.isin(['footway', 'cycleway', 'path', 'steps', 'proposed', 'construction', 'corridor', 'platform'])]
-    gdf_osm.drop(['osm_geometry2', 'highway'], inplace=True, axis=1)
+    gdf_osm.drop(['highway'], inplace=True, axis=1)
+
+    gdf_osm['osm_geometry2'] = gdf_osm.osm_geometry
 
     # Join buffered RGZ with OSM streets, filter those where 60% of length is in RGZ buffer
     print(f"    Joining streets in RGZ and OSM in {opstina} that have high length")

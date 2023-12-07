@@ -302,7 +302,7 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
         return opstina, []
 
     df_calc_naselja = pd.DataFrame(naselja)
-    df_calc_naselja['ratio'] = df_calc_naselja.apply(lambda row: min(100 * row.conflated_length / row.rgz_length, 100), axis=1)
+    df_calc_naselja['ratio'] = df_calc_naselja.apply(lambda row: min(100 * row.conflated_length / row.rgz_length if row.rgz_length > 0 else 0, 100), axis=1)
 
     gdf_naselja = context['gdf_naselja']
     gdf_naselje = gdf_naselja[gdf_naselja.opstina_imel == opstina_name]
