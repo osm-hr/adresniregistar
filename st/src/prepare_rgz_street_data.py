@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import argparse
 import csv
 import os
 import sys
@@ -51,16 +52,15 @@ def load_opstina_csv(opstina, opstina_csv_path):
     return results
 
 
-def main():
+def main(output_csv_file_path, output_csv_folder):
     cwd = os.getcwd()
     rgz_path = os.path.join(cwd, 'data/rgz')
     download_path = os.path.join(rgz_path, 'download/')
-    collect_path = os.path.join(rgz_path, 'csv/')
-    all_streets_path = os.path.join(rgz_path, 'streets.csv')
 
     need_address_collection = True
-    if os.path.exists(all_streets_path):
-        need_address_collection = False
+    if os.path.exists(output_csv_file_path):
+        print(f"File {output_csv_file_path} already exist, remove it to continue. Quitting")
+        return
 
     all_streets = []
     total_zips = len(os.listdir(download_path))
@@ -68,11 +68,11 @@ def main():
         if not file.endswith(".zip"):
             continue
         opstina = file[:-4]
-        opstina_csv_path = os.path.join(collect_path, opstina + ".csv")
+        opstina_csv_path = os.path.join(output_csv_folder, opstina + ".csv")
 
         print(f"{i+1}/{total_zips} Processing {opstina}... ", end='')
         if os.path.exists(opstina_csv_path) and not need_address_collection:
-            print(f"skipping, file data/rgz/csv/{opstina}.csv already exists")
+            print(f"skipping, file {opstina_csv_path} already exists")
             continue
 
         with zipfile.ZipFile(os.path.join(download_path, file), 'r') as zip_ref:
@@ -102,11 +102,7 @@ def main():
 
     print("Collecting all streets...", end='')
 
-    if os.path.exists(all_streets_path):
-        print("skipping, already exists")
-        return
-
-    with open(all_streets_path, 'w') as all_streets_csv:
+    with open(output_csv_file_path, 'w') as all_streets_csv:
         writer = csv.DictWriter(
             all_streets_csv, fieldnames=['rgz_kucni_broj_id', 'rgz_opstina_mb', 'rgz_opstina',
                                            'rgz_naselje_mb', 'rgz_naselje', 'rgz_ulica_mb', 'rgz_ulica',
@@ -118,4 +114,9 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(
+        description='prepare_rgz_data.py - Extract RGZ .zip files and creates addresses.csv')
+    parser.add_argument('--output-csv-file', default=None, required=True, help='Output CSV file for all RGZ streets')
+    parser.add_argument('--output-csv-folder', default=None, required=True, help='Output directory for RGZ streets per municipality')
+    args = parser.parse_args()
+    main(args.output_csv_file, args.output_csv_folder)

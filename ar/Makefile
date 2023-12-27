@@ -3,10 +3,7 @@
 help:
 	@echo "Read README.md to see which commands are available"
 
-clean: clean_rgz clean_osm
-
-clean_rgz:
-	@./src/clean_rgz.sh
+clean: clean_osm
 
 clean_osm: clean_normalize_street_names clean_analysis clean_quality_assurance clean_generate_b_hn_ratio
 	@echo "Removing OSM data"
@@ -64,14 +61,6 @@ clean_report:
 	fi
 	rm -rf data/report/*
 	rm -f data/report.tar.gz
-
-download_from_rgz:
-	@echo "Download housenumbers from RGZ"
-	mkdir -p data/rgz/download
-	python3 src/download_from_rgz.py
-	@echo "Prepare RGZ data for analysis"
-	python3 src/prepare_rgz_data.py
-	@echo "Created data/rgz/addresses.csv"
 
 download_from_osm:
 	@./src/download_from_osm.sh

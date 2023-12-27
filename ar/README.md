@@ -22,16 +22,6 @@ Sve komande se izvršavaju sa `make <komanda>`. Dostupne su sledeće komande:
   Briše sve sakupljene i generisane fajlove da proces počne iz početka
 
 
-* `download_from_rgz`
-
-  Da biste koristili ovu komandu, treba da napravite fajl "idp_creds" koji ima dve linije. Prva linija je username,
-  a druga je password za pristup RGZ sajtu https://download-tmp.geosrbija.rs/download.
-  
-  Komanda skida sve kućne brojeve svih opština sa RGZ sajta i smešta ih u data/rgz/download. 
-  Ukoliko je neka opština već tu, preskače skidanje. Zatim otpakuje sve zipove, reprojektuje EPSG:32634 u WSG84 i
-  pravi data/rgz/addressess.csv sa svim adresama, kao i CSV-ove po opštinama u data/rgz/csv/ koji se koriste u daljem radu.
-
-
 * `download_from_osm`
 
   Ova komanda skida najnoviji PBF Srbije sa geofabrika, izvlači sve adrese sa teritorije Srbije koje postoje u OSM-u,
@@ -77,6 +67,53 @@ Sve komande se izvršavaju sa `make <komanda>`. Dostupne su sledeće komande:
 * `upload_report`
 
   Ova komanda uploaduje izgenerisane HTML fajlove na DINA platformu.
+
+## Osvežavanje sa RGZ-a
+
+Osvežavanje nije trivijalan posao i dosta je manuelan. Prvo treba dohvatiti nove adrese, onda uraditi automatske
+izmene u OSM-u, pa onda objaviti nove vektorske mape, pa onda tek možemo da počnemo da ih koristimo.
+
+Savetuje se da se u isto vreme radi ažuriranje i ulica i adresa (kućnih brojeva) i to tako što se prvo uradi ažuriranje ulica
+(zato što se tad popunjuvaju pravilna imena novododatih ulica)!
+
+### Skidanje novih RGZ adresa
+
+Treba da napravite fajl "idp_creds" koji ima dve linije. Prva linija je username, a druga je password za pristup RGZ
+sajtu https://download-tmp.geosrbija.rs/download. 
+
+* Bekapovati staru `data/rgz/download` fasciklu (npr. `mkdir <data-datum>; mv *.zip <data-datum>/`)
+* Bekapovati stare adrese (`cp data/rgz/addresses.csv data/rgz/addresses.old.csv`)
+* Napraviti fasciklu za nove CSV adrese (`mkdir data/rgz/csv-new`)
+* Pokrenuti `python src/download_from_rgz`. Skripta smešta .zip fajlove u `data/rgz/download`. Može se pokretati iznova, krenuće tamo gde je stala. Pratiti ukoliko pukne i pokrenuti ponovo. Skripta traje oko 1-2h.
+* Proveriti (za svaki slučaj) da imate 168 .zip fajlova u `data/rgz/download` i da nijedan fajl nije prazan (0 bajtova)
+* Pokrenuti `python3 src/prepare_rgz_data.py --output-csv-file data/rgz/addresses.new.csv --output-csv-folder data/rgz/csv-new`. Skripta pravi novi `data/rgz/addresses.new.csv` fajl.
+
+### Automatske izmene u OSM-u
+
+Sad treba da imate fajlove `data/rgz/addresses.old.csv` i `data/rgz/addresses.new.csv`. Za ovo treba da imate `osm-password` fajl sa kredencijalima za OSM,
+kao i lokalni overpass server.
+
+* Izvršiti `python3 src/generate_rgz_diff.py --generate` i dobićete 3 fajla: `data/rgz/addresses-added.csv` (nove adrese), `data/rgz/addresses-removed.csv` (izbrisane adrese) i `data/rgz/addresses-changed.csv` (promenjene adrese)
+* Učitati `data/rgz/addresses-added.csv` i `data/rgz/addresses-removed.csv` i videti da izbrisana ulica nije zamenjena nekom novom ulicom
+* Izvršiti `python3 src/generate_rgz_diff.py --fix_deleted_to_added --rgz_update_date YYYY-MM-DD` - prolazi kroz obrisane adrese i ako su stvarno obrisane, briše im `ref:RS:kucni_broj` i dodaje im `removed:ref:RS:kucni_broj`, a ako su dodate sa novim ID-om, menja OSM adresu
+* Izvršiti `python3 src/generate_rgz_diff.py --fix_changed` - prolazi kroz promenjene adrese i menja ih u OSM-u sa novim vrednostima
+
+### Kreiranje vektorske mape
+
+Treba da dobijemo novi `adrese.mbtiles` koji treba staviti na [vektor serveru](https://vector-rgz.openstreetmap.rs/).
+Za ovo je potrebno da imamo [tippecanoe](https://github.com/felt/tippecanoe) program instaliran.
+
+* Konvertovati `data/rgz/addresses.new.csv` u geojson:
+
+`ogr2ogr data/rgz/adrese.geojson data/rgz/addresses.new.csv -dialect sqlite -sql "SELECT rgz_kucni_broj, ST_GeomFromText(rgz_geometry) AS geometry FROM 'addresses.new'" -nln adrese`
+
+* Generiše se .mbtiles fajl: `tippecanoe data/rgz/addresses.geojson -o data/rgz/brojevi.mbtiles`
+* Ovaj fajl se pošalje na vektor server (kredencijale tražiti od autora ovog uputstva)
+
+### Konačna zamena
+
+* Na kraju zameniti stari `data/rgz/addresses.csv` sa novim `data/rgz/addresses.new.csv` fajlom (`rm data/rgz/addresses.csv; mv data/rgz/addresses.csv`)
+* Zameniti sadržaj `data/rgz/csv` sa sadržajem `data/rgz/csv-new` i obrisati `data/rgz/csv-new`
 
 ## Licenca
 

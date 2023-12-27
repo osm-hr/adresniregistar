@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import argparse
 import csv
 import os
 import sys
@@ -17,10 +18,7 @@ csv.field_size_limit(sys.maxsize)
 
 wgs84 = pyproj.CRS('EPSG:4326')
 utm = pyproj.CRS('EPSG:32634')
-project = pyproj.Transformer.from_crs(wgs84, utm, always_xy=True).transform
-
-# Set this to date when RGZ was refreshed, something like '2023-08-15'
-RGZ_LAST_UPDATE = None
+project = pyproj.Transformer.from_crs(utm, wgs84, always_xy=True).transform
 
 
 def load_addresses(addresses_csv_path):
@@ -69,7 +67,7 @@ def get_ref_kucni_broj_from_overpass(overpass_api, kucni_broj_id):
     return results
 
 
-def fix_deleted_to_added(rgz_path):
+def fix_deleted_to_added(rgz_path, rgz_last_update):
     """
     Nalazi kucne brojeve koji su obrisani i koji su onda dodati sa novim ref:RS:kucni_broj,
     sa istim imenom ulice i kucnim brojom i unutar 100m i update-uje im ref:RS:kucni_broj
@@ -138,16 +136,16 @@ def fix_deleted_to_added(rgz_path):
             if candidate_new_address:
                 print(f'{old_address["opstina"]} - {old_address["ulica"]} {old_address["kucni_broj"]} - distance {round(candidate_new_address["geometry"].distance(old_address["geometry"]))}m')
             else:
-                print(f'Not found for {old_address["opstina"]} - {old_address["ulica"]} {old_address["kucni_broj"]}')
+                print(f'Not found candidate for {old_address["opstina"]} - {old_address["ulica"]} {old_address["kucni_broj"]}')
 
-            for k in entity['tag']:
-                print(f'    {k}={entity["tag"][k]}')
+            # for k in entity['tag']:
+            #     print(f'    {k}={entity["tag"][k]}')
 
             if candidate_new_address:
                 entity['tag']['ref:RS:kucni_broj'] = candidate_new_address["kucni_broj_id"]
             else:
                 entity['tag']['removed:ref:RS:kucni_broj'] = entity['tag']['ref:RS:kucni_broj']
-                note_text = f'Izbrisano iz RGZ-a ' + RGZ_LAST_UPDATE
+                note_text = f'Izbrisano iz RGZ-a ' + rgz_last_update
                 if 'note' not in entity['tag']:
                     entity['tag']['note'] = note_text
                 else:
@@ -155,16 +153,19 @@ def fix_deleted_to_added(rgz_path):
                 del entity['tag']['ref:RS:kucni_broj']
 
             if osm_entity_found[0] == 'n':
-                api.NodeUpdate(entity)
+                #api.NodeUpdate(entity)
+                pass
             elif osm_entity_found[0] == 'w':
-                api.WayUpdate(entity)
+                #api.WayUpdate(entity)
+                pass
             else:
-                api.RelationUpdate(entity)
+                #api.RelationUpdate(entity)
+                pass
 
             if candidate_new_address:
                 print(f'Updated ref:RS:kucni_broj of {osm_entity_found} from {old_address["kucni_broj_id"]} to {candidate_new_address["kucni_broj_id"]}')
             else:
-                print(f'Removed ref:RS:kucni_broj of {osm_entity_found} and added removed:ref:RS:kucni_broj')
+                print(f'Removed ref:RS:kucni_broj of {osm_entity_found} and adding removed:ref:RS:kucni_broj')
             time.sleep(1)
 
         time.sleep(1)
@@ -226,8 +227,8 @@ def fix_changed(rgz_path, street_mappings):
             if addrstreet == newstreet and addrhousenumber == newhousenumber:
                 print(f"Already fixed ('{changed_address['ulica_old']} {changed_address['kucni_broj_old']}' => '{changed_address['ulica_old']} {changed_address['kucni_broj_new']}')")
                 continue
-            for k in entity['tag']:
-                print(f'    {k}={entity["tag"][k]}')
+            # for k in entity['tag']:
+            #     print(f'    {k}={entity["tag"][k]}')
             print(f"Changing '{addrstreet} {addrhousenumber}' => '{newstreet} {newhousenumber}'")
             response = '' #input()
             if response != '' and response.lower() != 'y' and response.lower() != u'з':
@@ -236,21 +237,24 @@ def fix_changed(rgz_path, street_mappings):
             entity['tag']['addr:housenumber'] = newhousenumber
 
             if osm_entity_found[0] == 'n':
-                api.NodeUpdate(entity)
+                #api.NodeUpdate(entity)
+                pass
             elif osm_entity_found[0] == 'w':
-                api.WayUpdate(entity)
+                #api.WayUpdate(entity)
+                pass
             else:
-                api.RelationUpdate(entity)
+                #api.RelationUpdate(entity)
+                pass
             time.sleep(1)
     api.flush()
 
 
 def create_csv_files(rgz_path):
     print('Loading old addresses')
-    addresses_old = load_addresses(os.path.join(rgz_path, 'addresses-old.csv'))
+    addresses_old = load_addresses(os.path.join(rgz_path, 'addresses.old.csv'))
 
     print('Loading new addresses')
-    addresses_new = load_addresses(os.path.join(rgz_path, 'addresses-new.csv'))
+    addresses_new = load_addresses(os.path.join(rgz_path, 'addresses.new.csv'))
 
     print('Detecting new addresses')
     new_addresses = []
@@ -294,10 +298,10 @@ def create_csv_files(rgz_path):
         if rgz_kucni_broj_id not in addresses_old:
             continue
         address_old = addresses_old[rgz_kucni_broj_id]
-        if address_new['opstina_mb'] != address_old['opstina_mb']:
-            raise Exception('Opstina maticni broj changed, bailing out')
-        if address_new['opstina'] != address_old['opstina']:
-            raise Exception('Opstina changed, bailing out')
+        if (address_new['opstina_mb'] != address_old['opstina_mb']) or address_new['opstina'] != address_old['opstina']:
+            print(f"Opstina changed for ref:RS:kucni_broj {rgz_kucni_broj_id} from {address_old['opstina']} ({address_old['opstina_mb']}) to {address_new['opstina']} ({address_new['opstina_mb']}), fix manually")
+            continue
+            #raise Exception('Opstina changed, bailing out')
         naselje_mb_changed = address_new['naselje_mb'] != address_old['naselje_mb']
         naselje_changed = address_new['naselje'] != address_old['naselje']
         ulica_mb_changed = address_new['ulica_mb'] != address_old['ulica_mb']
@@ -348,18 +352,34 @@ def create_csv_files(rgz_path):
 
 
 def main():
-    if not RGZ_LAST_UPDATE:
-        raise Exception("Set RGZ_LAST_UPDATE to date when RGZ was refreshed, like '2023-08-15'")
+    parser = argparse.ArgumentParser(
+        description='generate_rgz_diff.py - Fix OSM data after RGZ data refresh')
+    parser.add_argument('--generate', required=False, help='Should we generate diff files from old and new data', action='store_true')
+    parser.add_argument('--fix_deleted_to_added', required=False, help='Should we fix deleted to added addresses - set removed:ref:RS:kucni_broj for those that do not exist anymore and change those that have new ref', action='store_true')
+    parser.add_argument('--fix_changed', required=False, help='Should we update addresses for those addresses that are changed', action='store_true')
+    parser.add_argument('--rgz_update_date', default=None, required=False, help='Date of RGZ data update, in YYYY-MM-DD format, like 2023-04-23')
+    args = parser.parse_args()
     cwd = os.getcwd()
     data_path = os.path.join(cwd, 'data/')
     rgz_path = os.path.join(cwd, 'data/rgz')
 
-    print("Loading normalized street names mapping")
-    street_mappings = load_mappings(data_path)
+    if args.generate:
+        create_csv_files(rgz_path)
+        return
 
-    create_csv_files(rgz_path)
-    fix_deleted_to_added(rgz_path)
-    fix_changed(rgz_path, street_mappings)
+    if args.fix_deleted_to_added or args.fix_changed:
+        print("Loading normalized street names mapping")
+        street_mappings = load_mappings(data_path)
+
+    if args.fix_deleted_to_added:
+        if args.rgz_update_date is None:
+            print("Set --rgz_update_date with date of RGZ data update, in YYYY-MM-DD format, like --rgz_update_date 2023-04-23")
+            return
+        fix_deleted_to_added(rgz_path, args.rgz_update_date)
+    elif args.fix_changed:
+        fix_changed(rgz_path, street_mappings)
+    else:
+        print("Choose either --generate or --fix_deleted_to_added or --fix_changed")
 
 
 if __name__ == '__main__':

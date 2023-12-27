@@ -61,8 +61,7 @@ class CollectOsmMappingsHandler(osmium.SimpleHandler):
                 self.mappings[normalized_name].append({'name': name, 'refs': ['w' + str(w.id)]})
 
 
-def load_curated(cwd):
-    curated_street_csv_path = os.path.join(cwd, 'curated_streets.csv')
+def load_curated(curated_street_csv_path):
     curated_street = {}
 
     with open(curated_street_csv_path, encoding="utf-8") as curated_street_csv_file:
@@ -195,7 +194,8 @@ def main():
         print("Skipping mapping generation, file data/mapping/mapping.csv already exist")
         return
 
-    curated_streets = load_curated(cwd)
+    curated_street_csv_path = os.path.join(cwd, 'curated_streets.csv')
+    curated_streets = load_curated(curated_street_csv_path)
     print(f"Collected all curated ({len(curated_streets)}) mappings")
 
     ref_mappings = load_ref_mapping(cwd)
@@ -267,23 +267,6 @@ def fix_framacalc():
             })
 
 
-def sort_curated_streets(cwd):
-    curated_streets = load_curated(cwd)
-    with open('curated_streets2.csv', 'w', encoding="utf-8") as curated_streets_csv_file:
-        writer = csv.DictWriter(
-            curated_streets_csv_file,
-            fieldnames=['rgz_name', 'name'])
-        writer.writeheader()
-        curated_streets_sorted = sorted(curated_streets)
-        for rgz_name in curated_streets_sorted:
-            if rgz_name == '':
-                raise Exception()
-            writer.writerow({
-                'rgz_name': rgz_name,
-                'name': curated_streets[rgz_name]
-            })
-
-
 class StreetMapping:
     def __init__(self, cwd):
         self.street_mappings = {}
@@ -334,4 +317,3 @@ class StreetMapping:
 if __name__ == '__main__':
     main()
     #fix_framacalc()
-    #sort_curated_streets(os.getcwd())

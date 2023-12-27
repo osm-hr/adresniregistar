@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import argparse
 import csv
 import os
 import sys
@@ -58,16 +59,15 @@ def load_opstina_csv(opstina, opstina_csv_path):
     return results
 
 
-def main():
+def main(output_csv_file_path, output_csv_folder):
     cwd = os.getcwd()
     rgz_path = os.path.join(cwd, 'data/rgz')
     download_path = os.path.join(rgz_path, 'download/')
-    collect_path = os.path.join(rgz_path, 'csv/')
-    all_addresses_path = os.path.join(rgz_path, 'addresses.csv')
 
     need_address_collection = True
-    if os.path.exists(all_addresses_path):
-        need_address_collection = False
+    if os.path.exists(output_csv_file_path):
+        print(f"File {output_csv_file_path} already exist, remove it to continue. Quitting")
+        return
 
     all_addresses = []
     total_zips = len(os.listdir(download_path))
@@ -75,7 +75,7 @@ def main():
         if not file.endswith(".zip"):
             continue
         opstina = file[:-4]
-        opstina_csv_path = os.path.join(collect_path, opstina + ".csv")
+        opstina_csv_path = os.path.join(output_csv_folder, opstina + ".csv")
 
         print(f"{i+1}/{total_zips} Processing {opstina}... ", end='')
         if os.path.exists(opstina_csv_path) and not need_address_collection:
@@ -90,7 +90,7 @@ def main():
         os.remove(temp_opstina_csv_file)
 
         if os.path.exists(opstina_csv_path):
-            print(f"skipping, file data/rgz/csv/{opstina}.csv already exists")
+            print(f"skipping, file {opstina_csv_path} already exists")
             continue
 
         with open(opstina_csv_path, 'w') as opstina_addresses_csv:
@@ -105,11 +105,7 @@ def main():
 
     print("Collecting all addresses...", end='')
 
-    if os.path.exists(all_addresses_path):
-        print("skipping, already exists")
-        return
-
-    with open(all_addresses_path, 'w') as all_addresses_csv:
+    with open(output_csv_file_path, 'w') as all_addresses_csv:
         writer = csv.DictWriter(
             all_addresses_csv, fieldnames=['rgz_kucni_broj_id', 'rgz_opstina_mb', 'rgz_opstina',
                                            'rgz_naselje_mb', 'rgz_naselje', 'rgz_ulica_mb', 'rgz_ulica',
@@ -121,4 +117,9 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(
+        description='prepare_rgz_data.py - Extract RGZ .zip files and creates addresses.csv')
+    parser.add_argument('--output-csv-file', default=None, required=True, help='Output CSV file for all RGZ addresses')
+    parser.add_argument('--output-csv-folder', default=None, required=True, help='Output directory for RGZ addresses per municipality')
+    args = parser.parse_args()
+    main(args.output_csv_file, args.output_csv_folder)

@@ -18,13 +18,6 @@ def collect_linestring(x):
 
 
 def do_analysis(opstina, data_path, street_mappings: StreetMapping, df_cached_circles):
-    # This is how to get missing street name at new CSV
-    # df_rgz = pd.read_csv(os.path.join(data_path, f'rgz/streets.csv'))
-    # df_rgz['rgz_ulica_proper'] = df_rgz[['rgz_ulica', 'rgz_opstina']].apply(lambda x: street_mappings.get_name(x['rgz_ulica'], x['rgz_opstina'], default_value='foo'), axis=1)
-    # df_missing_addresses = df_rgz[df_rgz.rgz_ulica_proper == 'foo']
-    # df_missing_addresses['best_effort'] = df_missing_addresses['rgz_ulica'].apply(lambda x: best_effort_decapitalize(x))
-    # pd.DataFrame(df_missing_addresses[['rgz_ulica', 'best_effort']]).to_csv(os.path.join(data_path, f'missing_streets.csv'), index=False)
-
     if os.path.exists(os.path.join(data_path, f'analysis/{opstina}.csv')):
         print(f"    Skipping {opstina}, already exists")
         return
