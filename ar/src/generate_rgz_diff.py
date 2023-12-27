@@ -95,7 +95,7 @@ def fix_deleted_to_added(rgz_path, rgz_last_update):
                 'ulica': row['ulica'],
                 'kucni_broj': row['kucni_broj'],
                 'geometry': transform(project, wkt.loads(row['geometry'])),
-            })
+                })
 
     print('Loading removed addresses')
     old_addresses = []
@@ -153,22 +153,19 @@ def fix_deleted_to_added(rgz_path, rgz_last_update):
                 del entity['tag']['ref:RS:kucni_broj']
 
             if osm_entity_found[0] == 'n':
-                #api.NodeUpdate(entity)
-                pass
+                api.NodeUpdate(entity)
             elif osm_entity_found[0] == 'w':
-                #api.WayUpdate(entity)
-                pass
+                api.WayUpdate(entity)
             else:
-                #api.RelationUpdate(entity)
-                pass
+                api.RelationUpdate(entity)
 
             if candidate_new_address:
                 print(f'Updated ref:RS:kucni_broj of {osm_entity_found} from {old_address["kucni_broj_id"]} to {candidate_new_address["kucni_broj_id"]}')
             else:
                 print(f'Removed ref:RS:kucni_broj of {osm_entity_found} and adding removed:ref:RS:kucni_broj')
-            time.sleep(1)
+            time.sleep(0.1)
 
-        time.sleep(1)
+        #time.sleep(0.1)
     api.flush()
 
 
@@ -237,15 +234,12 @@ def fix_changed(rgz_path, street_mappings):
             entity['tag']['addr:housenumber'] = newhousenumber
 
             if osm_entity_found[0] == 'n':
-                #api.NodeUpdate(entity)
-                pass
+                api.NodeUpdate(entity)
             elif osm_entity_found[0] == 'w':
-                #api.WayUpdate(entity)
-                pass
+                api.WayUpdate(entity)
             else:
-                #api.RelationUpdate(entity)
-                pass
-            time.sleep(1)
+                api.RelationUpdate(entity)
+            time.sleep(0.1)
     api.flush()
 
 
