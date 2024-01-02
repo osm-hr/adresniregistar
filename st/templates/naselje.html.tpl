@@ -13,7 +13,8 @@
       </div>
       <div class="modal-body">
 		<ul>
-			<li><b>Id (RGZ)</b> &mdash; Identifikator ulice u RGZ-u (ono što se stavlja u „ref:RS:ulica” tag)</li>
+			<li><b>Id (RGZ)</b> &mdash; Identifikator ulice u RGZ-u (ono što se stavlja u „ref:RS:ulica” tag).
+			Možete da filtrirate po tipu ulice, a dublje objašnjenje kako se formira identifikator možete da vidite <a href="https://community.openstreetmap.org/t/topic/9338/14" target="_blank">ovde na forumu</a>.</li>
 			<li><b>Ulica (RGZ)</b> &mdash; Ime ulice iz RGZ-a, a posle strelice i pravilno ime ulice kako treba uneti u OSM.
 			Ukoliko nema imena ulice posle strelice, znači da ulice još nema u <a href="https://dina.openstreetmap.rs/ar/street_mapping.html" target="_blank">registru</a>.
 			Klikom na ulicu se otvara geojson.io portal na kome može da se vidi i RGZ ulica (crvenom bojom) i sve conflated OSM ulice (plavom bojom).
@@ -52,9 +53,21 @@
     <script>
 	$(document).ready( function () {
 		$.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+		    let streetType = $("#streetTypeSelect option:selected").val();
 		    let isConflated = $("#isConflatedSelect option:selected").val();
 			let isPotential = $("#isPotentialSelect option:selected").val();
 			let isZaseok = $("#isZaseokSelect option:selected").val();
+
+            let streetTypeFilter = true;
+            if (streetType === 'street0') {
+                streetTypeFilter = data[0][6] === "0";
+            } else if (streetType === 'street1') {
+                streetTypeFilter = data[0][6] === "1";
+            } else if (streetType === 'street2') {
+                streetTypeFilter = data[0][6] === "2";
+            } else if (streetType === 'street3') {
+                streetTypeFilter = data[0][6] === "3";
+            }
 
             let isConflatedFilter = true;
             if (isConflated === 'yes') {
@@ -81,7 +94,7 @@
                 isZaseokFilter = data[1].indexOf('⭕') === -1;
             }
 
-			return isConflatedFilter && isPotentialFilter && isZaseokFilter;
+			return streetTypeFilter && isConflatedFilter && isPotentialFilter && isZaseokFilter;
 		});
 
 
@@ -94,6 +107,9 @@
 		    ]
 		});
 
+        $('#streetTypeSelect').on('change', function() {
+            table.draw();
+        });
         $('#isConflatedSelect').on('change', function() {
             table.draw();
         });
@@ -120,6 +136,15 @@ Podaci u poslednjoj koloni tabele prikazuju <b>samo potencijalne vrednosti</b> i
 <br/>
 
 <div class="text-right">
+    <label for="streetType">Tip ulice</label>
+    <select name="streetType" id="streetTypeSelect">
+      <option value="all"></option>
+      <option value="street0">Ulica u naseljenom mestu sa uličnim sistemom</option>
+      <option value="street1">Trg u naseljenom mestu sa uličnim sistemom</option>
+      <option value="street2">Zaseok u naseljenom mestu bez uličnog sistema</option>
+      <option value="street3">Ulica u naseljenom mestu bez uličnog sistema</option>
+    </select>
+    <br/>
     <label for="isConflated">Conflated putevi</label>
     <select name="isConflated" id="isConflatedSelect">
       <option value="all"></option>
