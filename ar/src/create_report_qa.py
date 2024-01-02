@@ -158,6 +158,7 @@ def generate_qa_duplicated_refs(context):
         duplicates=duplicates,
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
+        rgzDataDate=context['dates']['rgz_data'],
         osmDataDate=context['dates']['osm_data']
     )
     with open(html_path, 'w', encoding='utf-8') as fh:
@@ -262,6 +263,7 @@ def generate_addresses_in_buildings(context):
         output = template.render(
             currentDate=context['dates']['short'],
             reportDate=context['dates']['report'],
+            rgzDataDate=context['dates']['rgz_data'],
             osmDataDate=context['dates']['osm_data'],
             addresses=addresses,
             opstina_name=opstina_name,
@@ -293,6 +295,7 @@ def generate_addresses_in_buildings(context):
             output = template.render(
                 currentDate=context['dates']['short'],
                 reportDate=context['dates']['report'],
+                rgzDataDate=context['dates']['rgz_data'],
                 osmDataDate=context['dates']['osm_data'],
                 addresses=[],
                 opstina_name=opstina_name,
@@ -307,6 +310,7 @@ def generate_addresses_in_buildings(context):
     output = template.render(
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
+        rgzDataDate=context['dates']['rgz_data'],
         osmDataDate=context['dates']['osm_data'],
         opstine=opstine,
         total=total,
@@ -376,6 +380,7 @@ def generate_unaccounted_osm_qa(context):
         output = template.render(
             currentDate=context['dates']['short'],
             reportDate=context['dates']['report'],
+            rgzDataDate=context['dates']['rgz_data'],
             osmDataDate=context['dates']['osm_data'],
             addresses=addresses,
             opstina_name=opstina_name
@@ -402,6 +407,7 @@ def generate_unaccounted_osm_qa(context):
             output = template.render(
                 currentDate=context['dates']['short'],
                 reportDate=context['dates']['report'],
+                rgzDataDate=context['dates']['rgz_data'],
                 osmDataDate=context['dates']['osm_data'],
                 addresses=[],
                 opstina_name=opstina_name,
@@ -414,6 +420,7 @@ def generate_unaccounted_osm_qa(context):
     output = template.render(
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
+        rgzDataDate=context['dates']['rgz_data'],
         osmDataDate=context['dates']['osm_data'],
         opstine=opstine,
         total=total,
@@ -496,6 +503,7 @@ def generate_osm_import_qa(context):
     output = template.render(
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
+        rgzDataDate=context['dates']['rgz_data'],
         osmDataDate=context['dates']['osm_data'],
         addresses=addresses
     )
@@ -540,6 +548,7 @@ def generate_building_addresses_ratio_opstina(context, df_opstina, opstina):
     output = template.render(
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
+        rgzDataDate=context['dates']['rgz_data'],
         osmDataDate=context['dates']['osm_data'],
         opstina=opstina,
         naselja=naselja
@@ -593,6 +602,7 @@ def generate_building_addresses_ratio(context):
     output = template.render(
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
+        rgzDataDate=context['dates']['rgz_data'],
         osmDataDate=context['dates']['osm_data'],
         opstine=opstine
     )
@@ -658,6 +668,7 @@ def generate_removed_addresses(context):
         output = template.render(
             currentDate=context['dates']['short'],
             reportDate=context['dates']['report'],
+            rgzDataDate=context['dates']['rgz_data'],
             osmDataDate=context['dates']['osm_data'],
             addresses=addresses,
             opstina_name=opstina_name
@@ -684,6 +695,7 @@ def generate_removed_addresses(context):
             output = template.render(
                 currentDate=context['dates']['short'],
                 reportDate=context['dates']['report'],
+                rgzDataDate=context['dates']['rgz_data'],
                 osmDataDate=context['dates']['osm_data'],
                 addresses=[],
                 opstina_name=opstina_name,
@@ -695,6 +707,7 @@ def generate_removed_addresses(context):
     template = env.get_template('qa/removed_addresses.html.tpl')
     output = template.render(
         reportDate=context['dates']['report'],
+        rgzDataDate=context['dates']['rgz_data'],
         osmDataDate=context['dates']['osm_data'],
         currentDate=context['dates']['short'],
         opstine=opstine,
@@ -762,6 +775,7 @@ def generate_street_mapping(context):
     template = env.get_template('qa/street_mapping_qa.html.tpl')
     output = template.render(
         reportDate=context['dates']['report'],
+        rgzDataDate=context['dates']['rgz_data'],
         osmDataDate=context['dates']['osm_data'],
         currentDate=context['dates']['short'],
         street_names=street_names,
@@ -796,6 +810,7 @@ def generate_qa(context):
     output = template.render(
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
+        rgzDataDate=context['dates']['rgz_data'],
         osmDataDate=context['dates']['osm_data']
     )
     with open(html_path, 'w', encoding='utf-8') as fh:
@@ -809,6 +824,8 @@ def main():
     cwd = os.getcwd()
 
     data_path = os.path.join(cwd, 'data')
+    rgz_path = os.path.join(data_path, 'rgz')
+
     print("Building cache of OSM entities")
     osm_entities_cache = build_osm_entities_cache(data_path)
 
@@ -820,7 +837,14 @@ def main():
        raise Exception("File data/running missing, no way to determine date when OSM data was retrieved")
     with open(running_file, 'r') as file:
        file_content = file.read().rstrip()
-       osm_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y %H:%M')
+       osm_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y. %H:%M')
+
+    rgz_date_file = os.path.join(rgz_path, 'LATEST')
+    if not os.path.exists(rgz_date_file):
+        raise Exception("File data/rgz/LATEST missing, no way to determine date when RGZ data was retrived")
+    with open(rgz_date_file, 'r') as file:
+        file_content = file.read().rstrip()
+        rgz_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y.')
 
     context = {
         'env': env,
@@ -828,8 +852,9 @@ def main():
         'data_path': data_path,
         'dates': {
             'short': datetime.date.today().strftime('%Y-%m-%d'),
-            'report': datetime.datetime.now().strftime('%d.%m.%Y %H:%M'),
-            'osm_data': osm_data_timestamp
+            'report': datetime.datetime.now().strftime('%d.%m.%Y. %H:%M'),
+            'osm_data': osm_data_timestamp,
+            'rgz_data': rgz_data_timestamp,
         },
         'osm_entities_cache': osm_entities_cache,
         'street_mappings': street_mappings

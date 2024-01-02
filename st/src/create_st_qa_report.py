@@ -109,6 +109,7 @@ def generate_wrong_names_report(context):
             currentDate=context['dates']['short'],
             reportDate=context['dates']['report'],
             osmDataDate=context['dates']['osm_data'],
+            rgzDataDate=context['dates']['rgz_data'],
             streets=streets,
             opstina_name=opstina_name
         )
@@ -140,6 +141,7 @@ def generate_wrong_names_report(context):
                 currentDate=context['dates']['short'],
                 reportDate=context['dates']['report'],
                 osmDataDate=context['dates']['osm_data'],
+                rgzDataDate=context['dates']['rgz_data'],
                 streets=[],
                 opstina_name=opstina_name,
             )
@@ -152,6 +154,7 @@ def generate_wrong_names_report(context):
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
         osmDataDate=context['dates']['osm_data'],
+        rgzDataDate=context['dates']['rgz_data'],
         opstine=opstine,
         total=total,
     )
@@ -183,7 +186,14 @@ def main():
         raise Exception("File data/running missing, no way to determine date when OSM data was retrived")
     with open(running_file, 'r') as file:
         file_content = file.read().rstrip()
-        osm_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y %H:%M')
+        osm_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y. %H:%M')
+
+    rgz_date_file = os.path.join(rgz_path, 'LATEST')
+    if not os.path.exists(rgz_date_file):
+        raise Exception("File data/rgz/LATEST missing, no way to determine date when RGZ data was retrived")
+    with open(rgz_date_file, 'r') as file:
+        file_content = file.read().rstrip()
+        rgz_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y.')
 
     print("Loading normalized street names mapping")
     street_mappings = StreetMapping(os.path.join(cwd, '..', 'ar'))
@@ -197,8 +207,9 @@ def main():
         'data_path': data_path,
         'dates': {
             'short': datetime.date.today().strftime('%Y-%m-%d'),
-            'report': datetime.datetime.now().strftime('%d.%m.%Y %H:%M'),
-            'osm_data': osm_data_timestamp
+            'report': datetime.datetime.now().strftime('%d.%m.%Y. %H:%M'),
+            'osm_data': osm_data_timestamp,
+            'rgz_data': rgz_data_timestamp,
         },
         'street_mappings': street_mappings,
         'gdf_naselja': gdf_naselja
@@ -216,7 +227,8 @@ def main():
     output = template.render(
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
-        osmDataDate=context['dates']['osm_data']
+        osmDataDate=context['dates']['osm_data'],
+        rgzDataDate=context['dates']['rgz_data'],
     )
     with open(qa_html_path, 'w', encoding='utf-8') as fh:
         fh.write(output)

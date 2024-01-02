@@ -232,6 +232,7 @@ def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselj
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
         osmDataDate=context['dates']['osm_data'],
+        rgzDataDate=context['dates']['rgz_data'],
         streets=streets,
         naselje=naselje,
         opstina_name=opstina_name,
@@ -319,6 +320,7 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
         osmDataDate=context['dates']['osm_data'],
+        rgzDataDate=context['dates']['rgz_data'],
         showAllNaselja=False,
         naselja=naselja,
         opstina=opstina)
@@ -378,6 +380,7 @@ def generate_report(context):
             currentDate=context['dates']['short'],
             reportDate=context['dates']['report'],
             osmDataDate=context['dates']['osm_data'],
+            rgzDataDate=context['dates']['rgz_data'],
             opstine=opstine,
             total=total)
         with open(report_html_path, 'w', encoding='utf-8') as fh:
@@ -426,7 +429,14 @@ def main():
         raise Exception("File data/running missing, no way to determine date when OSM data was retrived")
     with open(running_file, 'r') as file:
         file_content = file.read().rstrip()
-        osm_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y %H:%M')
+        osm_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y. %H:%M')
+
+    rgz_date_file = os.path.join(rgz_path, 'LATEST')
+    if not os.path.exists(rgz_date_file):
+        raise Exception("File data/rgz/LATEST missing, no way to determine date when RGZ data was retrived")
+    with open(rgz_date_file, 'r') as file:
+        file_content = file.read().rstrip()
+        rgz_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y.')
 
     print("Building cache of OSM entities")
     osm_entities_cache = build_osm_entities_cache(data_path)
@@ -443,8 +453,9 @@ def main():
         'data_path': data_path,
         'dates': {
             'short': datetime.date.today().strftime('%Y-%m-%d'),
-            'report': datetime.datetime.now().strftime('%d.%m.%Y %H:%M'),
-            'osm_data': osm_data_timestamp
+            'report': datetime.datetime.now().strftime('%d.%m.%Y. %H:%M'),
+            'osm_data': osm_data_timestamp,
+            'rgz_data': rgz_data_timestamp,
         },
         'osm_entities_cache': osm_entities_cache,
         'street_mappings': street_mappings,
@@ -463,7 +474,8 @@ def main():
     output = template.render(
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
-        osmDataDate=context['dates']['osm_data']
+        osmDataDate=context['dates']['osm_data'],
+        rgzDataDate=context['dates']['rgz_data'],
     )
     with open(index_html_path, 'w', encoding='utf-8') as fh:
         fh.write(output)

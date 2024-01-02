@@ -147,8 +147,8 @@ def main():
         'cwd': cwd,
         'dates': {
             'short': datetime.date.today().strftime('%Y-%m-%d'),
-            'report': datetime.datetime.now().strftime('%d.%m.%Y %H:%M'),
-            'osm_data': datetime.datetime.now().strftime('%d.%m.%Y %H:%M'),
+            'report': datetime.datetime.now().strftime('%d.%m.%Y. %H:%M'),
+            'osm_data': datetime.datetime.now().strftime('%d.%m.%Y. %H:%M'),
         }
     }
     generate_report(context)

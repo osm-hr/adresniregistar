@@ -408,6 +408,7 @@ def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselj
     output = template.render(
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
+        rgzDataDate=context['dates']['rgz_data'],
         osmDataDate=context['dates']['osm_data'],
         realTime=context['incremental_update'],
         addresses=addresses,
@@ -496,6 +497,7 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
     output = template.render(
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
+        rgzDataDate=context['dates']['rgz_data'],
         osmDataDate=context['dates']['osm_data'],
         realTime=context['incremental_update'],
         showAllNaselja=False,
@@ -525,6 +527,7 @@ def generate_all_naselja(context, total, all_naselja):
     output = template.render(
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
+        rgzDataDate=context['dates']['rgz_data'],
         osmDataDate=context['dates']['osm_data'],
         realTime=context['incremental_update'],
         showAllNaselja=True,
@@ -582,6 +585,7 @@ def generate_report(context):
         output = template.render(
             currentDate=context['dates']['short'],
             reportDate=context['dates']['report'],
+            rgzDataDate=context['dates']['rgz_data'],
             osmDataDate=context['dates']['osm_data'],
             realTime=context['incremental_update'],
             opstine=opstine,
@@ -635,7 +639,14 @@ def main():
         raise Exception("File data/running missing, no way to determine date when OSM data was retrived")
     with open(running_file, 'r') as file:
         file_content = file.read().rstrip()
-        osm_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y %H:%M')
+        osm_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y. %H:%M')
+
+    rgz_date_file = os.path.join(rgz_path, 'LATEST')
+    if not os.path.exists(rgz_date_file):
+        raise Exception("File data/rgz/LATEST missing, no way to determine date when RGZ data was retrived")
+    with open(rgz_date_file, 'r') as file:
+        file_content = file.read().rstrip()
+        rgz_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y.')
 
     incremental_update = False
     if os.environ.get('AR_INCREMENTAL_UPDATE', None) == "1":
@@ -659,8 +670,9 @@ def main():
         'incremental_update': incremental_update,
         'dates': {
             'short': datetime.date.today().strftime('%Y-%m-%d'),
-            'report': datetime.datetime.now().strftime('%d.%m.%Y %H:%M'),
-            'osm_data': osm_data_timestamp
+            'report': datetime.datetime.now().strftime('%d.%m.%Y. %H:%M'),
+            'osm_data': osm_data_timestamp,
+            'rgz_data': rgz_data_timestamp,
         },
         'osm_entities_cache': osm_entities_cache,
         'street_mappings': street_mappings,
@@ -682,6 +694,7 @@ def main():
     output = template.render(
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
+        rgzDataDate=context['dates']['rgz_data'],
         osmDataDate=context['dates']['osm_data']
     )
     with open(index_html_path, 'w', encoding='utf-8') as fh:
