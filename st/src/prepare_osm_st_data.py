@@ -25,16 +25,8 @@ def main():
     gdf_opstine.to_crs("EPSG:4326", inplace=True)
     gdf_opstine.sindex
 
-    print("Load all OSM addresses")
-    df_streets = pd.read_csv(os.path.join(osm_path, 'streets.csv'), dtype={'ref:RS:ulica': object})
-    df_streets['osm_geometry'] = df_streets.osm_geometry.apply(wkt.loads)
-    gdf_streets = gpd.GeoDataFrame(df_streets, geometry='osm_geometry', crs="EPSG:4326")
-    gdf_streets.sindex
-
-    print("Finding opstina for each OSM street")
-    streets_with_opstina = gdf_streets.sjoin(gdf_opstine, how='inner', predicate='intersects')
-    streets_with_opstina['ref:RS:ulica'] = streets_with_opstina['ref:RS:ulica'].astype('str')
-
+    # Find in advance which opstine to process
+    opstine_to_process = []
     for i, row in gdf_opstine.iterrows():
         opstina = row['opstina_imel']
         csv_filename = f"{opstina}.csv"
@@ -45,7 +37,32 @@ def main():
 
         if opstina in OPSTINE_TO_SKIP:
             continue
-        print(f"{i+1}/{len(gdf_opstine)} Processing {opstina}")
+        opstine_to_process.append(opstina)
+
+    if len(opstine_to_process) == 0:
+        print("All data/osm/csv/*.csv opstine already exist, quitting")
+        return
+
+    print("Load all OSM addresses")
+    df_streets = pd.read_csv(os.path.join(osm_path, 'streets.csv'), dtype={'ref:RS:ulica': object})
+    df_streets['osm_geometry'] = df_streets.osm_geometry.apply(wkt.loads)
+    gdf_streets = gpd.GeoDataFrame(df_streets, geometry='osm_geometry', crs="EPSG:4326")
+    gdf_streets.sindex
+
+    print("Finding opstina for each OSM street")
+    streets_with_opstina = gdf_streets.sjoin(gdf_opstine, how='inner', predicate='intersects')
+    streets_with_opstina['ref:RS:ulica'] = streets_with_opstina['ref:RS:ulica'].astype('str')
+
+    for i, opstina in enumerate(opstine_to_process):
+        csv_filename = f"{opstina}.csv"
+        csv_file_path = os.path.join(osm_path, 'csv', csv_filename)
+        if os.path.exists(csv_file_path):
+            print(f"Skipping {opstina} as data/osm/csv/{csv_filename} already exists")
+            continue
+
+        if opstina in OPSTINE_TO_SKIP:
+            continue
+        print(f"{i+1}/{len(opstine_to_process)} Processing {opstina}")
         streets_in_opstina = streets_with_opstina[streets_with_opstina['opstina_imel'] == opstina].copy()
         streets_in_opstina.drop(['index_right', 'opstina_maticni_broj', 'opstina_ime', 'opstina_imel',
                    'opstina_povrsina', 'okrug_sifra', 'okrug_ime', 'okrug_imel', 'wkt'], inplace=True, axis=1)
