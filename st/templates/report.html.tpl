@@ -128,13 +128,13 @@ Ispod tabele možete da nađete interaktivnu mapu sa prikazom procenta konflacij
 	<tr>
 		<td><a href="opstine/{{ opstina.name }}.html">{{ opstina.name }}</a></td>
 		<td>{{ opstina.rgz }}</td>
-		<td>{{ '{0:0.2f}'.format(opstina.rgz_length / 1000.0) }}</td>
-		<td>{{ '{0:0.2f}'.format(opstina.conflated_length / 1000.0) }}</td>
-		<td>{{ '{0:0.2f}'.format((100.0 * opstina.conflated_length) / opstina.rgz_length) }}</td>
-		<td>{{ '{0:0.2f}'.format(opstina.found_length / 1000.0) }}</td>
-		<td>{{ '{0:0.2f}'.format((100.0 * opstina.found_length) / opstina.rgz_length) }}</td>
-		<td>{{ '{0:0.2f}'.format(opstina.notfound_length / 1000.0) }}</td>
-		<td>{{ '{0:0.2f}'.format((100.0 * opstina.notfound_length) / opstina.rgz_length) }}</td>
+		<td>{{ '{0:0.1f}'.format(opstina.rgz_length / 1000.0).replace('.', ',') }}</td>
+		<td>{{ '{0:0.1f}'.format(opstina.conflated_length / 1000.0).replace('.', ',') }}</td>
+		<td>{{ '{0:0.2f}'.format((100.0 * opstina.conflated_length) / opstina.rgz_length).replace('.', ',') }}</td>
+		<td>{{ '{0:0.1f}'.format(opstina.found_length / 1000.0).replace('.', ',') }}</td>
+		<td>{{ '{0:0.2f}'.format((100.0 * opstina.found_length) / opstina.rgz_length).replace('.', ',') }}</td>
+		<td>{{ '{0:0.1f}'.format(opstina.notfound_length / 1000.0).replace('.', ',') }}</td>
+		<td>{{ '{0:0.2f}'.format((100.0 * opstina.notfound_length) / opstina.rgz_length).replace('.', ',') }}</td>
 	</tr>
 	{% endfor %}
 </tbody>
@@ -142,13 +142,13 @@ Ispod tabele možete da nađete interaktivnu mapu sa prikazom procenta konflacij
 	<tr>
 		<th>Serbia TOTAL:</th>
 		<th class="d-sm-table-cell">{{ total.rgz }}</th>
-		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format(total.rgz_length / 1000.0) }}</th>
-		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format(total.conflated_length / 1000.0) }}</th>
-		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.conflated_length) / total.rgz_length) }}</th>
-		<th class="d-lg-table-cell">{{ '{0:0.2f}'.format(total.found_length / 1000.0) }}</th>
-		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.found_length) / total.rgz_length) }}</th>
-		<th class="d-lg-table-cell">{{ '{0:0.2f}'.format(total.notfound_length / 1000.0) }}</th>
-		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.notfound_length) / total.rgz_length) }}</th>
+		<th class="d-sm-table-cell">{{ '{0:0.1f}'.format(total.rgz_length / 1000.0).replace('.', ',') }}</th>
+		<th class="d-sm-table-cell">{{ '{0:0.1f}'.format(total.conflated_length / 1000.0).replace('.', ',') }}</th>
+		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.conflated_length) / total.rgz_length).replace('.', ',') }}</th>
+		<th class="d-lg-table-cell">{{ '{0:0.1f}'.format(total.found_length / 1000.0).replace('.', ',') }}</th>
+		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.found_length) / total.rgz_length).replace('.', ',') }}</th>
+		<th class="d-lg-table-cell">{{ '{0:0.1f}'.format(total.notfound_length / 1000.0).replace('.', ',') }}</th>
+		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.notfound_length) / total.rgz_length).replace('.', ',') }}</th>
 	</tr>
 </tfoot>
 </table>

@@ -138,13 +138,13 @@ Ispod tabele možete da nađete interaktivnu mapu opštine „{{ opstina.name }}
 	<tr>
 		<td><a href="{{ opstina.name_norm }}/{{ naselje.name_lat }}.html">{{ naselje.name_lat }}</a></td>
 		<td>{{ naselje.rgz }}</td>
-		<td>{{ '{0:0.2f}'.format(naselje.rgz_length / 1000.0) }}</td>
-		<td>{{ '{0:0.2f}'.format(naselje.conflated_length / 1000.0) }}</td>
-		<td>{{ '{0:0.2f}'.format((100.0 * naselje.conflated_length) / naselje.rgz_length) if naselje.rgz_length > 0 else '/' }}</td>
-		<td>{{ '{0:0.2f}'.format(naselje.found_length / 1000.0) }}</td>
-		<td>{{ '{0:0.2f}'.format((100.0 * naselje.found_length) / naselje.rgz_length) if naselje.rgz_length > 0 else '/' }}</td>
-		<td>{{ '{0:0.2f}'.format(naselje.notfound_length / 1000.0) }}</td>
-		<td>{{ '{0:0.2f}'.format((100.0 * naselje.notfound_length) / naselje.rgz_length) if naselje.rgz_length > 0 else '/' }}</td>
+		<td>{{ '{0:0.1f}'.format(naselje.rgz_length / 1000.0).replace('.', ',') }}</td>
+		<td>{{ '{0:0.1f}'.format(naselje.conflated_length / 1000.0).replace('.', ',') }}</td>
+		<td>{{ '{0:0.2f}'.format((100.0 * naselje.conflated_length) / naselje.rgz_length).replace('.', ',') if naselje.rgz_length > 0 else '/' }}</td>
+		<td>{{ '{0:0.1f}'.format(naselje.found_length / 1000.0).replace('.', ',') }}</td>
+		<td>{{ '{0:0.2f}'.format((100.0 * naselje.found_length) / naselje.rgz_length).replace('.', ',') if naselje.rgz_length > 0 else '/' }}</td>
+		<td>{{ '{0:0.1f}'.format(naselje.notfound_length / 1000.0).replace('.', ',') }}</td>
+		<td>{{ '{0:0.2f}'.format((100.0 * naselje.notfound_length) / naselje.rgz_length).replace('.', ',') if naselje.rgz_length > 0 else '/' }}</td>
 	</tr>
 	{% endfor %}
 </tbody>
@@ -152,13 +152,13 @@ Ispod tabele možete da nađete interaktivnu mapu opštine „{{ opstina.name }}
 	<tr>
 		<th>{{ opstina.name }} TOTAL:</th>
 		<th class="d-sm-table-cell">{{ opstina.rgz }}</th>
-		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format(opstina.rgz_length / 1000.0) }}</th>
-		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format(opstina.conflated_length / 1000.0) }}</th>
-		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * opstina.conflated_length) / opstina.rgz_length) if opstina.rgz_length > 0 else '/' }}</th>
-		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format(opstina.found_length / 1000.0) }}</th>
-		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * opstina.found_length) / opstina.rgz_length) if opstina.rgz_length > 0 else '/' }}</th>
-		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format(opstina.notfound_length / 1000.0) }}</th>
-		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * opstina.notfound_length) / opstina.rgz_length) if opstina.rgz_length > 0 else '/' }}</th>
+		<th class="d-sm-table-cell">{{ '{0:0.1f}'.format(opstina.rgz_length / 1000.0).replace('.', ',') }}</th>
+		<th class="d-sm-table-cell">{{ '{0:0.1f}'.format(opstina.conflated_length / 1000.0).replace('.', ',') }}</th>
+		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * opstina.conflated_length) / opstina.rgz_length).replace('.', ',') if opstina.rgz_length > 0 else '/' }}</th>
+		<th class="d-sm-table-cell">{{ '{0:0.1f}'.format(opstina.found_length / 1000.0).replace('.', ',') }}</th>
+		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * opstina.found_length) / opstina.rgz_length).replace('.', ',') if opstina.rgz_length > 0 else '/' }}</th>
+		<th class="d-sm-table-cell">{{ '{0:0.1f}'.format(opstina.notfound_length / 1000.0).replace('.', ',') }}</th>
+		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * opstina.notfound_length) / opstina.rgz_length).replace('.', ',') if opstina.rgz_length > 0 else '/' }}</th>
 	</tr>
 </tfoot>
 </table>
