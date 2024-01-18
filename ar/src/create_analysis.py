@@ -70,7 +70,7 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
         return
 
     print(f"    Loading OSM addresses in {opstina}")
-    df_osm = pd.read_csv(input_osm_file, dtype={'ref:RS:ulica': object, 'ref:RS:kucni_broj': object})
+    df_osm = pd.read_csv(input_osm_file, dtype={'osm_housenumber': object, 'ref:RS:ulica': object, 'ref:RS:kucni_broj': object})
     df_osm['osm_geometry2'] = df_osm.osm_geometry.apply(wkt.loads)
     gdf_osm = gpd.GeoDataFrame(df_osm, geometry='osm_geometry2', crs="EPSG:4326")
     gdf_osm.drop(['osm_country', 'osm_city', 'osm_postcode'], inplace=True, axis=1)

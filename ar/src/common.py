@@ -238,16 +238,21 @@ class CollectRelationWaysHandler(osmium.SimpleHandler):
     """
     Iterates for all building relations and collects associated ways
     """
-    def __init__(self, tag_to_search):
+    def __init__(self, tags_to_search):
         osmium.SimpleHandler.__init__(self)
         self.ways = {}
-        self.tag_to_search = tag_to_search
+        if type(tags_to_search) == str:
+            self.tags_to_search = set([tags_to_search])
+        else:
+            self.tags_to_search = set(tags_to_search)
 
     def relation(self, r):
-        if r.tags.get(self.tag_to_search):
-            only_outer_ways = [m for m in r.members if m.type == 'w' and m.role == 'outer']
-            for m in only_outer_ways:
-                self.ways[m.ref] = {'role': m.role}
+        for tag_to_search in self.tags_to_search:
+            if r.tags.get(tag_to_search):
+                only_outer_ways = [m for m in r.members if m.type == 'w' and m.role == 'outer']
+                for m in only_outer_ways:
+                    self.ways[m.ref] = {'role': m.role}
+                break
 
 
 class CollectWayNodesHandler(osmium.SimpleHandler):
@@ -256,17 +261,22 @@ class CollectWayNodesHandler(osmium.SimpleHandler):
     * collects their nodes
     * build ways cache
     """
-    def __init__(self, ways, tag_to_search):
+    def __init__(self, ways, tags_to_search):
         osmium.SimpleHandler.__init__(self)
-        self.tag_to_search = tag_to_search
+        if type(tags_to_search) == str:
+            self.tags_to_search = set([tags_to_search])
+        else:
+            self.tags_to_search = set(tags_to_search)
         self.ways = ways
         self.nodes = []
         self.ways_cache = {}
 
     def way(self, w):
-        if w.tags.get(self.tag_to_search):
-            for n in w.nodes:
-                self.nodes.append(n.ref)
+        for tag_to_search in self.tags_to_search:
+            if w.tags.get(tag_to_search):
+                for n in w.nodes:
+                    self.nodes.append(n.ref)
+                break
         if w.id in self.ways:
             self.ways_cache[w.id] = [n.ref for n in w.nodes]
             self.nodes += [n.ref for n in w.nodes]
@@ -293,9 +303,12 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
     """
     Collects all entities and their geometries
     """
-    def __init__(self, nodes_cache, ways_cache, tag_to_search, collect_only_nodes=False, collect_tags=False):
+    def __init__(self, nodes_cache, ways_cache, tags_to_search, collect_only_nodes=False, collect_tags=False):
         osmium.SimpleHandler.__init__(self)
-        self.tag_to_search = tag_to_search
+        if type(tags_to_search) == str:
+            self.tags_to_search = set([tags_to_search])
+        else:
+            self.tags_to_search = set(tags_to_search)
         self.collect_only_nodes = collect_only_nodes
         self.collect_tags = collect_tags
         self.nodes_cache = nodes_cache
@@ -347,66 +360,72 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
                 return geometry.GeometryCollection(polygons).convex_hull
 
     def node(self, n):
-        if n.tags.get(self.tag_to_search):
-            point = geometry.Point((n.location.lon, n.location.lat))
-            self.entities.append({
-                'osm_id': 'n' + str(n.id),
-                'osm_country': n.tags.get('addr:country'),
-                'osm_city': n.tags.get('addr:city'),
-                'osm_postcode': n.tags.get('addr:postcode'),
-                'osm_street': n.tags.get('addr:street'),
-                'osm_housenumber': n.tags.get('addr:housenumber'),
-                'ref:RS:kucni_broj': n.tags.get('ref:RS:kucni_broj'),
-                'tags': '{}' if not self.collect_tags else {k: v for k, v in n.tags},
-                'note': n.tags.get('note') if 'note' in n.tags else '',
-                'osm_geometry': point
-            })
+        for tag_to_search in self.tags_to_search:
+            if n.tags.get(tag_to_search):
+                point = geometry.Point((n.location.lon, n.location.lat))
+                self.entities.append({
+                    'osm_id': 'n' + str(n.id),
+                    'osm_country': n.tags.get('addr:country'),
+                    'osm_city': n.tags.get('addr:city'),
+                    'osm_postcode': n.tags.get('addr:postcode'),
+                    'osm_street': n.tags.get('addr:street'),
+                    'osm_housenumber': n.tags.get('addr:housenumber'),
+                    'ref:RS:kucni_broj': n.tags.get('ref:RS:kucni_broj'),
+                    'tags': '{}' if not self.collect_tags else {k: v for k, v in n.tags},
+                    'note': n.tags.get('note') if 'note' in n.tags else '',
+                    'osm_geometry': point
+                })
+                break
 
     def way(self, w):
         if self.collect_only_nodes:
             return
-        if w.tags.get(self.tag_to_search):
-            street = w.tags.get('addr:street')
-            housenumber = w.tags.get('addr:housenumber')
-            geom = self.geometry_from_way([n.ref for n in w.nodes])
-            if not geom:
-                print(f"Dropping way {w.id} ({street or ''} {housenumber}) as its geometry cannot be calculated")
-                return
-            self.entities.append({
-                'osm_id': 'w' + str(w.id),
-                'osm_country': w.tags.get('addr:country'),
-                'osm_city': w.tags.get('addr:city'),
-                'osm_postcode': w.tags.get('addr:postcode'),
-                'osm_street': street,
-                'osm_housenumber': housenumber,
-                'ref:RS:kucni_broj': w.tags.get('ref:RS:kucni_broj'),
-                'tags': '{}' if not self.collect_tags else {k: v for k, v in w.tags},
-                'note': w.tags.get('note') if 'note' in w.tags else '',
-                'osm_geometry': geom
-            })
+        for tag_to_search in self.tags_to_search:
+            if w.tags.get(tag_to_search):
+                street = w.tags.get('addr:street')
+                housenumber = w.tags.get('addr:housenumber')
+                geom = self.geometry_from_way([n.ref for n in w.nodes])
+                if not geom:
+                    print(f"Dropping way {w.id} ({street or ''} {housenumber}) as its geometry cannot be calculated")
+                    return
+                self.entities.append({
+                    'osm_id': 'w' + str(w.id),
+                    'osm_country': w.tags.get('addr:country'),
+                    'osm_city': w.tags.get('addr:city'),
+                    'osm_postcode': w.tags.get('addr:postcode'),
+                    'osm_street': street,
+                    'osm_housenumber': housenumber,
+                    'ref:RS:kucni_broj': w.tags.get('ref:RS:kucni_broj'),
+                    'tags': '{}' if not self.collect_tags else {k: v for k, v in w.tags},
+                    'note': w.tags.get('note') if 'note' in w.tags else '',
+                    'osm_geometry': geom
+                })
+                break
 
     def relation(self, r):
         if self.collect_only_nodes:
             return
-        if r.tags.get(self.tag_to_search):
-            street = r.tags.get('addr:street')
-            housenumber = r.tags.get('addr:housenumber')
-            geom = self.geometry_from_relation(r)
-            if not geom:
-                print(f"Dropping relation {r.id} as its geometry cannot be calculated")
-                return
-            self.entities.append({
-                'osm_id': 'r' + str(r.id),
-                'osm_country': r.tags.get('addr:country'),
-                'osm_city': r.tags.get('addr:city'),
-                'osm_postcode': r.tags.get('addr:postcode'),
-                'osm_street': street,
-                'osm_housenumber': housenumber,
-                'ref:RS:kucni_broj': r.tags.get('ref:RS:kucni_broj'),
-                'tags': '{}' if not self.collect_tags else {k: v for k, v in r.tags},
-                'note': r.tags.get('note') if 'note' in r.tags else '',
-                'osm_geometry': geom
-            })
+        for tag_to_search in self.tags_to_search:
+            if r.tags.get(tag_to_search):
+                street = r.tags.get('addr:street')
+                housenumber = r.tags.get('addr:housenumber')
+                geom = self.geometry_from_relation(r)
+                if not geom:
+                    print(f"Dropping relation {r.id} as its geometry cannot be calculated")
+                    return
+                self.entities.append({
+                    'osm_id': 'r' + str(r.id),
+                    'osm_country': r.tags.get('addr:country'),
+                    'osm_city': r.tags.get('addr:city'),
+                    'osm_postcode': r.tags.get('addr:postcode'),
+                    'osm_street': street,
+                    'osm_housenumber': housenumber,
+                    'ref:RS:kucni_broj': r.tags.get('ref:RS:kucni_broj'),
+                    'tags': '{}' if not self.collect_tags else {k: v for k, v in r.tags},
+                    'note': r.tags.get('note') if 'note' in r.tags else '',
+                    'osm_geometry': geom
+                })
+                break
 
 
 class OsmEntitiesCacheHandler(osmium.SimpleHandler):

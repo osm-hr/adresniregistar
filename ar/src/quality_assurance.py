@@ -384,7 +384,7 @@ def find_addresses_in_buildings(cwd):
     # gdf_buildings.sindex
 
     # # Build node geometries
-    ceh = CollectEntitiesHandler(nodes_cache=set(), ways_cache=set(), tag_to_search='addr:housenumber',
+    ceh = CollectEntitiesHandler(nodes_cache=set(), ways_cache=set(), tags_to_search='addr:housenumber',
                                  collect_only_nodes=True, collect_tags=True)
     ceh.apply_file(pbf_file)
     gdf_addresses = gpd.GeoDataFrame(ceh.entities, geometry='osm_geometry', crs="EPSG:4326")

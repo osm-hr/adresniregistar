@@ -17,11 +17,11 @@ def main():
         print("Skipping creation of data/osm/addresses.csv as it already exists")
         return
 
-    crwh = CollectRelationWaysHandler('addr:housenumber')
+    crwh = CollectRelationWaysHandler(['addr:street', 'addr:housenumber'])
     crwh.apply_file(pbf_file)
     print(f"Collected all ways ({len(crwh.ways)}) from relations")
 
-    cwnh = CollectWayNodesHandler(crwh.ways, 'addr:housenumber')
+    cwnh = CollectWayNodesHandler(crwh.ways, ['addr:street', 'addr:housenumber'])
     cwnh.apply_file(pbf_file)
     print(f"Collected all nodes ({len(cwnh.nodes)}) from ways")
 
@@ -29,7 +29,7 @@ def main():
     bnch.apply_file(pbf_file)
     print(f"Found coordinates for all nodes ({len(bnch.nodes_cache)})")
 
-    ceh = CollectEntitiesHandler(bnch.nodes_cache, cwnh.ways_cache, 'addr:housenumber')
+    ceh = CollectEntitiesHandler(bnch.nodes_cache, cwnh.ways_cache, ['addr:street', 'addr:housenumber'])
     ceh.apply_file(pbf_file)
     print(f"Collected all addresses ({len(ceh.entities)})")
 
