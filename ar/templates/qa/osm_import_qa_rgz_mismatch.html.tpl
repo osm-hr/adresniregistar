@@ -29,7 +29,7 @@
     <li class="breadcrumb-item" aria-current="page"><a href="../index.html">DINA</a></li>
 	<li class="breadcrumb-item" aria-current="page"><a href="index.html">Adrese</a></li>
 	<li class="breadcrumb-item" aria-current="page"><a href="qa.html">QA</a></li>
-	<li class="breadcrumb-item" aria-current="page">Kvalitet uvoza</li>
+	<li class="breadcrumb-item" aria-current="page">Kvalitet uvoza - nepoklapanje sa RGZ-om</li>
   </ol>
 </nav>
     <!-- Optional JavaScript -->
@@ -60,15 +60,13 @@
                 errorTypeFilter = data[9].indexOf('❌') > -1;
             } else if (errorType === 'housenumber_partial') {
                 errorTypeFilter = data[9].indexOf('⚠') > -1;
-            } else if (errorType === 'distance') {
-                errorTypeFilter = data[10].indexOf('❌') > -1;
             }
 
             let noteTypeFilter = true;
             if (noteType === 'yes') {
-                noteTypeFilter = data[11] != '';
+                noteTypeFilter = data[10] != '';
             } else if (noteType === 'no') {
-                noteTypeFilter = data[11] === '';
+                noteTypeFilter = data[10] === '';
             }
 
 			return errorTypeFilter && noteTypeFilter;
@@ -96,19 +94,17 @@
 	} );
     </script>
 
-<h2>Kvalitet uvoza OSM adresa</h2>
+<h2>Kvalitet uvoza - nepoklapanje sa RGZ-om</h2>
 <br/>
 <p>Ovde možete videti OSM adrese koje imaju tag <code>ref:RS:kucni_broj</code>, ali se nešto ne poklapa sa RGZ-om.
     <br/>
-    Može biti da u RGZ-u nema te reference, da je ulica delimično (⚠️) ili potpuno (❌) pogrešna, da je kućni broj delimično (⚠️) ili potpuno (❌) pogrešan ili da je udaljenost između adrese u OSM-u i RGZ-u preko 30 metara.
+    Može biti da u RGZ-u nema te reference, da je ulica delimično (⚠️) ili potpuno (❌) pogrešna, ili da je kućni broj delimično (⚠️) ili potpuno (❌) pogrešan.
     <br/>
     Nisu sve stvari isto bitne, pa postoji i kolona prioritet. Sa gornje desne strane tabele je filter kojim može da se isfiltrira tip greške.
     <br/>
     Ukoliko je adresa ili kućni broj <i>delimično</i> pogrešna, to znači da je ima neko veliko ili malo slovo drugačije, ili da je napisana pogrešnim pismom ili da ima neke interpunkcijske znake viška ili manjka.
     Da vidite koje su trenutno ispravna imena ulica, pogledajte stranu sa <a href="street_mapping.html">pravilnim imenima ulica</a>.
 </p>
-<br/>
-<br/>
 
 <div class="text-right">
     <label for="errorType">Tip greške:</label>
@@ -120,7 +116,6 @@
       <option value="housenumber">Kućni broj</option>
       <option value="housenumber_complete">&nbsp;&nbsp; Potpuno pogrešan</option>
       <option value="housenumber_partial">&nbsp;&nbsp; Delimično pogrešan</option>
-      <option value="distance">Predaleko u odnosu na RGZ-u</option>
     </select>
     <br/>
     <label for="errorType">Ima belešku:</label>
@@ -144,7 +139,6 @@
         <th>RGZ adresa poklapanje</th>
         <th>RGZ kućni broj</th>
         <th>RGZ kućni broj poklapanje</th>
-        <th>Udaljenost [m]</th>
         <th>Beleška</th>
 	</tr>
 </thead>
@@ -173,11 +167,6 @@
                 {% elif address.rgz_housenumber_match == 0 %}⚠️
                 {% else %}❌
                 {% endif %}
-            {% endif %}
-        </td>
-        <td data-order="{% if address.found_in_rgz %}{{ '{0:0.0f}'.format(address.distance) }}{% else %}0{% endif %}">
-            {% if address.found_in_rgz %}
-                {% if address.distance <= 30 %}✅{% else %}❌{% endif %} &nbsp; {{ '{0:0.0f}'.format(address.distance) }}
             {% endif %}
         </td>
         <td>{% if address.note %}<a href="#" class="text-dark" style="text-decoration: underline;text-decoration-style: dotted;" data-toggle="tooltip" title="{{ address.note }}">{{ address.note_short }} ↗</a>{% endif %}

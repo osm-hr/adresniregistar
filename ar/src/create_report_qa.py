@@ -430,7 +430,7 @@ def generate_unaccounted_osm_qa(context):
         fh.write(output)
 
 
-def generate_osm_import_qa(context):
+def generate_osm_import_qa_rgz_mismatch(context):
     env = context['env']
     cwd = context['cwd']
     street_mappings: StreetMapping = context['street_mappings']
@@ -446,7 +446,11 @@ def generate_osm_import_qa(context):
     print("Generating data/report/osm_import_qa.html")
 
     osm_import_qa_problems = pd.read_csv(osm_import_qa_path)
-
+    osm_import_qa_problems = osm_import_qa_problems[
+        pd.isna(osm_import_qa_problems.rgz_kucni_broj_id) |
+        ~osm_import_qa_problems.street_perfect_match |
+        ~osm_import_qa_problems.housenumber_perfect_match
+    ]
     addresses = []
 
     for _, osm_import_qa_problem in osm_import_qa_problems.iterrows():
@@ -495,11 +499,69 @@ def generate_osm_import_qa(context):
             'rgz_housenumber': normalize_name_latin(osm_import_qa_problem['rgz_kucni_broj']) if found_in_rgz else '',
             'rgz_housenumber_order': housenumber_to_float(osm_import_qa_problem['rgz_kucni_broj']) if found_in_rgz else 0,
             'rgz_housenumber_match': rgz_housenumber_match,
+            'note': note,
+            'note_short': note_short
+        })
+    template = env.get_template('qa/osm_import_qa_rgz_mismatch.html.tpl')
+    output = template.render(
+        currentDate=context['dates']['short'],
+        reportDate=context['dates']['report'],
+        rgzDataDate=context['dates']['rgz_data'],
+        osmDataDate=context['dates']['osm_data'],
+        addresses=addresses
+    )
+    with open(html_path, 'w', encoding='utf-8') as fh:
+        fh.write(output)
+
+
+def generate_osm_import_qa_too_far(context):
+    env = context['env']
+    cwd = context['cwd']
+    street_mappings: StreetMapping = context['street_mappings']
+
+    qa_path = os.path.join(cwd, 'data/qa')
+    report_path = os.path.join(cwd, 'data/report')
+    osm_import_qa_path = os.path.join(qa_path, 'osm_import_qa.csv')
+    html_path = os.path.join(report_path, 'osm_import_qa_too_far.html')
+    if os.path.exists(html_path):
+        print("Page data/report/osm_import_qa_too_far.html already exists")
+        return
+
+    print("Generating data/report/osm_import_qa_too_far.html")
+
+    osm_import_qa_problems = pd.read_csv(osm_import_qa_path)
+    osm_import_qa_problems = osm_import_qa_problems[osm_import_qa_problems.distance >= 30]
+
+    addresses = []
+
+    for _, osm_import_qa_problem in osm_import_qa_problems.iterrows():
+        location = osm_import_qa_problem['rgz_geometry'][7:-1].split(' ')
+        location_lon = round(float(location[0]), 6)
+        location_lat = round(float(location[1]), 6)
+        location_url = f'https://www.openstreetmap.org/?mlat={location_lat}&mlon={location_lon}#map=19/{location_lat}/{location_lon}'
+
+        osm_type = 'way' if osm_import_qa_problem['osm_id'][0] == 'w' else 'relation' if osm_import_qa_problem['osm_id'][0] == 'r' else 'node'
+        if pd.notna(osm_import_qa_problem['note']) and 'RGZ' in osm_import_qa_problem['note'] and 'Izbrisano iz RGZ-a' not in osm_import_qa_problem['note']:
+            note = osm_import_qa_problem['note']
+            note_short = note[0:4] + '...' if len(note) > 4 else note
+        else:
+            note = ''
+            note_short = ''
+
+        addresses.append({
+            'osm_link': f"https://openstreetmap.org/{osm_type}/{osm_import_qa_problem['osm_id'][1:]}",
+            'osm_link_text': osm_import_qa_problem['osm_id'][1:],
+            'rgz_link': location_url,
+            'location_lon': location_lon,
+            'location_lat': location_lat,
+            'osm_street': osm_import_qa_problem['osm_street'],
+            'osm_housenumber': osm_import_qa_problem['osm_housenumber'],
+            'rgz_opstina': osm_import_qa_problem['rgz_opstina_lat'],
             'distance': osm_import_qa_problem['distance'],
             'note': note,
             'note_short': note_short
         })
-    template = env.get_template('qa/osm_import_qa.html.tpl')
+    template = env.get_template('qa/osm_import_qa_too_far.html.tpl')
     output = template.render(
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
@@ -791,7 +853,8 @@ def generate_qa(context):
 
     print("Generating QA pages")
 
-    generate_osm_import_qa(context)
+    generate_osm_import_qa_rgz_mismatch(context)
+    generate_osm_import_qa_too_far(context)
     generate_qa_duplicated_refs(context)
     generate_addresses_in_buildings(context)
     generate_unaccounted_osm_qa(context)
