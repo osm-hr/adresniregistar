@@ -8,7 +8,7 @@ import pandas as pd
 from jinja2 import Environment, FileSystemLoader
 from shapely import wkt
 
-from common import cyr2lat_small
+from common import cyr2lat_small, cyr2intname
 from street_mapping import StreetMapping
 
 
@@ -163,6 +163,239 @@ def generate_wrong_names_report(context):
         fh.write(output)
 
 
+def generate_english_names_report(context):
+    env = context['env']
+    cwd = context['cwd']
+
+    qa_path = os.path.join(cwd, 'data/qa')
+    analysis_path = os.path.join(cwd, 'data/analysis')
+    report_path = os.path.join(cwd, 'data/report')
+    html_path = os.path.join(report_path, 'en_names.html')
+    en_names_osm_address_path = os.path.join(report_path, 'en_names')
+
+    template = env.get_template('qa/en_names_opstina.html.tpl')
+
+    if not os.path.exists(en_names_osm_address_path):
+        os.mkdir(en_names_osm_address_path)
+
+    df_wrong_street_names = pd.read_csv(os.path.join(qa_path, 'wrong_street_names.csv'))
+
+    opstine = []
+    total = {
+        'unneeded_name_en': 0,
+        'suspicious_name_en': 0,
+    }
+
+    for opstina_name, df_wrong_street_names_in_opstina in df_wrong_street_names.sort_values('opstina_imel').groupby('opstina_imel'):
+        suspicious_name_en_count = len(df_wrong_street_names_in_opstina[df_wrong_street_names_in_opstina.suspicious_name_en])
+        unneeded_name_en_count = len(df_wrong_street_names_in_opstina[df_wrong_street_names_in_opstina.unneeded_name_en])
+
+        total['unneeded_name_en'] += unneeded_name_en_count
+        total['suspicious_name_en'] += suspicious_name_en_count
+        opstine.append({
+            'name': opstina_name,
+            'unneeded_name_en': unneeded_name_en_count,
+            'suspicious_name_en': suspicious_name_en_count,
+        })
+        streets = []
+
+        opstina_html_path = os.path.join(en_names_osm_address_path, f'{opstina_name}.html')
+        if os.path.exists(opstina_html_path):
+            print(f"Page data/report/en_names/{opstina_name}.html already exists")
+            continue
+
+        print(f"Generating data/report/en_names/{opstina_name}.html")
+
+        for _, df_street in df_wrong_street_names_in_opstina.iterrows():
+            osm_id = df_street['osm_id']
+            osm_type = 'way' if osm_id[0] == 'w' else 'relation' if osm_id[0] == 'r' else 'node'
+
+            street = {
+                'osm_link': f'https://openstreetmap.org/{osm_type}/{osm_id[1:]}',
+                'osm_id': osm_id,
+                'has_ref_rs_ulica': True if pd.notna(df_street['ref:RS:ulica']) and df_street['ref:RS:ulica'] else False,
+                'osm_name': df_street['osm_name'] if pd.notna(df_street['osm_name']) else '',
+                'osm_name_en': df_street['osm_name_en'],
+                'unneeded_name_en': df_street['unneeded_name_en'],
+                'suspicious_name_en': df_street['suspicious_name_en'],
+            }
+            streets.append(street)
+
+        output = template.render(
+            currentDate=context['dates']['short'],
+            reportDate=context['dates']['report'],
+            osmDataDate=context['dates']['osm_data'],
+            rgzDataDate=context['dates']['rgz_data'],
+            streets=streets,
+            opstina_name=opstina_name
+        )
+
+        with open(opstina_html_path, 'w', encoding='utf-8') as fh:
+            fh.write(output)
+
+    if os.path.exists(html_path):
+        print("Page data/report/en_names.html already exists")
+        return
+
+    print("Generating data/report/en_names.html")
+
+    for i, file in enumerate(sorted(os.listdir(analysis_path))):
+        if not file.endswith(".csv"):
+            continue
+        opstina_name = file[:-4]
+        if not any(o for o in opstine if o['name'] == opstina_name):
+            opstine.append({
+                'name': opstina_name,
+                'unneeded_name_en': 0,
+                'suspicious_name_en': 0,
+            })
+            output = template.render(
+                currentDate=context['dates']['short'],
+                reportDate=context['dates']['report'],
+                osmDataDate=context['dates']['osm_data'],
+                rgzDataDate=context['dates']['rgz_data'],
+                streets=[],
+                opstina_name=opstina_name,
+            )
+            opstina_html_path = os.path.join(en_names_osm_address_path, f'{opstina_name}.html')
+            with open(opstina_html_path, 'w', encoding='utf-8') as fh:
+                fh.write(output)
+
+    template = env.get_template('qa/en_names.html.tpl')
+    output = template.render(
+        currentDate=context['dates']['short'],
+        reportDate=context['dates']['report'],
+        osmDataDate=context['dates']['osm_data'],
+        rgzDataDate=context['dates']['rgz_data'],
+        opstine=opstine,
+        total=total,
+    )
+
+    with open(html_path, 'w', encoding='utf-8') as fh:
+        fh.write(output)
+
+
+def generate_int_names_report(context):
+    env = context['env']
+    cwd = context['cwd']
+
+    qa_path = os.path.join(cwd, 'data/qa')
+    analysis_path = os.path.join(cwd, 'data/analysis')
+    report_path = os.path.join(cwd, 'data/report')
+    html_path = os.path.join(report_path, 'int_names.html')
+    int_names_osm_address_path = os.path.join(report_path, 'int_names')
+
+    template = env.get_template('qa/int_names_opstina.html.tpl')
+
+    if not os.path.exists(int_names_osm_address_path):
+        os.mkdir(int_names_osm_address_path)
+
+    df_wrong_street_names = pd.read_csv(os.path.join(qa_path, 'wrong_street_names.csv'))
+
+    opstine = []
+    total = {
+        'wrong_int_name': 0,
+        'missing_int_name': 0,
+    }
+
+    for opstina_name, df_wrong_street_names_in_opstina in df_wrong_street_names.sort_values('opstina_imel').groupby('opstina_imel'):
+        wrong_int_name_count = len(df_wrong_street_names_in_opstina[df_wrong_street_names_in_opstina.wrong_int_name])
+        missing_int_name_count = len(df_wrong_street_names_in_opstina[df_wrong_street_names_in_opstina.missing_int_name])
+
+        total['wrong_int_name'] += wrong_int_name_count
+        total['missing_int_name'] += missing_int_name_count
+        opstine.append({
+            'name': opstina_name,
+            'wrong_int_name': wrong_int_name_count,
+            'missing_int_name': missing_int_name_count,
+        })
+        streets = []
+
+        opstina_html_path = os.path.join(int_names_osm_address_path, f'{opstina_name}.html')
+        if os.path.exists(opstina_html_path):
+            print(f"Page data/report/int_names/{opstina_name}.html already exists")
+            continue
+
+        print(f"Generating data/report/int_names/{opstina_name}.html")
+
+        for _, df_street in df_wrong_street_names_in_opstina.iterrows():
+            osm_id = df_street['osm_id']
+            osm_type = 'way' if osm_id[0] == 'w' else 'relation' if osm_id[0] == 'r' else 'node'
+
+            if pd.notna(df_street['rgz_ulica_proper']) and df_street['rgz_ulica_proper'] != '':
+                osm_int_name_proper = cyr2intname(df_street['rgz_ulica_proper'])
+            else:
+                if pd.notna(df_street['osm_name']):
+                    osm_int_name_proper = cyr2intname(df_street['osm_name'])
+                else:
+                    osm_int_name_proper = '?'
+
+            street = {
+                'osm_link': f'https://openstreetmap.org/{osm_type}/{osm_id[1:]}',
+                'osm_id': osm_id,
+                'has_ref_rs_ulica': True if pd.notna(df_street['ref:RS:ulica']) and df_street['ref:RS:ulica'] else False,
+                'osm_name': df_street['osm_name'] if pd.notna(df_street['osm_name']) else '',
+                'osm_int_name': df_street['osm_int_name'],
+                'osm_int_name_proper': osm_int_name_proper,
+                'wrong_int_name': df_street['wrong_int_name'],
+                'missing_int_name': df_street['missing_int_name'],
+            }
+            streets.append(street)
+
+        output = template.render(
+            currentDate=context['dates']['short'],
+            reportDate=context['dates']['report'],
+            osmDataDate=context['dates']['osm_data'],
+            rgzDataDate=context['dates']['rgz_data'],
+            streets=streets,
+            opstina_name=opstina_name
+        )
+
+        with open(opstina_html_path, 'w', encoding='utf-8') as fh:
+            fh.write(output)
+
+    if os.path.exists(html_path):
+        print("Page data/report/int_names.html already exists")
+        return
+
+    print("Generating data/report/int_names.html")
+
+    for i, file in enumerate(sorted(os.listdir(analysis_path))):
+        if not file.endswith(".csv"):
+            continue
+        opstina_name = file[:-4]
+        if not any(o for o in opstine if o['name'] == opstina_name):
+            opstine.append({
+                'name': opstina_name,
+                'wrong_int_name': 0,
+                'missing_int_name': 0,
+            })
+            output = template.render(
+                currentDate=context['dates']['short'],
+                reportDate=context['dates']['report'],
+                osmDataDate=context['dates']['osm_data'],
+                rgzDataDate=context['dates']['rgz_data'],
+                streets=[],
+                opstina_name=opstina_name,
+            )
+            opstina_html_path = os.path.join(int_names_osm_address_path, f'{opstina_name}.html')
+            with open(opstina_html_path, 'w', encoding='utf-8') as fh:
+                fh.write(output)
+
+    template = env.get_template('qa/int_names.html.tpl')
+    output = template.render(
+        currentDate=context['dates']['short'],
+        reportDate=context['dates']['report'],
+        osmDataDate=context['dates']['osm_data'],
+        rgzDataDate=context['dates']['rgz_data'],
+        opstine=opstine,
+        total=total,
+    )
+
+    with open(html_path, 'w', encoding='utf-8') as fh:
+        fh.write(output)
+
+
 def load_naselja_boundaries(rgz_path):
     df_naselja = pd.read_csv(os.path.join(rgz_path, 'naselje.csv'))
     df_naselja['geometry'] = df_naselja.wkt.apply(wkt.loads)
@@ -215,6 +448,8 @@ def main():
         'gdf_naselja': gdf_naselja
     }
     generate_wrong_names_report(context)
+    generate_english_names_report(context)
+    generate_int_names_report(context)
 
     report_path = os.path.join(cwd, 'data/report')
     qa_html_path = os.path.join(report_path, 'qa.html')

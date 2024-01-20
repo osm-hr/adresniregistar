@@ -63,6 +63,20 @@ cyr_to_lat = {
     'х': 'h', 'ц': 'c', 'ч': 'č', 'џ': 'dž', 'ш': 'š', 'ђ': 'đ'
 }
 
+cyr_to_norm = {
+    'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E',
+    'Ж': 'Z', 'З': 'Z', 'И': 'I', 'Ј': 'J', 'К': 'K', 'Л': 'L',
+    'М': 'M', 'Н': 'N', 'Њ': 'Nj', 'О': 'O', 'П': 'P', 'Р': 'R',
+    'С': 'S', 'Т': 'T', 'Ћ': 'C', 'У': 'U', 'Ф': 'F', 'Х': 'H',
+    'Ц': 'C', 'Ч': 'C', 'Џ': 'Dz', 'Ш': 'S', 'Ђ': 'Dj', 'Љ': 'Lj',
+    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e',
+    'ж': 'z', 'з': 'z', 'и': 'i', 'ј': 'j', 'к': 'k', 'л': 'l',
+    'љ': 'lj','м': 'm', 'н': 'n', 'њ': 'nj', 'о': 'o', 'п': 'p',
+    'р': 'r', 'с': 's', 'т': 't', 'ћ': 'c', 'у': 'u', 'ф': 'f',
+    'х': 'h', 'ц': 'c', 'ч': 'c', 'џ': 'dz', 'ш': 's', 'ђ': 'dj'
+}
+
+
 cyr_to_lat_small = {
     'Њ': 'Nj', 'Џ': 'Dž', 'Љ': 'Lj'
 }
@@ -127,6 +141,18 @@ def cyr2lat_small(text):
             out += cyr_to_lat_small[c]
         elif c in cyr_to_lat:
             out += cyr_to_lat[c]
+        else:
+            out += c
+    return out
+
+
+def cyr2intname(text):
+    if type(text) == int:
+        return str(text)
+    out = ''
+    for c in text:
+        if c in cyr_to_norm:
+            out += cyr_to_norm[c]
         else:
             out += c
     return out

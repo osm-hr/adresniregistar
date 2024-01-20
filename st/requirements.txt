@@ -7,3 +7,4 @@ selenium==4.10.0
 selenium-wire==5.1.0
 Shapely==1.8.4
 geojson==3.0.1
+python-Levenshtein==0.20.9

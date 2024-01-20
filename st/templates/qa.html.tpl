@@ -46,6 +46,12 @@
     <h3><a href="wrong_names.html">Loši nazivi ulica</a></h3>
     <p>Pronalazi OSM ulice kojima se tagovi imena ne slažu sa pravilima imenovanja ulica u Srbiji.</p>
     <br/><br/>
+    <h3><a href="en_names.html">Engleski nazivi ulica</a></h3>
+    <p>Pronalazi OSM ulice kojima je „name:en” tag nepotreban ili potencijalno pogrešan.</p>
+    <br/><br/>
+    <h3><a href="int_names.html">Int nazivi ulica</a></h3>
+    <p>Pronalazi OSM ulice kojima „int_name” tag nedostaje ili je pogrešan</p>
+    <br/><br/>
 </div>
 
 {% endblock %}

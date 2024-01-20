@@ -88,7 +88,7 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping, df_cached_ci
 
     # TODO: buffer naselja, ulice nekada mogu da budu malo preko
     # TODO: do quality checks for far away addresses
-    # TODO: do quality checks for alt_name, short_name, int_name
+    # TODO: do quality checks for alt_name, short_name
     # TODO: refactor whole app
     # TODO: add overpass view on naselje
     """
