@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-test -f serbia.osm.pbf || wget http://download.geofabrik.de/europe/serbia-latest.osm.pbf -O serbia.osm.pbf -q --show-progress
+test -f serbia.osm.pbf || wget http://download.geofabrik.de/europe/serbia-latest.osm.pbf -O serbia.osm.pbf -q --show-progress --progress=dot:giga
 
 docker stop overpass_serbia_rt
 docker rm overpass_serbia_rt
