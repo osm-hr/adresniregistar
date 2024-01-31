@@ -97,6 +97,22 @@ def is_wrong_int_name(rgz_proper_name, osm_name, osm_int_name):
             # We don't have RGZ name, nor "name" tag, nothing can be wrong
             return False
 
+def is_needed_int_name(rgz_proper_name, osm_name, osm_int_name):
+    if pd.notna(osm_int_name) and osm_int_name != '':
+        # int_name exists, no need for it
+        return False
+
+    matches = ["ш", "ч", "ћ", "ж", "ђ", "Ш", "Ч", "Ћ", "Ж", "Ђ"]
+
+    if pd.notna(rgz_proper_name) and rgz_proper_name != '':
+        if any(x in rgz_proper_name for x in matches):
+            return True
+    elif pd.notna(osm_name) and osm_name != '':
+        # We have "name" tag, compare with it
+        if any(x in osm_name for x in matches):
+            return True
+    return False
+
 
 def find_wrong_names(cwd, street_mappings: StreetMapping):
     osm_path = os.path.join(cwd, 'data/osm')
@@ -170,8 +186,8 @@ def find_wrong_names(cwd, street_mappings: StreetMapping):
 
     streets_per_opstina['wrong_int_name'] = streets_per_opstina[['rgz_ulica_proper', 'osm_name', 'osm_int_name']].apply(
         lambda x: is_wrong_int_name(x['rgz_ulica_proper'], x['osm_name'], x['osm_int_name']), axis=1)
-    streets_per_opstina['missing_int_name'] = streets_per_opstina[['osm_name', 'osm_int_name']].apply(
-        lambda x: pd.notna(x['osm_name']) and x['osm_name'] != '' and (pd.isna(x['osm_int_name']) or x['osm_int_name'] == ''), axis=1)
+    streets_per_opstina['missing_int_name'] = streets_per_opstina[['rgz_ulica_proper', 'osm_name', 'osm_int_name']].apply(
+        lambda x: is_needed_int_name(x['rgz_ulica_proper'], x['osm_name'], x['osm_int_name']), axis=1)
 
     streets_per_opstina = streets_per_opstina[
         streets_per_opstina.wrong_name | streets_per_opstina.missing_name |
