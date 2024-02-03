@@ -44,6 +44,7 @@ sajtu https://download-tmp.geosrbija.rs/download.
 * Prekopirate ih na dno `ar/curated_streets.csv` i ispraviti sve nazive da budu dobri (Ctrl+F da nađete kako su ranije kapitalizovane neke stvari)
 * Sortirajte curated listu sa `python3 src/sort_curated.streets.py --input-curated-streets ../ar/curated_streets.csv --output-curated-streets curated_streets-sorted.csv`
 * Uporedite ih i ako je sve OK, zamenite `ar/curated_streets.csv` sa `curated_streets-sorted.csv`, a `curated_streets-sorted.csv` obrisati.
+* Sada izbrisati ar/data/mapping/mapping.csv i regenerisati ga ponovnim pokretanjem `python3 src/street_mapping.py` iz AR modula.
 
 ### Automatske izmene u OSM-u
 
@@ -69,10 +70,20 @@ Za ovo je potrebno da imamo [tippecanoe](https://github.com/felt/tippecanoe) pro
 * Generiše se .mbtiles fajl: `tippecanoe data/rgz/ulice.geojson -o data/rgz/ulice.mbtiles`
 * Ovaj fajl se pošalje na vektor server (kredencijale tražiti od autora ovog uputstva)
 
+### Kreiranje rasterske mape
+
+Ovu mapu treba da okačimo na sajt i da obavestimo Peleta da je osveži.
+
+* `ogr2ogr data/rgz/rgz_ulice.shp data/rgz/streets.new.csv -dialect sqlite -sql "SELECT rgz_ulica_mb, rgz_ulica AS rgz_ulica, GeometryFromText(rgz_geometry, 4326) AS geometry FROM 'streets.new'" -lco ENCODING=UTF-8 -s_srs EPSG:4326 -t_srs EPSG:3857`
+* `zip -j data/rgz/rgz_ulice_dump_latest.zip data/rgz/rgz_ulice.*`
+* `scp data/rgz/rgz_ulice_dump_latest.zip kokanovic:/home/branko/`
+* ssh tamo i kopirati ga u fajl sa `rgz_ulice_dump_YYYYMMDD.zip` strukturom, zbog arhiviranja
+
 ### Konačna zamena
 
 * Na kraju zameniti stari `data/rgz/streets.csv` sa novim `data/rgz/streets.new.csv` fajlom (`rm data/rgz/streets.csv; mv data/rgz/streets.csv`)
 * Zameniti sadržaj `data/rgz/csv` sa sadržajem `data/rgz/csv-new` i obrisati `data/rgz/csv-new`
+* Promeniti sadržaj fajla `data/rgz/LATEST`
 
 ## Licenca
 

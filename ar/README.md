@@ -105,15 +105,25 @@ Za ovo je potrebno da imamo [tippecanoe](https://github.com/felt/tippecanoe) pro
 
 * Konvertovati `data/rgz/addresses.new.csv` u geojson:
 
-`ogr2ogr data/rgz/adrese.geojson data/rgz/addresses.new.csv -dialect sqlite -sql "SELECT rgz_kucni_broj, ST_GeomFromText(rgz_geometry) AS geometry FROM 'addresses.new'" -nln adrese`
+`ogr2ogr data/rgz/addresses.geojson data/rgz/addresses.new.csv -dialect sqlite -sql "SELECT rgz_kucni_broj, ST_GeomFromText(rgz_geometry) AS geometry FROM 'addresses.new'" -nln adrese`
 
 * Generiše se .mbtiles fajl: `tippecanoe data/rgz/addresses.geojson -o data/rgz/brojevi.mbtiles`
 * Ovaj fajl se pošalje na vektor server (kredencijale tražiti od autora ovog uputstva)
+
+### Kreiranje rasterske mape
+
+Ovu mapu treba da okačimo na sajt i da obavestimo Peleta da je osveži.
+
+* `ogr2ogr data/rgz/rgz_adrese.shp data/rgz/addresses.new.csv -dialect sqlite -sql "SELECT rgz_ulica, rgz_kucni_broj, GeometryFromText(rgz_geometry, 4326) AS geometry FROM 'addresses.new'" -lco ENCODING=UTF-8 -s_srs EPSG:4326 -t_srs EPSG:3857`
+* `zip -j data/rgz/rgz_adrese_dump_latest.zip data/rgz/rgz_adrese.*`
+* `scp data/rgz/rgz_adrese_dump_latest.zip kokanovic:/home/branko/`
+* ssh tamo i kopirati ga u fajl sa `rgz_ulice_dump_YYYYMMDD.zip` strukturom, zbog arhiviranja
 
 ### Konačna zamena
 
 * Na kraju zameniti stari `data/rgz/addresses.csv` sa novim `data/rgz/addresses.new.csv` fajlom (`rm data/rgz/addresses.csv; mv data/rgz/addresses.csv`)
 * Zameniti sadržaj `data/rgz/csv` sa sadržajem `data/rgz/csv-new` i obrisati `data/rgz/csv-new`
+* Promeniti sadržaj fajla `data/rgz/LATEST`
 
 ## Licenca
 

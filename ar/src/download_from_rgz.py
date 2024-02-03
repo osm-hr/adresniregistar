@@ -12,7 +12,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from seleniumwire import webdriver
 
-from common import OPSTINE_TO_SKIP
+from common import OPSTINE_TO_SKIP, normalize_name
 
 SLEEP_TIME = 2
 
@@ -28,15 +28,21 @@ class DataFormat(Enum):
 
 
 def login(driver, rgz_username, rgz_password):
-    driver.get("https://download-tmp.geosrbija.rs/download/")
+    driver.get("https://download.geosrbija.rs/download/")
 
     time.sleep(SLEEP_TIME)
-    driver.find_element(By.CSS_SELECTOR, "button.p-ripple").click()
+    driver.find_element(By.CSS_SELECTOR, "div.actions > button.btn-rgz").click()
 
     time.sleep(SLEEP_TIME)
     driver.find_element(By.CSS_SELECTOR, "input#username").send_keys(rgz_username)
     driver.find_element(By.CSS_SELECTOR, "input#password").send_keys(rgz_password)
     driver.find_element(By.CSS_SELECTOR, "input#kc-login").click()
+
+    time.sleep(SLEEP_TIME * 3)
+    try:
+        driver.find_element(By.CSS_SELECTOR, "footer.shepherd-footer > button.red").click()
+    except NoSuchElementException:
+        pass
 
 
 def click_novo_preuzimanje(driver):
@@ -44,7 +50,7 @@ def click_novo_preuzimanje(driver):
     while True:
         try:
             time.sleep(SLEEP_TIME * 3)
-            driver.find_element(By.CSS_SELECTOR, "button.btn1").click()
+            driver.find_element(By.CSS_SELECTOR, "button#newDownloadButton").click()
             time.sleep(SLEEP_TIME)
             break
         except ElementClickInterceptedException as e:
@@ -119,7 +125,7 @@ def download_all_from_rgz(rgz_username, rgz_password, download_path,
 
     all_opstine = []
     for request in driver.requests:
-        if request.url == "https://download-tmp.geosrbija.rs/download-api/backend/opstine":
+        if request.url == "https://download.geosrbija.rs/download-api/backend/opstine":
             opstine_str = request.response.body.decode("utf-8")
             all_opstine = json.loads(opstine_str)
             break
@@ -139,7 +145,7 @@ def download_all_from_rgz(rgz_username, rgz_password, download_path,
 
         select_opstina(driver, opstina_name)
         driver.find_element(By.CSS_SELECTOR, 'input.p-inputtext[placeholder="Naziv fajla"]').clear()
-        driver.find_element(By.CSS_SELECTOR, 'input.p-inputtext[placeholder="Naziv fajla"]').send_keys(opstina_name)
+        driver.find_element(By.CSS_SELECTOR, 'input.p-inputtext[placeholder="Naziv fajla"]').send_keys(normalize_name(opstina_name))
 
         if dataFormat == DataFormat.SHAPEFILE:
             select_data_format(driver, "Shape")

@@ -11,6 +11,8 @@ import shapely.errors
 from shapely import wkt
 from shapely.ops import transform
 
+from common import normalize_name
+
 csv.field_size_limit(sys.maxsize)
 
 wgs84 = pyproj.CRS('EPSG:4326')
@@ -37,7 +39,7 @@ def load_opstina_csv(opstina, opstina_csv_path):
                 print(f"Error reprojecting {row['ulica_ime']} in {row['naselje_ime']} ({row['opstina_ime']}), skipping")
                 continue
 
-            if row['opstina_ime_lat'] != opstina:
+            if  normalize_name(row['opstina_ime_lat']) != opstina:
                 print(f"Unexpected opstina {row['opstina_ime']} during processing of opstina {opstina}")
                 continue
 

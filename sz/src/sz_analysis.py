@@ -3,14 +3,13 @@
 import argparse
 import json
 import os.path
-import pickle
 import ast
 
 import numpy as np
 import osmium
 import pandas as pd
 
-from common import cyr2lat, ApartmentResolution
+from common import cyr2lat, ApartmentResolution, normalize_name
 
 
 # TODO: add support for street mapping to multiple street names
@@ -127,7 +126,7 @@ def join_dz_rgz_osm(ar_data_path: str, df_sz, opstina):
     df_osm['ref:RS:kucni_broj'] = df_osm['ref:RS:kucni_broj'].astype('string')
 
     # Take RGZ data and normalize for join
-    df_rgz = pd.read_csv(os.path.join(ar_data_path, f'rgz/csv/{opstina_latin}.csv'), dtype={'rgz_kucni_broj_id': str})
+    df_rgz = pd.read_csv(os.path.join(ar_data_path, f'rgz/csv/{normalize_name(opstina_latin.lower())}.csv'), dtype={'rgz_kucni_broj_id': str})
     df_rgz['rgz_ulica_norm'] = df_rgz.rgz_ulica.apply(lambda x: normalize_street(x))
     df_rgz['rgz_kucni_broj_id'] = df_rgz['rgz_kucni_broj_id'].astype('string')
 

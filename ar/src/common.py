@@ -88,6 +88,14 @@ housenumber_order = {
 }
 
 
+class ApartmentResolution(Enum):
+    OSM_ENTITY_NOT_FOUND = 1  # recently deleted or recently added
+    NODE_DETACHED = 2  # node is detached, cannot be building=apartments
+    OSM_ENTITY_NOT_BUILDING = 3  # If entity is node, it is attached to something that is not tagged as building. If it is way or relation, it is not tagged as building
+    OSM_ENTITY_NOT_APARTMENT = 4  # If entity is node, it is attached to something that is not tagged as building=apartments. If it is way or relation, it is not tagged as building=apartments
+    OSM_ENTITY_APARTMENT = 5  # All is OK
+
+
 def normalize_name(name: str):
     if type(name) == float and math.isnan(name):
         return name

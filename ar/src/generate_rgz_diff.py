@@ -36,7 +36,7 @@ def load_addresses(addresses_csv_path):
                 'ulica_mb': row['rgz_ulica_mb'],
                 'ulica': row['rgz_ulica'],
                 'kucni_broj': row['rgz_kucni_broj'],
-                'geometry': transform(project, wkt.loads(row['rgz_geometry'])),
+                'geometry': wkt.loads(row['rgz_geometry']),
             }
     return results
 
@@ -94,7 +94,7 @@ def fix_deleted_to_added(rgz_path, rgz_last_update):
                 'ulica_mb': row['ulica_mb'],
                 'ulica': row['ulica'],
                 'kucni_broj': row['kucni_broj'],
-                'geometry': transform(project, wkt.loads(row['geometry'])),
+                'geometry': wkt.loads(row['geometry']),
                 })
 
     print('Loading removed addresses')
@@ -112,7 +112,7 @@ def fix_deleted_to_added(rgz_path, rgz_last_update):
                 'ulica_mb': row['ulica_mb'],
                 'ulica': row['ulica'],
                 'kucni_broj': row['kucni_broj'],
-                'geometry': transform(project, wkt.loads(row['geometry'])),
+                'geometry': wkt.loads(row['geometry']),
             })
 
     for i_progress, old_address in enumerate(old_addresses):
@@ -124,6 +124,14 @@ def fix_deleted_to_added(rgz_path, rgz_last_update):
             continue
 
         candidate_new_address = find_in_new_addresses(new_addresses, old_address['ulica'], old_address['kucni_broj'], old_address['geometry'])
+        if candidate_new_address:
+            distance_diff = round(candidate_new_address["geometry"].distance(old_address["geometry"]))
+            if distance_diff > 1000:
+                ### THIS IS NOT WORKING, CHECK ON NEXT REFRESH
+                ### THIS IS NOT WORKING, CHECK ON NEXT REFRESH
+                ### THIS IS NOT WORKING, CHECK ON NEXT REFRESH
+                print(f'{old_address["opstina"]} - {old_address["ulica"]} {old_address["kucni_broj"]} found, but with distance of {distance_diff}m, assuming it is deleted')
+                candidate_new_address = None
 
         for osm_entity_found in osm_entities_found:
             if osm_entity_found[0] == 'n':
@@ -193,8 +201,8 @@ def fix_changed(rgz_path, street_mappings):
                 'ulica_new': row['ulica_new'],
                 'kucni_broj_old': row['kucni_broj_old'],
                 'kucni_broj_new': row['kucni_broj_new'],
-                'geometry_old': transform(project, wkt.loads(row['geometry_old'])),
-                'geometry_new': transform(project, wkt.loads(row['geometry_new'])),
+                'geometry_old': wkt.loads(row['geometry_old']),
+                'geometry_new': wkt.loads(row['geometry_new']),
             })
     for i, changed_address in enumerate(changed_addresses):
         if i % 100 == 0:
@@ -207,6 +215,8 @@ def fix_changed(rgz_path, street_mappings):
         if len(osm_entities_found) == 0:
             # print(f'Skipping {changed_address["opstina"]} {changed_address["ulica_new"]} {changed_address["kucni_broj_new"]} - do not exist in OSM')
             continue
+
+        distance_diff = round(changed_address["geometry_old"].distance(changed_address["geometry_new"]))
 
         for osm_entity_found in osm_entities_found:
             if osm_entity_found[0] == 'n':
@@ -226,7 +236,7 @@ def fix_changed(rgz_path, street_mappings):
                 continue
             # for k in entity['tag']:
             #     print(f'    {k}={entity["tag"][k]}')
-            print(f"Changing '{addrstreet} {addrhousenumber}' => '{newstreet} {newhousenumber}'")
+            print(f"Changing '{addrstreet} {addrhousenumber}' => '{newstreet} {newhousenumber}', distance {distance_diff}m")
             response = '' #input()
             if response != '' and response.lower() != 'y' and response.lower() != u'з':
                 continue

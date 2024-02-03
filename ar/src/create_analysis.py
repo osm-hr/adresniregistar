@@ -64,7 +64,7 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
         print(f"    Missing file {input_osm_file}, cannot process opstina {opstina}")
         return
 
-    input_rgz_file = os.path.join(data_path, f'rgz/csv/{opstina}.csv')
+    input_rgz_file = os.path.join(data_path, f'rgz/csv/{normalize_name(opstina.lower())}.csv')
     if not os.path.exists(input_rgz_file):
         print(f"    Missing file {input_rgz_file}, cannot process opstina {opstina}")
         return
@@ -192,7 +192,7 @@ def main():
     if not args.opstina:
         process_all_opstina(data_path, rgz_csv_path, street_mappings)
     else:
-        if not os.path.exists(os.path.join(rgz_csv_path, f'{args.opstina}.csv')):
+        if not os.path.exists(os.path.join(rgz_csv_path, f'{normalize_name(args.opstina.lower())}.csv')):
             parser.error(f"File data/rgz/csv/{args.opstina}.csv do not exist")
             return
         do_analysis(args.opstina, data_path, street_mappings)
