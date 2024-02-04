@@ -2,6 +2,7 @@
 
 import argparse
 import ast
+import json
 import os
 
 import geopandas as gpd
@@ -142,15 +143,15 @@ way[ref:RS:ulica] {
                                 'osm_int_name', 'ref:RS:ulica', 'note', 'osm_geometry2', 'intersection_length'],
                                inplace=True, axis=1)
 
+    gdf_high_intersection['same_street_names'] = gdf_high_intersection.apply(lambda x: x['rgz_ulica_norm'] == x['osm_name_norm'] or pd.isna(x['rgz_ulica_norm']) or pd.isna(x['osm_name_norm']), axis=1)
     # Bring back high IoU to RGZ. We can have here duplicated OSM streets that are in multiple RGZ streets.
     # We need to associate only one RGZ street per each OSM street, those with highest IoU.
     gdf_merge_with_iou = gdf_rgz.merge(gdf_high_intersection[
                                            ['rgz_naselje_mb', 'rgz_ulica_mb', 'osm_name', 'osm_name_norm',
-                                            'found_intersection', 'found_osm_id', 'osm_way_length']], how='left',
+                                            'found_intersection', 'found_osm_id', 'osm_way_length', 'same_street_names']], how='left',
                                        on=['rgz_naselje_mb', 'rgz_ulica_mb'])
     gdf_merge_with_iou['rank'] = 1
-    gdf_merge_with_iou['rank'] = gdf_merge_with_iou.sort_values('found_intersection').groupby('found_osm_id')[
-        'rank'].cumsum()
+    gdf_merge_with_iou['rank'] = gdf_merge_with_iou.sort_values(['same_street_names', 'found_intersection'],  ascending=[False, False]).groupby('found_osm_id')['rank'].cumsum()
     gdf_merge_with_iou = gdf_merge_with_iou[gdf_merge_with_iou['rank'] == 1]
 
     # Bring back high IoU to RGZ. Now we have duplicated RGZ street that have multiple OSM candidates, collapse them
@@ -163,7 +164,7 @@ way[ref:RS:ulica] {
         lambda x: x['rgz_ulica_norm'] == x['osm_name'] and x['rgz_ulica_norm'] != '', axis=1)
     gdf_rgz.loc[pd.isna(gdf_rgz['osm_name']), 'osm_name'] = ''
     gdf_rgz.loc[pd.isna(gdf_rgz['found_osm_id']), 'found_osm_id'] = ''
-    import json
+
     gdf_rgz.loc[pd.isna(gdf_rgz['found_intersection']), 'found_intersection'] = ''
     gdf_rgz['found_osm_id'] = gdf_rgz.groupby(['rgz_naselje_mb', 'rgz_ulica_mb'])['found_osm_id'].transform(
         lambda x: ','.join(x))
