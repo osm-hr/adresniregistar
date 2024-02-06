@@ -25,6 +25,19 @@ def main():
     gdf_opstine.to_crs("EPSG:4326", inplace=True)
     gdf_opstine.sindex
 
+    all_opstina_exist = True
+    for i, row in gdf_opstine.iterrows():
+        opstina = row['opstina_imel']
+        if opstina in OPSTINE_TO_SKIP:
+            continue
+        csv_file_path = os.path.join(osm_path, 'csv', f"{opstina}.csv")
+        if not os.path.exists(csv_file_path):
+            all_opstina_exist = False
+            break
+    if all_opstina_exist:
+        print("Skipping all opstina as they all exist")
+        return
+
     print("Load all OSM addresses")
     df_addresses = pd.read_csv(os.path.join(osm_path, 'addresses.csv'), dtype={'ref:RS:ulica': object, 'ref:RS:kucni_broj': object})
     df_addresses['osm_geometry'] = df_addresses.osm_geometry.apply(wkt.loads)

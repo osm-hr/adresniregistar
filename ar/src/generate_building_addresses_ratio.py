@@ -48,6 +48,12 @@ def main():
 
     pbf_file = os.path.join(osm_path, 'download/serbia.osm.pbf')
 
+    building_housenumber_filepath = os.path.join(data_path, 'b-hn/building_housenumber_per_naselje.csv')
+
+    if os.path.exists(building_housenumber_filepath):
+        print("File data/b-hn/building_housenumber_per_naselje.csv already exists")
+        return
+
     gdf_naselje = get_naselje_boundaries(cwd)
 
     # Calculate addresses per naselje
@@ -123,8 +129,7 @@ def main():
     print("Exporting building / housenumber ratio to CSV")
     gdf_naselje.drop(['naselje_ime', 'naselje_povrsina', 'opstina_maticni_broj', 'opstina_ime', 'geometry', 'wkt'],
                      inplace=True, axis=1)
-    pd.DataFrame(gdf_naselje).to_csv(os.path.join(data_path, 'b-hn/building_housenumber_per_naselje.csv'),
-                                     index=False)
+    pd.DataFrame(gdf_naselje).to_csv(building_housenumber_filepath, index=False)
 
 
 if __name__ == '__main__':

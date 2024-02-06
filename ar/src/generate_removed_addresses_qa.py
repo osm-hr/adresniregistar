@@ -87,6 +87,7 @@ def main():
     qa_path = os.path.join(cwd, 'data/qa')
 
     if os.path.exists(os.path.join(qa_path, 'removed_addresses.csv')):
+        print("File data/qa/removed_addresses.csv already exists")
         return
 
     gdf_removed_addresses = load_removed_addresses_from_osm(cwd)
