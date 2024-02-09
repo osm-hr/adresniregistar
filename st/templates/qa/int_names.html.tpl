@@ -87,7 +87,7 @@
 <tfoot>
 	<tr>
 		<th>Serbia TOTAL:</th>
-		<th class="d-sm-table-cell">{{ total.unneeded_name_enwrong_int_name }}</th>
+		<th class="d-sm-table-cell">{{ total.wrong_int_name }}</th>
 		<th class="d-sm-table-cell">{{ total.missing_int_name }}</th>
 	</tr>
 </tfoot>
