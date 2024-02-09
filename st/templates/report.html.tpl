@@ -67,11 +67,19 @@
 		}
 
 		function loadMap() {
-			const map = L.map('map').setView([44.5, 20.5], 7);
-			const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			const map = L.map('map').setView([44.5, 21], 7);
+			const tiles = L.tileLayer('https://tiles.openstreetmap.rs/cir/{z}/{x}/{y}.png', {
 				maxZoom: 19,
+				minZoom: 7,
 				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 			}).addTo(map);
+			var sw = L.latLng(42, 18.5);
+			var ne = L.latLng(46.5, 23.5);
+			var bounds = L.latLngBounds(sw, ne);
+			map.setMaxBounds(bounds);
+			map.on('drag', function() {
+				map.panInsideBounds(bounds, { animate: false });
+			});
 
 			const opstinelLayer = L.geoJSON(opstine, {
 				style(feature) {
