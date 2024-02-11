@@ -255,19 +255,28 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
     opstina_html_path = os.path.join(opstine_dir_path, f'{opstina_name}.html')
 
     df_opstina_no_circles = df_opstina[~df_opstina.is_circle]
-    rgz_count = len(df_opstina_no_circles)
-    rgz_length = df_opstina_no_circles['rgz_way_length'].sum()
+    df_opstina_no_circles = df_opstina_no_circles[df_opstina_no_circles.rgz_ulica_mb.str[6] != '2']
+
+    rgz_length = df_opstina['rgz_way_length'].sum()
     # Condensed way to sum all split ways into one and sum them altogether
     conflated_length = round(sum([i for i in [sum([float(i) for i in x.split(',')]) if type(x)==str else x for x in df_opstina['conflated_osm_way_length']] if pd.notna(i)]), 2)
     found_length = round(sum([i for i in [sum([float(i) for i in x.split(',')]) if type(x)==str else x for x in df_opstina['found_osm_way_length']] if pd.notna(i)]), 2)
+
+    rgz_count = len(df_opstina_no_circles)
+    conflated_count = len(df_opstina_no_circles[pd.notna(df_opstina_no_circles.conflated_osm_id)])
+    found_count = len(df_opstina_no_circles[pd.isna(df_opstina_no_circles.conflated_osm_id) & pd.notna(df_opstina_no_circles.found_osm_id)])
+
     opstina = {
         'name': opstina_name,
         'name_norm': normalize_name(opstina_name),
         'rgz': rgz_count,
         'rgz_length': rgz_length,
         'conflated_length': conflated_length,
+        'conflated_count': conflated_count,
         'found_length': found_length,
-        'notfound_length': max(rgz_length - (conflated_length + found_length), 0)
+        'found_count': found_count,
+        'notfound_length': max(rgz_length - (conflated_length + found_length), 0),
+        'notfound_count': rgz_count - (conflated_count + found_count)
     }
 
     if os.path.exists(opstina_html_path):
@@ -279,10 +288,15 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
 
     for naselje_name, df_naselje in df_opstina.groupby('rgz_naselje'):
         df_naselje_no_circles = df_naselje[~df_naselje.is_circle]
-        rgz_count = len(df_naselje_no_circles)
-        rgz_length = df_naselje_no_circles['rgz_way_length'].sum()
+        df_naselje_no_circles = df_naselje_no_circles[df_naselje_no_circles.rgz_ulica_mb.str[6] != '2']
+
+        rgz_length = df_naselje['rgz_way_length'].sum()
         conflated_length = round(sum([i for i in [sum([float(i) for i in x.split(',')]) if type(x)==str else x for x in df_naselje['conflated_osm_way_length']] if pd.notna(i)]), 2)
         found_length = round(sum([i for i in [sum([float(i) for i in x.split(',')]) if type(x)==str else x for x in df_naselje['found_osm_way_length']] if pd.notna(i)]), 2)
+
+        rgz_count = len(df_naselje_no_circles)
+        conflated_count = len(df_naselje_no_circles[pd.notna(df_naselje_no_circles.conflated_osm_id)])
+        found_count = len(df_naselje_no_circles[pd.isna(df_naselje_no_circles.conflated_osm_id) & pd.notna(df_naselje_no_circles.found_osm_id)])
         naselje = {
             'name': naselje_name,
             'opstina': opstina,
@@ -290,8 +304,11 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
             'rgz': rgz_count,
             'rgz_length': rgz_length,
             'conflated_length': conflated_length,
+            'conflated_count': conflated_count,
             'found_length': found_length,
-            'notfound_length': max(rgz_length - (conflated_length + found_length), 0)
+            'found_count': found_count,
+            'notfound_length': max(rgz_length - (conflated_length + found_length), 0),
+            'notfound_count': rgz_count - (conflated_count + found_count)
         }
         generate_naselje(context, opstine_dir_path, opstina_name, naselje, df_naselje)
 
@@ -350,8 +367,11 @@ def generate_report(context):
         'rgz': 0,
         'rgz_length': 0,
         'conflated_length': 0,
+        'conflated_count': 0,
         'found_length': 0,
+        'found_count': 0,
         'notfound_length': 0,
+        'notfound_count': 0,
     }
     opstine = []
     all_naselja = []
@@ -363,6 +383,7 @@ def generate_report(context):
         df_opstina = pd.read_csv(os.path.join(analysis_path, file), dtype={'conflated_osm_way_length': object})
         df_opstina['rgz_geometry'] = df_opstina.rgz_geometry.apply(wkt.loads)
         gdf_opstina = gpd.GeoDataFrame(df_opstina, geometry='rgz_geometry', crs="EPSG:4326")
+        gdf_opstina['rgz_ulica_mb'] = gdf_opstina['rgz_ulica_mb'].astype('str')
         df_opstina_osm = pd.read_csv(os.path.join(osm_path, file), dtype='unicode')
         opstina, naselja = generate_opstina(context, opstina_name, gdf_opstina, df_opstina_osm)
         all_naselja += naselja
@@ -370,8 +391,11 @@ def generate_report(context):
         total['rgz'] += opstina['rgz']
         total['rgz_length'] += opstina['rgz_length']
         total['conflated_length'] += opstina['conflated_length']
+        total['conflated_count'] += opstina['conflated_count']
         total['found_length'] += opstina['found_length']
+        total['found_count'] += opstina['found_count']
         total['notfound_length'] += opstina['notfound_length']
+        total['notfound_count'] += opstina['notfound_count']
         total['bounds'] = (0, 0, 0, 0)
         print()
 
