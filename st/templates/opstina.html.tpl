@@ -16,8 +16,10 @@
 		<ul>
 			<li><b>Naselje</b> &mdash; Naselje za koje se odnose podaci</li>
 			<li><b>#RGZ [km]</b> &mdash; Ukupna dužina (u kilometrima) svih ulica u RGZ-u, uključujući i zaseoke</li>
-			<li><b>Konflacija [km]</b> &mdash; Ukupna dužina (u kilometrima) svih ulica u OSM-u koje su spojene sa RGZ-om (tj. imaju ispravan „ref:RS:ulica” tag)</li>
-			<li><b>Konflacija [%]</b> &mdash; Procenat kilometraže svih ulica u OSM-u koje su spojene sa RGZ-om</li>
+			<li><b>RGZ konflacija [km]</b> &mdash; Ukupna dužina (u kilometrima) svih delova ulica RGZ-a koje su spojene sa OSM-om. Ukoliko je ovaj broj manji od dužine RGZ ulice, postoji delovi RGZ ulice koji nisu spojeni u OSM-u</li>
+			<li><b>RGZ konflacija [%]</b> &mdash; Procenat kilometraže svih ulica RGZ-a koje su spojene sa OSM-om</li>
+			<li><b>OSM konflacija [km]</b> &mdash; Ukupna dužina (u kilometrima) svih ulica u OSM-u koje su spojene sa RGZ-om (tj. imaju ispravan „ref:RS:ulica” tag)</li>
+			<li><b>OSM konflacija [%]</b> &mdash; Procenat kilometraže svih ulica u OSM-u koje su spojene sa RGZ-om</li>
 			<li><b>Pronađeno [km]</b> &mdash; Ukupna dužina (u kilometrima) svih ulica u OSM-u koje su potencijalni kandidati za spajanje sa RGZ-om (ovo znači da generalno neka ulica u blizini postoji u OSM-u, ali ne mora da znači da je to baš ulica iz RGZ-a)</li>
 			<li><b>Pronađeno [%]</b> &mdash; Procenat kilometraže svih ulica u OSM-u koje su potencijalni kandidati za spajanje sa RGZ-om</li>
 			<li><b>Nepronađeno [km]</b> &mdash; Preostala dužina (u kilometrima) ulica koje nisu nađene (dakle, razlika između RGZ kilometraže i OSM kilometraže). Ovim se ukazuje da verovatno ništa oko ove ulice nije ni ucrtano u OSM-u</li>
@@ -158,8 +160,10 @@ U gornjem desnom uglu je filtriranje. Kliknite na <a href="" data-toggle="modal"
         <tr>
             <th>Naselje</th>
             <th>#RGZ [km]</th>
-            <th class="d-sm-table-cell">Konflacija [km]</th>
-            <th class="d-sm-table-cell">Konflacija [%]</th>
+            <th class="d-sm-table-cell">RGZ konflacija [km]</th>
+            <th class="d-sm-table-cell">RGZ konflacija [%]</th>
+            <th class="d-sm-table-cell">OSM konflacija [km]</th>
+            <th class="d-sm-table-cell">OSM konflacija [%]</th>
             <th class="d-lg-table-cell">Pronađeno [km]</th>
             <th class="d-lg-table-cell">Pronađeno [%]</th>
             <th class="d-lg-table-cell">Nepronađeno [km]</th>
@@ -171,6 +175,8 @@ U gornjem desnom uglu je filtriranje. Kliknite na <a href="" data-toggle="modal"
         <tr>
             <td><a href="{{ opstina.name_norm }}/{{ naselje.name_lat }}.html">{{ naselje.name_lat }}</a></td>
             <td>{{ '{0:0.1f}'.format(naselje.rgz_length / 1000.0).replace('.', ',') }}</td>
+            <td>{{ '{0:0.1f}'.format(naselje.conflated_length_rgz / 1000.0).replace('.', ',') }}</td>
+            <td>{{ '{0:0.2f}'.format((100.0 * naselje.conflated_length_rgz) / naselje.rgz_length).replace('.', ',') if naselje.rgz_length > 0 else '/' }}</td>
             <td>{{ '{0:0.1f}'.format(naselje.conflated_length / 1000.0).replace('.', ',') }}</td>
             <td>{{ '{0:0.2f}'.format((100.0 * naselje.conflated_length) / naselje.rgz_length).replace('.', ',') if naselje.rgz_length > 0 else '/' }}</td>
             <td>{{ '{0:0.1f}'.format(naselje.found_length / 1000.0).replace('.', ',') }}</td>
@@ -184,6 +190,8 @@ U gornjem desnom uglu je filtriranje. Kliknite na <a href="" data-toggle="modal"
         <tr>
             <th>{{ opstina.name }} TOTAL:</th>
             <th class="d-sm-table-cell">{{ '{0:0.1f}'.format(opstina.rgz_length / 1000.0).replace('.', ',') }}</th>
+            <th class="d-sm-table-cell">{{ '{0:0.1f}'.format(opstina.conflated_length_rgz / 1000.0).replace('.', ',') }}</th>
+            <th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * opstina.conflated_length_rgz) / opstina.rgz_length).replace('.', ',') if opstina.rgz_length > 0 else '/' }}</th>
             <th class="d-sm-table-cell">{{ '{0:0.1f}'.format(opstina.conflated_length / 1000.0).replace('.', ',') }}</th>
             <th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * opstina.conflated_length) / opstina.rgz_length).replace('.', ',') if opstina.rgz_length > 0 else '/' }}</th>
             <th class="d-sm-table-cell">{{ '{0:0.1f}'.format(opstina.found_length / 1000.0).replace('.', ',') }}</th>

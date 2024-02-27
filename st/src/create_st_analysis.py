@@ -59,8 +59,7 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping, df_cached_ci
 
     # Join with cached streets
     print(f"    Joining streets in RGZ and cached circles")
-    gdf_rgz = gdf_rgz.merge(df_cached_circles, on=['rgz_ulica_mb'], how='left')
-    gdf_rgz.fillna(value={'is_circle': False}, inplace=True)
+    gdf_rgz['is_zaseok'] = gdf_rgz['rgz_ulica_mb'].apply(lambda x: x[6] == '2')
 
     print(f"    Joining streets in RGZ and OSM in {opstina} by conflation (ref:RS:ulica)")
     gdf_rgz = gdf_rgz.merge(gdf_osm, how='left', left_on='rgz_ulica_mb', right_on='ref:RS:ulica')
@@ -81,6 +80,13 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping, df_cached_ci
     gdf_rgz.drop_duplicates(subset=['rgz_naselje_mb', 'rgz_ulica_mb'], keep='first', inplace=True)
     gdf_rgz.drop(['osm_way_length'], inplace=True, axis=1)
     gdf_rgz.sindex
+
+    # Add "rgz_way_length_covered" column - length of RGZ geometry covered with conflation
+    gdf_rgz_osm_buffer = gdf_rgz.copy()
+    gdf_rgz_osm_buffer['osm_buffered_geometry'] = gdf_rgz.osm_geometry.buffer(distance=15, cap_style=2)
+    gdf_rgz_osm_buffer.set_geometry('osm_buffered_geometry', inplace=True)
+    gdf_rgz['rgz_way_length_covered'] = gdf_rgz.intersection(gdf_rgz_osm_buffer).length
+    gdf_rgz.fillna(value={'rgz_way_length_covered': 0}, inplace=True)
 
     print(f"    Buffering RGZ streets for 50m in {opstina}")
     gdf_rgz['rgz_buffered_geometry'] = gdf_rgz.rgz_geometry.buffer(distance=15)

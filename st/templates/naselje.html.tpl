@@ -23,8 +23,11 @@
 			Ukoliko na početku ulice ima simbol „⭕”, algoritam je detektovao da je u pitanju zaseok, tj. virtuelna ulica (ne postoji fizički put). Ovo su ulice koje ne treba da se unose.
 			</li>
 			<li><b>Dužina (RGZ)</b> &mdash; Ukupna dužina ulice u RGZ-u (u metrima)</li>
-			<li><b>Conflated putevi (dužina)</b> &mdash; Spisak svih nađenih puteva u OSM-u koji su spojeni sa RGZ ulicom preko „ref:RS:ulica” taga. Za svaki je u zagradi navedena njegova dužina u OSM-u</li>
-			<li><b>Conflated - max greška (m)</b> &mdash; Najveća greška između RGZ ulice i OSM ulica (u metrima). Najveća udaljenost koju dve tačke na ovim ulicama mogu imati. Ova vrednost obično ne sme biti preko par stotina metara</li>
+			<li><b>Dužina konflacije (RGZ)</b> &mdash; Ukupna dužina onog dela ulice iz RGZ-a koji su spojeni preko „ref:RS:ulica” taga (u metrima). Ukoliko je ovaj broj manji od dužine ulice, postoji delovi RGZ ulice koji nisu spojeni u OSM-u</li>
+			<li><b>Nedostaje konflacija (RGZ)</b> &mdash; Ukupna dužina onih delova ulice iu RGZ-u koja nisu spojeni preko „ref:RS:ulica” taga (u metrima). Zapravo, razlika između ukupne dužine ulice i dužine konflacije</li>
+			<li><b>Dužina konflacije (OSM)</b> &mdash; Zbir dužina OSM way-eva koji su spojeni preko „ref:RS:ulica” taga sa RGZ ulicom (u metrima). Može biti veća od RGZ dužine.</li>
+			<li><b>Conflated putevi</b> &mdash; Spisak svih nađenih puteva u OSM-u koji su spojeni sa RGZ ulicom preko „ref:RS:ulica” taga.</li>
+			<li><b>Max greška konflacije (m)</b> &mdash; Greška konflacije između RGZ ulice i OSM ulica (u metrima). Najveća udaljenost koju dve tačke na ovim ulicama mogu imati. Ova vrednost obično ne sme biti preko par stotina metara</li>
 			<li><b>Potencijalni putevi (% poklapanja, dužina)</b> &mdash; Spisak svih potencijalno nađenih OSM puteva koje treba spojiti sa RGZ-om. Za svaki OSM put je naveden procenat poklapanja sa RGZ putem i njegova OSM dužina.
 			Ukoliko je ime puta <s>precrtano</s>, to označava da se ime iz RGZ-a i ime iz OSM-a ne slažu. Ukoliko ime puta ima prefiks „✅”, to znači da se ime RGZ i OSM puta kompletno slažu. <b>PAŽNJA:</b> u ovoj koloni može biti dosta grešaka i ne unositi ovo automatizovano</li>
 		</ul>
@@ -58,7 +61,6 @@
 		    let streetType = $("#streetTypeSelect option:selected").val();
 		    let isConflated = $("#isConflatedSelect option:selected").val();
 			let isPotential = $("#isPotentialSelect option:selected").val();
-			let isZaseok = $("#isZaseokSelect option:selected").val();
 
             let streetTypeFilter = true;
             if (streetType === 'street0') {
@@ -73,30 +75,23 @@
 
             let isConflatedFilter = true;
             if (isConflated === 'yes') {
-                isConflatedFilter = data[3].indexOf('w') > -1;
+                isConflatedFilter = data[6].indexOf('w') > -1;
             } else if (isConflated === 'no') {
-                isConflatedFilter = data[3].indexOf('w') === -1;
+                isConflatedFilter = data[6].indexOf('w') === -1;
             }
 
             let isPotentialFilter = true;
             if (isPotential === 'yes') {
-                isPotentialFilter = data[5].indexOf('✅') > -1;
+                isPotentialFilter = data[8].indexOf('✅') > -1;
             } else if (isPotential === 'partial') {
-                isPotentialFilter = data[5].indexOf('(') > -1;
+                isPotentialFilter = data[8].indexOf('(') > -1;
             } else if (isPotential === 'errors') {
-                isPotentialFilter = data[5].indexOf('<s>') > -1;
+                isPotentialFilter = data[8].indexOf('<s>') > -1;
             } else if (isPotential === 'no') {
-                isPotentialFilter = data[5].trim() === '';
+                isPotentialFilter = data[8].trim() === '';
             }
 
-            let isZaseokFilter = true;
-            if (isZaseok === 'yes') {
-                isZaseokFilter = data[1].indexOf('⭕') > -1;
-            } else if (isZaseok === 'no') {
-                isZaseokFilter = data[1].indexOf('⭕') === -1;
-            }
-
-			return streetTypeFilter && isConflatedFilter && isPotentialFilter && isZaseokFilter;
+			return streetTypeFilter && isConflatedFilter && isPotentialFilter;
 		});
 
 
@@ -116,9 +111,6 @@
             table.draw();
         });
         $('#isPotentialSelect').on('change', function() {
-            table.draw();
-        });
-        $('#isZaseokSelect').on('change', function() {
             table.draw();
         });
 	} );
@@ -162,13 +154,6 @@ Podaci u poslednjoj koloni tabele prikazuju <b>samo potencijalne vrednosti</b> i
       <option value="errors">Bar jedna precrtana ulica</option>
       <option value="no">Bez potencijalnih puteva</option>
     </select>
-    <br/>
-    <label for="isZaseok">Zaseoci</label>
-    <select name="isZaseok" id="isZaseokSelect">
-      <option value="all"></option>
-      <option value="yes">Samo zaseoci</option>
-      <option value="no">Bez zaseoka</option>
-    </select>
 </div>
 
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-100">
@@ -177,8 +162,11 @@ Podaci u poslednjoj koloni tabele prikazuju <b>samo potencijalne vrednosti</b> i
 		<th>Id (RGZ)</th>
 		<th>Ulica (RGZ)</th>
 		<th>Dužina (RGZ)</th>
-		<th>Conflated putevi (dužina)</th>
-		<th>Conflated - max greška (m)</th>
+		<th>Dužina konflacije (RGZ)</th>
+		<th>Nedostaje konflacija (RGZ)</th>
+		<th>Dužina konflacije (OSM)</th>
+		<th>Conflated putevi</th>
+		<th>Max greška konflacije (m)</th>
 		<th>Potencijalni putevi (% poklapanja, dužina)</th>
 	</tr>
 </thead>
@@ -186,13 +174,16 @@ Podaci u poslednjoj koloni tabele prikazuju <b>samo potencijalne vrednosti</b> i
     {% for street in streets %}
     <tr>
         <td>{{ street.rgz_ulica_mb }}</td>
-        <td>{% if street.is_circle %}⭕ {% endif %}<a href="{{ street.rgz_geojson_url }}" target="_blank">{{ street.rgz_ulica }}</a> {% if street.rgz_ulica_proper != '' %} ➝ {{ street.rgz_ulica_proper }}{% endif %}</td>
+        <td>{% if street.is_zaseok %}⭕ {% endif %}<a href="{{ street.rgz_geojson_url }}" target="_blank">{{ street.rgz_ulica }}</a> {% if street.rgz_ulica_proper != '' %} ➝ {{ street.rgz_ulica_proper }}{% endif %}</td>
         <td data-order="{{ street.rgz_way_length }}">{{ street.rgz_way_length }}m</td>
-        <td data-order="{{ street.max_conflated_osm_way_length }}">
+        <td data-order="{% if street.is_zaseok %}-1{% else %}{{ street.rgz_way_length_covered }}{% endif %}">{% if not street.is_zaseok %}{{ street.rgz_way_length_covered }}m{% endif %}</td>
+        <td data-order="{% if street.is_zaseok %}-1{% else %}{{ street.rgz_way_length_uncovered }}{% endif %}">{% if not street.is_zaseok %}{{ street.rgz_way_length_uncovered }}m{% endif %}</td>
+        <td data-order="{% if street.is_zaseok %}-1{% else %}{{ street.conflated_osm_way_length_sum }}{% endif %}">{% if not street.is_zaseok %}{{ street.conflated_osm_way_length_sum }}m{% endif %}</td>
+        <td data-order="{{ street.conflated_osm_way_length_sum }}">
             {% if street.conflated_ways|length > 0 %}
             <ul>
             {% for conflated_way in street.conflated_ways %}
-                <li><a href="{{ conflated_way.osm_link }}" target="_blank">{{ conflated_way.osm_id }}</a> ({{ conflated_way.conflated_osm_way_length }}m)</li>
+                <li><a href="{{ conflated_way.osm_link }}" target="_blank">{{ conflated_way.osm_id }}</a></li>
             {% endfor %}
             </ul>
             {% endif %}
@@ -226,6 +217,19 @@ Podaci u poslednjoj koloni tabele prikazuju <b>samo potencijalne vrednosti</b> i
     </tr>
     {% endfor %}
 </tbody>
+<tfoot>
+    <tr>
+        <th>TOTAL:</th>
+        <th class="d-sm-table-cell"></th>
+        <th class="d-sm-table-cell">{{ '{0:0.2f}'.format(total.rgz_way_length / 1000.0).replace('.', ',') }}km</th>
+        <th class="d-sm-table-cell">{{ '{0:0.2f}'.format(total.rgz_way_length_covered / 1000.0).replace('.', ',') }}km</th>
+        <th class="d-sm-table-cell">{{ '{0:0.2f}'.format(total.rgz_way_length_uncovered / 1000.0).replace('.', ',') }}km</th>
+        <th class="d-sm-table-cell">{{ '{0:0.2f}'.format(total.conflated_osm_way_length_sum / 1000.0).replace('.', ',') }}km</th>
+        <th class="d-sm-table-cell"></th>
+        <th class="d-sm-table-cell">{{ '{0:0.2f}'.format(total.conflated_max_error / 1000.0).replace('.', ',') }}km</th>
+        <th class="d-sm-table-cell"></th>
+    </tr>
+</tfoot>
 </table>
 
 {% if len(osm_files_matched_streets) > 0 %}

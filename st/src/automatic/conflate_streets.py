@@ -28,7 +28,7 @@ def do_opstina(data_path, street_mappings: StreetMapping, opstina):
 
     df_opstina = pd.read_csv(opstina_csv_filepath, dtype={'conflated_osm_way_length': object})
     df_opstina['rgz_ulica_mb'] = df_opstina['rgz_ulica_mb'].astype('str')
-    df_opstina = df_opstina[~df_opstina.is_circle]
+    df_opstina = df_opstina[~df_opstina.is_zaseok]
     df_opstina = df_opstina[df_opstina.rgz_ulica_mb.str[6] != '2']
     only_matched_addresses = df_opstina[pd.notna(df_opstina.found_osm_id)]
     i = 0

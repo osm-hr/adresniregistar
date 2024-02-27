@@ -160,12 +160,21 @@ def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselj
 
     osm_files_matched_streets = generate_osm_files_matched_streets(context, opstina_dir_path, opstina_name_norm, naselje, df_naselje)
 
+    total = {
+        'rgz_way_length': 0,
+        'rgz_way_length_covered': 0,
+        'rgz_way_length_uncovered': 0,
+        'conflated_osm_way_length_sum': 0,
+        'conflated_max_error': 0
+    }
+
     naselje_path = os.path.join(naselje_dir_path, f'{naselje["name_lat"]}.html')
 
     streets = []
     for _, address in df_naselje.iterrows():
         conflated_ways, found_ways = [], []
         max_conflated_osm_way_length = -1
+        conflated_osm_way_length_sum = 0
         if pd.notna(address['conflated_osm_id']):
             conflated_osm_ids = address['conflated_osm_id'].split(',')
             conflated_osm_way_lengths = address['conflated_osm_way_length'].split(',')
@@ -178,6 +187,7 @@ def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselj
                     'conflated_osm_way_length': round(float(conflated_osm_way_length), 2)
                 })
             max_conflated_osm_way_length = max([way['conflated_osm_way_length'] for way in conflated_ways])
+            conflated_osm_way_length_sum = round(sum([float(c) for c in conflated_osm_way_lengths]), 2)
         found_max_found_intersection = -1
         if pd.notna(address['found_osm_id']):
             found_osm_ids = address['found_osm_id'].split(',')
@@ -214,19 +224,34 @@ def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselj
             both_geojson = geojson.FeatureCollection([rgz_geojson])
         geojson_data = urllib.parse.quote(geojson.dumps(both_geojson))
         rgz_geojson_url = f"http://geojson.io/#data=data:application/json,{geojson_data}"
+        rgz_way_length_uncovered = max(round(address['rgz_way_length']) - round(address['rgz_way_length_covered']), 0)
         streets.append({
             'rgz_ulica_mb': address['rgz_ulica_mb'],
             'rgz_ulica': address['rgz_ulica'],
             'rgz_ulica_proper': address['rgz_ulica_proper'] if pd.notna(address['rgz_ulica_proper']) else '',
             'rgz_geojson_url': rgz_geojson_url,
             'rgz_way_length': round(address['rgz_way_length']),
+            'rgz_way_length_covered': round(address['rgz_way_length_covered']),
+            'rgz_way_length_uncovered': rgz_way_length_uncovered,
             'conflated_ways': conflated_ways,
             'conflated_max_error': round(address['conflated_max_error']) if pd.notna(address['conflated_max_error']) else None,
             'max_conflated_osm_way_length': max_conflated_osm_way_length,
+            'conflated_osm_way_length_sum': conflated_osm_way_length_sum,
             'found_ways': found_ways,
             'found_max_found_intersection': found_max_found_intersection,
-            'is_circle': address['is_circle'],
+            'is_zaseok': address['is_zaseok'],
         })
+        total['rgz_way_length'] += round(address['rgz_way_length'])
+        total['rgz_way_length_covered'] += round(address['rgz_way_length_covered'])
+        total['rgz_way_length_uncovered'] += rgz_way_length_uncovered
+        total['conflated_osm_way_length_sum'] += conflated_osm_way_length_sum
+        total['conflated_max_error'] += round(address['conflated_max_error']) if pd.notna(address['conflated_max_error']) else 0
+
+    total['rgz_way_length'] = round(total['rgz_way_length'])
+    total['rgz_way_length_covered'] = round(total['rgz_way_length_covered'])
+    total['rgz_way_length_uncovered'] = round(total['rgz_way_length_uncovered'])
+    total['conflated_osm_way_length_sum'] = round(total['conflated_osm_way_length_sum'])
+    total['conflated_max_error'] = round(total['conflated_max_error'])
 
     output = template.render(
         currentDate=context['dates']['short'],
@@ -236,13 +261,14 @@ def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselj
         streets=streets,
         naselje=naselje,
         opstina_name=opstina_name,
+        total=total,
         osm_files_matched_streets=osm_files_matched_streets
     )
     with open(naselje_path, 'w', encoding='utf-8') as fh:
         fh.write(output)
 
 
-def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
+def generate_opstina(context, opstina_name, df_opstina):
     env = context['env']
     data_path = context['data_path']
 
@@ -254,23 +280,25 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
         os.mkdir(opstine_dir_path)
     opstina_html_path = os.path.join(opstine_dir_path, f'{opstina_name}.html')
 
-    df_opstina_no_circles = df_opstina[~df_opstina.is_circle]
-    df_opstina_no_circles = df_opstina_no_circles[df_opstina_no_circles.rgz_ulica_mb.str[6] != '2']
+    df_opstina_no_zaseok = df_opstina[~df_opstina.is_zaseok]
+    df_opstina_no_zaseok = df_opstina_no_zaseok[df_opstina_no_zaseok.rgz_ulica_mb.str[6] != '2']
 
     rgz_length = df_opstina['rgz_way_length'].sum()
     # Condensed way to sum all split ways into one and sum them altogether
     conflated_length = round(sum([i for i in [sum([float(i) for i in x.split(',')]) if type(x)==str else x for x in df_opstina['conflated_osm_way_length']] if pd.notna(i)]), 2)
+    conflated_length_rgz = df_opstina['rgz_way_length_covered'].sum()
     found_length = round(sum([i for i in [sum([float(i) for i in x.split(',')]) if type(x)==str else x for x in df_opstina['found_osm_way_length']] if pd.notna(i)]), 2)
 
-    rgz_count = len(df_opstina_no_circles)
-    conflated_count = len(df_opstina_no_circles[pd.notna(df_opstina_no_circles.conflated_osm_id)])
-    found_count = len(df_opstina_no_circles[pd.isna(df_opstina_no_circles.conflated_osm_id) & pd.notna(df_opstina_no_circles.found_osm_id)])
+    rgz_count = len(df_opstina_no_zaseok)
+    conflated_count = len(df_opstina_no_zaseok[pd.notna(df_opstina_no_zaseok.conflated_osm_id)])
+    found_count = len(df_opstina_no_zaseok[pd.isna(df_opstina_no_zaseok.conflated_osm_id) & pd.notna(df_opstina_no_zaseok.found_osm_id)])
 
     opstina = {
         'name': opstina_name,
         'name_norm': normalize_name(opstina_name),
         'rgz': rgz_count,
         'rgz_length': rgz_length,
+        'conflated_length_rgz': conflated_length_rgz,
         'conflated_length': conflated_length,
         'conflated_count': conflated_count,
         'found_length': found_length,
@@ -287,22 +315,24 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
     naselja = []
 
     for naselje_name, df_naselje in df_opstina.groupby('rgz_naselje'):
-        df_naselje_no_circles = df_naselje[~df_naselje.is_circle]
-        df_naselje_no_circles = df_naselje_no_circles[df_naselje_no_circles.rgz_ulica_mb.str[6] != '2']
+        df_naselje_no_zaseoks = df_naselje[~df_naselje.is_zaseok]
+        df_naselje_no_zaseoks = df_naselje_no_zaseoks[df_naselje_no_zaseoks.rgz_ulica_mb.str[6] != '2']
 
         rgz_length = df_naselje['rgz_way_length'].sum()
         conflated_length = round(sum([i for i in [sum([float(i) for i in x.split(',')]) if type(x)==str else x for x in df_naselje['conflated_osm_way_length']] if pd.notna(i)]), 2)
+        conflated_length_rgz = df_naselje['rgz_way_length_covered'].sum()
         found_length = round(sum([i for i in [sum([float(i) for i in x.split(',')]) if type(x)==str else x for x in df_naselje['found_osm_way_length']] if pd.notna(i)]), 2)
 
-        rgz_count = len(df_naselje_no_circles)
-        conflated_count = len(df_naselje_no_circles[pd.notna(df_naselje_no_circles.conflated_osm_id)])
-        found_count = len(df_naselje_no_circles[pd.isna(df_naselje_no_circles.conflated_osm_id) & pd.notna(df_naselje_no_circles.found_osm_id)])
+        rgz_count = len(df_naselje_no_zaseoks)
+        conflated_count = len(df_naselje_no_zaseoks[pd.notna(df_naselje_no_zaseoks.conflated_osm_id)])
+        found_count = len(df_naselje_no_zaseoks[pd.isna(df_naselje_no_zaseoks.conflated_osm_id) & pd.notna(df_naselje_no_zaseoks.found_osm_id)])
         naselje = {
             'name': naselje_name,
             'opstina': opstina,
             'name_lat': cyr2lat(naselje_name),
             'rgz': rgz_count,
             'rgz_length': rgz_length,
+            'conflated_length_rgz': conflated_length_rgz,
             'conflated_length': conflated_length,
             'conflated_count': conflated_count,
             'found_length': found_length,
@@ -367,6 +397,7 @@ def generate_report(context):
         'rgz': 0,
         'rgz_length': 0,
         'conflated_length': 0,
+        'conflated_length_rgz': 0,
         'conflated_count': 0,
         'found_length': 0,
         'found_count': 0,
@@ -384,12 +415,12 @@ def generate_report(context):
         df_opstina['rgz_geometry'] = df_opstina.rgz_geometry.apply(wkt.loads)
         gdf_opstina = gpd.GeoDataFrame(df_opstina, geometry='rgz_geometry', crs="EPSG:4326")
         gdf_opstina['rgz_ulica_mb'] = gdf_opstina['rgz_ulica_mb'].astype('str')
-        df_opstina_osm = pd.read_csv(os.path.join(osm_path, file), dtype='unicode')
-        opstina, naselja = generate_opstina(context, opstina_name, gdf_opstina, df_opstina_osm)
+        opstina, naselja = generate_opstina(context, opstina_name, gdf_opstina)
         all_naselja += naselja
         opstine.append(opstina)
         total['rgz'] += opstina['rgz']
         total['rgz_length'] += opstina['rgz_length']
+        total['conflated_length_rgz'] += opstina['conflated_length_rgz']
         total['conflated_length'] += opstina['conflated_length']
         total['conflated_count'] += opstina['conflated_count']
         total['found_length'] += opstina['found_length']

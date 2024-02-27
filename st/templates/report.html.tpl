@@ -16,8 +16,10 @@
 		<ul>
 			<li><b>Opština</b> &mdash; Opština za koju se odnose podaci</li>
 			<li><b>#RGZ [km]</b> &mdash; Ukupna dužina (u kilometrima) svih ulica u RGZ-u</li>
-			<li><b>Konflacija [km]</b> &mdash; Ukupna dužina (u kilometrima) svih ulica u OSM-u koje su spojene sa RGZ-om (tj. imaju ispravan „ref:RS:ulica” tag)</li>
-			<li><b>Konflacija [%]</b> &mdash; Procenat kilometraže svih ulica u OSM-u koje su spojene sa RGZ-om</li>
+			<li><b>RGZ konflacija [km]</b> &mdash; Ukupna dužina (u kilometrima) svih delova ulica RGZ-a koje su spojene sa OSM-om. Ukoliko je ovaj broj manji od dužine RGZ ulice, postoji delovi RGZ ulice koji nisu spojeni u OSM-u</li>
+			<li><b>RGZ konflacija [%]</b> &mdash; Procenat kilometraže svih ulica RGZ-a koje su spojene sa OSM-om</li>
+			<li><b>OSM konflacija [km]</b> &mdash; Ukupna dužina (u kilometrima) svih ulica u OSM-u koje su spojene sa RGZ-om (tj. imaju ispravan „ref:RS:ulica” tag)</li>
+			<li><b>OSM konflacija [%]</b> &mdash; Procenat kilometraže svih ulica u OSM-u koje su spojene sa RGZ-om</li>
 			<li><b>Pronađeno [km]</b> &mdash; Ukupna dužina (u kilometrima) svih ulica u OSM-u koje su potencijalni kandidati za spajanje sa RGZ-om</li>
 			<li><b>Pronađeno [%]</b> &mdash; Procenat kilometraže svih ulica u OSM-u koje su potencijalni kandidati za spajanje sa RGZ-om (ovo znači da generalno neka ulica u blizini postoji u OSM-u, ali ne mora da znači da je to baš ulica iz RGZ-a)</li>
 			<li><b>Nepronađeno [km]</b> &mdash; Preostala dužina (u kilometrima) ulica koje nisu nađene (dakle, razlika između RGZ kilometraže i OSM kilometraže)</li>
@@ -151,8 +153,10 @@
             <tr>
                 <th>Opština</th>
                 <th>#RGZ [km]</th>
-                <th class="d-sm-table-cell">Konflacija [km]</th>
-                <th class="d-sm-table-cell">Konflacija [%]</th>
+                <th class="d-sm-table-cell">RGZ konflacija [km]</th>
+                <th class="d-sm-table-cell">RGZ konflacija [%]</th>
+                <th class="d-sm-table-cell">OSM konflacija [km]</th>
+                <th class="d-sm-table-cell">OSM konflacija [%]</th>
                 <th class="d-lg-table-cell">Pronađeno [km]</th>
                 <th class="d-lg-table-cell">Pronađeno [%]</th>
                 <th class="d-lg-table-cell">Nepronađeno [km]</th>
@@ -164,6 +168,8 @@
             <tr>
                 <td><a href="opstine/{{ opstina.name }}.html">{{ opstina.name }}</a></td>
                 <td>{{ '{0:0.1f}'.format(opstina.rgz_length / 1000.0).replace('.', ',') }}</td>
+                <td>{{ '{0:0.1f}'.format(opstina.conflated_length_rgz / 1000.0).replace('.', ',') }}</td>
+                <td>{{ '{0:0.2f}'.format((100.0 * opstina.conflated_length_rgz) / opstina.rgz_length).replace('.', ',') }}</td>
                 <td>{{ '{0:0.1f}'.format(opstina.conflated_length / 1000.0).replace('.', ',') }}</td>
                 <td>{{ '{0:0.2f}'.format((100.0 * opstina.conflated_length) / opstina.rgz_length).replace('.', ',') }}</td>
                 <td>{{ '{0:0.1f}'.format(opstina.found_length / 1000.0).replace('.', ',') }}</td>
@@ -177,6 +183,8 @@
             <tr>
                 <th>Serbia TOTAL:</th>
                 <th class="d-sm-table-cell">{{ '{0:0.1f}'.format(total.rgz_length / 1000.0).replace('.', ',') }}</th>
+                <th class="d-sm-table-cell">{{ '{0:0.1f}'.format(total.conflated_length_rgz / 1000.0).replace('.', ',') }}</th>
+                <th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.conflated_length_rgz) / total.rgz_length).replace('.', ',') }}</th>
                 <th class="d-sm-table-cell">{{ '{0:0.1f}'.format(total.conflated_length / 1000.0).replace('.', ',') }}</th>
                 <th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.conflated_length) / total.rgz_length).replace('.', ',') }}</th>
                 <th class="d-lg-table-cell">{{ '{0:0.1f}'.format(total.found_length / 1000.0).replace('.', ',') }}</th>
