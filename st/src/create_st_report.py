@@ -44,8 +44,8 @@ def build_osm_entities_cache(data_path):
         df_opstina = pd.read_csv(os.path.join(analysis_path, file))
         osm_entites_to_cache = df_opstina[pd.notna(df_opstina.found_osm_id)]['found_osm_id']
         if len(osm_entites_to_cache) > 0:
-            ways_to_cache_string = list(chain(*[w.split(',') for w in list(osm_entites_to_cache[osm_entites_to_cache.str.startswith('w')])]))
-            ways_to_cache += [int(w[1:]) for w in ways_to_cache_string]
+            ways_to_cache_string = list(chain(*[w.split(',') for w in osm_entites_to_cache]))
+            ways_to_cache += [int(w[1:]) for w in ways_to_cache_string if w[0] == 'w']
 
     print("Using PBF to build cache")
 
