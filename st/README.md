@@ -31,8 +31,8 @@ izmene u OSM-u, pa onda objaviti nove vektorske mape, pa onda tek možemo da po�
 Treba da napravite fajl "idp_creds" koji ima dve linije. Prva linija je username, a druga je password za pristup RGZ
 sajtu https://download-tmp.geosrbija.rs/download. 
 
-* Bekapovati staru `data/rgz/download` fasciklu (npr. `mkdir <data-datum>; mv *.zip <data-datum>/`)
-* Bekapovati stare adrese (`cp data/rgz/streets.csv data/rgz/streets.old.csv`)
+* Bekapovati staru `data/rgz/download` fasciklu (npr. `mkdir <data-datum>; mv *.zip <data-datum>/`) i isprazniti postojeću fasciklu
+* Bekapovati stare ulice (`cp data/rgz/streets.csv data/rgz/streets.old.csv`)
 * Napraviti fasciklu za nove CSV ulice (`mkdir data/rgz/csv-new`)
 * Pokrenuti `python src/download_st_from_rgz`. Skripta smešta .zip fajlove u `data/rgz/download`. Može se pokretati iznova, krenuće tamo gde je stala. Pratiti ukoliko pukne i pokrenuti ponovo. Skripta traje oko 1-2h.
 * Proveriti (za svaki slučaj) da imate 168 .zip fajlova u `data/rgz/download` i da nijedan fajl nije prazan (0 bajtova)
@@ -42,6 +42,7 @@ sajtu https://download-tmp.geosrbija.rs/download.
 
 * Pokrenuti `python3 src/fix_missing_proper_street_names.py` i biće generisan `data/rgz/missing_streets.csv` fajl u kome su sve nove ulice kojima nedostaje pravilno imenovanje.
 * Prekopirate ih na dno `ar/curated_streets.csv` i ispraviti sve nazive da budu dobri (Ctrl+F da nađete kako su ranije kapitalizovane neke stvari)
+  * Na kraju proveriti standardne greške iz RGZ-a, kao što je trailing space
 * Sortirajte curated listu sa `python3 src/sort_curated.streets.py --input-curated-streets ../ar/curated_streets.csv --output-curated-streets curated_streets-sorted.csv`
 * Uporedite ih i ako je sve OK, zamenite `ar/curated_streets.csv` sa `curated_streets-sorted.csv`, a `curated_streets-sorted.csv` obrisati.
 * Sada izbrisati ar/data/mapping/mapping.csv i regenerisati ga ponovnim pokretanjem `python3 src/street_mapping.py` iz AR modula.
@@ -53,7 +54,7 @@ kao i lokalni overpass server.
 
 * Izvršiti `python3 src/generate_st_rgz_diff.py --generate` i dobićete 3 fajla: `data/rgz/streets-added.csv` (nove ulice), `data/rgz/streets-removed.csv` (izbrisane ulice) i `data/rgz/streets-changed.csv` (promenjene ulice)
 * Izvršiti `python3 src/generate_st_rgz_diff.py --fix_deleted` - prolazi kroz obrisane ulice i ako su stvarno obrisane, briše im `ref:RS:ulica` i dodaje im `removed:ref:RS:ulica`
-* Otvoriti  `data/rgz/streets-changed.csv` i naći ulice koje su promenile ime i izmeniti ime u OSM-u.
+* Otvoriti  `data/rgz/streets-changed.csv` i naći ćete ulice koje su promenile ime - izmeniti ime u OSM-u.
 Najbolje se radi tako što se otvori ovaj fajl u QGIS-u, i ide ulicu po ulicu koje su promenile ime. Ukoliko je stara ulica u OSM-u, učitati ulicu u iD/JOSM i promeniti ime (i staviti i `old_name` takođe).
 Ukoliko je u RGZ-u samo pravopisna greška, ne treba stavljati `old_name` (možda eventualno `alt_name` ako mislite da treba).
 

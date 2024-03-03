@@ -18,7 +18,7 @@ csv.field_size_limit(sys.maxsize)
 
 wgs84 = pyproj.CRS('EPSG:4326')
 utm = pyproj.CRS('EPSG:32634')
-project = pyproj.Transformer.from_crs(utm, wgs84, always_xy=True).transform
+project = pyproj.Transformer.from_crs(wgs84, utm, always_xy=True).transform
 
 
 def load_addresses(addresses_csv_path):
@@ -43,7 +43,7 @@ def load_addresses(addresses_csv_path):
 
 def find_in_new_addresses(new_addresses, ulica_old, kucni_broj_old, geometry_old):
     for new_address in new_addresses:
-        if new_address['ulica'] == ulica_old and new_address['kucni_broj'] == kucni_broj_old and new_address['geometry'].distance(geometry_old) < 100:
+        if new_address['ulica'] == ulica_old and new_address['kucni_broj'] == kucni_broj_old and transform(project, new_address['geometry']).distance(transform(project, geometry_old)) < 100:
             return new_address
     return None
 
@@ -125,11 +125,8 @@ def fix_deleted_to_added(rgz_path, rgz_last_update):
 
         candidate_new_address = find_in_new_addresses(new_addresses, old_address['ulica'], old_address['kucni_broj'], old_address['geometry'])
         if candidate_new_address:
-            distance_diff = round(candidate_new_address["geometry"].distance(old_address["geometry"]))
+            distance_diff = round(transform(project, candidate_new_address["geometry"]).distance(transform(project, old_address["geometry"])))
             if distance_diff > 1000:
-                ### THIS IS NOT WORKING, CHECK ON NEXT REFRESH
-                ### THIS IS NOT WORKING, CHECK ON NEXT REFRESH
-                ### THIS IS NOT WORKING, CHECK ON NEXT REFRESH
                 print(f'{old_address["opstina"]} - {old_address["ulica"]} {old_address["kucni_broj"]} found, but with distance of {distance_diff}m, assuming it is deleted')
                 candidate_new_address = None
 
@@ -142,7 +139,7 @@ def fix_deleted_to_added(rgz_path, rgz_last_update):
                 entity = api.RelationGet(osm_entity_found[1:])
 
             if candidate_new_address:
-                print(f'{old_address["opstina"]} - {old_address["ulica"]} {old_address["kucni_broj"]} - distance {round(candidate_new_address["geometry"].distance(old_address["geometry"]))}m')
+                print(f'{old_address["opstina"]} - {old_address["ulica"]} {old_address["kucni_broj"]} - distance {round(transform(project, candidate_new_address["geometry"]).distance(transform(project, old_address["geometry"])))}m')
             else:
                 print(f'Not found candidate for {old_address["opstina"]} - {old_address["ulica"]} {old_address["kucni_broj"]}')
 
@@ -178,7 +175,7 @@ def fix_deleted_to_added(rgz_path, rgz_last_update):
 
 
 def fix_changed(rgz_path, street_mappings):
-    api = osmapi.OsmApi(passwordfile='osm-password', changesetauto=True, changesetautosize=100, changesetautotags={
+    api = osmapi.OsmApi(passwordfile='osm-password', changesetauto=True, changesetautosize=500, changesetautotags={
         "comment": f"RGZ address import (updating street and housenumber after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html",
         "tag": "mechanical=yes",
         "source": "RGZ_AR"
@@ -216,7 +213,7 @@ def fix_changed(rgz_path, street_mappings):
             # print(f'Skipping {changed_address["opstina"]} {changed_address["ulica_new"]} {changed_address["kucni_broj_new"]} - do not exist in OSM')
             continue
 
-        distance_diff = round(changed_address["geometry_old"].distance(changed_address["geometry_new"]))
+        distance_diff = round(transform(project, changed_address["geometry_old"]).distance(transform(project, changed_address["geometry_new"])))
 
         for osm_entity_found in osm_entities_found:
             if osm_entity_found[0] == 'n':
@@ -311,7 +308,7 @@ def create_csv_files(rgz_path):
         ulica_mb_changed = address_new['ulica_mb'] != address_old['ulica_mb']
         ulica_changed = address_new['ulica'] != address_old['ulica']
         kucni_broj_changed = address_new['kucni_broj'] != address_old['kucni_broj']
-        geometry_changed = round(address_old['geometry'].distance(address_new['geometry']))
+        geometry_changed = round(transform(project, address_old['geometry']).distance(transform(project, address_new['geometry'])))
 
         if naselje_mb_changed or naselje_changed or ulica_mb_changed or ulica_changed or kucni_broj_changed or geometry_changed > 0:
             changed_addresses.append({

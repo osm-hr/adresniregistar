@@ -119,6 +119,13 @@ def download_all_from_rgz(rgz_username, rgz_password, download_path,
     driver.implicitly_wait(10)
 
     login(driver, rgz_username, rgz_password)
+
+    time.sleep(SLEEP_TIME * 3)
+    x_tour = driver.find_element(By.CSS_SELECTOR, "button.shepherd-cancel-icon")
+    if x_tour:
+        x_tour.click()
+        time.sleep(SLEEP_TIME)
+
     click_novo_preuzimanje(driver)
     if entity_type == EntityType.KUCNI_BROJEVI:
         select_kucni_broj(driver)
@@ -136,7 +143,7 @@ def download_all_from_rgz(rgz_username, rgz_password, download_path,
     for i, opstina in enumerate(all_opstine):
         opstina_name = opstina["opstinaImel"]
         print(f'{i}/{len(all_opstine)} Processing {opstina_name}')
-        if os.path.exists(os.path.join(download_path, opstina_name + '.zip')):
+        if os.path.exists(os.path.join(download_path, normalize_name(opstina_name) + '.zip')):
             print(f'Skipping opstina {opstina_name}, already exist')
             continue
         if opstina_name in OPSTINE_TO_SKIP:

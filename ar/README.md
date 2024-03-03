@@ -105,9 +105,9 @@ Za ovo je potrebno da imamo [tippecanoe](https://github.com/felt/tippecanoe) pro
 
 * Konvertovati `data/rgz/addresses.new.csv` u geojson:
 
-`ogr2ogr data/rgz/addresses.geojson data/rgz/addresses.new.csv -dialect sqlite -sql "SELECT rgz_kucni_broj, ST_GeomFromText(rgz_geometry) AS geometry FROM 'addresses.new'" -nln adrese`
+`ogr2ogr data/rgz/adrese.geojson data/rgz/addresses.new.csv -dialect sqlite -sql "SELECT rgz_kucni_broj, ST_GeomFromText(rgz_geometry) AS geometry FROM 'addresses.new'" -nln adrese`
 
-* Generiše se .mbtiles fajl: `tippecanoe data/rgz/addresses.geojson -o data/rgz/brojevi.mbtiles`
+* Generiše se .mbtiles fajl: `tippecanoe data/rgz/adrese.geojson -o data/rgz/brojevi.mbtiles`
 * Ovaj fajl se pošalje na vektor server (kredencijale tražiti od autora ovog uputstva)
 
 ### Kreiranje rasterske mape
