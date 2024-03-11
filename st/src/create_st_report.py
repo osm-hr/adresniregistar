@@ -241,11 +241,13 @@ def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselj
             'found_max_found_intersection': found_max_found_intersection,
             'is_zaseok': address['is_zaseok'],
         })
-        total['rgz_way_length'] += round(address['rgz_way_length'])
-        total['rgz_way_length_covered'] += round(address['rgz_way_length_covered'])
-        total['rgz_way_length_uncovered'] += rgz_way_length_uncovered
-        total['conflated_osm_way_length_sum'] += conflated_osm_way_length_sum
-        total['conflated_max_error'] += round(address['conflated_max_error']) if pd.notna(address['conflated_max_error']) else 0
+
+        if not address['is_zaseok']:
+            total['rgz_way_length'] += round(address['rgz_way_length'])
+            total['rgz_way_length_covered'] += round(address['rgz_way_length_covered'])
+            total['rgz_way_length_uncovered'] += rgz_way_length_uncovered
+            total['conflated_osm_way_length_sum'] += conflated_osm_way_length_sum
+            total['conflated_max_error'] += round(address['conflated_max_error']) if pd.notna(address['conflated_max_error']) else 0
 
     total['rgz_way_length'] = round(total['rgz_way_length'])
     total['rgz_way_length_covered'] = round(total['rgz_way_length_covered'])
@@ -283,11 +285,11 @@ def generate_opstina(context, opstina_name, df_opstina):
     df_opstina_no_zaseok = df_opstina[~df_opstina.is_zaseok]
     df_opstina_no_zaseok = df_opstina_no_zaseok[df_opstina_no_zaseok.rgz_ulica_mb.str[6] != '2']
 
-    rgz_length = df_opstina['rgz_way_length'].sum()
+    rgz_length = df_opstina_no_zaseok['rgz_way_length'].sum()
     # Condensed way to sum all split ways into one and sum them altogether
-    conflated_length = round(sum([i for i in [sum([float(i) for i in x.split(',')]) if type(x)==str else x for x in df_opstina['conflated_osm_way_length']] if pd.notna(i)]), 2)
-    conflated_length_rgz = df_opstina['rgz_way_length_covered'].sum()
-    found_length = round(sum([i for i in [sum([float(i) for i in x.split(',')]) if type(x)==str else x for x in df_opstina['found_osm_way_length']] if pd.notna(i)]), 2)
+    conflated_length = round(sum([i for i in [sum([float(i) for i in x.split(',')]) if type(x)==str else x for x in df_opstina_no_zaseok['conflated_osm_way_length']] if pd.notna(i)]), 2)
+    conflated_length_rgz = df_opstina_no_zaseok['rgz_way_length_covered'].sum()
+    found_length = round(sum([i for i in [sum([float(i) for i in x.split(',')]) if type(x)==str else x for x in df_opstina_no_zaseok['found_osm_way_length']] if pd.notna(i)]), 2)
 
     rgz_count = len(df_opstina_no_zaseok)
     conflated_count = len(df_opstina_no_zaseok[pd.notna(df_opstina_no_zaseok.conflated_osm_id)])
@@ -318,10 +320,10 @@ def generate_opstina(context, opstina_name, df_opstina):
         df_naselje_no_zaseoks = df_naselje[~df_naselje.is_zaseok]
         df_naselje_no_zaseoks = df_naselje_no_zaseoks[df_naselje_no_zaseoks.rgz_ulica_mb.str[6] != '2']
 
-        rgz_length = df_naselje['rgz_way_length'].sum()
-        conflated_length = round(sum([i for i in [sum([float(i) for i in x.split(',')]) if type(x)==str else x for x in df_naselje['conflated_osm_way_length']] if pd.notna(i)]), 2)
-        conflated_length_rgz = df_naselje['rgz_way_length_covered'].sum()
-        found_length = round(sum([i for i in [sum([float(i) for i in x.split(',')]) if type(x)==str else x for x in df_naselje['found_osm_way_length']] if pd.notna(i)]), 2)
+        rgz_length = df_naselje_no_zaseoks['rgz_way_length'].sum()
+        conflated_length = round(sum([i for i in [sum([float(i) for i in x.split(',')]) if type(x)==str else x for x in df_naselje_no_zaseoks['conflated_osm_way_length']] if pd.notna(i)]), 2)
+        conflated_length_rgz = df_naselje_no_zaseoks['rgz_way_length_covered'].sum()
+        found_length = round(sum([i for i in [sum([float(i) for i in x.split(',')]) if type(x)==str else x for x in df_naselje_no_zaseoks['found_osm_way_length']] if pd.notna(i)]), 2)
 
         rgz_count = len(df_naselje_no_zaseoks)
         conflated_count = len(df_naselje_no_zaseoks[pd.notna(df_naselje_no_zaseoks.conflated_osm_id)])
