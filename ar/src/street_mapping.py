@@ -274,7 +274,7 @@ class StreetMapping:
             reader = csv.DictReader(mapping_csv_file)
             for row in reader:
                 self.street_mappings[row['rgz_name']] = [{'name': row['name'], 'source': row['source'], 'refs': row['refs'], 'opstina': ''}]
-        with open(os.path.join(cwd, 'cureted_streets_per_opstina.csv'), encoding='utf-8') as mapping_csv_file:
+        with open(os.path.join(cwd, 'curated_streets_per_opstina.csv'), encoding='utf-8') as mapping_csv_file:
             reader = csv.DictReader(mapping_csv_file)
             for row in reader:
                 rgz_name = row['rgz_name']
