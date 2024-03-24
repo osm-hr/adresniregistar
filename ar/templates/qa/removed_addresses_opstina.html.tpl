@@ -48,7 +48,7 @@
 	    $('#list').DataTable({
 		    stateSave: true,
 		    order: [[1, 'desc']],
-		    lengthMenu: [ [10, 100, -1], [10, 50, "All"] ],
+		    lengthMenu: [ [10, 50, -1], [10, 50, "All"] ],
 		    columnDefs: [
 		        { targets: [2], className: 'text-right' },
 		        { targets: [4], className: 'text-right' },

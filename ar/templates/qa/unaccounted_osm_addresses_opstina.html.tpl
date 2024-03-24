@@ -49,7 +49,7 @@
 	    $('#list').DataTable({
 		    stateSave: true,
 		    order: [[0, 'desc']],
-		    lengthMenu: [ [10, 100, -1], [10, 50, "All"] ],
+		    lengthMenu: [ [10, 50, -1], [10, 50, "All"] ],
 		    columnDefs: [
 		        //{ targets: [10, 11, 12, 13, 14], "orderable": false},
 		        //{ targets: [1], visible: false },

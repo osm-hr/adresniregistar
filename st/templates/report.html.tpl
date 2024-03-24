@@ -63,7 +63,7 @@
 	    $('#list-by-km').DataTable({
 		    stateSave: true,
 		    order: [[0, 'asc']],
-		    lengthMenu: [ [10, 100, -1], [10, 50, "All"] ],
+		    lengthMenu: [ [10, 50, -1], [10, 50, "All"] ],
 		    columnDefs: [
 		        { targets: [2, 3, 4, 5], className: 'text-right' }
 		    ]
@@ -71,7 +71,7 @@
 	    $('#list-by-count').DataTable({
 		    stateSave: true,
 		    order: [[0, 'asc']],
-		    lengthMenu: [ [10, 100, -1], [10, 50, "All"] ],
+		    lengthMenu: [ [10, 50, -1], [10, 50, "All"] ],
 		    columnDefs: [
 		        { targets: [2, 3, 4, 5], className: 'text-right' }
 		    ]
