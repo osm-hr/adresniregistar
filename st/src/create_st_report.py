@@ -352,7 +352,7 @@ def generate_opstina(context, opstina_name, df_opstina):
         return opstina, []
 
     df_calc_naselja = pd.DataFrame(naselja)
-    df_calc_naselja['ratio'] = df_calc_naselja.apply(lambda row: min(100 * row.conflated_length / row.rgz_length if row.rgz_length > 0 else 0, 100), axis=1)
+    df_calc_naselja['ratio'] = df_calc_naselja.apply(lambda row: min(100 * row.conflated_length_rgz / row.rgz_length if row.rgz_length > 0 else 0, 100), axis=1)
 
     gdf_naselja = context['gdf_naselja']
     gdf_naselje = gdf_naselja[gdf_naselja.opstina_imel == opstina_name]
@@ -448,7 +448,7 @@ def generate_report(context):
         return
 
     df_calc_opstine = pd.DataFrame(opstine)
-    df_calc_opstine['ratio'] = df_calc_opstine.apply(lambda row: 100 * row.conflated_length / row.rgz_length, axis=1)
+    df_calc_opstine['ratio'] = df_calc_opstine.apply(lambda row: 100 * row.conflated_length_rgz / row.rgz_length, axis=1)
     df_opstine = pd.read_csv(os.path.join(rgz_path, 'opstina.csv'))
     df_opstine['geometry'] = df_opstine.wkt.apply(wkt.loads)
     df_opstine = df_opstine[~df_opstine.okrug_sifra.isin([25, 26, 27, 28, 29])]  # remove kosovo
