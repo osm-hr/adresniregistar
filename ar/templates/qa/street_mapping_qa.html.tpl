@@ -19,7 +19,7 @@
 			Može biti: „ručno provereno” (ljudi su ručno gledali kroz tabelu i proveravali), „OSM” (neko je koristio već ovo ime u OSM-u),
 			„ref:RS:ulica” (neka ulica je povezana sa registrom i nosi ovo ime) i „Algoritam” (nikako drugačije ulica nije nađena, pa je algoritam heuristikom pokušao da nađe najbolje ime za ulicu)</li>
 			<li><b>Reference</b> &mdash; Ukoliko je ime uzeto iz OSM-a ili preko ref:RS:ulica taga, ovde su navedene neke reference (ukoliko ih ima više od 5, samo prvih 5 su navedene)</li>
-			<li><b>Izuzeci po opštinama</b> &mdash; Ukoliko u nekoj opštini standardni naziv nije tačan, biće naveden ovde</li>
+			<li><b>Izuzeci po ID-ovima ulica</b> &mdash; Ukoliko u nekoj opštini, po nekom ID-u ulice, standardni naziv nije tačan, ID ulice će biti naveden ovde</li>
 		</ul>
       </div>
       <div class="modal-footer">
@@ -70,7 +70,7 @@
 		<th>Ispravan naziv</th>
 		<th>Izvor</th>
 		<th>Reference</th>
-		<th>Izuzeci po opštinama</th>
+		<th>Izuzeci po ID-ovima ulica</th>
 	</tr>
 </thead>
 <tbody>
@@ -104,7 +104,7 @@
         <td>
             <ul>
             {% for exc in street_name.exceptions %}
-                <li>{{ exc.opstina }}: {{ exc.name }}</li>
+                <li>{{ exc.ulica_id }}: {{ exc.name }}</li>
             {% endfor %}
             </ul>
         </td>

@@ -47,7 +47,7 @@ def do_analysis(data_path, street_mappings: StreetMapping):
     gdf_rgz = gpd.GeoDataFrame(df_rgz, geometry='rgz_geometry', crs="EPSG:4326")
     gdf_rgz.to_crs("EPSG:32634", inplace=True)
     gdf_rgz.drop(['rgz_opstina_mb', 'rgz_opstina_mb', 'rgz_naselje_mb', 'rgz_naselje'], inplace=True, axis=1)
-    gdf_rgz['rgz_ulica_proper'] = gdf_rgz[['rgz_opstina', 'rgz_ulica']].apply(lambda x: street_mappings.get_name(x['rgz_ulica'], x['rgz_opstina']), axis=1)
+    gdf_rgz['rgz_ulica_proper'] = gdf_rgz[['rgz_ulica', 'rgz_ulica_mb']].apply(lambda x: street_mappings.get_name(x['rgz_ulica'], str(x['rgz_ulica_mb'])), axis=1)
     gdf_rgz['rgz_ulica_norm'] = gdf_rgz.rgz_ulica_proper.apply(normalize_name)
     gdf_rgz['rgz_kucni_broj_norm'] = gdf_rgz.rgz_kucni_broj.apply(lambda x: normalize_name_latin(x))
     gdf_rgz['rgz_opstina_lat'] = gdf_rgz['rgz_opstina'].apply(lambda x: cyr2lat(x))

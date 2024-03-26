@@ -85,7 +85,7 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
     df_rgz['rgz_geometry'] = df_rgz.rgz_geometry.apply(wkt.loads)
     gdf_rgz = gpd.GeoDataFrame(df_rgz, geometry='rgz_geometry', crs="EPSG:4326")
     gdf_rgz.to_crs("EPSG:32634", inplace=True)
-    gdf_rgz['rgz_ulica_norm'] = gdf_rgz[['rgz_ulica', 'rgz_opstina']].apply(lambda x: normalize_name(street_mappings.get_name(x['rgz_ulica'], x['rgz_opstina'], default_value=x['rgz_ulica'])), axis=1)
+    gdf_rgz['rgz_ulica_norm'] = gdf_rgz[['rgz_ulica', 'rgz_ulica_mb']].apply(lambda x: normalize_name(street_mappings.get_name(x['rgz_ulica'], str(x['rgz_ulica_mb']), default_value=x['rgz_ulica'])), axis=1)
     gdf_rgz.drop(['rgz_opstina_mb'], inplace=True, axis=1)
     gdf_rgz['rgz_kucni_broj_norm'] = gdf_rgz.rgz_kucni_broj.apply(normalize_name)
     gdf_rgz.sindex
@@ -165,12 +165,12 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
     pd.DataFrame(joined).to_csv(os.path.join(data_path, f'analysis/{opstina}.csv'), index=False)
 
 
-def process_all_opstina(data_path, rgz_csv_path, street_mappings):
-    total_csvs = len(os.listdir(rgz_csv_path))
+def process_all_opstina(data_path, osm_csv_path, street_mappings):
+    total_csvs = len(os.listdir(osm_csv_path))
     if total_csvs < 168:
         raise Exception("Some or all RGZ files missing! Bailing out")
 
-    for i, file in enumerate(sorted(os.listdir(rgz_csv_path))):
+    for i, file in enumerate(sorted(os.listdir(osm_csv_path))):
         if not file.endswith(".csv"):
             continue
         opstina = file[:-4]
@@ -182,6 +182,7 @@ def main():
     cwd = os.getcwd()
     data_path = os.path.join(cwd, 'data/')
     rgz_csv_path = os.path.join(data_path, 'rgz/csv')
+    osm_csv_path = os.path.join(data_path, 'osm/csv')
 
     street_mappings = StreetMapping(cwd)
 
@@ -190,7 +191,7 @@ def main():
     parser.add_argument('--opstina', default=None, required=False, help='Opstina to process')
     args = parser.parse_args()
     if not args.opstina:
-        process_all_opstina(data_path, rgz_csv_path, street_mappings)
+        process_all_opstina(data_path, osm_csv_path, street_mappings)
     else:
         if not os.path.exists(os.path.join(rgz_csv_path, f'{normalize_name(args.opstina.lower())}.csv')):
             parser.error(f"File data/rgz/csv/{args.opstina}.csv do not exist")

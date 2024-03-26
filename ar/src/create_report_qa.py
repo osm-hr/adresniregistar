@@ -494,7 +494,7 @@ def generate_osm_import_qa_rgz_mismatch(context):
             'osm_housenumber': osm_import_qa_problem['osm_housenumber'],
             'found_in_rgz': found_in_rgz,
             'rgz_opstina': osm_import_qa_problem['rgz_opstina_lat'],
-            'rgz_street': street_mappings.get_name(osm_import_qa_problem['rgz_ulica'], osm_import_qa_problem['rgz_opstina']),
+            'rgz_street': street_mappings.get_name(osm_import_qa_problem['rgz_ulica'], str(osm_import_qa_problem['rgz_ulica_mb'])),
             'rgz_street_match': rgz_street_match,
             'rgz_housenumber': normalize_name_latin(osm_import_qa_problem['rgz_kucni_broj']) if found_in_rgz else '',
             'rgz_housenumber_order': housenumber_to_float(osm_import_qa_problem['rgz_kucni_broj']) if found_in_rgz else 0,
@@ -806,7 +806,7 @@ def generate_street_mapping(context):
     street_names = []
     for rgz_name in rgz_names_sorted:
         names = street_mappings.get_all_names_for_rgz_name(rgz_name)
-        default_name = next(n for n in names if n['opstina'] == '')
+        default_name = next(n for n in names if n['ulica_id'] == '')
         osm_name = default_name['name']
         default_source = default_name['source']
         default_refs = default_name['refs']
@@ -819,7 +819,7 @@ def generate_street_mapping(context):
             refs.append({'osm_id': osm_id, 'osm_link': osm_link})
         refs_count = len(refs)
         refs = refs[0:5]
-        exceptions = [n for n in names if n['opstina'] != '']
+        exceptions = [n for n in names if n['ulica_id'] != '']
         rgz_name_html = rgz_name
         if rgz_name_html.startswith(' '):
             rgz_name_html = '␣' + rgz_name_html[1:]

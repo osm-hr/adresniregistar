@@ -259,7 +259,7 @@ def generate_osm_files_new_addresses(context, opstina_dir_path, opstina_name, na
             'id': 0 - (len(osm_entities) + 1),
             'lat': location_lat,
             'lon': location_lon,
-            'street': street_mappings.get_name(address['rgz_ulica'], address['rgz_opstina']),
+            'street': street_mappings.get_name(address['rgz_ulica'], str(address['rgz_ulica_mb'])),
             'housenumber': normalize_name_latin(address['rgz_kucni_broj']),
             'ulica': address['rgz_ulica_mb'],
             'kucni_broj': address['rgz_kucni_broj_id']
@@ -294,9 +294,11 @@ def generate_osm_files_new_per_street_addresses(context, opstina_dir_path, opsti
     osm_files = []
     counter = 1
     only_not_found_addresses = df_naselje[pd.isna(df_naselje.conflated_osm_id) & pd.isna(df_naselje.osm_id)]
-    for rgz_opstina_ulica, df_ulica in only_not_found_addresses.groupby(['rgz_opstina', 'rgz_ulica']):
+    for rgz_ulica_and_mb, df_ulica in only_not_found_addresses.groupby(['rgz_ulica', 'rgz_ulica_mb']):
         osm_entities = []
-        proper_street = street_mappings.get_name(rgz_opstina_ulica[1], rgz_opstina_ulica[0])
+        rgz_ulica = rgz_ulica_and_mb[0]
+        rgz_ulica_mb = str(rgz_ulica_and_mb[1])
+        proper_street = street_mappings.get_name(rgz_ulica, rgz_ulica_mb)
 
         for _, address in df_ulica.iterrows():
             location = address['rgz_geometry'][7:-1].split(' ')
@@ -313,7 +315,6 @@ def generate_osm_files_new_per_street_addresses(context, opstina_dir_path, opsti
             })
 
         output = template.render(osm_entities=osm_entities)
-        ulica_norm = normalize_name_latin(rgz_opstina_ulica[1])
         filename = f'{normalize_name(naselje["name_lat"])}-new-st-{counter}.osm'
         counter = counter + 1
         osm_file_path = os.path.join(naselje_dir_path, filename)

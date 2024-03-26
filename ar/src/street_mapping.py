@@ -273,14 +273,14 @@ class StreetMapping:
         with open(os.path.join(cwd, 'data', 'mapping', 'mapping.csv'), encoding='utf-8') as mapping_csv_file:
             reader = csv.DictReader(mapping_csv_file)
             for row in reader:
-                self.street_mappings[row['rgz_name']] = [{'name': row['name'], 'source': row['source'], 'refs': row['refs'], 'opstina': ''}]
+                self.street_mappings[row['rgz_name']] = [{'name': row['name'], 'source': row['source'], 'refs': row['refs'], 'ulica_id': ''}]
         with open(os.path.join(cwd, 'curated_streets_per_opstina.csv'), encoding='utf-8') as mapping_csv_file:
             reader = csv.DictReader(mapping_csv_file)
             for row in reader:
                 rgz_name = row['rgz_name']
                 if rgz_name not in self.street_mappings:
                     raise Exception(f"Street {rgz_name} present in opstina overrides, but not in main mapping, quitting")
-                self.street_mappings[rgz_name].append({'name': row['name'], 'source': 'curated', 'refs': '', 'opstina': row['opstina']})
+                self.street_mappings[rgz_name].append({'name': row['name'], 'source': 'curated', 'refs': '', 'ulica_id': row['ulica_id']})
 
     def get_all_rgz_names(self):
         """
@@ -294,7 +294,7 @@ class StreetMapping:
         """
         return self.street_mappings[rgz_name]
 
-    def get_name(self, rgz_name, opstina, default_value=''):
+    def get_name(self, rgz_name: str, ulica_id: str, default_value: str = ''):
         """
         Gets name for given RGZ name and opstina
         """
@@ -306,11 +306,11 @@ class StreetMapping:
         if len(all_names) == 1:
             return all_names[0]['name']
         else:
-            opstina_name = [n for n in all_names if n['opstina'] == opstina]
-            if len(opstina_name) > 0:
-                return opstina_name[0]['name']
+            overriden_names = [n for n in all_names if n['ulica_id'] == ulica_id]
+            if len(overriden_names) > 0:
+                return overriden_names[0]['name']
             else:
-                default_name = [n for n in all_names if n['opstina'] == '']
+                default_name = [n for n in all_names if n['ulica_id'] == '']
                 return default_name[0]['name']
 
 
