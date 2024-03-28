@@ -4,7 +4,7 @@ set -euo pipefail
 
 test -f serbia.osm.pbf || wget http://download.geofabrik.de/europe/serbia-latest.osm.pbf -O serbia.osm.pbf -q --show-progress --progress=dot:giga
 
-docker stop overpass_serbia_rt
+sudo service docker-overpass-rt stop
 docker rm overpass_serbia_rt
 rm -rf /mnt/ubicassd/overpass_db/
 
@@ -22,5 +22,5 @@ docker run \
   -i \
   --name overpass_serbia_rt wiktorn/overpass-api
 
-docker start overpass_serbia_rt
+sudo service docker-overpass-rt start
 rm serbia.osm.pbf
