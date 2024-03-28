@@ -66,7 +66,9 @@
 		});
 	} );
     </script>
+	{% if not showAllNaselja %}
     <script src="{{ opstina.name_norm }}.js"></script>
+	{% endif %}
     <script>
 		function onEachFeature(feature, layer) {
 			let percentage = feature.properties.ratio !== null ? feature.properties.ratio.toFixed(2) : '/';
@@ -74,8 +76,12 @@
 			layer.bindPopup(popupContent);
 		}
 
-		function loadMap() {
+		function loadStaticMap() {
+			{% if showAllNaselja %}
+			const map = L.map('map').setView([44.5, 21], 7);
+			{% else %}
 			const map = L.map('map').setView([44.5, 21], 13);
+			{% endif %}
 			const tiles = L.tileLayer('https://tiles.openstreetmap.rs/cir/{z}/{x}/{y}.png', {
 				maxZoom: 19,
 				minZoom: 7,
@@ -111,15 +117,35 @@
 				},
 				onEachFeature
 			}).addTo(map);
+			{% if not showAllNaselja %}
 			map.fitBounds([
 				[{{ opstina.bounds.1 }}, {{ opstina.bounds.0 }}],
 				[{{ opstina.bounds.3 }}, {{ opstina.bounds.2 }}]
 			]);
+			{% endif %}
+		}
+
+		function loadDynamicMap() {
+			var script = document.createElement('script');
+			script.setAttribute('type', 'text/javascript');
+			script.setAttribute('src', 'all_naselja.js');
+			script.onload = function(){
+				loadStaticMap();
+			};
+			document.head.appendChild(script);
 		}
 
 		{% if not showAllNaselja %}
 		$(document).ready( function () {
-			loadMap();
+			loadStaticMap();
+		});
+		{% else %}
+		$(document).ready( function () {
+			$("#loadMapButton").click(function () {
+				$("#loadMapButton").remove();
+				$("#map").css("display", "block");
+				loadDynamicMap();
+			});
 		});
 		{% endif %}
     </script>
@@ -202,6 +228,15 @@ Vratite se na <a href="report.html">prikaz po opštinama</a>.
 {% if not showAllNaselja %}
 <br/><br/>
 <div id="map" class="mx-auto" style="position: relative;border: 1px solid black;border-radius: 8px;height: 400px;width: min(90%, 600px);">
+</div>
+{% else %}
+<br/><br/>
+<div class="mx-auto" style="width: 200px;">
+	<button id="loadMapButton" type="button" class="btn btn-info">Učitaj mapu (pazi: veličina je 16MB)</button>
+</div>
+
+<br/><br/>
+<div id="map" class="mx-auto" style="display: none;position: relative;border: 1px solid black;border-radius: 8px;height: 400px;width: min(90%, 600px);">
 </div>
 {% endif %}
 

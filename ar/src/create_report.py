@@ -463,8 +463,10 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
         conflated_count = len(df_naselje[df_naselje['conflated_osm_id'].notnull()])
         matched_count = len(df_naselje[(df_naselje['matching'] == True) & (pd.isna(df_naselje['conflated_osm_id']))])
         partially_matched_count = len(df_opstina[(pd.notna(df_opstina.osm_id)) & (df_opstina.matching == False) & (pd.isna(df_naselje['conflated_osm_id']))])
+        assert len(df_naselje['rgz_naselje_mb'].unique()) == 1
         naselje = {
             'name': naselje_name,
+            'rgz_naselje_mb': df_naselje['rgz_naselje_mb'].unique()[0],
             'opstina': opstina,
             'name_lat': cyr2lat(naselje_name),
             'rgz': rgz_count,
@@ -520,6 +522,18 @@ def generate_all_naselja(context, total, all_naselja):
         report_path = os.path.join(report_path, 'rt')
     template = env.get_template('opstina.html')
     all_naselja_html_path = os.path.join(report_path, 'all_naselja.html')
+
+    # Generate naselja js
+    all_naselja_js_path = os.path.join(report_path, 'all_naselja.js')
+    if not os.path.exists(all_naselja_js_path):
+        df_all_naselja_calc = pd.DataFrame(all_naselja)[['rgz_naselje_mb', 'rgz', 'conflated']]
+        gdf_naselja = context['gdf_naselja']
+        gdf_naselja = gdf_naselja.merge(df_all_naselja_calc, left_on='naselje_maticni_broj', right_on='rgz_naselje_mb')
+        gdf_naselja['ratio'] = gdf_naselja.apply(lambda row: 100 * row.conflated / row.rgz, axis=1)
+        gdf_naselja.drop(['naselje_maticni_broj', 'opstina_imel', 'rgz_naselje_mb', 'rgz', 'conflated'], inplace=True, axis=1)
+        gdf_naselja.to_file(all_naselja_js_path, driver='GeoJSON')
+
+        geojson2js(all_naselja_js_path, 'naselja')
 
     if os.path.exists(all_naselja_html_path):
         print('Skipping all_naselja.html, already exist')
@@ -618,7 +632,7 @@ def generate_report(context):
 def load_naselja_boundaries(rgz_path):
     df_naselja = pd.read_csv(os.path.join(rgz_path, 'naselje.csv'))
     df_naselja['geometry'] = df_naselja.wkt.apply(wkt.loads)
-    df_naselja.drop(['objectid', 'naselje_maticni_broj', 'naselje_ime', 'naselje_povrsina', 'opstina_maticni_broj',
+    df_naselja.drop(['objectid', 'naselje_ime', 'naselje_povrsina', 'opstina_maticni_broj',
                      'opstina_ime', 'wkt'], inplace=True, axis=1)
     gdf_naselja = gpd.GeoDataFrame(df_naselja, geometry='geometry', crs="EPSG:32634")
     gdf_naselja.to_crs("EPSG:4326", inplace=True)
