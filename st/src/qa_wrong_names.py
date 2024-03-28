@@ -97,6 +97,7 @@ def is_wrong_int_name(rgz_proper_name, osm_name, osm_int_name):
             # We don't have RGZ name, nor "name" tag, nothing can be wrong
             return False
 
+
 def is_needed_int_name(rgz_proper_name, osm_name, osm_int_name):
     if pd.notna(osm_int_name) and osm_int_name != '':
         # int_name exists, no need for it
