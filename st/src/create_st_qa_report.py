@@ -4,6 +4,7 @@ import datetime
 import os
 
 import geopandas as gpd
+import numpy as np
 import pandas as pd
 from jinja2 import Environment, FileSystemLoader
 from shapely import wkt
@@ -396,6 +397,169 @@ def generate_int_names_report(context):
         fh.write(output)
 
 
+def emphasise_partial_alt_suggestion(s: str):
+    if pd.isna(s):
+        return s
+    idx1 = s.find('~~')
+    if idx1 == -1:
+        return s
+    idx2 = s.find('~~', idx1 + 1)
+    if idx2 == -1:
+        return s
+    return s[0:idx1] + '<i>*' + s[idx1+2:idx2] + '*</i>' + s[idx2+2:]
+
+
+def generate_alt_names_report(context):
+    env = context['env']
+    cwd = context['cwd']
+
+    qa_path = os.path.join(cwd, 'data/qa')
+    analysis_path = os.path.join(cwd, 'data/analysis')
+    report_path = os.path.join(cwd, 'data/report')
+    html_path = os.path.join(report_path, 'alt_names.html')
+    alt_names_osm_address_path = os.path.join(report_path, 'alt_names')
+
+    template = env.get_template('qa/alt_names_opstina.html.tpl')
+
+    if not os.path.exists(alt_names_osm_address_path):
+        os.mkdir(alt_names_osm_address_path)
+
+    df_wrong_alt_names = pd.read_csv(os.path.join(qa_path, 'wrong_alt_names.csv'))
+    df_wrong_alt_names['ref:RS:ulica'] = df_wrong_alt_names['ref:RS:ulica'].fillna(0).astype('Int64').astype('str').replace('0', np.nan)
+
+    opstine = []
+    total = {
+        'wrong_alt_name': 0,
+        'missing_alt_name': 0,
+        'wrong_alt_name_sr': 0,
+        'missing_alt_name_sr': 0,
+        'wrong_alt_name_sr_latn': 0,
+        'missing_alt_name_sr_latn': 0,
+    }
+
+    for opstina_name, df_wrong_alt_names_in_opstina in df_wrong_alt_names.sort_values('opstina_imel').groupby('opstina_imel'):
+        wrong_alt_name_count = len(df_wrong_alt_names_in_opstina[df_wrong_alt_names_in_opstina.is_wrong_alt_name])
+        missing_alt_name_count = len(df_wrong_alt_names_in_opstina[df_wrong_alt_names_in_opstina.is_missing_alt_name])
+        wrong_alt_name_sr_count = len(df_wrong_alt_names_in_opstina[df_wrong_alt_names_in_opstina.is_wrong_alt_name_sr])
+        missing_alt_name_sr_count = len(df_wrong_alt_names_in_opstina[df_wrong_alt_names_in_opstina.is_missing_alt_name_sr])
+        wrong_alt_name_sr_latn_count = len(df_wrong_alt_names_in_opstina[df_wrong_alt_names_in_opstina.is_wrong_alt_name_sr_latn])
+        missing_alt_name_sr_latn_count = len(df_wrong_alt_names_in_opstina[df_wrong_alt_names_in_opstina.is_missing_alt_name_sr_latn])
+
+        total['wrong_alt_name'] += wrong_alt_name_count
+        total['missing_alt_name'] += missing_alt_name_count
+        total['wrong_alt_name_sr'] += wrong_alt_name_sr_count
+        total['missing_alt_name_sr'] += missing_alt_name_sr_count
+        total['wrong_alt_name_sr_latn'] += wrong_alt_name_sr_latn_count
+        total['missing_alt_name_sr_latn'] += missing_alt_name_sr_latn_count
+
+        opstine.append({
+            'name': opstina_name,
+            'wrong_alt_name': wrong_alt_name_count,
+            'missing_alt_name': missing_alt_name_count,
+            'wrong_alt_name_sr': wrong_alt_name_sr_count,
+            'missing_alt_name_sr': missing_alt_name_sr_count,
+            'wrong_alt_name_sr_latn': wrong_alt_name_sr_latn_count,
+            'missing_alt_name_sr_latn': missing_alt_name_sr_latn_count,
+        })
+
+        streets = []
+        opstina_html_path = os.path.join(alt_names_osm_address_path, f'{opstina_name}.html')
+        if os.path.exists(opstina_html_path):
+            print(f"Page data/report/alt_names/{opstina_name}.html already exists")
+            continue
+
+        print(f"Generating data/report/alt_names/{opstina_name}.html")
+
+        for _, df_street in df_wrong_alt_names_in_opstina.iterrows():
+            osm_id = df_street['osm_id']
+            osm_type = 'way' if osm_id[0] == 'w' else 'relation' if osm_id[0] == 'r' else 'node'
+
+            street = {
+                'osm_link': f'https://openstreetmap.org/{osm_type}/{osm_id[1:]}',
+                'osm_id': osm_id,
+                'has_ref_rs_ulica': True if pd.notna(df_street['ref:RS:ulica']) and df_street['ref:RS:ulica'] else False,
+                'ref_rs_ulica': df_street['ref:RS:ulica'] if pd.notna(df_street['ref:RS:ulica']) else '',
+                'rgz_ulica_proper': df_street['rgz_ulica_proper'] if pd.notna(df_street['rgz_ulica_proper']) else '',
+                'osm_name': df_street['osm_name'] if pd.notna(df_street['osm_name']) else '',
+                'osm_alt_name': df_street['osm_alt_name'],
+                'osm_alt_name_sr': df_street['osm_alt_name_sr'],
+                'osm_alt_name_sr_latn': df_street['osm_alt_name_sr_latn'],
+
+                'is_missing_alt_name': df_street['is_missing_alt_name'],
+                'is_wrong_alt_name': df_street['is_wrong_alt_name'],
+                'alt_name_suggestion': emphasise_partial_alt_suggestion(df_street['alt_name_suggestion']),
+                'is_alt_name_suggestion_partial': df_street['is_alt_name_suggestion_partial'],
+
+                'is_missing_alt_name_sr': df_street['is_missing_alt_name_sr'],
+                'is_wrong_alt_name_sr': df_street['is_wrong_alt_name_sr'],
+                'alt_name_sr_suggestion': emphasise_partial_alt_suggestion(df_street['alt_name_sr_suggestion']),
+                'is_alt_name_sr_suggestion_partial': df_street['is_alt_name_sr_suggestion_partial'],
+
+                'is_missing_alt_name_sr_latn': df_street['is_missing_alt_name_sr_latn'],
+                'is_wrong_alt_name_sr_latn': df_street['is_wrong_alt_name_sr_latn'],
+                'alt_name_sr_latn_suggestion': emphasise_partial_alt_suggestion(df_street['alt_name_sr_latn_suggestion']),
+                'is_alt_name_sr_latn_suggestion_partial': df_street['is_alt_name_sr_latn_suggestion_partial'],
+            }
+            streets.append(street)
+
+        output = template.render(
+            currentDate=context['dates']['short'],
+            reportDate=context['dates']['report'],
+            osmDataDate=context['dates']['osm_data'],
+            rgzDataDate=context['dates']['rgz_data'],
+            streets=streets,
+            opstina_name=opstina_name
+        )
+
+        with open(opstina_html_path, 'w', encoding='utf-8') as fh:
+            fh.write(output)
+
+    if os.path.exists(html_path):
+        print("Page data/report/alt_names.html already exists")
+        return
+
+    print("Generating data/report/alt_names.html")
+
+    for i, file in enumerate(sorted(os.listdir(analysis_path))):
+        if not file.endswith(".csv"):
+            continue
+        opstina_name = file[:-4]
+        if not any(o for o in opstine if o['name'] == opstina_name):
+            opstine.append({
+                'name': opstina_name,
+                'wrong_alt_name': 0,
+                'missing_alt_name': 0,
+                'wrong_alt_name_sr': 0,
+                'missing_alt_name_sr': 0,
+                'wrong_alt_name_sr_latn': 0,
+                'missing_alt_name_sr_latn': 0,
+            })
+            output = template.render(
+                currentDate=context['dates']['short'],
+                reportDate=context['dates']['report'],
+                osmDataDate=context['dates']['osm_data'],
+                rgzDataDate=context['dates']['rgz_data'],
+                streets=[],
+                opstina_name=opstina_name,
+            )
+            opstina_html_path = os.path.join(alt_names_osm_address_path, f'{opstina_name}.html')
+            with open(opstina_html_path, 'w', encoding='utf-8') as fh:
+                fh.write(output)
+
+    template = env.get_template('qa/alt_names.html.tpl')
+    output = template.render(
+        currentDate=context['dates']['short'],
+        reportDate=context['dates']['report'],
+        osmDataDate=context['dates']['osm_data'],
+        rgzDataDate=context['dates']['rgz_data'],
+        opstine=opstine,
+        total=total,
+    )
+
+    with open(html_path, 'w', encoding='utf-8') as fh:
+        fh.write(output)
+
+
 def load_naselja_boundaries(rgz_path):
     df_naselja = pd.read_csv(os.path.join(rgz_path, 'naselje.csv'))
     df_naselja['geometry'] = df_naselja.wkt.apply(wkt.loads)
@@ -450,6 +614,7 @@ def main():
     generate_wrong_names_report(context)
     generate_english_names_report(context)
     generate_int_names_report(context)
+    generate_alt_names_report(context)
 
     report_path = os.path.join(cwd, 'data/report')
     qa_html_path = os.path.join(report_path, 'qa.html')
