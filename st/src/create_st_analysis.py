@@ -50,10 +50,10 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping, df_cached_ci
     df_rgz['rgz_geometry'] = df_rgz.rgz_geometry.apply(wkt.loads)
     gdf_rgz = gpd.GeoDataFrame(df_rgz, geometry='rgz_geometry', crs="EPSG:4326")
     gdf_rgz.to_crs("EPSG:32634", inplace=True)
-    gdf_rgz['rgz_ulica_proper'] = gdf_rgz[['rgz_ulica', 'rgz_opstina']].apply(
-        lambda x: street_mappings.get_name(x['rgz_ulica'], x['rgz_opstina'], default_value=''), axis=1)
-    gdf_rgz['rgz_ulica_norm'] = gdf_rgz[['rgz_ulica', 'rgz_opstina']].apply(lambda x: normalize_name(
-        street_mappings.get_name(x['rgz_ulica'], x['rgz_opstina'], default_value=x['rgz_ulica'])), axis=1)
+    gdf_rgz['rgz_ulica_proper'] = gdf_rgz[['rgz_ulica', 'rgz_ulica_mb']].apply(
+        lambda x: street_mappings.get_name(x['rgz_ulica'], x['rgz_ulica_mb'], default_value=''), axis=1)
+    gdf_rgz['rgz_ulica_norm'] = gdf_rgz[['rgz_ulica', 'rgz_ulica_mb']].apply(lambda x: normalize_name(
+        street_mappings.get_name(x['rgz_ulica'], x['rgz_ulica_mb'], default_value=x['rgz_ulica'])), axis=1)
     gdf_rgz['rgz_way_length'] = gdf_rgz.length
     gdf_rgz.sindex
 

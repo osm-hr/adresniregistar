@@ -415,8 +415,8 @@ def find_wrong_names(cwd, street_mappings: StreetMapping):
 
     # Merge with RGZ streets and find out proper street names
     streets_per_opstina = streets_per_opstina.merge(df_rgz_streets[['rgz_opstina', 'rgz_ulica_mb', 'rgz_ulica']], how='left', left_on='ref:RS:ulica', right_on='rgz_ulica_mb')
-    streets_per_opstina['rgz_ulica_proper'] = streets_per_opstina[['rgz_ulica', 'rgz_opstina']].apply(
-        lambda x: street_mappings.get_name(x['rgz_ulica'], x['rgz_opstina'], default_value='') if pd.notna(x['rgz_ulica']) and x['rgz_ulica'] != '' else np.nan, axis=1)
+    streets_per_opstina['rgz_ulica_proper'] = streets_per_opstina[['rgz_ulica', 'rgz_ulica_mb']].apply(
+        lambda x: street_mappings.get_name(x['rgz_ulica'], x['rgz_ulica_mb'], default_value='') if pd.notna(x['rgz_ulica']) and x['rgz_ulica'] != '' else np.nan, axis=1)
 
     # For testing purposes, save and load addresses_per_opstina like this
     # pd.DataFrame(streets_per_opstina).to_csv('~/src/adresniregistar/st/data/qa/addresses_per_opstina.csv', index=False)
@@ -457,7 +457,7 @@ def find_wrong_names(cwd, street_mappings: StreetMapping):
             streets_per_opstina.unneeded_name_en |
             streets_per_opstina.wrong_int_name | streets_per_opstina.missing_int_name
         ]
-        streets_per_opstina_wrong_names = streets_per_opstina_wrong_names.sort_values('osm_id')
+        streets_per_opstina_wrong_names = streets_per_opstina_wrong_names.sort_values(['osm_id', 'opstina_imel'])
         pd.DataFrame(streets_per_opstina_wrong_names).to_csv(os.path.join(qa_path, 'wrong_street_names.csv'), index=False)
         print("Created wrong_street_names.csv")
 
@@ -479,7 +479,7 @@ def find_wrong_names(cwd, street_mappings: StreetMapping):
              'is_missing_alt_name_sr', 'is_wrong_alt_name_sr', 'alt_name_sr_suggestion', 'is_alt_name_sr_suggestion_partial',
              'is_missing_alt_name_sr_latn', 'is_wrong_alt_name_sr_latn', 'alt_name_sr_latn_suggestion', 'is_alt_name_sr_latn_suggestion_partial',]
         ]
-        streets_per_opstina_wrong_alt_names = streets_per_opstina_wrong_alt_names.sort_values('osm_id')
+        streets_per_opstina_wrong_alt_names = streets_per_opstina_wrong_alt_names.sort_values(['osm_id', 'opstina_imel'])
         pd.DataFrame(streets_per_opstina_wrong_alt_names).to_csv(os.path.join(qa_path, 'wrong_alt_names.csv'), index=False)
         print("Created wrong_alt_names.csv")
 
