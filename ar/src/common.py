@@ -365,7 +365,7 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
         if len(coords) == 1:
             return geometry.Point((coords[0][0], coords[0][1]))
         else:
-            if first_node == last_node:
+            if first_node == last_node and len(coords) > 2:
                 return geometry.Polygon(coords)
             else:
                 return geometry.LineString(coords)
