@@ -147,12 +147,12 @@
       <option value="all_wrong_alt_names">Svi pogrešni tagovi</option>
       <option value="all_missing_alt_names">Samo nedostajući tagovi</option>
       <option disabled>-</option>
-      <option value="wrong_alt_name">Pogrešan „name” tag</option>
-      <option value="missing_alt_name">Nedostajući „name” tag</option>
-      <option value="wrong_alt_name_sr">Pogrešan „name:sr” tag</option>
-      <option value="missing_alt_name_sr">Nedostajući „name:sr” tag</option>
-      <option value="wrong_alt_name_sr_latn">Pogrešan „name:sr-Latn” tag</option>
-      <option value="missing_alt_name_sr_latn">Nedostajući „name:sr-Latn” tag</option>
+      <option value="wrong_alt_name">Pogrešan „alt_name” tag</option>
+      <option value="missing_alt_name">Nedostajući „alt_name” tag</option>
+      <option value="wrong_alt_name_sr">Pogrešan „alt_name:sr” tag</option>
+      <option value="missing_alt_name_sr">Nedostajući „alt_name:sr” tag</option>
+      <option value="wrong_alt_name_sr_latn">Pogrešan „alt_name:sr-Latn” tag</option>
+      <option value="missing_alt_name_sr_latn">Nedostajući „alt_name:sr-Latn” tag</option>
     </select>
 </div>
 
