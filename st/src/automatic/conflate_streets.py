@@ -9,13 +9,13 @@ import pandas as pd
 
 from street_mapping import StreetMapping
 
-INTERACTIVE = True  # Change if you know what are you doing
+INTERACTIVE = False  # Change if you know what are you doing
 
 
 def do_opstina(data_path, street_mappings: StreetMapping, opstina):
     print(f"Doing opstina {opstina}")
 
-    api = osmapi.OsmApi(passwordfile='osm-password', changesetauto=True, changesetautosize=100, changesetautotags={
+    api = osmapi.OsmApi(passwordfile='osm-password', changesetauto=True, changesetautosize=1000, changesetautotags={
         "comment": f"RGZ address import in {opstina} (adding ref:RS:ulica to existing ways, https://community.openstreetmap.org/t/topic/9338/18)",
         "tag": "mechanical=yes",
         "source": "RGZ_ST"
