@@ -355,7 +355,7 @@ def check_alt_name(rgz_proper_name, osm_name, alt_name, is_latin: bool = False):
                     break
         if not found_possibility and len(possibilities) > 0:
             idx = name_to_check_lower.find(str(number) + ('.' if is_ordinal else ''))
-            proper_alt_name = name_to_check[0:idx] + '~~' + possibilities[0] + '~~' + name_to_check[idx + len(str(number)) + 1:]
+            proper_alt_name = name_to_check[0:idx] + '~~' + possibilities[0] + '~~' + name_to_check[idx + len(str(number)) + (1 if is_ordinal else 0):]
             return is_alt_name_missing, not is_alt_name_missing, proper_alt_name, True
         break
 
@@ -373,6 +373,13 @@ def check_alt_name(rgz_proper_name, osm_name, alt_name, is_latin: bool = False):
     if name_to_check_lower.endswith(' ' + doctor):
         idx = name_to_check_lower.find(doctor)
         proper_alt_name = name_to_check[0:idx - 1] + (' др' if not is_latin else ' dr')
+        if not has_number and (is_alt_name_missing or alt_name != proper_alt_name):
+            return is_alt_name_missing, not is_alt_name_missing, proper_alt_name, False
+
+    # check for knjeginje
+    knjeginjе = 'књегиње' if not is_latin else 'knjeginje'
+    if name_to_check_lower.startswith(knjeginjе + ' '):
+        proper_alt_name = ('Кнегиње ' if not is_latin else 'Kneginje ') + name_to_check[len(knjeginjе) + 1:]
         if not has_number and (is_alt_name_missing or alt_name != proper_alt_name):
             return is_alt_name_missing, not is_alt_name_missing, proper_alt_name, False
 
