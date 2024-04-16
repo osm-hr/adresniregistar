@@ -83,13 +83,13 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping, df_cached_ci
 
     # Add "rgz_way_length_covered" column - length of RGZ geometry covered with conflation
     gdf_rgz_osm_buffer = gdf_rgz.copy()
-    gdf_rgz_osm_buffer['osm_buffered_geometry'] = gdf_rgz.osm_geometry.buffer(distance=15, cap_style=2)
+    gdf_rgz_osm_buffer['osm_buffered_geometry'] = gdf_rgz.osm_geometry.buffer(distance=30, cap_style=2)
     gdf_rgz_osm_buffer.set_geometry('osm_buffered_geometry', inplace=True)
     gdf_rgz['rgz_way_length_covered'] = gdf_rgz.intersection(gdf_rgz_osm_buffer).length
     gdf_rgz.fillna(value={'rgz_way_length_covered': 0}, inplace=True)
 
-    print(f"    Buffering RGZ streets for 50m in {opstina}")
-    gdf_rgz['rgz_buffered_geometry'] = gdf_rgz.rgz_geometry.buffer(distance=15)
+    print(f"    Buffering RGZ streets for 15m in {opstina}")
+    gdf_rgz['rgz_buffered_geometry'] = gdf_rgz.rgz_geometry.buffer(distance=30)
     gdf_rgz.set_geometry('rgz_buffered_geometry', inplace=True)
     gdf_rgz.sindex
 
