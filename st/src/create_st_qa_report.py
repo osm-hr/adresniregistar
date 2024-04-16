@@ -40,6 +40,14 @@ def generate_wrong_names_report(context):
         'wrong_name_sr_latn': 0,
         'missing_name_sr_latn': 0
     }
+    df_wrong_street_names = df_wrong_street_names[
+        df_wrong_street_names.wrong_name |
+        df_wrong_street_names.missing_name |
+        df_wrong_street_names.wrong_name_sr |
+        df_wrong_street_names.missing_name_sr |
+        df_wrong_street_names.wrong_name_sr_latn |
+        df_wrong_street_names.missing_name_sr_latn
+    ]
 
     for opstina_name, df_wrong_street_names_in_opstina in df_wrong_street_names.sort_values('opstina_imel').groupby('opstina_imel'):
         wrong_name_count = len(df_wrong_street_names_in_opstina[df_wrong_street_names_in_opstina.wrong_name])
@@ -187,6 +195,11 @@ def generate_english_names_report(context):
         'suspicious_name_en': 0,
     }
 
+    df_wrong_street_names = df_wrong_street_names[
+        df_wrong_street_names.suspicious_name_en |
+        df_wrong_street_names.unneeded_name_en
+    ]
+
     for opstina_name, df_wrong_street_names_in_opstina in df_wrong_street_names.sort_values('opstina_imel').groupby('opstina_imel'):
         suspicious_name_en_count = len(df_wrong_street_names_in_opstina[df_wrong_street_names_in_opstina.suspicious_name_en])
         unneeded_name_en_count = len(df_wrong_street_names_in_opstina[df_wrong_street_names_in_opstina.unneeded_name_en])
@@ -298,6 +311,11 @@ def generate_int_names_report(context):
         'wrong_int_name': 0,
         'missing_int_name': 0,
     }
+
+    df_wrong_street_names = df_wrong_street_names[
+        df_wrong_street_names.wrong_int_name |
+        df_wrong_street_names.missing_int_name
+    ]
 
     for opstina_name, df_wrong_street_names_in_opstina in df_wrong_street_names.sort_values('opstina_imel').groupby('opstina_imel'):
         wrong_int_name_count = len(df_wrong_street_names_in_opstina[df_wrong_street_names_in_opstina.wrong_int_name])
