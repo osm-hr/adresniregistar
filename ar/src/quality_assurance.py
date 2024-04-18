@@ -17,7 +17,7 @@ def is_simple_address(tags):
     common_tags = ['note', 'description', 'entrance', 'door', 'survey:date', 'survey_date', 'area',
                    'TEXT_ANGLE', 'TEXT_SIZE', 'OBJECTID', 'ref:RS:ulica', 'ref:RS:kucni_broj',
                    'building', 'building:levels', 'old_name', 'alt_name', 'source:addr', 'roof:levels',
-                   'old_addr:street', 'old_addr:housenumber', 'access', 'removed:ref:RS:kucni_broj']
+                   'old_addr:street', 'old_addr:housenumber', 'access', 'removed:ref:RS:kucni_broj', 'source']
     for k in tags.keys():
         if not k.startswith("addr:") and k not in common_tags:
             return False
@@ -464,6 +464,7 @@ def find_addresses_in_buildings(cwd):
     df['resolution'] = df['resolution'].apply(lambda x: x.value)
     df = df[df.resolution != AddressInBuildingResolution.NO_ACTION.value]
 
+    df.sort_values(['osm_id_left', 'osm_id_right'], inplace=True)
     pd.DataFrame(df).to_csv(os.path.join(qa_path, 'addresses_in_buildings_per_opstina.csv'), index=False)
     print("Created addresses_in_buildings_per_opstina.csv")
 

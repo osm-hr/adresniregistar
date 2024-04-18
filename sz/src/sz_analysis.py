@@ -18,11 +18,11 @@ from common import cyr2lat, ApartmentResolution, normalize_name
 
 
 class CollectApartmentsHandler(osmium.SimpleHandler):
-    def __init__(self, entites):
+    def __init__(self, entities):
         osmium.SimpleHandler.__init__(self)
-        self.relation_to_search = set([int(e[1:]) for e in entites if e[0] == 'r'])
-        self.ways_to_search = set([int(e[1:]) for e in entites if e[0] == 'w'])
-        self.nodes_to_search = set([int(e[1:]) for e in entites if e[0] == 'n'])
+        self.relation_to_search = set([int(e[1:]) for e in entities if e[0] == 'r'])
+        self.ways_to_search = set([int(e[1:]) for e in entities if e[0] == 'w'])
+        self.nodes_to_search = set([int(e[1:]) for e in entities if e[0] == 'n'])
         self.relations = {}
         self.ways = {}
         self.node2way_mapping = {}
@@ -80,6 +80,11 @@ def get_resolution_single_entity(cah: CollectApartmentsHandler, df_addresses_in_
             way = cah.ways[id_int]
             if 'building' in way:
                 if way['building'] != 'apartments':
+                    return ApartmentResolution.OSM_ENTITY_NOT_APARTMENT
+                else:
+                    return ApartmentResolution.OSM_ENTITY_APARTMENT
+            elif 'building:part' in way:
+                if way['building:part'] != 'apartments':
                     return ApartmentResolution.OSM_ENTITY_NOT_APARTMENT
                 else:
                     return ApartmentResolution.OSM_ENTITY_APARTMENT
