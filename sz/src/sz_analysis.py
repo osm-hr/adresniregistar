@@ -48,7 +48,7 @@ def normalize_street(street):
     return street.replace(' ', '').replace('.', '')
 
 
-def get_resolution_single_entity(cah: CollectApartmentsHandler, df_addresses_in_buildings, osm_id) -> ApartmentResolution:
+def get_resolution_single_entity(cah: CollectApartmentsHandler, df_addresses_in_buildings, osm_id) -> [ApartmentResolution, str]:
     if pd.isna(osm_id):
         return np.nan
 
@@ -56,54 +56,56 @@ def get_resolution_single_entity(cah: CollectApartmentsHandler, df_addresses_in_
     if osm_id[0] == 'n':
         if id_int in cah.node2way_mapping:
             way_listing = cah.node2way_mapping[id_int]
-            any_apartment = len([w for w in way_listing if 'building' in w['tags'] and w['tags']['building'] == 'apartments']) > 0
-            any_building = len([w for w in way_listing if 'building' in w['tags']]) > 0
+            apartments = [w for w in way_listing if 'building' in w['tags'] and w['tags']['building'] == 'apartments']
+            any_apartment = len(apartments) > 0
+            buildings = [w for w in way_listing if 'building' in w['tags']]
+            any_building = len(buildings) > 0
             if any_apartment:
-                return ApartmentResolution.OSM_ENTITY_APARTMENT
+                return ApartmentResolution.OSM_ENTITY_APARTMENT, 'w' + str(apartments[0]['way_id'])
             if any_building:
-                return ApartmentResolution.OSM_ENTITY_NOT_APARTMENT
-            return ApartmentResolution.OSM_ENTITY_NOT_BUILDING
+                return ApartmentResolution.OSM_ENTITY_NOT_APARTMENT, 'w' + str(buildings[0]['way_id'])
+            return ApartmentResolution.OSM_ENTITY_NOT_BUILDING, ''
         else:
             nodes_inside_building = df_addresses_in_buildings[df_addresses_in_buildings['osm_id_left'] == osm_id]
             if len(nodes_inside_building) == 0:
-                return ApartmentResolution.NODE_DETACHED
+                return ApartmentResolution.NODE_DETACHED, ''
             else:
                 tags = ast.literal_eval(list(nodes_inside_building['tags_right'])[0])
                 if 'building' not in tags:
-                    return ApartmentResolution.OSM_ENTITY_NOT_BUILDING
+                    return ApartmentResolution.OSM_ENTITY_NOT_BUILDING, list(nodes_inside_building['osm_id_right'])[0]
                 elif tags['building'] != 'apartments':
-                    return ApartmentResolution.OSM_ENTITY_NOT_APARTMENT
+                    return ApartmentResolution.OSM_ENTITY_NOT_APARTMENT, list(nodes_inside_building['osm_id_right'])[0]
                 else:
-                    return ApartmentResolution.OSM_ENTITY_APARTMENT
+                    return ApartmentResolution.OSM_ENTITY_APARTMENT, list(nodes_inside_building['osm_id_right'])[0]
     if osm_id[0] == 'w':
         if id_int in cah.ways:
             way = cah.ways[id_int]
             if 'building' in way:
                 if way['building'] != 'apartments':
-                    return ApartmentResolution.OSM_ENTITY_NOT_APARTMENT
+                    return ApartmentResolution.OSM_ENTITY_NOT_APARTMENT, 'w' + str(id_int)
                 else:
-                    return ApartmentResolution.OSM_ENTITY_APARTMENT
+                    return ApartmentResolution.OSM_ENTITY_APARTMENT, 'w' + str(id_int)
             elif 'building:part' in way:
                 if way['building:part'] != 'apartments':
-                    return ApartmentResolution.OSM_ENTITY_NOT_APARTMENT
+                    return ApartmentResolution.OSM_ENTITY_NOT_APARTMENT, 'w' + str(id_int)
                 else:
-                    return ApartmentResolution.OSM_ENTITY_APARTMENT
+                    return ApartmentResolution.OSM_ENTITY_APARTMENT, 'w' + str(id_int)
             else:
-                return ApartmentResolution.OSM_ENTITY_NOT_BUILDING
+                return ApartmentResolution.OSM_ENTITY_NOT_BUILDING, ''
         else:
-            return ApartmentResolution.OSM_ENTITY_NOT_FOUND
+            return ApartmentResolution.OSM_ENTITY_NOT_FOUND, ''
     if osm_id[0] == 'r':
         if id_int in cah.relations:
             relation = cah.relations[id_int]
             if 'building' in relation:
                 if relation['building'] != 'apartments':
-                    return ApartmentResolution.OSM_ENTITY_NOT_APARTMENT
+                    return ApartmentResolution.OSM_ENTITY_NOT_APARTMENT, 'r' + str(id_int)
                 else:
-                    return ApartmentResolution.OSM_ENTITY_APARTMENT
+                    return ApartmentResolution.OSM_ENTITY_APARTMENT, 'r' + str(id_int)
             else:
-                return ApartmentResolution.OSM_ENTITY_NOT_BUILDING
+                return ApartmentResolution.OSM_ENTITY_NOT_BUILDING, 'r' + str(id_int)
         else:
-            return ApartmentResolution.OSM_ENTITY_NOT_FOUND
+            return ApartmentResolution.OSM_ENTITY_NOT_FOUND, ''
     raise Exception(f'Unknown osm id type {osm_id}')
 
 
@@ -116,11 +118,13 @@ def get_resolution(cah: CollectApartmentsHandler, df_addresses_in_buildings, osm
         return np.nan
 
     max_resolution = None
+    max_closest_building = ''
     for osm_id in osm_id_list:
-        resolution = get_resolution_single_entity(cah, df_addresses_in_buildings, osm_id)
+        resolution, closest_building = get_resolution_single_entity(cah, df_addresses_in_buildings, osm_id)
         if not max_resolution or resolution.value > max_resolution.value:
             max_resolution = resolution
-    return max_resolution
+            max_closest_building = closest_building
+    return max_resolution, max_closest_building
 
 
 def join_dz_rgz_osm(ar_data_path: str, df_sz, opstina):
@@ -228,7 +232,7 @@ def main(ar_data_path: str):
     # Calculate resolution
     df_addresses_in_buildings = pd.read_csv(os.path.join(os.path.join(ar_data_path, 'qa/addresses_in_buildings_per_opstina.csv')))
 
-    df_sz_rgz_osm['resolution'] = df_sz_rgz_osm.osm_id.apply(lambda osm_id: get_resolution(cah, df_addresses_in_buildings, osm_id))
+    df_sz_rgz_osm[['resolution', 'closest_building']] = df_sz_rgz_osm[['osm_id']].apply(lambda x: get_resolution(cah, df_addresses_in_buildings, x['osm_id']), axis=1, result_type='expand')
     df_sz_rgz_osm['resolution'] = df_sz_rgz_osm.resolution.apply(lambda x: x.value if pd.notna(x) else np.nan)
 
     # dump to report
