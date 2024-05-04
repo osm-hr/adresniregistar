@@ -86,7 +86,7 @@ def main():
 
     print("Calculating address count per naselje")
     rgz_addresses_with_naselje = gdf_rgz_addresses.sjoin(gdf_naselje, how='inner', predicate='intersects')
-    rgz_addresses_count_per_naselje = rgz_addresses_with_naselje.groupby(['naselje_imel', 'opstina_imel'])['naselje_imel', 'opstina_imel'].count()
+    rgz_addresses_count_per_naselje = rgz_addresses_with_naselje.groupby(['naselje_imel', 'opstina_imel'])[['naselje_imel', 'opstina_imel']].count()
     gdf_naselje = gdf_naselje.join(rgz_addresses_count_per_naselje, how='left', on=['naselje_imel', 'opstina_imel'], rsuffix='_addresses_count')
     gdf_naselje.rename(columns={'naselje_imel_addresses_count': 'addresses_count'}, inplace=True)
     gdf_naselje.drop(['opstina_imel_addresses_count'], inplace=True, axis=1)
@@ -118,7 +118,7 @@ def main():
     # buildings_with_naselje = gpd.GeoDataFrame(buildings_with_naselje, geometry='osm_geometry', crs="EPSG:4326")
     # buildings_with_naselje.sindex
 
-    building_count_per_naselje = buildings_with_naselje.groupby(['naselje_imel', 'opstina_imel'])['naselje_imel', 'opstina_imel'].count()
+    building_count_per_naselje = buildings_with_naselje.groupby(['naselje_imel', 'opstina_imel'])[['naselje_imel', 'opstina_imel']].count()
     gdf_naselje = gdf_naselje.join(building_count_per_naselje, how='left', on=['naselje_imel', 'opstina_imel'], rsuffix='_building_count')
     gdf_naselje.rename(columns={'naselje_imel_building_count': 'building_count'}, inplace=True)
     gdf_naselje.drop(['opstina_imel_building_count'], inplace=True, axis=1)
