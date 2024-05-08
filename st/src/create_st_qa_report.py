@@ -29,7 +29,7 @@ def generate_wrong_names_report(context):
     if not os.path.exists(wrong_names_osm_address_path):
         os.mkdir(wrong_names_osm_address_path)
 
-    df_wrong_street_names = pd.read_csv(os.path.join(qa_path, 'wrong_street_names.csv'))
+    df_wrong_street_names = pd.read_csv(os.path.join(qa_path, 'wrong_street_names.csv'), dtype={'ref:RS:ulica': 'string'})
 
     opstine = []
     total = {
@@ -187,7 +187,7 @@ def generate_english_names_report(context):
     if not os.path.exists(en_names_osm_address_path):
         os.mkdir(en_names_osm_address_path)
 
-    df_wrong_street_names = pd.read_csv(os.path.join(qa_path, 'wrong_street_names.csv'))
+    df_wrong_street_names = pd.read_csv(os.path.join(qa_path, 'wrong_street_names.csv'), dtype={'ref:RS:ulica': 'string'})
 
     opstine = []
     total = {
@@ -304,7 +304,7 @@ def generate_int_names_report(context):
     if not os.path.exists(int_names_osm_address_path):
         os.mkdir(int_names_osm_address_path)
 
-    df_wrong_street_names = pd.read_csv(os.path.join(qa_path, 'wrong_street_names.csv'))
+    df_wrong_street_names = pd.read_csv(os.path.join(qa_path, 'wrong_street_names.csv'), dtype={'ref:RS:ulica': 'string'})
 
     opstine = []
     total = {
@@ -442,8 +442,8 @@ def generate_alt_names_report(context):
     if not os.path.exists(alt_names_osm_address_path):
         os.mkdir(alt_names_osm_address_path)
 
-    df_wrong_alt_names = pd.read_csv(os.path.join(qa_path, 'wrong_alt_names.csv'))
-    df_wrong_alt_names['ref:RS:ulica'] = df_wrong_alt_names['ref:RS:ulica'].fillna(0).astype('Int64').astype('str').replace('0', np.nan)
+    df_wrong_alt_names = pd.read_csv(os.path.join(qa_path, 'wrong_alt_names.csv'), dtype={'ref:RS:ulica': 'string'})
+    df_wrong_alt_names['ref:RS:ulica'] = df_wrong_alt_names['ref:RS:ulica'].astype(object).where(df_wrong_alt_names['ref:RS:ulica'].notnull(), np.nan)
 
     opstine = []
     total = {

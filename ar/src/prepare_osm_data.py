@@ -39,7 +39,7 @@ def main():
         return
 
     print("Load all OSM addresses")
-    df_addresses = pd.read_csv(os.path.join(osm_path, 'addresses.csv'), dtype={'ref:RS:ulica': object, 'ref:RS:kucni_broj': object})
+    df_addresses = pd.read_csv(os.path.join(osm_path, 'addresses.csv'), dtype={'ref:RS:ulica': 'string', 'ref:RS:kucni_broj': 'string', 'osm_postcode': 'string'})
     df_addresses['osm_geometry'] = df_addresses.osm_geometry.apply(wkt.loads)
     gdf_addresses = gpd.GeoDataFrame(df_addresses, geometry='osm_geometry', crs="EPSG:4326")
     gdf_addresses.sindex

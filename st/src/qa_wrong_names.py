@@ -402,10 +402,9 @@ def find_wrong_names(cwd, street_mappings: StreetMapping):
     gdf_opstine.sindex
     print(f"Loaded all opstine geometries ({len(gdf_opstine)})")
 
-    df_osm_streets = pd.read_csv(os.path.join(osm_path, 'streets.csv'))
+    df_osm_streets = pd.read_csv(os.path.join(osm_path, 'streets.csv'), dtype={'ref:RS:ulica': 'string'})
     df_osm_streets['geometry'] = df_osm_streets.osm_geometry.apply(wkt.loads)
     gdf_osm_streets = gpd.GeoDataFrame(df_osm_streets, geometry='geometry', crs="EPSG:4326")
-    gdf_osm_streets['ref:RS:ulica'] = gdf_osm_streets['ref:RS:ulica'].astype('Int64').astype('str')
     gdf_osm_streets.sindex
     print(f"Loaded all {len(gdf_osm_streets)} OSM streets")
 
@@ -427,8 +426,7 @@ def find_wrong_names(cwd, street_mappings: StreetMapping):
 
     # For testing purposes, save and load addresses_per_opstina like this
     # pd.DataFrame(streets_per_opstina).to_csv('~/src/adresniregistar/st/data/qa/addresses_per_opstina.csv', index=False)
-    # streets_per_opstina = pd.read_csv('~/src/adresniregistar/st/data/qa/addresses_per_opstina.csv')
-    # streets_per_opstina['ref:RS:ulica'] = streets_per_opstina['ref:RS:ulica'].astype('str')
+    # streets_per_opstina = pd.read_csv('~/src/adresniregistar/st/data/qa/addresses_per_opstina.csv', dtype={'ref:RS:ulica': 'string'})
 
     if not os.path.exists(os.path.join(qa_path, 'wrong_street_names.csv')):
         # Detect all wrong tags

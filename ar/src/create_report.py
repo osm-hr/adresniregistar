@@ -106,7 +106,7 @@ def build_osm_entities_cache(data_path):
     for i, file in enumerate(sorted(os.listdir(analysis_path))):
         if not file.endswith(".csv"):
             continue
-        df_opstina = pd.read_csv(os.path.join(analysis_path, file), dtype={'conflated_osm_housenumber': object, 'osm_housenumber': object})
+        df_opstina = pd.read_csv(os.path.join(analysis_path, file), dtype={'note_left': 'string', 'osm_id': 'string', 'osm_street': 'string', 'osm_housenumber': 'string', 'osm_geometry': 'string'})
         osm_entites_to_cache = df_opstina[pd.notna(df_opstina.osm_id) & (df_opstina.matching)]['osm_id']
         if len(osm_entites_to_cache) > 0:
             nodes_to_cache += [int(n[1:]) for n in list(osm_entites_to_cache[osm_entites_to_cache.str.startswith('n')])]
@@ -583,7 +583,7 @@ def generate_report(context):
             continue
         opstina_name = file[:-4]
         print(f"{i+1}/{total_csvs} Processing {opstina_name}...", end='')
-        df_opstina = pd.read_csv(os.path.join(analysis_path, file), dtype={'conflated_osm_housenumber': object, 'osm_housenumber': object})
+        df_opstina = pd.read_csv(os.path.join(analysis_path, file), dtype={'note_left': 'string', 'osm_id': 'string', 'osm_street': 'string', 'osm_housenumber': 'string', 'osm_geometry': 'string'})
         df_opstina_osm = pd.read_csv(os.path.join(osm_path, file), dtype='unicode')
         opstina, naselja = generate_opstina(context, opstina_name, df_opstina, df_opstina_osm)
         all_naselja += naselja
