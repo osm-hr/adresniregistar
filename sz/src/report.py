@@ -110,6 +110,7 @@ def generate_report(context):
             currentDate=context['dates']['short'],
             reportDate=context['dates']['report'],
             osmDataDate=context['dates']['osm_data'],
+            rgzDataDate=context['dates']['rgz_data'],
             addresses=addresses,
             opstina_name=opstina_name,
             total=total_opstina,
@@ -129,6 +130,7 @@ def generate_report(context):
     output = template.render(
         currentDate=context['dates']['short'],
         reportDate=context['dates']['report'],
+        rgzDataDate=context['dates']['rgz_data'],
         osmDataDate=context['dates']['osm_data'],
         opstine=opstine,
         total=total
@@ -142,6 +144,14 @@ def main():
     env = Environment(loader=FileSystemLoader(searchpath='./templates'))
     env.globals.update(len=len, ApartmentResolution=ApartmentResolution)
     cwd = os.getcwd()
+
+    rgz_date_file = os.path.join(cwd, 'data/LATEST')
+    if not os.path.exists(rgz_date_file):
+        raise Exception("File data/LATEST missing, no way to determine date when RGZ data was retrived")
+    with open(rgz_date_file, 'r') as file:
+        file_content = file.read().rstrip()
+        rgz_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y.')
+
     context = {
         'env': env,
         'cwd': cwd,
@@ -149,6 +159,7 @@ def main():
             'short': datetime.date.today().strftime('%Y-%m-%d'),
             'report': datetime.datetime.now().strftime('%d.%m.%Y. %H:%M'),
             'osm_data': datetime.datetime.now().strftime('%d.%m.%Y. %H:%M'),
+            'rgz_data': rgz_data_timestamp,
         }
     }
     generate_report(context)

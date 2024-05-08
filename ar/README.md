@@ -95,7 +95,7 @@ kao i lokalni overpass server.
 
 * Izvršiti `python3 src/generate_rgz_diff.py --generate` i dobićete 3 fajla: `data/rgz/addresses-added.csv` (nove adrese), `data/rgz/addresses-removed.csv` (izbrisane adrese) i `data/rgz/addresses-changed.csv` (promenjene adrese)
 * Učitati `data/rgz/addresses-added.csv` i `data/rgz/addresses-removed.csv` i videti da izbrisana ulica nije zamenjena nekom novom ulicom
-* Izvršiti `python3 src/generate_rgz_diff.py --fix_deleted_to_added --rgz_update_date YYYY-MM-DD` - prolazi kroz obrisane adrese i ako su stvarno obrisane, briše im `ref:RS:kucni_broj` i dodaje im `removed:ref:RS:kucni_broj`, a ako su dodate sa novim ID-om, menja OSM adresu
+* Izvršiti `python3 src/generate_rgz_diff.py --fix_deleted_to_added --rgz_update_date YYYY-MM-DD` - prolazi kroz obrisane adrese i ako su stvarno obrisane, briše im `ref:RS:kucni_broj` i dodaje im `removed:ref:RS:kucni_broj`, a ako su dodate sa novim ID-om, menja `ref:RS:kucni_broj`
 * Izvršiti `python3 src/generate_rgz_diff.py --fix_changed` - prolazi kroz promenjene adrese i menja ih u OSM-u sa novim vrednostima
 
 ### Kreiranje vektorske mape
@@ -107,7 +107,7 @@ Za ovo je potrebno da imamo [tippecanoe](https://github.com/felt/tippecanoe) pro
 
 `ogr2ogr data/rgz/adrese.geojson data/rgz/addresses.new.csv -dialect sqlite -sql "SELECT rgz_kucni_broj, ST_GeomFromText(rgz_geometry) AS geometry FROM 'addresses.new'" -nln adrese`
 
-* Generiše se .mbtiles fajl: `tippecanoe data/rgz/adrese.geojson -o data/rgz/brojevi.mbtiles`
+* Generiše se .mbtiles fajl: `tippecanoe data/rgz/adrese.geojson -o data/rgz/brojevi.mbtiles --force`
 * Ovaj fajl se pošalje na vektor server (kredencijale tražiti od autora ovog uputstva)
 
 ### Kreiranje rasterske mape

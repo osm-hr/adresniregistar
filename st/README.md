@@ -36,16 +36,16 @@ sajtu https://download-tmp.geosrbija.rs/download.
 * Napraviti fasciklu za nove CSV ulice (`mkdir data/rgz/csv-new`)
 * Pokrenuti `python src/download_st_from_rgz`. Skripta smešta .zip fajlove u `data/rgz/download`. Može se pokretati iznova, krenuće tamo gde je stala. Pratiti ukoliko pukne i pokrenuti ponovo. Skripta traje oko 1-2h.
 * Proveriti (za svaki slučaj) da imate 168 .zip fajlova u `data/rgz/download` i da nijedan fajl nije prazan (0 bajtova)
-* Pokrenuti `python3 src/prepare_rgz_street_data.py --output-csv-file data/rgz/streets.new.csv --output-csv-folder data/rgz/csv-new`. Skripta pravi novi `data/rgz/streets.new.csv` fajl.
+* Pokrenuti `PYTHONPATH=../ar/src/ python3 src/prepare_rgz_street_data.py --output-csv-file data/rgz/streets.new.csv --output-csv-folder data/rgz/csv-new`. Skripta pravi novi `data/rgz/streets.new.csv` fajl.
 
 ### Dopunjavanje pravilnih imena ulica
 
-* Pokrenuti `python3 src/fix_missing_proper_street_names.py` i biće generisan `data/rgz/missing_streets.csv` fajl u kome su sve nove ulice kojima nedostaje pravilno imenovanje.
+* Pokrenuti `PYTHONPATH=../ar/src/ python3 src/fix_missing_proper_street_names.py` i biće generisan `data/rgz/missing_streets.csv` fajl u kome su sve nove ulice kojima nedostaje pravilno imenovanje.
 * Prekopirate ih na dno `ar/curated_streets.csv` i ispraviti sve nazive da budu dobri (Ctrl+F da nađete kako su ranije kapitalizovane neke stvari)
   * Na kraju proveriti standardne greške iz RGZ-a, kao što je trailing space
-* Sortirajte curated listu sa `python3 src/sort_curated.streets.py --input-curated-streets ../ar/curated_streets.csv --output-curated-streets curated_streets-sorted.csv`
+* Sortirajte curated listu sa `PYTHONPATH=../ar/src/ python3 src/sort_curated_streets.py --input-curated-streets ../ar/curated_streets.csv --output-curated-streets curated_streets-sorted.csv`
 * Uporedite ih i ako je sve OK, zamenite `ar/curated_streets.csv` sa `curated_streets-sorted.csv`, a `curated_streets-sorted.csv` obrisati.
-* Sada izbrisati ar/data/mapping/mapping.csv i regenerisati ga ponovnim pokretanjem `python3 src/street_mapping.py` iz AR modula.
+* Sada izbrisati `ar/data/mapping/mapping.csv` i regenerisati ga ponovnim pokretanjem `python3 src/street_mapping.py` iz AR modula.
 
 ### Automatske izmene u OSM-u
 
@@ -68,7 +68,7 @@ Za ovo je potrebno da imamo [tippecanoe](https://github.com/felt/tippecanoe) pro
 
 `ogr2ogr data/rgz/ulice.geojson data/rgz/streets.new.csv -dialect sqlite -sql "SELECT rgz_ulica AS ulica_ime, ST_GeomFromText(rgz_geometry) AS geometry FROM 'streets.new'" -nln ulice`
 
-* Generiše se .mbtiles fajl: `tippecanoe data/rgz/ulice.geojson -o data/rgz/ulice.mbtiles`
+* Generiše se .mbtiles fajl: `tippecanoe data/rgz/ulice.geojson -o data/rgz/ulice.mbtiles --force`
 * Ovaj fajl se pošalje na vektor server (kredencijale tražiti od autora ovog uputstva)
 
 ### Kreiranje rasterske mape

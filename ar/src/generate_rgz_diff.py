@@ -72,7 +72,7 @@ def fix_deleted_to_added(rgz_path, rgz_last_update):
     Nalazi kucne brojeve koji su obrisani i koji su onda dodati sa novim ref:RS:kucni_broj,
     sa istim imenom ulice i kucnim brojom i unutar 100m i update-uje im ref:RS:kucni_broj
     """
-    api = osmapi.OsmApi(passwordfile='osm-password', changesetauto=True, changesetautosize=100, changesetautotags={
+    api = osmapi.OsmApi(passwordfile='osm-password', changesetauto=True, changesetautosize=1000, changesetautotags={
         "comment": f"RGZ address import (updating ref:RS:kucni_broj after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html",
         "tag": "mechanical=yes",
         "source": "RGZ_AR"
@@ -175,7 +175,7 @@ def fix_deleted_to_added(rgz_path, rgz_last_update):
 
 
 def fix_changed(rgz_path, street_mappings):
-    api = osmapi.OsmApi(passwordfile='osm-password', changesetauto=True, changesetautosize=500, changesetautotags={
+    api = osmapi.OsmApi(passwordfile='osm-password', changesetauto=True, changesetautosize=1000, changesetautotags={
         "comment": f"RGZ address import (updating street and housenumber after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html",
         "tag": "mechanical=yes",
         "source": "RGZ_AR"
