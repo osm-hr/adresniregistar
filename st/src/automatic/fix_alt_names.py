@@ -43,7 +43,7 @@ def fix_alt_names(data_path, street_mappings: StreetMapping, opstina: str=None):
     if opstina:
         additional_comment = f'in {opstina} '
     api = osmapi.OsmApi(passwordfile='osm-password', changesetauto=True, changesetautosize=1000 if opstina else 100, changesetautotags={
-        "comment": f"RGZ address import {additional_comment}(fixing name:sr and name:sr-Latn on conflated ways, https://community.openstreetmap.org/t/topic/9338/18)",
+        "comment": f"RGZ address import {additional_comment}(fixing alt_name on conflated ways, https://community.openstreetmap.org/t/topic/9338/18)",
         "tag": "mechanical=yes",
         "source": "RGZ_ST"
     })
