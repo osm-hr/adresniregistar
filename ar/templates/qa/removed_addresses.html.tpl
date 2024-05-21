@@ -14,7 +14,8 @@
       <div class="modal-body">
 		<ul>
 			<li><b>Opština</b> &mdash; Opština analize</li>
-			<li><b>#</b> &mdash; Ukupan broj obrisanih adresa bez ref:RS:kucni_broj oznaka</li>
+			<li><b># „removed:ref:RS:kucni_broj”</b> &mdash; Ukupan broj obrisanih adresa sa „removed:ref:RS:kucni_broj” oznakama</li>
+			<li><b># „ref:RS:kucni_broj”</b> &mdash; Ukupan broj obrisanih adresa koje imaju i „removed:ref:RS:kucni_broj” i „ref:RS:kucni_broj” oznaku</li>
 		</ul>
       </div>
       <div class="modal-footer">
@@ -67,21 +68,24 @@
 <thead class="thead-dark sticky-top">
 	<tr>
 		<th>Opština</th>
-		<th>#</th>
+		<th># „removed:ref:RS:kucni_broj”</th>
+		<th># „ref:RS:kucni_broj”</th>
 	</tr>
 </thead>
 <tbody>
 	{% for opstina in opstine %}
 	<tr>
 		<td><a href="removed_addresses/{{ opstina.name }}.html">{{ opstina.name }}</a></td>
-		<td>{{ opstina.count }}</td>
+		<td>{{ opstina.removed_count }}</td>
+		<td>{{ opstina.current_count }}</td>
 	</tr>
 	{% endfor %}
 </tbody>
 <tfoot>
 	<tr>
 		<th>Serbia TOTAL:</th>
-		<th class="d-sm-table-cell">{{ total.count }}</th>
+		<th class="d-sm-table-cell">{{ total.removed_count }}</th>
+		<th class="d-sm-table-cell">{{ total.current_count }}</th>
 	</tr>
 </tfoot>
 </table>

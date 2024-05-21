@@ -18,6 +18,7 @@
                 <li><b>Kućni broj</b> &mdash; Kućni broj iz adrese (addr:housenumber oznaka)</li>
                 <li><b>Datum brisanja</b> &mdash; Datum prvog primećivanja da adresa nije više u RGZ-u</li>
                 <li><b>„removed:ref:RS:kucni_broj” tag</b> &mdash; „removed:ref:RS:kucni_broj” oznaka na adresi, vrednost koju je adresa nekad imala u RGZ-u</li>
+                <li><b>„ref:RS:kucni_broj” tag</b> &mdash; „ref:RS:kucni_broj” oznaka na adresi, ukoliko trenutno postoji. Ako postoje obe vrednosti, treba obrisati „removed:ref:RS:kucni_broj” oznaku</li>
             </ul>
         </div>
         <div class="modal-footer">
@@ -61,8 +62,9 @@
 <br/>
 <p>Ovde možete videti sve RGZ adrese koje smo uneli u OSM, ali su one od tad izbrisane iz RGZ-a.
     Adresa brisanja je najranije vreme kada smo primetili da adresa više nije u RGZ-u. Ukoliko imate lokalno znanje,
-    slobodno obrišite ove adrese (ili cele zgrade ukoliko više ne postoji). U suprotnom, dogovor zajednice je da ih
-    ostavimo neke vreme (npr. 2 godine) jer neko može da ih koristi za navođenje ili su možda još u upotrebi.
+    slobodno obrišite ove adrese (ili cele zgrade ukoliko više ne postoji).
+    Ukoliko postoji „removed:ref:RS:kucni_broj” oznake, sigurno treba obrisati „removed:ref:RS:kucni_broj” oznaku!
+    U suprotnom, dogovor zajednice je da ih ostavimo neke vreme (npr. 2 godine) jer neko može da ih koristi za navođenje ili su možda još u upotrebi.
     U gornjem desnom uglu je filtriranje. Klikom na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.
     </p>
 <br/>
@@ -77,6 +79,7 @@
         <th>Broj</th>
         <th>Datum brisanja</th>
         <th>„removed:ref:RS:kucni_broj” tag</th>
+        <th>„ref:RS:kucni_broj” tag</th>
 	</tr>
 </thead>
 <tbody>
@@ -86,7 +89,8 @@
         <td>{{ address.street}}</td>
         <td>{{ address.housenumber}}</td>
         <td>{{ address.removal_date}}</td>
-        <td>{{ address.rgz_id}}</td>
+        <td>{{ address.removed_rgz_id}}</td>
+        <td>{{ address.current_rgz_id}}</td>
 	</tr>
 	{% endfor %}
 </tbody>

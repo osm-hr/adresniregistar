@@ -687,19 +687,23 @@ def generate_removed_addresses(context):
     if not os.path.exists(report_removed_address_path):
         os.mkdir(report_removed_address_path)
 
-    df_removed_osm_addresses = pd.read_csv(os.path.join(qa_path, 'removed_addresses.csv'))
+    df_removed_osm_addresses = pd.read_csv(os.path.join(qa_path, 'removed_addresses.csv'), dtype={'ref:RS:kucni_broj': str})
 
     opstine = []
     total = {
-        'count': 0
+        'removed_count': 0,
+        'current_count': 0
     }
 
     for opstina_name, df_addresses_in_opstina in df_removed_osm_addresses.sort_values('opstina_imel').groupby('opstina_imel'):
-        count = len(df_addresses_in_opstina)
-        total['count'] += count
+        removed_count = len(df_addresses_in_opstina)
+        current_count = len(df_addresses_in_opstina[pd.notna(df_addresses_in_opstina['ref:RS:kucni_broj'])])
+        total['removed_count'] += removed_count
+        total['current_count'] += current_count
         opstine.append({
             'name': opstina_name,
-            'count': count
+            'removed_count': removed_count,
+            'current_count': current_count
         })
         addresses = []
 
@@ -711,10 +715,7 @@ def generate_removed_addresses(context):
         print(f"Generating data/report/removed_addresses/{opstina_name}.html")
 
         for _, df_address in df_addresses_in_opstina.iterrows():
-            address_text = ''
             osm_id = df_address['osm_id']
-            street = df_address['osm_street']
-            house_number = df_address['osm_housenumber']
 
             osm_type = 'way' if osm_id[0] == 'w' else 'relation' if osm_id[0] == 'r' else 'node'
             address = {
@@ -723,7 +724,8 @@ def generate_removed_addresses(context):
                 'street': df_address['osm_street'] if pd.notna(df_address['osm_street']) else '',
                 'housenumber': df_address['osm_housenumber'] if pd.notna(df_address['osm_housenumber']) else '',
                 'removal_date': df_address['removal_date'] if pd.notna(df_address['removal_date']) else '',
-                'rgz_id': df_address['removed:ref:RS:kucni_broj'] if pd.notna(df_address['removed:ref:RS:kucni_broj']) else '',
+                'removed_rgz_id': df_address['removed:ref:RS:kucni_broj'] if pd.notna(df_address['removed:ref:RS:kucni_broj']) else '',
+                'current_rgz_id': df_address['ref:RS:kucni_broj'] if pd.notna(df_address['ref:RS:kucni_broj']) else '',
             }
             addresses.append(address)
 
@@ -752,7 +754,8 @@ def generate_removed_addresses(context):
         if not any(o for o in opstine if o['name'] == opstina_name):
             opstine.append({
                 'name': opstina_name,
-                'count': 0
+                'removed_count': 0,
+                'current_count': 0
             })
             output = template.render(
                 currentDate=context['dates']['short'],
