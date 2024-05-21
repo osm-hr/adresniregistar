@@ -59,7 +59,7 @@
             let refExistsFilter = true;
             if (refExists === 'yes') {
                 refExistsFilter = data[1].indexOf('✅') > -1;
-            } else if (errorType === 'no') {
+            } else if (refExists === 'no') {
                 refExistsFilter = data[1].indexOf('❌') > -1;
             }
 
