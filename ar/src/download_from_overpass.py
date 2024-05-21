@@ -74,16 +74,16 @@ def get_entities(overpass_api, from_lat, from_lon, to_lat, to_lon):
         [out:json];
         area["name"="Србија"]["admin_level"=2]->.c;
         (
-            node(area.c)["addr:housenumber"];
-            way(area.c)["addr:housenumber"];
-            relation(area.c)["addr:housenumber"];
+            nwr(area.c)["addr:housenumber"];
+            nwr(area.c)["addr:street"];
+            nwr(area.c)["ref:RS:kucni_broj"];
         );
         (._;>;);
         out;
         // &contact=https://gitlab.com/osm-serbia/adresniregistar
     """)
     for n in response.nodes:
-        if not n.tags.get('addr:housenumber'):
+        if not n.tags.get('addr:housenumber') and not n.tags.get('addr:street') and not n.tags.get('ref:RS:kucni_broj'):
             continue
         geom = geometry.Point((n.lon, n.lat))
         entities.append({
@@ -99,7 +99,7 @@ def get_entities(overpass_api, from_lat, from_lon, to_lat, to_lon):
             'osm_geometry': geom,
         })
     for w in response.ways:
-        if not w.tags.get('addr:housenumber'):
+        if not w.tags.get('addr:housenumber') and not w.tags.get('addr:street') and not w.tags.get('ref:RS:kucni_broj'):
             continue
         ls_coords = []
         for node in w.nodes:
@@ -123,7 +123,7 @@ def get_entities(overpass_api, from_lat, from_lon, to_lat, to_lon):
             'osm_geometry': geom
         })
     for r in response.relations:
-        if not r.tags.get('addr:housenumber'):
+        if not r.tags.get('addr:housenumber') and not r.tags.get('addr:street') and not r.tags.get('ref:RS:kucni_broj'):
             continue
         geom = create_geometry_from_osm_response(r, response)
         entities.append({
