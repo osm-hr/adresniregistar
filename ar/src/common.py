@@ -283,8 +283,8 @@ class CollectRelationWaysHandler(osmium.SimpleHandler):
     def relation(self, r):
         for tag_to_search in self.tags_to_search:
             if r.tags.get(tag_to_search):
-                only_outer_ways = [m for m in r.members if m.type == 'w' and m.role == 'outer']
-                for m in only_outer_ways:
+                outer_inner_ways = [m for m in r.members if m.type == 'w' and m.role == 'outer' or m.role == 'inner']
+                for m in outer_inner_ways:
                     self.ways[m.ref] = {'role': m.role}
                 break
 
@@ -372,7 +372,8 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
 
     def geometry_from_relation(self, r):
         only_outer_ways = [m for m in r.members if m.type == 'w' and m.role == 'outer']
-        polygons = []
+        only_inner_ways = [m for m in r.members if m.type == 'w' and m.role == 'inner']
+        outer_polygons, inner_polygons = [], []
         for way in only_outer_ways:
             if way.ref not in self.ways_cache:
                 continue
@@ -380,18 +381,40 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
             way_geometry = self.geometry_from_way(way_nodes)
             if not way_geometry:
                 continue
-            polygons.append(way_geometry)
-        if len(polygons) == 0:
+            outer_polygons.append(way_geometry)
+        if len(outer_polygons) == 0:
             return None
-        if len(polygons) == 1:
-            return polygons[0]
+
+        if all(p.geom_type == 'LineString' for p in outer_polygons):
+            return geometry.MultiLineString(outer_polygons).convex_hull
+
+        for way in only_inner_ways:
+            if way.ref not in self.ways_cache:
+                continue
+            way_nodes = self.ways_cache[way.ref]
+            way_geometry = self.geometry_from_way(way_nodes)
+            if not way_geometry:
+                continue
+            inner_polygons.append(way_geometry)
+        all_inner_polygons = None
+        if len(inner_polygons) == 1:
+            all_inner_polygons = inner_polygons[0]
+        elif all(p.geom_type == 'Polygon' for p in inner_polygons):
+            all_inner_polygons = geometry.MultiPolygon(inner_polygons)
         else:
-            if all(p.geom_type == 'Polygon' for p in polygons):
-                return geometry.MultiPolygon(polygons)
-            elif all(p.geom_type == 'LineString' for p in polygons):
-                return geometry.MultiLineString(polygons).convex_hull
-            else:
-                return geometry.GeometryCollection(polygons).convex_hull
+            all_inner_polygons = geometry.GeometryCollection(inner_polygons)
+
+        if len(outer_polygons) == 1:
+            all_outer_polygons = outer_polygons[0]
+        if all(p.geom_type == 'Polygon' for p in outer_polygons):
+            all_outer_polygons = geometry.MultiPolygon(outer_polygons)
+        else:
+            all_outer_polygons = geometry.GeometryCollection(outer_polygons)
+
+        if not all_inner_polygons:
+            return all_outer_polygons
+        else:
+            return all_outer_polygons.difference(all_inner_polygons)
 
     def node(self, n):
         for tag_to_search in self.tags_to_search:
