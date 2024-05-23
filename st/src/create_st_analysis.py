@@ -7,14 +7,14 @@ import os
 
 import geopandas as gpd
 import pandas as pd
-from shapely import wkt
+from shapely import wkt, LineString
 
 from common import normalize_name
 from street_mapping import StreetMapping
 
 
 def collect_linestring(x):
-    break_polygons = [(g if g.geom_type != 'Polygon' else g.boundary) for g in x]
+    break_polygons = [(g if g.geom_type != 'Polygon' else LineString(g.exterior.coords)) for g in x]
     return gpd.tools.collect(break_polygons)
 
 
