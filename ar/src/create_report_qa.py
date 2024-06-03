@@ -91,7 +91,7 @@ def generate_osm_files_move_address_to_building(context, report_qa_address_path,
             'id': way_id,
             'tags': {k: xml_escape(v) for k, v in new_tags.items()},
             'nodes': entity['nodes'],
-            'version': entity['version'] + 1
+            'version': entity['version']
         })
         for node in entity['nodes']:
             node_entity = osm_entities_cache.nodes_cache[node]
