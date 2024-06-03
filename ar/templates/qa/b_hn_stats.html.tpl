@@ -45,6 +45,7 @@
 	$(document).ready( function () {
 	    $('#list').DataTable({
 		    stateSave: true,
+		    stateDuration: 0,
 		    order: [[0, 'asc'], [1, 'asc']],
 		    lengthMenu: [ [10, 50, -1], [10, 50, "All"] ],
 		    columnDefs: [

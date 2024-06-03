@@ -97,6 +97,13 @@
 
 	    var table = $('#list').DataTable({
 		    stateSave: true,
+		    stateDuration: 0,
+			stateSaveCallback: function (settings, data) {
+				localStorage.setItem('DataTables_st_naselje', JSON.stringify(data));
+			},
+			stateLoadCallback: function (settings) {
+				return JSON.parse(localStorage.getItem('DataTables_st_naselje'));
+			},
 		    order: [[1, 'asc']],
 		    lengthMenu: [ [10, 50, -1], [10, 50, "All"] ],
 		    columnDefs: [

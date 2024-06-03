@@ -82,6 +82,13 @@
 
 	    var table = $('#list').DataTable({
 		    stateSave: true,
+		    stateDuration: 0,
+			stateSaveCallback: function (settings, data) {
+				localStorage.setItem('DataTables_sz_opstina', JSON.stringify(data));
+			},
+			stateLoadCallback: function (settings) {
+				return JSON.parse(localStorage.getItem('DataTables_sz_opstina'));
+			},
 		    order: [[0, 'asc']],
 		    lengthMenu: [ [10, 50, -1], [10, 50, "All"] ],
 		    columnDefs: [

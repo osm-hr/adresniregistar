@@ -64,6 +64,13 @@
 	$(document).ready( function () {
 	    $('#list-by-length').DataTable({
 		    stateSave: true,
+		    stateDuration: 0,
+			stateSaveCallback: function (settings, data) {
+				localStorage.setItem('DataTables_st_opstina', JSON.stringify(data));
+			},
+			stateLoadCallback: function (settings) {
+				return JSON.parse(localStorage.getItem('DataTables_st_opstina'));
+			},
 		    order: [[0, 'asc']],
 		    lengthMenu: [ [10, 50, -1], [10, 50, "All"] ],
 		    columnDefs: []
