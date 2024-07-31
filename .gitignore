@@ -2,6 +2,8 @@
 ar/data/
 ar/rgz_creds
 ar/idp_creds
+ar/client_secrets
+ar/token.json
 ar/osm-password
 ar/geckodriver
 ar/geckodriver.log

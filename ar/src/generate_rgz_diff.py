@@ -11,6 +11,9 @@ import overpy
 import pyproj
 from shapely import wkt
 from shapely.ops import transform
+from requests_oauthlib import OAuth2Session
+import webbrowser
+import json
 
 from common import load_mappings, normalize_name_latin
 
@@ -19,6 +22,45 @@ csv.field_size_limit(sys.maxsize)
 wgs84 = pyproj.CRS('EPSG:4326')
 utm = pyproj.CRS('EPSG:32634')
 project = pyproj.Transformer.from_crs(wgs84, utm, always_xy=True).transform
+
+
+def token_loader():
+    with open("token.json", 'r') as f:
+        token = json.loads(f.read())
+    return token
+
+
+def token_saver(token):
+    with open("token.json", 'w') as f:
+        f.write(json.dumps(token))
+
+
+def save_and_get_access_token(client_id, client_secret, scope):
+    authorization_base_url = "https://www.openstreetmap.org/oauth2/authorize"
+    token_url = "https://www.openstreetmap.org/oauth2/token"
+    redirect_uri = "urn:ietf:wg:oauth:2.0:oob"
+
+    oauth = OAuth2Session(
+        client_id=client_id,
+        redirect_uri=redirect_uri,
+        scope=scope,
+    )
+
+    login_url, _ = oauth.authorization_url(authorization_base_url)
+
+    print(f"Authorize user using this URL: {login_url}")
+    webbrowser.open(login_url)
+
+    authorization_code = input("Paste the authorization code here: ")
+
+    token = oauth.fetch_token(
+        token_url=token_url,
+        client_secret=client_secret,
+        code=authorization_code,
+    )
+
+    token_saver(token)
+    return token
 
 
 def load_addresses(addresses_csv_path):
@@ -67,16 +109,17 @@ def get_ref_kucni_broj_from_overpass(overpass_api, kucni_broj_id):
     return results
 
 
-def fix_deleted_to_added(rgz_path, rgz_last_update):
+def fix_deleted_to_added(rgz_path, rgz_last_update, oauth_session):
     """
     Nalazi kucne brojeve koji su obrisani i koji su onda dodati sa novim ref:RS:kucni_broj,
     sa istim imenom ulice i kucnim brojom i unutar 100m i update-uje im ref:RS:kucni_broj
     """
-    api = osmapi.OsmApi(passwordfile='osm-password', changesetauto=True, changesetautosize=1000, changesetautotags={
+    api = osmapi.OsmApi(session=oauth_session, changesetauto=True, changesetautosize=1000, changesetautotags={
         "comment": f"RGZ address import (updating ref:RS:kucni_broj after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html",
         "tag": "mechanical=yes",
         "source": "RGZ_AR"
     })
+
     overpass_api = overpy.Overpass(url='http://localhost:12346/api/interpreter')
 
     print('Loading added addresses')
@@ -174,8 +217,8 @@ def fix_deleted_to_added(rgz_path, rgz_last_update):
     api.flush()
 
 
-def fix_changed(rgz_path, street_mappings):
-    api = osmapi.OsmApi(passwordfile='osm-password', changesetauto=True, changesetautosize=1000, changesetautotags={
+def fix_changed(rgz_path, street_mappings, oauth_session):
+    api = osmapi.OsmApi(session=oauth_session, changesetauto=True, changesetautosize=1000, changesetautotags={
         "comment": f"RGZ address import (updating street and housenumber after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html",
         "tag": "mechanical=yes",
         "source": "RGZ_AR"
@@ -368,6 +411,20 @@ def main():
         create_csv_files(rgz_path)
         return
 
+    if not os.path.exists("client_secrets"):
+        print("File 'client_secrets' is missing. Create OAuth2 application on 'https://www.openstreetmap.org/oauth2/applications' with redirect url 'urn:ietf:wg:oauth:2.0:oob' and all permissions and write <client_id>:<client_secret> in 'client_secrets' file before proceding")
+        return
+    with open('client_secrets') as f:
+        client_id, client_secret = f.readline().split(":")
+
+    try:
+        token = token_loader()
+    except FileNotFoundError:
+
+        print("Token not found, get a new one...")
+        token = save_and_get_access_token(client_id, client_secret, ["write_api", "write_notes"])
+    oauth_session = OAuth2Session(client_id, token=token)
+
     if args.fix_deleted_to_added or args.fix_changed:
         print("Loading normalized street names mapping")
         street_mappings = load_mappings(data_path)
@@ -376,9 +433,9 @@ def main():
         if args.rgz_update_date is None:
             print("Set --rgz_update_date with date of RGZ data update, in YYYY-MM-DD format, like --rgz_update_date 2023-04-23")
             return
-        fix_deleted_to_added(rgz_path, args.rgz_update_date)
+        fix_deleted_to_added(rgz_path, args.rgz_update_date, oauth_session)
     elif args.fix_changed:
-        fix_changed(rgz_path, street_mappings)
+        fix_changed(rgz_path, street_mappings, oauth_session)
     else:
         print("Choose either --generate or --fix_deleted_to_added or --fix_changed")
 
