@@ -4,9 +4,11 @@ import csv
 import json
 import math
 import os
+import webbrowser
 from enum import Enum
 
 import osmium
+from requests_oauthlib import OAuth2Session
 from shapely import geometry
 
 OPSTINE_TO_SKIP = ['VITINA', 'VUČITRN', 'GLOGOVAC', 'GNJILANE', 'GORA', 'DEČANI', 'ĐAKOVICA',
@@ -266,6 +268,45 @@ def housenumber_to_float(housenumber):
         return round(number + housenumber_order[letter]/30, 3)
     else:
         return number
+
+
+def token_loader():
+    with open("token.json", 'r') as f:
+        token = json.loads(f.read())
+    return token
+
+
+def token_saver(token):
+    with open("token.json", 'w') as f:
+        f.write(json.dumps(token))
+
+
+def save_and_get_access_token(client_id, client_secret, scope):
+    authorization_base_url = "https://www.openstreetmap.org/oauth2/authorize"
+    token_url = "https://www.openstreetmap.org/oauth2/token"
+    redirect_uri = "urn:ietf:wg:oauth:2.0:oob"
+
+    oauth = OAuth2Session(
+        client_id=client_id,
+        redirect_uri=redirect_uri,
+        scope=scope,
+    )
+
+    login_url, _ = oauth.authorization_url(authorization_base_url)
+
+    print(f"Authorize user using this URL: {login_url}")
+    webbrowser.open(login_url)
+
+    authorization_code = input("Paste the authorization code here: ")
+
+    token = oauth.fetch_token(
+        token_url=token_url,
+        client_secret=client_secret,
+        code=authorization_code,
+    )
+
+    token_saver(token)
+    return token
 
 
 class CollectRelationWaysHandler(osmium.SimpleHandler):

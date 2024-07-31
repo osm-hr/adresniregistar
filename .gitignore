@@ -20,3 +20,4 @@ st/geckodriver
 st/geckodriver.log
 st/clean.log
 st/upload.log
+st/client_secrets

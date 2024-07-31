@@ -12,55 +12,14 @@ import pyproj
 from shapely import wkt
 from shapely.ops import transform
 from requests_oauthlib import OAuth2Session
-import webbrowser
-import json
 
-from common import load_mappings, normalize_name_latin
+from common import load_mappings, normalize_name_latin, token_loader, save_and_get_access_token
 
 csv.field_size_limit(sys.maxsize)
 
 wgs84 = pyproj.CRS('EPSG:4326')
 utm = pyproj.CRS('EPSG:32634')
 project = pyproj.Transformer.from_crs(wgs84, utm, always_xy=True).transform
-
-
-def token_loader():
-    with open("token.json", 'r') as f:
-        token = json.loads(f.read())
-    return token
-
-
-def token_saver(token):
-    with open("token.json", 'w') as f:
-        f.write(json.dumps(token))
-
-
-def save_and_get_access_token(client_id, client_secret, scope):
-    authorization_base_url = "https://www.openstreetmap.org/oauth2/authorize"
-    token_url = "https://www.openstreetmap.org/oauth2/token"
-    redirect_uri = "urn:ietf:wg:oauth:2.0:oob"
-
-    oauth = OAuth2Session(
-        client_id=client_id,
-        redirect_uri=redirect_uri,
-        scope=scope,
-    )
-
-    login_url, _ = oauth.authorization_url(authorization_base_url)
-
-    print(f"Authorize user using this URL: {login_url}")
-    webbrowser.open(login_url)
-
-    authorization_code = input("Paste the authorization code here: ")
-
-    token = oauth.fetch_token(
-        token_url=token_url,
-        client_secret=client_secret,
-        code=authorization_code,
-    )
-
-    token_saver(token)
-    return token
 
 
 def load_addresses(addresses_csv_path):

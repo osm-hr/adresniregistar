@@ -6,14 +6,15 @@ import time
 
 import osmapi
 import pandas as pd
+from requests_oauthlib import OAuth2Session
 
+from common import cyr2lat_small, token_loader, save_and_get_access_token
 from street_mapping import StreetMapping
-from common import cyr2lat_small
 
 INTERACTIVE = False  # Change if you know what are you doing
 
 
-def fix_names(data_path, street_mappings: StreetMapping, opstina: str=None):
+def fix_names(data_path, street_mappings: StreetMapping, oauth_session: OAuth2Session, opstina: str=None):
     if opstina:
         print(f"Doing opstina {opstina}")
     else:
@@ -22,7 +23,7 @@ def fix_names(data_path, street_mappings: StreetMapping, opstina: str=None):
     additional_comment = ''
     if opstina:
         additional_comment = f'in {opstina} '
-    api = osmapi.OsmApi(passwordfile='osm-password', changesetauto=True, changesetautosize=1000 if opstina else 100, changesetautotags={
+    api = osmapi.OsmApi(session=oauth_session, changesetauto=True, changesetautosize=1000 if opstina else 100, changesetautotags={
         "comment": f"RGZ address import {additional_comment}(fixing name:sr and name:sr-Latn on conflated ways, https://community.openstreetmap.org/t/topic/9338/18)",
         "tag": "mechanical=yes",
         "source": "RGZ_ST"
@@ -128,6 +129,21 @@ def main():
     cwd = os.getcwd()
     data_path = os.path.join(cwd, 'data')
 
+    if not os.path.exists("client_secrets"):
+        print("File 'client_secrets' is missing. Create OAuth2 application on 'https://www.openstreetmap.org/oauth2/applications' with redirect url 'urn:ietf:wg:oauth:2.0:oob' and all permissions and write <client_id>:<client_secret> in 'client_secrets' file before proceding")
+        return
+    with open('client_secrets') as f:
+        client_id, client_secret = f.readline().split(":")
+
+    try:
+        token = token_loader()
+    except FileNotFoundError:
+
+        print("Token not found, get a new one...")
+        token = save_and_get_access_token(client_id, client_secret, ["write_api", "write_notes"])
+    oauth_session = OAuth2Session(client_id, token=token)
+
+
     parser = argparse.ArgumentParser(
         description='fix_names.py - Adds proper name:sr and name:sr-Latn to conflated ways')
     parser.add_argument('--opstina', default='', required=False, help='Opstina to process')
@@ -137,9 +153,9 @@ def main():
     street_mappings = StreetMapping(os.path.join(cwd, '..', 'ar'))
 
     if args.opstina != '':
-        fix_names(data_path, street_mappings, args.opstina)
+        fix_names(data_path, street_mappings, oauth_session, args.opstina)
     else:
-        fix_names(data_path, street_mappings)
+        fix_names(data_path, street_mappings, oauth_session)
 
 
 if __name__ == '__main__':
