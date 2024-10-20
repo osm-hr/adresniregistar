@@ -103,15 +103,10 @@ def is_needed_int_name(rgz_proper_name, osm_name, osm_int_name):
         # int_name exists, no need for it
         return False
 
-    matches = ["ш", "ч", "ћ", "ж", "ђ", "Ш", "Ч", "Ћ", "Ж", "Ђ"]
-
     if pd.notna(rgz_proper_name) and rgz_proper_name != '':
-        if any(x in rgz_proper_name for x in matches):
-            return True
+        return True
     elif pd.notna(osm_name) and osm_name != '':
-        # We have "name" tag, compare with it
-        if any(x in osm_name for x in matches):
-            return True
+        return True
     return False
 
 
