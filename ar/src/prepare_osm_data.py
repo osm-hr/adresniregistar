@@ -25,6 +25,20 @@ def main():
     gdf_opstine.to_crs("EPSG:4326", inplace=True)
     gdf_opstine.sindex
 
+    df_naselja = pd.read_csv(os.path.join(rgz_path, 'naselje.csv'), dtype='unicode')
+    df_naselja['geometry'] = df_naselja.wkt.apply(wkt.loads)
+    gdf_naselja = gpd.GeoDataFrame(df_naselja, geometry='geometry', crs="EPSG:32634")
+    gdf_naselja.to_crs("EPSG:4326", inplace=True)
+    gdf_naselja.sindex
+
+    gdf_naselja = gdf_naselja.groupby('opstina_maticni_broj').agg({
+        'geometry': lambda x: x.unary_union
+    }).reset_index()
+
+    gdf_opstine = gdf_opstine.merge(gdf_naselja, on='opstina_maticni_broj', suffixes=('', '_naselja'))
+    gdf_opstine['geometry'] = gdf_opstine.apply(lambda row: row['geometry'].union(row['geometry_naselja']), axis=1)
+    gdf_opstine.drop(['geometry_naselja'], inplace=True, axis=1)
+
     all_opstina_exist = True
     for i, row in gdf_opstine.iterrows():
         opstina = row['opstina_imel']
