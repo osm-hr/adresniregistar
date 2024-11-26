@@ -27,7 +27,8 @@ def fix_int_names(data_path, street_mappings: StreetMapping, oauth_session: OAut
     additional_comment = ''
     if opstina:
         additional_comment = f'in {opstina} '
-    api = osmapi.OsmApi(session=oauth_session, changesetauto=True, changesetautosize=1000 if opstina else 100, changesetautotags={
+    api = osmapi.OsmApi(session=oauth_session)
+    api.ChangesetCreate({
         "comment": f"RGZ street import {additional_comment}(fixing and adding int_name on street names, https://community.openstreetmap.org/t/uvoz-adresnog-registra-pravila-tagovanja-ulica-u-srbiji/106126)",
         "tag": "mechanical=yes",
         "source": "RGZ_ST"
@@ -118,7 +119,7 @@ def fix_int_names(data_path, street_mappings: StreetMapping, oauth_session: OAut
         if not accepted:
             continue
         api.WayUpdate(entity)
-    api.flush()
+    api.ChangesetClose()
 
 
 def main():

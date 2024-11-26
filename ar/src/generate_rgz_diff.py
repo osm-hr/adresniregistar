@@ -73,7 +73,8 @@ def fix_deleted_to_added(rgz_path, rgz_last_update, oauth_session):
     Nalazi kucne brojeve koji su obrisani i koji su onda dodati sa novim ref:RS:kucni_broj,
     sa istim imenom ulice i kucnim brojom i unutar 100m i update-uje im ref:RS:kucni_broj
     """
-    api = osmapi.OsmApi(session=oauth_session, changesetauto=True, changesetautosize=1000, changesetautotags={
+    api = osmapi.OsmApi(session=oauth_session)
+    api.ChangesetCreate({
         "comment": f"RGZ address import (updating ref:RS:kucni_broj after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html",
         "tag": "mechanical=yes",
         "source": "RGZ_AR"
@@ -173,15 +174,18 @@ def fix_deleted_to_added(rgz_path, rgz_last_update, oauth_session):
             time.sleep(0.1)
 
         #time.sleep(0.1)
-    api.flush()
+    api.ChangesetClose()
 
 
 def fix_changed(rgz_path, street_mappings, oauth_session):
-    api = osmapi.OsmApi(session=oauth_session, changesetauto=True, changesetautosize=1000, changesetautotags={
+    api = osmapi.OsmApi(session=oauth_session)
+    api.ChangesetCreate({
         "comment": f"RGZ address import (updating street and housenumber after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html",
         "tag": "mechanical=yes",
         "source": "RGZ_AR"
     })
+    changeset_count = 0
+
     overpass_api = overpy.Overpass(url='http://localhost:12346/api/interpreter')
 
     print('Loading changed addresses')
@@ -248,8 +252,17 @@ def fix_changed(rgz_path, street_mappings, oauth_session):
                 api.WayUpdate(entity)
             else:
                 api.RelationUpdate(entity)
+            changeset_count = changeset_count + 1
+            if changeset_count % 2000 == 0:
+                api.ChangesetClose()
+                time.sleep(5)
+                api.ChangesetCreate({
+                    "comment": f"RGZ address import (updating street and housenumber after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html",
+                    "tag": "mechanical=yes",
+                    "source": "RGZ_AR"
+                })
             time.sleep(0.1)
-    api.flush()
+    api.ChangesetClose()
 
 
 def create_csv_files(rgz_path):
@@ -379,7 +392,6 @@ def main():
     try:
         token = token_loader()
     except FileNotFoundError:
-
         print("Token not found, get a new one...")
         token = save_and_get_access_token(client_id, client_secret, ["write_api", "write_notes"])
     oauth_session = OAuth2Session(client_id, token=token)
