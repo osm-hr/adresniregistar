@@ -70,11 +70,20 @@
 <br/>
 <br/>
 
-<table id="list" class="table table-sm table-striped table-bordered table-hover w-25">
+<table id="list" class="table table-sm table-striped table-bordered table-hover w-75">
 <thead class="thead-dark sticky-top">
 	<tr>
 		<th>Opština</th>
-		<th>#</th>
+		<th>Ukupno</th>
+		<th>Adresa u zgradi</th>
+		<th>Više adresa u zgradi</th>
+		<th>Neslaganje adresa</th>
+		<th>POI u zgradi</th>
+		<th>POI i adresa(e) u zgradi</th>
+		<th>Nepotrebna adresa</th>
+		<th>Beleška</th>
+		<th>Adresa POI na zgradu</th>
+		<th>Zgrada je čvor</th>
 	</tr>
 </thead>
 <tbody>
@@ -82,6 +91,15 @@
 	<tr>
 		<td><a href="qa_addresses/{{ opstina.name }}.html">{{ opstina.name }}</a></td>
 		<td>{{ opstina.count }}</td>
+		<td>{{ opstina.count_matb }}</td>
+		<td>{{ opstina.count_aatb }}</td>
+		<td>{{ opstina.count_anm }}</td>
+		<td>{{ opstina.count_mptb }}</td>
+		<td>{{ opstina.count_ctc }}</td>
+		<td>{{ opstina.count_rafb }}</td>
+		<td>{{ opstina.count_np }}</td>
+		<td>{{ opstina.count_cpatb }}</td>
+		<td>{{ opstina.count_bin }}</td>
 	</tr>
 	{% endfor %}
 </tbody>
@@ -89,6 +107,15 @@
 	<tr>
 		<th>Serbia TOTAL:</th>
 		<th class="d-sm-table-cell">{{ total.count }}</th>
+		<th class="d-sm-table-cell">{{ total.count_matb }}</th>
+		<th class="d-sm-table-cell">{{ total.count_aatb }}</th>
+		<th class="d-sm-table-cell">{{ total.count_anm }}</th>
+		<th class="d-sm-table-cell">{{ total.count_mptb }}</th>
+		<th class="d-sm-table-cell">{{ total.count_ctc }}</th>
+		<th class="d-sm-table-cell">{{ total.count_rafb }}</th>
+		<th class="d-sm-table-cell">{{ total.count_np }}</th>
+		<th class="d-sm-table-cell">{{ total.count_cpatb }}</th>
+		<th class="d-sm-table-cell">{{ total.count_bin }}</th>
 	</tr>
 </tfoot>
 </table>
@@ -96,57 +123,18 @@
 <br/>
 <br/>
 <br/>
-<hr/>
-
-<h2>Broj različitih kategorija</h2>
-<br/>
-<p>Ovde možete videti ukupan broj adresa koje se nalaze unutar zgrada, po kategorijama. Neke od kategorija se mogu rešiti automatizacijom, ali većina zahteva ljudsku pažnju.</p>
-<br/>
-<br/>
-
-<table id="list_resolution" class="table table-sm table-striped table-bordered table-hover w-25">
-<thead class="thead-dark sticky-top">
-	<tr>
-		<th>Kategorija</th>
-        <th>Broj pojavljivanja</th>
-	</tr>
-</thead>
-<tbody>
-	{% for resolution, count in resolution_stats.items() %}
-    {% if resolution == AddressInBuildingResolution.NO_ACTION %}
-    {% else %}
-	<tr>
-        <td>
-            {% if resolution == AddressInBuildingResolution.NO_ACTION %}
-            Sve kako treba!
-            {% elif resolution == AddressInBuildingResolution.MERGE_POI_TO_BUILDING %}
-            POI bi mogao da se premesti na zgradu (ukoliko je namena zgrade ista)
-            {% elif resolution == AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING %}
-            Adresa unutar zgrade treba da se premesti na zgradu. Pogledajte fajlove iznad za ovo.
-            {% elif resolution == AddressInBuildingResolution.COPY_POI_ADDRESS_TO_BUILDING %}
-            Adresa POI-a može da se prekopira i na zgradu.
-            {% elif resolution == AddressInBuildingResolution.ATTACH_ADDRESSES_TO_BUILDING %}
-            Zakačiti čvorove adrese(a) na zgradu
-            {% elif resolution == AddressInBuildingResolution.REMOVE_ADDRESS_FROM_BUILDING %}
-            Uklonite adresu sa zgrade, već je adresa na tačkama unutar zgrade
-            {% elif resolution == AddressInBuildingResolution.ADDRESSES_NOT_MATCHING %}
-            Adrese unutar zgrade i na zgradi se ne poklapaju, razrešite ručno
-            {% elif resolution == AddressInBuildingResolution.CASE_TOO_COMPLEX %}
-            Mešavina POI-a i adresa unutar zgrade, razrešite ručno
-            {% elif resolution == AddressInBuildingResolution.BUILDING_IS_NODE %}
-            Ova zgrada je zapravo čvor sa tagom „building”, treba izbrisati „building” tag
-            {% elif resolution == AddressInBuildingResolution.NOTE_PRESENT %}
-            Nešto nije u redu, ali postoji "note" tag na zgradi, adresi ili POI-u i ništa se ne automatizuje
-            {% else %}
-            Kategorija nepoznata
-            {% endif %}
-        </td>
-        <td>{{ count }}</td>
-	</tr>
-    {% endif %}
-	{% endfor %}
-</tbody>
-</table>
+<h3>Objašnjenje kolona</h3>
+<ul>
+    <li>Adresa u zgradi &mdash; Adresa unutar zgrade treba da se premesti na zgradu. Pogledajte fajlove u pojedinačnim opštinama za ovo.</li>
+    <li>Više adresa u zgradi &mdash; Zakačiti čvorove adrese(a) na zgradu.</li>
+    <li>Neslaganje adresa &mdash; Adrese unutar zgrade i na zgradi se ne poklapaju, razrešite ručno.</li>
+    <li>POI u zgradi &mdash; POI bi mogao da se premesti na zgradu (ukoliko je namena zgrade ista)</li>
+    <li>POI i adresa(e) u zgradi &mdash; Mešavina POI-a i adresa unutar zgrade, razrešite ručno.</li>
+    <li>Nepotrebna adresa &mdash; Uklonite adresu sa zgrade, već je adresa na tačkama unutar zgrade.</li>
+    <li>Beleška &mdash; Nešto nije u redu, ali postoji "note" tag na zgradi, adresi ili POI-u i ništa se ne automatizuje</li>
+    <li>Adresa POI na zgradu &mdash; Adresa POI-a može da se prekopira i na zgradu.</li>
+    <li>Zgrada je čvor &mdash; Ova zgrada je zapravo čvor sa tagom „building”, treba izbrisati „building” tag</li>
+</ul>
 
 {% endblock %}
 

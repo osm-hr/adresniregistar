@@ -180,44 +180,70 @@ def generate_addresses_in_buildings(context):
         os.mkdir(report_qa_address_path)
 
     df_addresses_in_buildings = pd.read_csv(os.path.join(qa_path, 'addresses_in_buildings_per_opstina.csv'))
+    df_addresses_in_buildings['resolution_value'] = df_addresses_in_buildings['resolution']
     df_addresses_in_buildings['resolution'] = df_addresses_in_buildings['resolution'].apply(lambda x: AddressInBuildingResolution(x))
+
 
     opstine = []
     total = {
+        'count_matb': 0,
+        'count_aatb': 0,
+        'count_anm': 0,
+        'count_mptb': 0,
+        'count_ctc': 0,
+        'count_rafb': 0,
+        'count_np': 0,
+        'count_cpatb': 0,
+        'count_bin': 0,
         'count': 0
-    }
-    resolution_stats = {
-        AddressInBuildingResolution.NO_ACTION: 0,
-        AddressInBuildingResolution.MERGE_POI_TO_BUILDING: 0,
-        AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING: 0,
-        AddressInBuildingResolution.COPY_POI_ADDRESS_TO_BUILDING: 0,
-        AddressInBuildingResolution.ATTACH_ADDRESSES_TO_BUILDING: 0,
-        AddressInBuildingResolution.REMOVE_ADDRESS_FROM_BUILDING: 0,
-        AddressInBuildingResolution.ADDRESSES_NOT_MATCHING: 0,
-        AddressInBuildingResolution.CASE_TOO_COMPLEX: 0,
-        AddressInBuildingResolution.BUILDING_IS_NODE: 0,
-        AddressInBuildingResolution.NOTE_PRESENT: 0
     }
 
     for opstina_name, df_opstina in df_addresses_in_buildings.sort_values('opstina_imel').groupby('opstina_imel'):
         count = len(df_opstina['osm_id_right'].value_counts())
+        count_matb = len(df_opstina[df_opstina['resolution'] == AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING][['osm_id_right', 'resolution_value']].value_counts())
+        count_aatb = len(df_opstina[df_opstina['resolution'] == AddressInBuildingResolution.ATTACH_ADDRESSES_TO_BUILDING][['osm_id_right', 'resolution_value']].value_counts())
+        count_anm = len(df_opstina[df_opstina['resolution'] == AddressInBuildingResolution.ADDRESSES_NOT_MATCHING][['osm_id_right', 'resolution_value']].value_counts())
+        count_mptb = len(df_opstina[df_opstina['resolution'] == AddressInBuildingResolution.MERGE_POI_TO_BUILDING][['osm_id_right', 'resolution_value']].value_counts())
+        count_ctc = len(df_opstina[df_opstina['resolution'] == AddressInBuildingResolution.CASE_TOO_COMPLEX][['osm_id_right', 'resolution_value']].value_counts())
+        count_rafb = len(df_opstina[df_opstina['resolution'] == AddressInBuildingResolution.REMOVE_ADDRESS_FROM_BUILDING][['osm_id_right', 'resolution_value']].value_counts())
+        count_np = len(df_opstina[df_opstina['resolution'] == AddressInBuildingResolution.NOTE_PRESENT][['osm_id_right', 'resolution_value']].value_counts())
+        count_cpatb = len(df_opstina[df_opstina['resolution'] == AddressInBuildingResolution.COPY_POI_ADDRESS_TO_BUILDING][['osm_id_right', 'resolution_value']].value_counts())
+        count_bin = len(df_opstina[df_opstina['resolution'] == AddressInBuildingResolution.BUILDING_IS_NODE][['osm_id_right', 'resolution_value']].value_counts())
         total['count'] += count
+        total['count_matb'] += count_matb
+        total['count_aatb'] += count_aatb
+        total['count_anm'] += count_anm
+        total['count_mptb'] += count_mptb
+        total['count_ctc'] += count_ctc
+        total['count_rafb'] += count_rafb
+        total['count_np'] += count_np
+        total['count_cpatb'] += count_cpatb
+        total['count_bin'] += count_bin
         opstine.append({
             'name': opstina_name,
+            'count_matb': count_matb,
+            'count_aatb': count_aatb,
+            'count_anm': count_anm,
+            'count_mptb': count_mptb,
+            'count_ctc': count_ctc,
+            'count_rafb': count_rafb,
+            'count_np': count_np,
+            'count_cpatb': count_cpatb,
+            'count_bin': count_bin,
             'count': count
         })
         addresses = []
         opstina_resolution_stats = {
             AddressInBuildingResolution.NO_ACTION: 0,
-            AddressInBuildingResolution.MERGE_POI_TO_BUILDING: 0,
             AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING: 0,
-            AddressInBuildingResolution.COPY_POI_ADDRESS_TO_BUILDING: 0,
             AddressInBuildingResolution.ATTACH_ADDRESSES_TO_BUILDING: 0,
-            AddressInBuildingResolution.REMOVE_ADDRESS_FROM_BUILDING: 0,
             AddressInBuildingResolution.ADDRESSES_NOT_MATCHING: 0,
+            AddressInBuildingResolution.MERGE_POI_TO_BUILDING: 0,
             AddressInBuildingResolution.CASE_TOO_COMPLEX: 0,
-            AddressInBuildingResolution.BUILDING_IS_NODE: 0,
-            AddressInBuildingResolution.NOTE_PRESENT: 0
+            AddressInBuildingResolution.REMOVE_ADDRESS_FROM_BUILDING: 0,
+            AddressInBuildingResolution.NOTE_PRESENT: 0,
+            AddressInBuildingResolution.COPY_POI_ADDRESS_TO_BUILDING: 0,
+            AddressInBuildingResolution.BUILDING_IS_NODE: 0
         }
 
         opstina_html_path = os.path.join(report_qa_address_path, f'{opstina_name}.html')
@@ -271,9 +297,6 @@ def generate_addresses_in_buildings(context):
             osm_files_move_address_to_building=osm_files_move_address_to_building
         )
 
-        for resolution, count in opstina_resolution_stats.items():
-            resolution_stats[resolution] += count
-
         with open(opstina_html_path, 'w', encoding='utf-8') as fh:
             fh.write(output)
 
@@ -290,7 +313,16 @@ def generate_addresses_in_buildings(context):
         if not any(o for o in opstine if o['name'] == opstina_name):
             opstine.append({
                 'name': opstina_name,
-                'count': 0
+                'count': 0,
+                'count_matb': 0,
+                'count_aatb': 0,
+                'count_anm': 0,
+                'count_mptb': 0,
+                'count_ctc': 0,
+                'count_rafb': 0,
+                'count_np': 0,
+                'count_cpatb': 0,
+                'count_bin': 0,
             })
             output = template.render(
                 currentDate=context['dates']['short'],
@@ -299,7 +331,6 @@ def generate_addresses_in_buildings(context):
                 osmDataDate=context['dates']['osm_data'],
                 addresses=[],
                 opstina_name=opstina_name,
-                resolution_stats={},
                 osm_files_move_address_to_building=[],
             )
             opstina_html_path = os.path.join(report_qa_address_path, f'{opstina_name}.html')
@@ -313,8 +344,7 @@ def generate_addresses_in_buildings(context):
         rgzDataDate=context['dates']['rgz_data'],
         osmDataDate=context['dates']['osm_data'],
         opstine=opstine,
-        total=total,
-        resolution_stats=resolution_stats,
+        total=total
     )
 
     with open(html_path, 'w', encoding='utf-8') as fh:
