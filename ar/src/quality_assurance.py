@@ -14,7 +14,7 @@ from common import CollectRelationWaysHandler, CollectWayNodesHandler, BuildNode
 
 
 def is_simple_address(tags):
-    common_tags = ['note', 'description', 'entrance', 'door', 'survey:date', 'survey_date', 'area',
+    common_tags = ['note', 'description', 'entrance', 'door', 'survey:date', 'survey_date', 'check_date', 'area',
                    'TEXT_ANGLE', 'TEXT_SIZE', 'OBJECTID', 'ref:RS:ulica', 'ref:RS:kucni_broj',
                    'building', 'building:levels', 'old_name', 'alt_name', 'source:addr', 'roof:levels',
                    'old_addr:street', 'old_addr:housenumber', 'access', 'removed:ref:RS:kucni_broj', 'source']
