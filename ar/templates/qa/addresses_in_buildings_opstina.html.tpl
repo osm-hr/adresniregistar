@@ -129,9 +129,9 @@
             Adrese unutar zgrade i na zgradi se ne poklapaju, razrešite ručno
             {% elif address.resolution == AddressInBuildingResolution.CASE_TOO_COMPLEX %}
             Mešavina POI-a i adresa unutar zgrade, razrešite ručno
-            {% elif resolution == AddressInBuildingResolution.BUILDING_IS_NODE %}
+            {% elif address.resolution == AddressInBuildingResolution.BUILDING_IS_NODE %}
             Ova zgrada je zapravo čvor sa tagom "building", treba izbrisati "building" tag
-            {% elif resolution == AddressInBuildingResolution.NOTE_PRESENT %}
+            {% elif address.resolution == AddressInBuildingResolution.NOTE_PRESENT %}
             Nešto nije u redu, ali postoji "note" tag na zgradi, adresi ili POI-u i ništa se ne automatizuje
             {% else %}
             Kategorija nepoznata

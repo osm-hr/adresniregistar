@@ -331,6 +331,7 @@ def generate_addresses_in_buildings(context):
                 osmDataDate=context['dates']['osm_data'],
                 addresses=[],
                 opstina_name=opstina_name,
+                resolution_stats={},
                 osm_files_move_address_to_building=[],
             )
             opstina_html_path = os.path.join(report_qa_address_path, f'{opstina_name}.html')
