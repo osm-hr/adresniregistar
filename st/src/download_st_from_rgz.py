@@ -14,7 +14,7 @@ def main():
 
     cwd = os.getcwd()
     download_path = os.path.join(cwd, 'data/rgz/download')
-    if len(os.listdir(download_path)) >= 168:
+    if len([i for i in os.listdir(download_path) if not os.path.isdir(os.path.join(download_path, i))]) >= 168:
         print("All files from RGZ already downloaded, skipping download")
         return
 
