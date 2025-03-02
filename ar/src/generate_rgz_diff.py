@@ -80,7 +80,7 @@ def fix_deleted_to_added(rgz_path, rgz_last_update, oauth_session):
         "source": "RGZ_AR"
     })
 
-    overpass_api = overpy.Overpass(url='http://localhost:12346/api/interpreter')
+    overpass_api = overpy.Overpass(url='http://localhost:12345/api/interpreter')
 
     print('Loading added addresses')
     new_addresses = []
@@ -186,7 +186,7 @@ def fix_changed(rgz_path, street_mappings, oauth_session):
     })
     changeset_count = 0
 
-    overpass_api = overpy.Overpass(url='http://localhost:12346/api/interpreter')
+    overpass_api = overpy.Overpass(url='http://localhost:12345/api/interpreter')
 
     print('Loading changed addresses')
     changed_addresses = []
