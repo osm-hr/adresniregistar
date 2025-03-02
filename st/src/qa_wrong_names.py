@@ -397,12 +397,14 @@ def find_wrong_names(cwd, street_mappings: StreetMapping):
 
     df_opstine = pd.read_csv(os.path.join(rgz_path, 'opstina.csv'))
     df_opstine['geometry'] = df_opstine.wkt.apply(wkt.loads)
+    df_opstine = df_opstine[~df_opstine.okrug_sifra.isin([25, 26, 27, 28, 29])]
     gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs="EPSG:32634")
     gdf_opstine.to_crs("EPSG:4326", inplace=True)
     gdf_opstine.sindex
     print(f"Loaded all opstine geometries ({len(gdf_opstine)})")
 
     df_osm_streets = pd.read_csv(os.path.join(osm_path, 'streets.csv'), dtype={'ref:RS:ulica': 'string'})
+    df_osm_streets = df_osm_streets[~df_osm_streets.osm_id.isin(['w715908909', 'w473855550', 'w713821323', 'w367701564', 'w251497685', 'w26496536', 'w26496078', 'w36975305'])]
     df_osm_streets['geometry'] = df_osm_streets.osm_geometry.apply(wkt.loads)
     gdf_osm_streets = gpd.GeoDataFrame(df_osm_streets, geometry='geometry', crs="EPSG:4326")
     gdf_osm_streets.sindex
