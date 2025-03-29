@@ -147,10 +147,51 @@ def extract_number(s: str):
         return True, int(number), is_ordinal
 
 
+composite_prefixes = ['двадесет', 'тридесет', 'четрдесет', 'педесет',
+                      'шестдесет', 'седамдесет', 'осамдесет', 'деведесет']
+composite_prefixes_latn = []
+for composite_prefix in composite_prefixes:
+    composite_prefixes_latn.append(cyr2lat(composite_prefix))
+
+
 ordinal_replacements = [
+    ('двадесет прва', '21.', 'XXI'),
+    ('двадесет прве', '21.', 'XXI'),
+    ('двадесет први', '21.', 'XXI'),
+    ('двадесет првог', '21.', 'XXI'),
+    ('двадесет друга', '22.', 'XXII'),
+    ('двадесет друге', '22.', 'XXII'),
+    ('двадесет други', '22.', 'XXII'),
+    ('двадесет другог', '22.', 'XXII'),
+    ('двадесет трећа', '23.', 'XXIII'),
+    ('двадесет треће', '23.', 'XXIII'),
+    ('двадесет трећи', '23.', 'XXIII'),
+    ('двадесет трећег', '23.', 'XXIII'),
+    ('двадесет четврта', '24.', 'XXIV'),
+    ('двадесет четврте', '24.', 'XXIV'),
+    ('двадесет четврти', '24.', 'XXIV'),
+    ('двадесет четвртог', '24.', 'XXIV'),
+    ('двадесет пета', '25.', 'XXV'),
+    ('двадесет пете', '25.', 'XXV'),
+    ('двадесет пети', '25.', 'XXV'),
+    ('двадесет петог', '25.', 'XXV'),
+    ('двадесет шеста', '26.', 'XXVI'),
+    ('двадесет шесте', '26.', 'XXVI'),
+    ('двадесет шести', '26.', 'XXVI'),
+    ('двадесет шестог', '26.', 'XXVI'),
+    ('двадесет седма', '27.', 'XXVII'),
+    ('двадесет седме', '27.', 'XXVII'),
+    ('двадесет седми', '27.', 'XXVII'),
+    ('двадесет седмог', '27.', 'XXVII'),
+    ('двадесет осма', '28.', 'XXVIII'),
+    ('двадесет осме', '28.', 'XXVIII'),
+    ('двадесет осми', '28.', 'XXVIII'),
+    ('двадесет осмог', '28.', 'XXVIII'),
+    ('двадесет девета', '99.', 'XXIX'),
+    # TODO: Dodaj i "dvadesetdruga" varijantu bez razmaka, pogledaj Grocku
     ('први', '1.', 'I'),
     ('прва', '1.', 'I'),
-    ('првe', '1.', 'I'),
+    ('прве', '1.', 'I'),
     ('прво', '1.', 'I'),
     ('други', '2.', 'II'),
     ('друга', '2.', 'II'),
@@ -258,6 +299,7 @@ def check_alt_name(rgz_proper_name, osm_name, alt_name, is_latin: bool = False):
     name_to_check_lower = name_to_check.lower()
 
     # Check for ordinal numbers
+    contains_written_number = False
     ordinal_replacement_to_use = ordinal_replacements if not is_latin else ordinal_replacements_latn
     for replacement in ordinal_replacement_to_use:
         needle = replacement[0]
@@ -265,18 +307,25 @@ def check_alt_name(rgz_proper_name, osm_name, alt_name, is_latin: bool = False):
         if not is_alt_name_missing and roman.lower() in alt_name:
             continue
         if ' ' + needle + ' ' in name_to_check_lower:
+            contains_written_number = True
             idx = name_to_check_lower.find(needle)
             proper_alt_name = name_to_check[0:idx-1] + ' ' + replacement[1] + ' ' + name_to_check[idx + len(needle) + 1:]
-            if is_alt_name_missing or alt_name != proper_alt_name:
+            prefix = name_to_check[0:idx-1].lower()
+            contains_composite_prefix = any(c in prefix for c in (composite_prefixes if not is_latin else composite_prefixes_latn))
+            if not contains_composite_prefix and (is_alt_name_missing or alt_name != proper_alt_name):
                 return is_alt_name_missing, not is_alt_name_missing, proper_alt_name, False
         if name_to_check_lower.startswith(needle + ' '):
+            contains_written_number = True
             proper_alt_name = replacement[1] + ' ' + name_to_check[len(needle) + 1:]
             if is_alt_name_missing or alt_name != proper_alt_name:
                 return is_alt_name_missing, not is_alt_name_missing, proper_alt_name, False
         if name_to_check_lower.endswith(' ' + needle):
+            contains_written_number = True
             idx = name_to_check_lower.find(needle)
             proper_alt_name = name_to_check[0:idx - 1] + ' ' + replacement[1]
-            if is_alt_name_missing or alt_name != proper_alt_name:
+            prefix = name_to_check[0:idx-1].lower()
+            contains_composite_prefix = any(c in prefix for c in (composite_prefixes if not is_latin else composite_prefixes_latn))
+            if not contains_composite_prefix and (is_alt_name_missing or alt_name != proper_alt_name):
                 return is_alt_name_missing, not is_alt_name_missing, proper_alt_name, False
 
     # check for ordinal numbers, looking like some king titles, those are certainly roman numerals
@@ -287,6 +336,7 @@ def check_alt_name(rgz_proper_name, osm_name, alt_name, is_latin: bool = False):
         if ' ' + needle + ' ' in name_to_check_lower:
             if is_month_in_name(name_to_check_lower):
                 continue
+            contains_written_number = True
             idx = name_to_check_lower.find(needle)
             proper_alt_name = name_to_check[0:idx-1] + ' ' + replacement[1] + ' ' + name_to_check[idx + len(needle) + 1:]
             if is_alt_name_missing or alt_name != proper_alt_name:
@@ -294,12 +344,14 @@ def check_alt_name(rgz_proper_name, osm_name, alt_name, is_latin: bool = False):
         if name_to_check_lower.startswith(needle + ' '):
             if is_month_in_name(name_to_check_lower):
                 continue
+            contains_written_number = True
             proper_alt_name = replacement[1] + ' ' + name_to_check[len(needle) + 1:]
             if is_alt_name_missing or alt_name != proper_alt_name:
                 return is_alt_name_missing, not is_alt_name_missing, proper_alt_name, False
         if name_to_check_lower.endswith(' ' + needle):
             if is_month_in_name(name_to_check_lower):
                 continue
+            contains_written_number = True
             idx = name_to_check_lower.find(needle)
             proper_alt_name = name_to_check[0:idx - 1] + ' ' + replacement[1]
             if is_alt_name_missing or alt_name != proper_alt_name:
@@ -310,23 +362,33 @@ def check_alt_name(rgz_proper_name, osm_name, alt_name, is_latin: bool = False):
     for replacement in number_replacements_to_use:
         needle = replacement[0]
         if ' ' + needle + ' ' in name_to_check_lower:
+            contains_written_number = True
             idx = name_to_check_lower.find(needle)
             proper_alt_name = name_to_check[0:idx-1] + ' ' + replacement[1] + ' ' + name_to_check[idx + len(needle) + 1:]
-            if is_alt_name_missing or alt_name != proper_alt_name:
+            prefix = name_to_check[0:idx-1].lower()
+            contains_composite_prefix = any(c in prefix for c in (composite_prefixes if not is_latin else composite_prefixes_latn))
+            if not contains_composite_prefix and (is_alt_name_missing or alt_name != proper_alt_name):
                 return is_alt_name_missing, not is_alt_name_missing, proper_alt_name, False
         if name_to_check_lower.startswith(needle + ' '):
+            contains_written_number = True
             proper_alt_name = replacement[1] + ' ' + name_to_check[len(needle) + 1:]
             if is_alt_name_missing or alt_name != proper_alt_name:
                 return is_alt_name_missing, not is_alt_name_missing, proper_alt_name, False
         if name_to_check_lower.endswith(' ' + needle):
+            contains_written_number = True
             idx = name_to_check_lower.find(needle)
             proper_alt_name = name_to_check[0:idx - 1] + ' ' + replacement[1]
-            if is_alt_name_missing or alt_name != proper_alt_name:
+            prefix = name_to_check[0:idx-1].lower()
+            contains_composite_prefix = any(c in prefix for c in (composite_prefixes if not is_latin else composite_prefixes_latn))
+            if not contains_composite_prefix and (is_alt_name_missing or alt_name != proper_alt_name):
                 return is_alt_name_missing, not is_alt_name_missing, proper_alt_name, False
 
     # check for numbers to convert to written form
     has_number, number, is_ordinal = extract_number(name_to_check_lower)
     while True:
+        if contains_written_number:
+            # If street already has written number and numeral number, skip this part ("seste brigade 2. deo")
+            break
         if not has_number:
             break
         contains_roman = not is_alt_name_missing and number <= 10 and (
@@ -375,6 +437,7 @@ def check_alt_name(rgz_proper_name, osm_name, alt_name, is_latin: bool = False):
         proper_alt_name = name_to_check[0:idx - 1] + (' др' if not is_latin else ' dr')
         if not has_number and (is_alt_name_missing or alt_name != proper_alt_name):
             return is_alt_name_missing, not is_alt_name_missing, proper_alt_name, False
+    # TODO: Check case when name is "Dr" and alt name should be "Doktor", "Doktora", "Doktorka" or "Doktorke"
 
     # check for knjeginje
     knjeginjе = 'књегиње' if not is_latin else 'knjeginje'
@@ -385,6 +448,20 @@ def check_alt_name(rgz_proper_name, osm_name, alt_name, is_latin: bool = False):
 
     return False, False, '', False
 
+
+#check_alt_name("Двадесет шеста", "Двадесет шеста", "26.", False)
+#check_alt_name("Шеста", "Шеста", "6.", False)
+#check_alt_name("Деведесет девет палих бораца", "Деведесет девет палих бораца", "99. палих бораца", False)
+#check_alt_name("Двадесет друге дивизије", "Двадесет друге дивизије", "22. дивизије", False)
+#check_alt_name("Dvadeset druge divizije", "Dvadeset druge divizije", "22. divizije", True)
+#check_alt_name("23. дивизије", "23. дивизије", "Двадесет треће дивизије", False)
+#check_alt_name("Шесте источнобосанске 6. део", "Шесте источнобосанске 6. део", "6. источнобосанске 6. део", False)
+#check_alt_name("Четвртог јула четврти прилаз", "Четвртог јула четврти прилаз", "Четвртог јула 4. прилаз", False)
+#check_alt_name("Четвртог јула 4. прилаз", "Четвртог јула 4. прилаз", "4. јула 4. прилаз", False)
+#check_alt_name("1. шумадијске бригаде", "1. шумадијске бригаде", "Прве шумадијске бригаде", False)
+a = check_alt_name("Др Десе Милосављевић", "Др Десе Милосављевић", "sf", False)
+
+pass
 
 def find_wrong_names(cwd, street_mappings: StreetMapping):
     osm_path = os.path.join(cwd, 'data/osm')
@@ -404,7 +481,12 @@ def find_wrong_names(cwd, street_mappings: StreetMapping):
     print(f"Loaded all opstine geometries ({len(gdf_opstine)})")
 
     df_osm_streets = pd.read_csv(os.path.join(osm_path, 'streets.csv'), dtype={'ref:RS:ulica': 'string'})
-    df_osm_streets = df_osm_streets[~df_osm_streets.osm_id.isin(['w715908909', 'w473855550', 'w713821323', 'w367701564', 'w251497685', 'w26496536', 'w26496078', 'w36975305'])]
+    df_osm_streets = df_osm_streets[~df_osm_streets.osm_id.isin([
+        'w715908909', 'w473855550', 'w713821323', 'w367701564', 'w251497685', 'w26496536', 'w26496078', 'w36975305',
+        'w149943467', 'w1343580428', 'w1164632745', 'w821891741', 'w1087728893', 'w675806843', 'w576435160',
+        'w675806835', 'w684170029', 'w796441804', 'w680405070', 'w680385199', 'w680385122', 'w1337552425',
+        'w1127979395',
+        'r16764149'])]
     df_osm_streets['geometry'] = df_osm_streets.osm_geometry.apply(wkt.loads)
     gdf_osm_streets = gpd.GeoDataFrame(df_osm_streets, geometry='geometry', crs="EPSG:4326")
     gdf_osm_streets.sindex
