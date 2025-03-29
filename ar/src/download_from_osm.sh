@@ -17,7 +17,7 @@ function start_local_instance() {
   docker run \
     -e OVERPASS_META=yes \
     -e OVERPASS_MODE=init \
-    -e OVERPASS_PLANET_URL=http://download.geofabrik.de/europe/serbia-latest.osm.pbf \
+    -e OVERPASS_PLANET_URL=https://download.geofabrik.de/europe/serbia-latest.osm.pbf \
     -e OVERPASS_DIFF_URL=https://planet.openstreetmap.org/replication/minute/ \
     -e OVERPASS_RULES_LOAD=10 \
     -e OVERPASS_PLANET_PREPROCESS='mv /db/planet.osm.bz2 /db/planet.osm.pbf && osmium cat -o /db/planet.osm.bz2 /db/planet.osm.pbf && rm /db/planet.osm.pbf' \
@@ -52,7 +52,7 @@ if [ "${AR_INCREMENTAL_UPDATE:-}" = "1" ]; then
 else
   echo "Download Serbia PBF from geofabrik"
   mkdir -p data/osm/download
-  test -f data/osm/download/serbia.osm.pbf || wget http://download.geofabrik.de/europe/serbia-latest.osm.pbf -O data/osm/download/serbia.osm.pbf -q --show-progress --progress=dot:giga
+  test -f data/osm/download/serbia.osm.pbf || wget https://download.geofabrik.de/europe/serbia-latest.osm.pbf -O data/osm/download/serbia.osm.pbf -q --show-progress --progress=dot:giga
 
   osm_data_date=`osmium fileinfo data/osm/download/serbia.osm.pbf | grep osmosis_replication_timestamp | cut -d"=" -f2`
   osm_data_date=${osm_data_date::-1}
