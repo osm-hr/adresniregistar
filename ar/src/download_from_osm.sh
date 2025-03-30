@@ -52,7 +52,9 @@ if [ "${AR_INCREMENTAL_UPDATE:-}" = "1" ]; then
 else
   echo "Download Serbia PBF from geofabrik"
   mkdir -p data/osm/download
-  test -f data/osm/download/serbia.osm.pbf || wget https://download.geofabrik.de/europe/serbia-latest.osm.pbf -O data/osm/download/serbia.osm.pbf -q --show-progress --progress=dot:giga
+  yesterday=`date -d "yesterday" +"%y%m%d"`
+  echo "Downloading serbia-$yesterday.osm.pbf"
+  test -f data/osm/download/serbia.osm.pbf || wget https://download.geofabrik.de/europe/serbia-$yesterday.osm.pbf -O data/osm/download/serbia.osm.pbf -q --show-progress --progress=dot:giga
 
   osm_data_date=`osmium fileinfo data/osm/download/serbia.osm.pbf | grep osmosis_replication_timestamp | cut -d"=" -f2`
   osm_data_date=${osm_data_date::-1}
