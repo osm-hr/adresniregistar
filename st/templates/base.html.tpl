@@ -15,6 +15,51 @@
             display: none;
             position: absolute;
         }
+
+        .copy-btn {
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .copy-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        .copy-btn svg {
+            margin-right: 5px;
+            width: 16px;
+            height: 16px;
+        }
+
+        .copy-icon {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            color: #555;
+        }
+
+        .copy-icon:hover {
+            color: #000;
+        }
+
+        .success-message {
+            color: green;
+            font-size: 12px;
+            margin-left: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .show-message {
+            opacity: 1;
+        }
 	</style>
 </head>
 <body>

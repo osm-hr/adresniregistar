@@ -459,8 +459,9 @@ def check_alt_name(rgz_proper_name, osm_name, alt_name, is_latin: bool = False):
 #check_alt_name("Четвртог јула четврти прилаз", "Четвртог јула четврти прилаз", "Четвртог јула 4. прилаз", False)
 #check_alt_name("Четвртог јула 4. прилаз", "Четвртог јула 4. прилаз", "4. јула 4. прилаз", False)
 #check_alt_name("1. шумадијске бригаде", "1. шумадијске бригаде", "Прве шумадијске бригаде", False)
-a = check_alt_name("Др Десе Милосављевић", "Др Десе Милосављевић", "sf", False)
-
+#check_alt_name("Др Десе Милосављевић", "Др Десе Милосављевић", "sf", False)
+#a = check_alt_name("Првог маја 3. део", "Првог маја 3. део", "1. маја 3. део", False)
+a = cyr2intname("Љубице")
 pass
 
 def find_wrong_names(cwd, street_mappings: StreetMapping):
@@ -485,7 +486,7 @@ def find_wrong_names(cwd, street_mappings: StreetMapping):
         'w715908909', 'w473855550', 'w713821323', 'w367701564', 'w251497685', 'w26496536', 'w26496078', 'w36975305',
         'w149943467', 'w1343580428', 'w1164632745', 'w821891741', 'w1087728893', 'w675806843', 'w576435160',
         'w675806835', 'w684170029', 'w796441804', 'w680405070', 'w680385199', 'w680385122', 'w1337552425',
-        'w1127979395',
+        'w1127979395', 'w1164632744',
         'r16764149'])]
     df_osm_streets['geometry'] = df_osm_streets.osm_geometry.apply(wkt.loads)
     gdf_osm_streets = gpd.GeoDataFrame(df_osm_streets, geometry='geometry', crs="EPSG:4326")

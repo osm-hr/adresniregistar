@@ -13,7 +13,7 @@ import pandas as pd
 from jinja2 import Environment, FileSystemLoader
 from shapely import wkt
 
-from common import cyr2lat, normalize_name, geojson2js, xml_escape, OsmEntitiesCacheHandler
+from common import cyr2lat, cyr2lat_small, cyr2intname, normalize_name, geojson2js, xml_escape, OsmEntitiesCacheHandler
 from street_mapping import StreetMapping
 
 
@@ -225,6 +225,11 @@ def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselj
         geojson_data = urllib.parse.quote(geojson.dumps(both_geojson))
         rgz_geojson_url = f"http://geojson.io/#data=data:application/json,{geojson_data}"
         rgz_way_length_uncovered = max(round(address['rgz_way_length']) - round(address['rgz_way_length_covered']), 0)
+        if pd.notna(address['rgz_ulica_proper']):
+            rgz_ulica_proper = address['rgz_ulica_proper']
+            copy_text = f"ref:RS:ulica={address['rgz_ulica_mb']}\\nname={rgz_ulica_proper}\\nname:sr={rgz_ulica_proper}\\nname:sr-Latn={cyr2lat_small(rgz_ulica_proper)}\\nint_name={cyr2intname(rgz_ulica_proper)}"
+        else:
+            copy_text = None
         streets.append({
             'rgz_ulica_mb': address['rgz_ulica_mb'],
             'rgz_ulica': address['rgz_ulica'],
@@ -240,6 +245,7 @@ def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselj
             'found_ways': found_ways,
             'found_max_found_intersection': found_max_found_intersection,
             'is_zaseok': address['is_zaseok'],
+            'copy_text': copy_text,
         })
 
         if not address['is_zaseok']:

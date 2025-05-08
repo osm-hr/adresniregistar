@@ -121,6 +121,32 @@
             table.draw();
         });
 	} );
+
+    function copyToClipboard(text, messageId) {
+        // Create a temporary textarea element to copy from
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+
+        // Select and copy the text
+        textarea.select();
+        document.execCommand('copy');
+
+        // Remove the temporary element
+        document.body.removeChild(textarea);
+
+        // Show success message
+        const message = document.getElementById('success-message-' + messageId);
+        message.classList.add('show-message');
+
+        // Hide the message after 2 seconds
+        setTimeout(() => {
+            message.classList.remove('show-message');
+        }, 2000);
+    }
     </script>
 
 
@@ -181,7 +207,15 @@ Podaci u poslednjoj koloni tabele prikazuju <b>samo potencijalne vrednosti</b> i
     {% for street in streets %}
     <tr>
         <td>{{ street.rgz_ulica_mb }}</td>
-        <td>{% if street.is_zaseok %}⭕ {% endif %}<a href="{{ street.rgz_geojson_url }}" target="_blank">{{ street.rgz_ulica }}</a> {% if street.rgz_ulica_proper != '' %} ➝ {{ street.rgz_ulica_proper }}{% endif %}</td>
+        <td>{% if street.is_zaseok %}⭕ {% endif %}<a href="{{ street.rgz_geojson_url }}" target="_blank">{{ street.rgz_ulica }}</a> {% if street.rgz_ulica_proper != '' %} ➝ {{ street.rgz_ulica_proper }}{% endif %}
+        {% if street.copy_text %}
+        <span class="tooltip-container">
+            <svg class="copy-icon" onclick="copyToClipboard('{{ street.copy_text}}', '{{ street.rgz_ulica_mb }}')" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg><span id="success-message-{{ street.rgz_ulica_mb }}" class="success-message">Kopirano!</span>
+        </span>
+        {% endif %}
+        </td>
         <td data-order="{{ street.rgz_way_length }}">{{ street.rgz_way_length }}m</td>
         <td data-order="{% if street.is_zaseok %}-1{% else %}{{ street.rgz_way_length_covered }}{% endif %}">{% if not street.is_zaseok %}{{ street.rgz_way_length_covered }}m{% endif %}</td>
         <td data-order="{% if street.is_zaseok %}-1{% else %}{{ street.rgz_way_length_uncovered }}{% endif %}">{% if not street.is_zaseok %}{{ street.rgz_way_length_uncovered }}m{% endif %}</td>
