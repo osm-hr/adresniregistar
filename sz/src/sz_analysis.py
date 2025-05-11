@@ -154,7 +154,7 @@ def join_dz_rgz_osm(ar_data_path: str, df_sz, opstina):
     df_sz_rgz['duplicated_naselja'] = df_sz_rgz.groupby(['sz_opstina', 'sz_ulica', 'sz_kucni_broj'])['rgz_naselje'].transform(lambda x: ','.join(x))
     df_sz_rgz.drop_duplicates(subset=['sz_opstina', 'sz_ulica', 'sz_kucni_broj'], keep='first', inplace=True)
     df_sz_rgz['found_in_rgz'] = df_sz_rgz.apply(lambda row: row['found_in_rgz'] and not row['is_duplicated'], axis=1)
-    df_sz_rgz['rgz_kucni_broj_id'] = df_sz_rgz.apply(lambda row: row['rgz_kucni_broj_id'] if row['found_in_rgz'] else np.nan, axis=1)
+    df_sz_rgz['rgz_kucni_broj_id'] = df_sz_rgz.apply(lambda row: row['rgz_kucni_broj_id'] if row['found_in_rgz'] else '', axis=1)
 
     # join with OSM
     df_sz_rgz_osm = df_sz_rgz.merge(df_osm, how='left', left_on='rgz_kucni_broj_id', right_on='ref:RS:kucni_broj')
@@ -163,7 +163,7 @@ def join_dz_rgz_osm(ar_data_path: str, df_sz, opstina):
 
     # remove duplicated (it is complicated as we need to remove duplicated "rgz_kucni_broj_id", but they can be NaN too
     df_sz_rgz_osm['is_osm_duplicated'] = df_sz_rgz_osm.duplicated(subset=['rgz_kucni_broj_id'], keep=False)
-    df_sz_rgz_osm['is_osm_duplicated'] = df_sz_rgz_osm.apply(lambda row: row['is_osm_duplicated'] and pd.notna(row['rgz_kucni_broj_id']), axis=1)
+    df_sz_rgz_osm['is_osm_duplicated'] = df_sz_rgz_osm.apply(lambda row: row['is_osm_duplicated'] and row['rgz_kucni_broj_id'] != '', axis=1)
 
     df_sz_rgz_osm['osm_id'] = df_sz_rgz_osm.groupby(['rgz_kucni_broj_id'])['osm_id'].transform(lambda x: json.dumps(list(x)))
     df_sz_rgz_osm['osm_id'] = df_sz_rgz_osm.apply(lambda row: row['osm_id'] if row['found_in_osm'] else np.nan, axis=1)
