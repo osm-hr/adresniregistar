@@ -12,6 +12,17 @@
         </button>
       </div>
       <div class="modal-body">
+	    <h5>Analiza po broju:</h5>
+	    <ul>
+			<li><b>Opština</b> &mdash; Opština za koje se odnose podaci</li>
+			<li><b>#RGZ (broj ulica)</b> &mdash; Ukupan broj različitih ulica u RGZ-u, bez zaseoka i ulica koje geometrijom podsećaju na zaseoke</li>
+			<li><b>Konflacija (bar jedan way)</b> &mdash; Ukupna broj RGZ ulica koje imaju bar jedan segment (jedan OSM way) spojen sa RGZ-om (tj. imaju ispravan „ref:RS:ulica” tag)</li>
+			<li><b>Konflacija [%]</b> &mdash; Procenat svih ulica u RGZ-u kojima je bar jedan segment spojen sa RGZ-om</li>
+			<li><b>Pronađeno (bar jedan way)</b> &mdash; Ukupan broj svih ulica u RGZ-u koje imaju bar jednog potencijalnog kandidata za spajanje sa RGZ-om (ovo znači da generalno neka ulica u blizini postoji u OSM-u, ali ne mora da znači da je to baš ulica iz RGZ-a)</li>
+			<li><b>Pronađeno [%]</b> &mdash; Procenat svih ulica u RGZ-u koje imaju bar jednog potencijalnog kandidata za spajanje sa RGZ-om</li>
+			<li><b>Nepronađeno (bar jedan way)</b> &mdash; Ukupan broj ulica iz RGZ-a koje nemaju nijednog kandidata za spajanje sa RGZ-om (dakle, razlika između ukupnih iz RGZ-a i zbira spojenih i pronađenih). Ovim se ukazuje da verovatno ništa oko ove ulice nije ni ucrtano u OSM-u</li>
+			<li><b>Nepronađeno [%]</b> &mdash; Procenat broja ulica iz RGZ-a koje nemaju nijednog kandidata za spajanje sa RGZ-om</li>
+		</ul>
         <h5>Analiza po dužini:</h5>
 		<ul>
 			<li><b>Opština</b> &mdash; Opština za koju se odnose podaci</li>
@@ -24,17 +35,6 @@
 			<li><b>Pronađeno [%]</b> &mdash; Procenat kilometraže svih ulica u OSM-u koje su potencijalni kandidati za spajanje sa RGZ-om (ovo znači da generalno neka ulica u blizini postoji u OSM-u, ali ne mora da znači da je to baš ulica iz RGZ-a)</li>
 			<li><b>Nepronađeno [km]</b> &mdash; Preostala dužina (u kilometrima) ulica koje nisu nađene (dakle, razlika između RGZ kilometraže i OSM kilometraže)</li>
 			<li><b>Nepronađeno [%]</b> &mdash; Procenat kilometraže ulica koje nisu nađene</li>
-		</ul>
-	    <h5>Analiza po broju:</h5>
-	    <ul>
-			<li><b>Opština</b> &mdash; Opština za koje se odnose podaci</li>
-			<li><b>#RGZ (broj ulica)</b> &mdash; Ukupan broj različitih ulica u RGZ-u, bez zaseoka i ulica koje geometrijom podsećaju na zaseoke</li>
-			<li><b>Konflacija (bar jedan way)</b> &mdash; Ukupna broj RGZ ulica koje imaju bar jedan segment (jedan OSM way) spojen sa RGZ-om (tj. imaju ispravan „ref:RS:ulica” tag)</li>
-			<li><b>Konflacija [%]</b> &mdash; Procenat svih ulica u RGZ-u kojima je bar jedan segment spojen sa RGZ-om</li>
-			<li><b>Pronađeno (bar jedan way)</b> &mdash; Ukupan broj svih ulica u RGZ-u koje imaju bar jednog potencijalnog kandidata za spajanje sa RGZ-om (ovo znači da generalno neka ulica u blizini postoji u OSM-u, ali ne mora da znači da je to baš ulica iz RGZ-a)</li>
-			<li><b>Pronađeno [%]</b> &mdash; Procenat svih ulica u RGZ-u koje imaju bar jednog potencijalnog kandidata za spajanje sa RGZ-om</li>
-			<li><b>Nepronađeno (bar jedan way)</b> &mdash; Ukupan broj ulica iz RGZ-a koje nemaju nijednog kandidata za spajanje sa RGZ-om (dakle, razlika između ukupnih iz RGZ-a i zbira spojenih i pronađenih). Ovim se ukazuje da verovatno ništa oko ove ulice nije ni ucrtano u OSM-u</li>
-			<li><b>Nepronađeno [%]</b> &mdash; Procenat broja ulica iz RGZ-a koje nemaju nijednog kandidata za spajanje sa RGZ-om</li>
 		</ul>
       </div>
       <div class="modal-footer">
@@ -60,7 +60,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
 	$(document).ready( function () {
-	    $('#list-by-km').DataTable({
+	    $('#list-by-count').DataTable({
 		    stateSave: true,
 		    stateDuration: 0,
 		    order: [[0, 'asc']],
@@ -69,7 +69,7 @@
 		        { targets: [2, 3, 4, 5], className: 'text-right' }
 		    ]
 		});
-	    $('#list-by-count').DataTable({
+	    $('#list-by-km').DataTable({
 		    stateSave: true,
 		    stateDuration: 0,
 		    order: [[0, 'asc']],
@@ -142,14 +142,56 @@
 
 <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
   <li class="nav-item" role="presentation">
-    <button class="nav-link active" id="pills-by-length-tab" data-toggle="pill" data-target="#pills-by-length" type="button" role="tab" aria-controls="pills-by-length" aria-selected="true">Analiza po dužini</button>
+    <button class="nav-link active" id="pills-by-count-tab" data-toggle="pill" data-target="#pills-by-count" type="button" role="tab" aria-controls="pills-by-count" aria-selected="true">Analiza po broju</button>
   </li>
   <li class="nav-item" role="presentation">
-    <button class="nav-link" id="pills-by-count-tab" data-toggle="pill" data-target="#pills-by-count" type="button" role="tab" aria-controls="pills-by-count" aria-selected="false">Analiza po broju</button>
+    <button class="nav-link" id="pills-by-length-tab" data-toggle="pill" data-target="#pills-by-length" type="button" role="tab" aria-controls="pills-by-length" aria-selected="false">Analiza po dužini</button>
   </li>
 </ul>
 <div class="tab-content" id="pills-tabContent">
-  <div class="tab-pane fade show active" id="pills-by-length" role="tabpanel" aria-labelledby="pills-by-length-tab">
+  <div class="tab-pane fade show active" id="pills-by-count" role="tabpanel" aria-labelledby="pills-by-count-tab">
+        <table id="list-by-count" class="table table-sm table-striped table-bordered table-hover w-100">
+        <thead class="thead-dark sticky-top">
+            <tr>
+                <th>Opština</th>
+                <th>#RGZ (broj ulica)</th>
+                <th class="d-sm-table-cell">Konflacija (bar jedan way)</th>
+                <th class="d-sm-table-cell">Konflacija [%]</th>
+                <th class="d-lg-table-cell">Pronađeno (bar jedan way)</th>
+                <th class="d-lg-table-cell">Pronađeno [%]</th>
+                <th class="d-lg-table-cell">Nepronađeno (bar jedan way)</th>
+                <th class="d-lg-table-cell">Nepronađeno [%]</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for opstina in opstine %}
+            <tr>
+                <td><a href="opstine/{{ opstina.name }}.html">{{ opstina.name }}</a></td>
+                <td>{{ opstina.rgz }}</td>
+                <td>{{ opstina.conflated_count }}</td>
+                <td>{{ '{0:0.2f}'.format((100.0 * opstina.conflated_count) / opstina.rgz).replace('.', ',') }}</td>
+                <td>{{ opstina.found_count }}</td>
+                <td>{{ '{0:0.2f}'.format((100.0 * opstina.found_count) / opstina.rgz).replace('.', ',') }}</td>
+                <td>{{ opstina.notfound_count }}</td>
+                <td>{{ '{0:0.2f}'.format((100.0 * opstina.notfound_count) / opstina.rgz).replace('.', ',') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>Serbia TOTAL:</th>
+                <th class="d-sm-table-cell">{{ total.rgz }}</th>
+                <th class="d-sm-table-cell">{{ total.conflated_count }}</th>
+                <th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.conflated_count) / total.rgz).replace('.', ',') }}</th>
+                <th class="d-lg-table-cell">{{ total.found_count }}</th>
+                <th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.found_count) / total.rgz).replace('.', ',') }}</th>
+                <th class="d-lg-table-cell">{{ total.notfound_count }}</th>
+                <th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.notfound_count) / total.rgz).replace('.', ',') }}</th>
+            </tr>
+        </tfoot>
+      </table>
+  </div>
+  <div class="tab-pane fade" id="pills-by-length" role="tabpanel" aria-labelledby="pills-by-length-tab">
       <table id="list-by-km" class="table table-sm table-striped table-bordered table-hover w-100">
         <thead class="thead-dark sticky-top">
             <tr>
@@ -193,48 +235,6 @@
                 <th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.found_length) / total.rgz_length).replace('.', ',') }}</th>
                 <th class="d-lg-table-cell">{{ '{0:0.1f}'.format(total.notfound_length / 1000.0).replace('.', ',') }}</th>
                 <th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.notfound_length) / total.rgz_length).replace('.', ',') }}</th>
-            </tr>
-        </tfoot>
-      </table>
-  </div>
-  <div class="tab-pane fade" id="pills-by-count" role="tabpanel" aria-labelledby="pills-by-count-tab">
-        <table id="list-by-count" class="table table-sm table-striped table-bordered table-hover w-100">
-        <thead class="thead-dark sticky-top">
-            <tr>
-                <th>Opština</th>
-                <th>#RGZ (broj ulica)</th>
-                <th class="d-sm-table-cell">Konflacija (bar jedan way)</th>
-                <th class="d-sm-table-cell">Konflacija [%]</th>
-                <th class="d-lg-table-cell">Pronađeno (bar jedan way)</th>
-                <th class="d-lg-table-cell">Pronađeno [%]</th>
-                <th class="d-lg-table-cell">Nepronađeno (bar jedan way)</th>
-                <th class="d-lg-table-cell">Nepronađeno [%]</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for opstina in opstine %}
-            <tr>
-                <td><a href="opstine/{{ opstina.name }}.html">{{ opstina.name }}</a></td>
-                <td>{{ opstina.rgz }}</td>
-                <td>{{ opstina.conflated_count }}</td>
-                <td>{{ '{0:0.2f}'.format((100.0 * opstina.conflated_count) / opstina.rgz).replace('.', ',') }}</td>
-                <td>{{ opstina.found_count }}</td>
-                <td>{{ '{0:0.2f}'.format((100.0 * opstina.found_count) / opstina.rgz).replace('.', ',') }}</td>
-                <td>{{ opstina.notfound_count }}</td>
-                <td>{{ '{0:0.2f}'.format((100.0 * opstina.notfound_count) / opstina.rgz).replace('.', ',') }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-        <tfoot>
-            <tr>
-                <th>Serbia TOTAL:</th>
-                <th class="d-sm-table-cell">{{ total.rgz }}</th>
-                <th class="d-sm-table-cell">{{ total.conflated_count }}</th>
-                <th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.conflated_count) / total.rgz).replace('.', ',') }}</th>
-                <th class="d-lg-table-cell">{{ total.found_count }}</th>
-                <th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.found_count) / total.rgz).replace('.', ',') }}</th>
-                <th class="d-lg-table-cell">{{ total.notfound_count }}</th>
-                <th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.notfound_count) / total.rgz).replace('.', ',') }}</th>
             </tr>
         </tfoot>
       </table>
