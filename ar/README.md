@@ -94,7 +94,7 @@ Sad treba da imate fajlove `data/rgz/addresses.old.csv` i `data/rgz/addresses.ne
 kao i lokalni overpass server.
 
 * Izvršiti `python3 src/generate_rgz_diff.py --generate` i dobićete 3 fajla: `data/rgz/addresses-added.csv` (nove adrese), `data/rgz/addresses-removed.csv` (izbrisane adrese) i `data/rgz/addresses-changed.csv` (promenjene adrese)
-* Učitati `data/rgz/addresses-added.csv` i `data/rgz/addresses-removed.csv` i videti da izbrisana ulica nije zamenjena nekom novom ulicom
+* Učitati `data/rgz/addresses-added.csv` i `data/rgz/addresses-removed.csv` i videti da izbrisane adrese nisu zamenjene nekim drugim adresama (ovlaš, da nema nešto očigledno)
 * Izvršiti `python3 src/generate_rgz_diff.py --fix_deleted_to_added --rgz_update_date YYYY-MM-DD` - prolazi kroz obrisane adrese i ako su stvarno obrisane, briše im `ref:RS:kucni_broj` i dodaje im `removed:ref:RS:kucni_broj`, a ako su dodate sa novim ID-om, menja `ref:RS:kucni_broj`
 * Izvršiti `python3 src/generate_rgz_diff.py --fix_changed` - prolazi kroz promenjene adrese i menja ih u OSM-u sa novim vrednostima
 
