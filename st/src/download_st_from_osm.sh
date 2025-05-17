@@ -8,9 +8,9 @@ yesterday=`date -d "yesterday" +"%y%m%d"`
 echo "Downloading serbia-$yesterday.osm.pbf"
 
 
+attempts=0
 
 if [ ! -f data/osm/download/serbia.osm.pbf ]; then
-  attempts=0
   max_attempts=36  # 36 * 5 min = 3h
   success=false
 
