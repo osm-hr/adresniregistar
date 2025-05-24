@@ -14,10 +14,13 @@ ar/rt-upload.log
 sz/data/
 sz/output/
 sz/run.log
+sz/osm-password
 st/idp_creds
 st/data/
 st/geckodriver
 st/geckodriver.log
 st/clean.log
+st/token.json
 st/upload.log
+st/osm-password
 st/client_secrets
