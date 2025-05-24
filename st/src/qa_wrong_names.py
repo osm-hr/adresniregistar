@@ -474,7 +474,7 @@ def find_wrong_names(cwd, street_mappings: StreetMapping):
         return
 
     df_opstine = pd.read_csv(os.path.join(rgz_path, 'opstina.csv'))
-    df_opstine['geometry'] = df_opstine.wkt.apply(wkt.loads)
+    df_opstine['geometry'] = df_opstine.geometry.apply(wkt.loads)
     df_opstine = df_opstine[~df_opstine.okrug_sifra.isin([25, 26, 27, 28, 29])]
     gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs="EPSG:32634")
     gdf_opstine.to_crs("EPSG:4326", inplace=True)
@@ -500,8 +500,7 @@ def find_wrong_names(cwd, street_mappings: StreetMapping):
     streets_per_opstina = gdf_osm_streets.sjoin(gdf_opstine, how='inner', predicate='intersects')
     streets_per_opstina.sindex
 
-    streets_per_opstina.drop(['index_right', 'opstina_maticni_broj', 'opstina_povrsina', 'okrug_sifra',
-                              'okrug_ime', 'okrug_imel', 'wkt'], inplace=True, axis=1)
+    streets_per_opstina.drop(['index_right', 'opstina_maticni_broj', 'opstina_povrsina', 'okrug_sifra'], inplace=True, axis=1)
     print("Split all addresses per opstina")
 
     # Merge with RGZ streets and find out proper street names

@@ -20,7 +20,7 @@ def main():
 
     print("Load opstine geometries")
     df_opstine = pd.read_csv(os.path.join(rgz_path, 'opstina.csv'), dtype='unicode')
-    df_opstine['geometry'] = df_opstine.wkt.apply(wkt.loads)
+    df_opstine['geometry'] = df_opstine.geometry.apply(wkt.loads)
     gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs="EPSG:32634")
     gdf_opstine.to_crs("EPSG:4326", inplace=True)
     gdf_opstine.sindex
@@ -75,7 +75,7 @@ def main():
         print(f"{i+1}/{len(gdf_opstine)} Processing {opstina}")
         addresses_in_opstina = addresses_with_opstina[addresses_with_opstina['opstina_imel'] == opstina].copy()
         addresses_in_opstina.drop(['index_right', 'opstina_maticni_broj', 'opstina_ime', 'opstina_imel',
-                   'opstina_povrsina', 'okrug_sifra', 'okrug_ime', 'okrug_imel', 'wkt'], inplace=True, axis=1)
+                   'opstina_povrsina', 'okrug_sifra'], inplace=True, axis=1)
 
         if len(addresses_in_opstina) == 0:
             print(f"{opstina} doesn't seem to have any address")

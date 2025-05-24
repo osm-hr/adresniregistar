@@ -325,7 +325,7 @@ def find_unaccounted_osm_addresses(cwd):
     # gdf_osm_addresses.sindex
 
     df_opstine = pd.read_csv(os.path.join(rgz_path, 'opstina.csv'))
-    df_opstine['geometry'] = df_opstine.wkt.apply(wkt.loads)
+    df_opstine['geometry'] = df_opstine.geometry.apply(wkt.loads)
     gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs="EPSG:32634")
     gdf_opstine.to_crs("EPSG:4326", inplace=True)
     gdf_opstine.sindex
@@ -338,8 +338,7 @@ def find_unaccounted_osm_addresses(cwd):
     addresses_per_opstina['shop'] = addresses_per_opstina['tags'].apply(lambda x: x['shop'] if 'shop' in x else '')
 
     addresses_per_opstina.drop(['osm_country', 'osm_city', 'osm_postcode', 'ref:RS:kucni_broj', 'tags', 'index_right',
-                                'opstina_maticni_broj', 'opstina_ime', 'opstina_povrsina', 'okrug_sifra', 'okrug_ime',
-                                'okrug_imel', 'wkt', 'is_removed'],
+                                'opstina_maticni_broj', 'opstina_ime', 'opstina_povrsina', 'okrug_sifra', 'is_removed'],
                                inplace=True, axis=1)
     print("Split all addresses per opstina")
 
@@ -392,7 +391,7 @@ def find_addresses_in_buildings(cwd):
     print(f"Found all address nodes ({len(ceh.entities)}) from PBF")
 
     df_opstine = pd.read_csv(os.path.join(rgz_path, 'opstina.csv'))
-    df_opstine['geometry'] = df_opstine.wkt.apply(wkt.loads)
+    df_opstine['geometry'] = df_opstine.geometry.apply(wkt.loads)
     gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs="EPSG:32634")
     gdf_opstine.to_crs("EPSG:4326", inplace=True)
     gdf_opstine.sindex
@@ -401,7 +400,7 @@ def find_addresses_in_buildings(cwd):
     addresses_per_opstina = gdf_addresses.sjoin(gdf_opstine, how='inner', predicate='intersects')
     addresses_per_opstina.sindex
     addresses_per_opstina.drop(['osm_country', 'osm_city', 'osm_postcode', 'index_right', 'opstina_maticni_broj',
-                                'opstina_ime', 'opstina_povrsina', 'okrug_sifra', 'okrug_ime', 'okrug_imel', 'wkt'],
+                                'opstina_ime', 'opstina_povrsina', 'okrug_sifra'],
                                inplace=True, axis=1)
     print("Split all addresses per opstina")
 

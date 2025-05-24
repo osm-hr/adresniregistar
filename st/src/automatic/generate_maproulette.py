@@ -136,7 +136,7 @@ def main():
     print("Loading normalized street names mapping")
     street_mappings = StreetMapping(os.path.join(cwd, '..', 'ar'))
 
-    df_opstine = pd.read_csv(os.path.join(os.path.join(cwd, '..', 'ar/data/rgz'), 'opstina.csv'), dtype='unicode')
+    df_opstine = pd.read_csv('data/rgz/opstina.csv', dtype='unicode')
 
     osm_ways = {}
     if args.opstina != '':

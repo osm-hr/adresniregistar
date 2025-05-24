@@ -617,10 +617,10 @@ def generate_report(context):
     df_calc_opstine = pd.DataFrame(opstine)
     df_calc_opstine['ratio'] = df_calc_opstine.apply(lambda row: 100 * row.conflated / row.rgz, axis=1)
     df_opstine = pd.read_csv(os.path.join(rgz_path, 'opstina.csv'))
-    df_opstine['geometry'] = df_opstine.wkt.apply(wkt.loads)
+    df_opstine['geometry'] = df_opstine.geometry.apply(wkt.loads)
     df_opstine = df_opstine[~df_opstine.okrug_sifra.isin([25, 26, 27, 28, 29])]  # remove kosovo
     df_opstine = df_opstine.merge(df_calc_opstine[['name', 'ratio']], left_on='opstina_imel', right_on='name')
-    df_opstine.drop(['name', 'opstina_maticni_broj', 'opstina_ime', 'opstina_povrsina', 'okrug_sifra', 'okrug_ime', 'okrug_imel', 'wkt'], inplace=True, axis=1)
+    df_opstine.drop(['name', 'opstina_maticni_broj', 'opstina_ime', 'opstina_povrsina', 'okrug_sifra'], inplace=True, axis=1)
     gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs="EPSG:32634")
     gdf_opstine.to_crs("EPSG:4326", inplace=True)
     gdf_opstine['geometry'] = gdf_opstine.simplify(tolerance=0.0005)
