@@ -11,9 +11,9 @@ python3 src/report.py
 current_date=`date +%Y%m%d`
 echo $current_date
 tar -czf temp-report$current_date.tar.gz -C output/ .
-scp temp-report$current_date.tar.gz kokanovic:/home/branko/dina/sz-report$current_date.tar.gz
-ssh kokanovic "tar -xzf /home/branko/dina/sz-report$current_date.tar.gz -C /var/www/sites/dina.openstreetmap.rs/sz/"
-ssh kokanovic "rm -f /home/branko/dina/sz-report$current_date.tar.gz"
+scp temp-report$current_date.tar.gz kokanmain:/home/branko/dina/sz-report$current_date.tar.gz
+ssh kokanmain "tar -xzf /home/branko/dina/sz-report$current_date.tar.gz -C /var/www/sites/dina.openstreetmap.rs/sz/"
+ssh kokanmain "rm -f /home/branko/dina/sz-report$current_date.tar.gz"
 
 mv temp-report$current_date.tar.gz data/sz-report$current_date.tar.gz
 
