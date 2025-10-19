@@ -208,11 +208,12 @@ def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselj
                     'osm_name': osm_label,
                     'osm_link': f'https://www.openstreetmap.org/{osm_type}/{found_osm_id[1:]}',
                     'found_intersection': round(100.0 * float(found_intersection), 2),
-                    'found_osm_way_length': found_osm_way_length,
+                    'found_osm_way_length': float(found_osm_way_length),
                     'name_match': name_match,
                     'norm_name_match': norm_name_match,
                     'wrong_name': osm_name != '' and not name_match and not norm_name_match
                 })
+            found_ways.sort(key = lambda way: way['found_osm_way_length'] * way['found_intersection'], reverse=True)
             found_max_found_intersection = max([way['found_intersection'] for way in found_ways])
 
         rgz_geojson = geojson.Feature(geometry=address['rgz_geometry'], properties={"stroke": "#c01c28", "stroke-width": 4, "stroke-opacity": 1})
