@@ -43,18 +43,23 @@
     <br/>
     <p>Ovde možete videti neke od QA izveštaja</p>
     <br/>
+    <h3>Geometrijski QA</h3>
+    <br/>
+    <h3><a href="name_mismatch.html">Neslaganje imena</a></h3>
+    <p>Pronalazi nepovezane segmente OSM ulica koji se preklapaju sa RGZ geometrijama, a imaju pogrešna imena.</p>
+    <h3><a href="geom_missing.html">Nedostajuće geometrije</a></h3>
+    <p>Pronalazi greške između RGZ i OSM geometrija</p>
+    <br/><br/>
+    <h3>Jezički QA</h3>
+    <br/>
     <h3><a href="wrong_names.html">Loši nazivi ulica</a></h3>
     <p>Pronalazi OSM ulice kojima se tagovi imena ne slažu sa pravilima imenovanja ulica u Srbiji.</p>
-    <br/><br/>
     <h3><a href="alt_names.html">Alternativni nazivi ulica</a></h3>
     <p>Pronalazi OSM ulice kojima se tagovi alt imena ne slažu sa pravilima imenovanja ulica u Srbiji.</p>
-    <br/><br/>
     <h3><a href="en_names.html">Engleski nazivi ulica</a></h3>
     <p>Pronalazi OSM ulice kojima je „name:en” tag nepotreban ili potencijalno pogrešan.</p>
-    <br/><br/>
     <h3><a href="int_names.html">Int nazivi ulica</a></h3>
     <p>Pronalazi OSM ulice kojima „int_name” tag nedostaje ili je pogrešan</p>
-    <br/><br/>
 </div>
 
 {% endblock %}

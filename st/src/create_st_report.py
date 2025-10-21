@@ -149,6 +149,88 @@ def generate_osm_files_matched_streets(context, opstina_dir_path, opstina_name, 
     return osm_files
 
 
+def generate_street(address):
+    conflated_ways, found_ways = [], []
+    max_conflated_osm_way_length = -1
+    conflated_osm_way_length_sum = 0
+    if pd.notna(address['conflated_osm_id']):
+        conflated_osm_ids = address['conflated_osm_id'].split(',')
+        conflated_osm_way_lengths = address['conflated_osm_way_length'].split(',')
+        assert len(conflated_osm_ids) == len(conflated_osm_way_lengths)
+        for conflated_osm_id, conflated_osm_way_length in zip(conflated_osm_ids, conflated_osm_way_lengths):
+            osm_type = 'node' if conflated_osm_id[0] == 'n' else 'way' if conflated_osm_id[0] == 'w' else 'relation'
+            conflated_ways.append({
+                'osm_id': conflated_osm_id,
+                'osm_link': f'https://www.openstreetmap.org/{osm_type}/{conflated_osm_id[1:]}',
+                'conflated_osm_way_length': round(float(conflated_osm_way_length), 2)
+            })
+        max_conflated_osm_way_length = max([way['conflated_osm_way_length'] for way in conflated_ways])
+        conflated_osm_way_length_sum = round(sum([float(c) for c in conflated_osm_way_lengths]), 2)
+    found_max_found_intersection = -1
+    if pd.notna(address['found_osm_id']):
+        found_osm_ids = address['found_osm_id'].split(',')
+        name_matches = [True if x == '1' else False for x in address['name_match'].split(',')]
+        norm_name_matches = [True if x == '1' else False for x in address['norm_name_match'].split(',')]
+        osm_names = json.loads(address['osm_name'])
+        found_intersections = str(address['found_intersection']).split(',')
+        found_osm_way_lengths = str(address['found_osm_way_length']).split(',')
+        assert len(found_osm_ids) == len(found_intersections)
+        assert len(found_osm_ids) == len(found_osm_way_lengths)
+        assert len(found_osm_ids) == len(name_matches)
+        assert len(found_osm_ids) == len(norm_name_matches)
+        assert len(found_osm_ids) == len(osm_names)
+        for found_osm_id, found_intersection, found_osm_way_length, osm_name, name_match, norm_name_match in zip(found_osm_ids, found_intersections, found_osm_way_lengths, osm_names, name_matches, norm_name_matches):
+            osm_type = 'node' if found_osm_id[0] == 'n' else 'way' if found_osm_id[0] == 'w' else 'relation'
+            osm_label = osm_name if osm_name != '' else found_osm_id
+            found_ways.append({
+                'osm_name': osm_label,
+                'osm_link': f'https://www.openstreetmap.org/{osm_type}/{found_osm_id[1:]}',
+                'found_intersection': round(100.0 * float(found_intersection), 2),
+                'found_osm_way_length': float(found_osm_way_length),
+                'name_match': name_match,
+                'norm_name_match': norm_name_match,
+                'wrong_name': osm_name != '' and not name_match and not norm_name_match
+            })
+        found_ways.sort(key = lambda way: way['found_osm_way_length'] * way['found_intersection'], reverse=True)
+        found_max_found_intersection = max([way['found_intersection'] for way in found_ways])
+
+    rgz_geojson = geojson.Feature(geometry=address['rgz_geometry'], properties={"stroke": "#c01c28", "stroke-width": 4, "stroke-opacity": 1})
+    if pd.notna(address['osm_geometry']):
+        osm_geojson = geojson.Feature(geometry=wkt.loads(address['osm_geometry']), properties={"stroke": "#1c71d8", "stroke-width": 3, "stroke-opacity": 1})
+        both_geojson = geojson.FeatureCollection([rgz_geojson, osm_geojson])
+    else:
+        # both_geojson = rgz_geojson
+        both_geojson = geojson.FeatureCollection([rgz_geojson])
+    geojson_data = urllib.parse.quote(geojson.dumps(both_geojson))
+    rgz_geojson_url = f"http://geojson.io/#data=data:application/json,{geojson_data}"
+    rgz_way_length_uncovered = max(round(address['rgz_way_length']) - round(address['rgz_way_length_covered']), 0)
+    if pd.notna(address['rgz_ulica_proper']):
+        rgz_ulica_proper = address['rgz_ulica_proper']
+        copy_text = f"ref:RS:ulica={address['rgz_ulica_mb']}\\nname={rgz_ulica_proper}\\nname:sr={rgz_ulica_proper}\\nname:sr-Latn={cyr2lat_small(rgz_ulica_proper)}\\nint_name={cyr2intname(rgz_ulica_proper)}"
+    else:
+        copy_text = None
+    return {
+        'rgz_opstina': cyr2lat(address['rgz_opstina']),
+        'rgz_opstina_norm': normalize_name(address['rgz_opstina']),
+        'rgz_naselje': cyr2lat(address['rgz_naselje']),
+        'rgz_ulica_mb': address['rgz_ulica_mb'],
+        'rgz_ulica': address['rgz_ulica'],
+        'rgz_ulica_proper': address['rgz_ulica_proper'] if pd.notna(address['rgz_ulica_proper']) else '',
+        'rgz_geojson_url': rgz_geojson_url,
+        'rgz_way_length': round(address['rgz_way_length']),
+        'rgz_way_length_covered': round(address['rgz_way_length_covered']),
+        'rgz_way_length_uncovered': rgz_way_length_uncovered,
+        'conflated_ways': conflated_ways,
+        'conflated_max_error': round(address['conflated_max_error']) if pd.notna(address['conflated_max_error']) else None,
+        'max_conflated_osm_way_length': max_conflated_osm_way_length,
+        'conflated_osm_way_length_sum': conflated_osm_way_length_sum,
+        'found_ways': found_ways,
+        'found_max_found_intersection': found_max_found_intersection,
+        'is_zaseok': address['is_zaseok'],
+        'copy_text': copy_text,
+    }
+
+
 def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselje):
     env = context['env']
 
@@ -172,88 +254,14 @@ def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselj
 
     streets = []
     for _, address in df_naselje.iterrows():
-        conflated_ways, found_ways = [], []
-        max_conflated_osm_way_length = -1
-        conflated_osm_way_length_sum = 0
-        if pd.notna(address['conflated_osm_id']):
-            conflated_osm_ids = address['conflated_osm_id'].split(',')
-            conflated_osm_way_lengths = address['conflated_osm_way_length'].split(',')
-            assert len(conflated_osm_ids) == len(conflated_osm_way_lengths)
-            for conflated_osm_id, conflated_osm_way_length in zip(conflated_osm_ids, conflated_osm_way_lengths):
-                osm_type = 'node' if conflated_osm_id[0] == 'n' else 'way' if conflated_osm_id[0] == 'w' else 'relation'
-                conflated_ways.append({
-                    'osm_id': conflated_osm_id,
-                    'osm_link': f'https://www.openstreetmap.org/{osm_type}/{conflated_osm_id[1:]}',
-                    'conflated_osm_way_length': round(float(conflated_osm_way_length), 2)
-                })
-            max_conflated_osm_way_length = max([way['conflated_osm_way_length'] for way in conflated_ways])
-            conflated_osm_way_length_sum = round(sum([float(c) for c in conflated_osm_way_lengths]), 2)
-        found_max_found_intersection = -1
-        if pd.notna(address['found_osm_id']):
-            found_osm_ids = address['found_osm_id'].split(',')
-            name_matches = [True if x == '1' else False for x in address['name_match'].split(',')]
-            norm_name_matches = [True if x == '1' else False for x in address['norm_name_match'].split(',')]
-            osm_names = json.loads(address['osm_name'])
-            found_intersections = str(address['found_intersection']).split(',')
-            found_osm_way_lengths = str(address['found_osm_way_length']).split(',')
-            assert len(found_osm_ids) == len(found_intersections)
-            assert len(found_osm_ids) == len(found_osm_way_lengths)
-            assert len(found_osm_ids) == len(name_matches)
-            assert len(found_osm_ids) == len(norm_name_matches)
-            assert len(found_osm_ids) == len(osm_names)
-            for found_osm_id, found_intersection, found_osm_way_length, osm_name, name_match, norm_name_match in zip(found_osm_ids, found_intersections, found_osm_way_lengths, osm_names, name_matches, norm_name_matches):
-                osm_type = 'node' if found_osm_id[0] == 'n' else 'way' if found_osm_id[0] == 'w' else 'relation'
-                osm_label = osm_name if osm_name != '' else found_osm_id
-                found_ways.append({
-                    'osm_name': osm_label,
-                    'osm_link': f'https://www.openstreetmap.org/{osm_type}/{found_osm_id[1:]}',
-                    'found_intersection': round(100.0 * float(found_intersection), 2),
-                    'found_osm_way_length': float(found_osm_way_length),
-                    'name_match': name_match,
-                    'norm_name_match': norm_name_match,
-                    'wrong_name': osm_name != '' and not name_match and not norm_name_match
-                })
-            found_ways.sort(key = lambda way: way['found_osm_way_length'] * way['found_intersection'], reverse=True)
-            found_max_found_intersection = max([way['found_intersection'] for way in found_ways])
-
-        rgz_geojson = geojson.Feature(geometry=address['rgz_geometry'], properties={"stroke": "#c01c28", "stroke-width": 4, "stroke-opacity": 1})
-        if pd.notna(address['osm_geometry']):
-            osm_geojson = geojson.Feature(geometry=wkt.loads(address['osm_geometry']), properties={"stroke": "#1c71d8", "stroke-width": 3, "stroke-opacity": 1})
-            both_geojson = geojson.FeatureCollection([rgz_geojson, osm_geojson])
-        else:
-            # both_geojson = rgz_geojson
-            both_geojson = geojson.FeatureCollection([rgz_geojson])
-        geojson_data = urllib.parse.quote(geojson.dumps(both_geojson))
-        rgz_geojson_url = f"http://geojson.io/#data=data:application/json,{geojson_data}"
-        rgz_way_length_uncovered = max(round(address['rgz_way_length']) - round(address['rgz_way_length_covered']), 0)
-        if pd.notna(address['rgz_ulica_proper']):
-            rgz_ulica_proper = address['rgz_ulica_proper']
-            copy_text = f"ref:RS:ulica={address['rgz_ulica_mb']}\\nname={rgz_ulica_proper}\\nname:sr={rgz_ulica_proper}\\nname:sr-Latn={cyr2lat_small(rgz_ulica_proper)}\\nint_name={cyr2intname(rgz_ulica_proper)}"
-        else:
-            copy_text = None
-        streets.append({
-            'rgz_ulica_mb': address['rgz_ulica_mb'],
-            'rgz_ulica': address['rgz_ulica'],
-            'rgz_ulica_proper': address['rgz_ulica_proper'] if pd.notna(address['rgz_ulica_proper']) else '',
-            'rgz_geojson_url': rgz_geojson_url,
-            'rgz_way_length': round(address['rgz_way_length']),
-            'rgz_way_length_covered': round(address['rgz_way_length_covered']),
-            'rgz_way_length_uncovered': rgz_way_length_uncovered,
-            'conflated_ways': conflated_ways,
-            'conflated_max_error': round(address['conflated_max_error']) if pd.notna(address['conflated_max_error']) else None,
-            'max_conflated_osm_way_length': max_conflated_osm_way_length,
-            'conflated_osm_way_length_sum': conflated_osm_way_length_sum,
-            'found_ways': found_ways,
-            'found_max_found_intersection': found_max_found_intersection,
-            'is_zaseok': address['is_zaseok'],
-            'copy_text': copy_text,
-        })
+        street = generate_street(address)
+        streets.append(street)
 
         if not address['is_zaseok']:
             total['rgz_way_length'] += round(address['rgz_way_length'])
             total['rgz_way_length_covered'] += round(address['rgz_way_length_covered'])
-            total['rgz_way_length_uncovered'] += rgz_way_length_uncovered
-            total['conflated_osm_way_length_sum'] += conflated_osm_way_length_sum
+            total['rgz_way_length_uncovered'] += street['rgz_way_length_uncovered']
+            total['conflated_osm_way_length_sum'] += street['conflated_osm_way_length_sum']
             total['conflated_max_error'] += round(address['conflated_max_error']) if pd.notna(address['conflated_max_error']) else 0
 
     total['rgz_way_length'] = round(total['rgz_way_length'])
@@ -417,6 +425,8 @@ def generate_report(context):
     all_naselja = []
     for i, file in enumerate(sorted(os.listdir(analysis_path))):
         if not file.endswith(".csv"):
+            continue
+        if file == "all.csv":
             continue
         opstina_name = file[:-4]
         print(f"{i+1}/{total_csvs} Processing {opstina_name}...", end='')

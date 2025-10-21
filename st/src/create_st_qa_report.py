@@ -9,7 +9,8 @@ import pandas as pd
 from jinja2 import Environment, FileSystemLoader
 from shapely import wkt
 
-from common import cyr2lat_small, cyr2intname
+from common import cyr2lat, cyr2lat_small, cyr2intname, normalize_name
+from create_st_report import generate_street
 from street_mapping import StreetMapping
 
 
@@ -135,6 +136,8 @@ def generate_wrong_names_report(context):
     for i, file in enumerate(sorted(os.listdir(analysis_path))):
         if not file.endswith(".csv"):
             continue
+        if file == "all.csv":
+            continue
         opstina_name = file[:-4]
         if not any(o for o in opstine if o['name'] == opstina_name):
             opstine.append({
@@ -255,6 +258,8 @@ def generate_english_names_report(context):
 
     for i, file in enumerate(sorted(os.listdir(analysis_path))):
         if not file.endswith(".csv"):
+            continue
+        if file == "all.csv":
             continue
         opstina_name = file[:-4]
         if not any(o for o in opstine if o['name'] == opstina_name):
@@ -381,6 +386,8 @@ def generate_int_names_report(context):
 
     for i, file in enumerate(sorted(os.listdir(analysis_path))):
         if not file.endswith(".csv"):
+            continue
+        if file == "all.csv":
             continue
         opstina_name = file[:-4]
         if not any(o for o in opstine if o['name'] == opstina_name):
@@ -541,6 +548,8 @@ def generate_alt_names_report(context):
     for i, file in enumerate(sorted(os.listdir(analysis_path))):
         if not file.endswith(".csv"):
             continue
+        if file == "all.csv":
+            continue
         opstina_name = file[:-4]
         if not any(o for o in opstine if o['name'] == opstina_name):
             opstine.append({
@@ -571,6 +580,355 @@ def generate_alt_names_report(context):
         osmDataDate=context['dates']['osm_data'],
         rgzDataDate=context['dates']['rgz_data'],
         opstine=opstine,
+        total=total,
+    )
+
+    with open(html_path, 'w', encoding='utf-8') as fh:
+        fh.write(output)
+
+
+def generate_name_mismatch_report(context):
+    env = context['env']
+    cwd = context['cwd']
+
+    data_path = os.path.join(cwd, 'data')
+    qa_path = os.path.join(data_path, 'qa')
+    analysis_path = os.path.join(cwd, 'data/analysis')
+    report_path = os.path.join(cwd, 'data/report')
+    html_path = os.path.join(report_path, 'name_mismatch.html')
+    name_mismatch_address_path = os.path.join(report_path, 'name_mismatch')
+
+    template = env.get_template('qa/name_mismatch_opstina.html.tpl')
+
+    if not os.path.exists(name_mismatch_address_path):
+        os.mkdir(name_mismatch_address_path)
+
+    df_name_mismatch = pd.read_csv(os.path.join(qa_path, 'name_mismatch.csv'))
+    df_name_mismatch = df_name_mismatch[['rgz_opstina', 'rgz_naselje_mb', 'rgz_ulica_mb', 'total_length', 'average_length', 'total_count_wrong']]
+    df_analysis = pd.read_csv(os.path.join(data_path, 'analysis/all.csv'))
+
+    df_name_mismatch = df_name_mismatch.merge(df_analysis, on=['rgz_opstina', 'rgz_naselje_mb', 'rgz_ulica_mb'], how='left')
+    df_name_mismatch['opstina_imel'] = df_name_mismatch['rgz_opstina'].apply(lambda x: cyr2lat(x))
+    df_name_mismatch['rgz_geometry'] = df_name_mismatch.rgz_geometry.apply(wkt.loads)
+    gdf_name_mismatch = gpd.GeoDataFrame(df_name_mismatch, geometry='rgz_geometry', crs="EPSG:4326")
+
+    opstine = []
+    total = {
+        'name_mismatch_segment_count': 0,
+        'name_mismatch_length': 0
+    }
+
+    for opstina_name, df_name_mismatch_in_opstina in gdf_name_mismatch.sort_values('opstina_imel').groupby('opstina_imel'):
+        name_mismatch_segment_count = int(sum(df_name_mismatch_in_opstina[df_name_mismatch_in_opstina.is_zaseok == False]['total_count_wrong']))
+        name_mismatch_length = sum(df_name_mismatch_in_opstina[df_name_mismatch_in_opstina.is_zaseok == False]['total_length'])
+
+        total['name_mismatch_segment_count'] += name_mismatch_segment_count
+        total['name_mismatch_length'] += name_mismatch_length
+
+        opstine.append({
+            'name': opstina_name,
+            'name_mismatch_segment_count': name_mismatch_segment_count,
+            'name_mismatch_length': name_mismatch_length
+        })
+
+        total_opstina = {
+            'rgz_way_length': 0,
+            'rgz_way_length_covered': 0,
+            'conflated_osm_way_length_sum': 0,
+            'name_mismatch_segment_count': 0,
+            'name_mismatch_length': 0
+        }
+        streets = []
+        opstina_html_path = os.path.join(name_mismatch_address_path, f'{opstina_name}.html')
+        if os.path.exists(opstina_html_path):
+            print(f"Page data/report/name_mismatch/{opstina_name}.html already exists")
+            continue
+
+        print(f"Generating data/report/name_mismatch/{opstina_name}.html")
+
+        for _, address in df_name_mismatch_in_opstina.iterrows():
+            if address['is_zaseok']:
+                continue
+            street = generate_street(address)
+            street['found_way_name_mismatch_count'] = len([i for i in street['found_ways'] if i['wrong_name']])
+            street['found_way_name_mismatch_length'] = sum([(i['found_intersection'] * i['found_osm_way_length']) / 100.0 for i in street['found_ways'] if i['wrong_name']])
+            streets.append(street)
+
+            total_opstina['rgz_way_length'] += round(address['rgz_way_length'])
+            total_opstina['rgz_way_length_covered'] += round(address['rgz_way_length_covered'])
+            total_opstina['conflated_osm_way_length_sum'] += street['conflated_osm_way_length_sum']
+            total_opstina['name_mismatch_length'] += address['average_length']
+            total_opstina['name_mismatch_segment_count'] += int(address['total_count_wrong'])
+
+        output = template.render(
+            currentDate=context['dates']['short'],
+            reportDate=context['dates']['report'],
+            osmDataDate=context['dates']['osm_data'],
+            rgzDataDate=context['dates']['rgz_data'],
+            streets=streets,
+            opstina_name=opstina_name,
+            opstina_name_norm=normalize_name(opstina_name),
+            total=total_opstina
+        )
+
+        with open(opstina_html_path, 'w', encoding='utf-8') as fh:
+            fh.write(output)
+
+    if os.path.exists(html_path):
+        print("Page data/report/name_mismatch.html already exists")
+        return
+
+    print("Generating data/report/name_mismatch.html")
+
+    for i, file in enumerate(sorted(os.listdir(analysis_path))):
+        if not file.endswith(".csv"):
+            continue
+        if file == "all.csv":
+            continue
+        opstina_name = file[:-4]
+        if not any(o for o in opstine if o['name'] == opstina_name):
+            opstine.append({
+                'name': opstina_name,
+                'name_mismatch_length': 0,
+                'name_mismatch_segment_count': 0
+            })
+            output = template.render(
+                currentDate=context['dates']['short'],
+                reportDate=context['dates']['report'],
+                osmDataDate=context['dates']['osm_data'],
+                rgzDataDate=context['dates']['rgz_data'],
+                streets=[],
+                opstina_name=opstina_name,
+                total={
+                    'rgz_way_length': 0,
+                    'rgz_way_length_covered': 0,
+                    'conflated_osm_way_length_sum': 0,
+                    'name_mismatch_segment_count': 0,
+                    'name_mismatch_length': 0
+                }
+            )
+            opstina_html_path = os.path.join(name_mismatch_address_path, f'{opstina_name}.html')
+            with open(opstina_html_path, 'w', encoding='utf-8') as fh:
+                fh.write(output)
+
+    gdf_top100 = gdf_name_mismatch.sort_values('average_length', ascending=False)[0:100]
+    streets = []
+    for _, address in gdf_top100.iterrows():
+        street = generate_street(address)
+        street['found_way_name_mismatch_count'] = len([i for i in street['found_ways'] if i['wrong_name']])
+        street['found_way_name_mismatch_length'] = sum([(i['found_intersection'] * i['found_osm_way_length']) / 100.0 for i in street['found_ways'] if i['wrong_name']])
+        streets.append(street)
+
+    template = env.get_template('qa/name_mismatch.html.tpl')
+    output = template.render(
+        currentDate=context['dates']['short'],
+        reportDate=context['dates']['report'],
+        osmDataDate=context['dates']['osm_data'],
+        rgzDataDate=context['dates']['rgz_data'],
+        opstine=opstine,
+        streets=streets,
+        total=total,
+    )
+
+    with open(html_path, 'w', encoding='utf-8') as fh:
+        fh.write(output)
+
+
+def generate_geom_missing_report(context):
+    env = context['env']
+    cwd = context['cwd']
+
+    data_path = os.path.join(cwd, 'data')
+    qa_path = os.path.join(data_path, 'qa')
+    analysis_path = os.path.join(cwd, 'data/analysis')
+    report_path = os.path.join(cwd, 'data/report')
+    html_path = os.path.join(report_path, 'geom_missing.html')
+    geom_missing_address_path = os.path.join(report_path, 'geom_missing')
+
+    template = env.get_template('qa/geom_missing_opstina.html.tpl')
+
+    if not os.path.exists(geom_missing_address_path):
+        os.mkdir(geom_missing_address_path)
+
+    df_geom_missing = pd.read_csv(os.path.join(qa_path, 'geom_missing.csv'))
+    df_geom_missing = df_geom_missing[['rgz_opstina', 'rgz_naselje_mb', 'rgz_ulica_mb', 'geom_missing_need_drawing', 'geom_missing_need_conflate']]
+    df_analysis = pd.read_csv(os.path.join(data_path, 'analysis/all.csv'))
+
+    df_geom_missing = df_geom_missing.merge(df_analysis, on=['rgz_opstina', 'rgz_naselje_mb', 'rgz_ulica_mb'], how='left')
+    df_geom_missing['opstina_imel'] = df_geom_missing['rgz_opstina'].apply(lambda x: cyr2lat(x))
+    df_geom_missing['rgz_geometry'] = df_geom_missing.rgz_geometry.apply(wkt.loads)
+    gdf_geom_missing = gpd.GeoDataFrame(df_geom_missing, geometry='rgz_geometry', crs="EPSG:4326")
+
+    opstine = []
+    total = {
+        'geom_missing_need_drawing_count': 0,
+        'geom_missing_need_drawing_length': 0,
+        'geom_missing_need_conflate_count': 0,
+        'geom_missing_need_conflate_length': 0
+    }
+
+    for opstina_name, df_geom_missing_in_opstina in df_geom_missing.sort_values('opstina_imel').groupby('opstina_imel'):
+        geom_missing_need_drawing_count = len(df_geom_missing_in_opstina[(df_geom_missing_in_opstina.is_zaseok == False) & (df_geom_missing_in_opstina.geom_missing_need_drawing > 0)])
+        geom_missing_need_drawing_length = sum(df_geom_missing_in_opstina[df_geom_missing_in_opstina.is_zaseok == False]['geom_missing_need_drawing'])
+        geom_missing_need_conflate_count = len(df_geom_missing_in_opstina[(df_geom_missing_in_opstina.is_zaseok == False) & (df_geom_missing_in_opstina.geom_missing_need_conflate > 0)])
+        geom_missing_need_conflate_length = sum(df_geom_missing_in_opstina[df_geom_missing_in_opstina.is_zaseok == False]['geom_missing_need_conflate'])
+
+        total['geom_missing_need_drawing_count'] += geom_missing_need_drawing_count
+        total['geom_missing_need_drawing_length'] += geom_missing_need_drawing_length
+        total['geom_missing_need_conflate_count'] += geom_missing_need_conflate_count
+        total['geom_missing_need_conflate_length'] += geom_missing_need_conflate_length
+
+        opstine.append({
+            'name': opstina_name,
+            'geom_missing_need_drawing_count': geom_missing_need_drawing_count,
+            'geom_missing_need_drawing_length': geom_missing_need_drawing_length,
+            'geom_missing_need_conflate_count': geom_missing_need_conflate_count,
+            'geom_missing_need_conflate_length': geom_missing_need_conflate_length
+        })
+
+        total_opstina_need_drawing = {
+            'rgz_way_length': 0,
+            'rgz_way_length_covered': 0,
+            'conflated_osm_way_length_sum': 0,
+            'geom_missing_need_drawing_count': 0,
+            'geom_missing_need_drawing_length': 0,
+        }
+        total_opstina_need_conflate = {
+            'rgz_way_length': 0,
+            'rgz_way_length_covered': 0,
+            'conflated_osm_way_length_sum': 0,
+            'geom_missing_need_conflate_count': 0,
+            'geom_missing_need_conflate_length': 0
+        }
+        streets_need_drawing, streets_need_conflate = [], []
+        opstina_html_path = os.path.join(geom_missing_address_path, f'{opstina_name}.html')
+        if os.path.exists(opstina_html_path):
+            print(f"Page data/report/geom_missing/{opstina_name}.html already exists")
+            continue
+
+        print(f"Generating data/report/geom_missing/{opstina_name}.html")
+
+        for _, address in df_geom_missing_in_opstina.iterrows():
+            if address['is_zaseok']:
+                continue
+            street = generate_street(address)
+            street['geom_missing_need_drawing'] = address['geom_missing_need_drawing']
+            street['geom_missing_need_conflate'] = address['geom_missing_need_conflate']
+            if address['geom_missing_need_drawing'] > 0:
+                streets_need_drawing.append(street)
+            elif address['geom_missing_need_conflate'] > 0:
+                streets_need_conflate.append(street)
+            else:
+                assert "Should not happen"
+
+            if address['geom_missing_need_drawing'] > 0:
+                total_opstina_need_drawing['rgz_way_length'] += round(address['rgz_way_length'])
+                total_opstina_need_drawing['rgz_way_length_covered'] += round(address['rgz_way_length_covered'])
+                total_opstina_need_drawing['conflated_osm_way_length_sum'] += street['conflated_osm_way_length_sum']
+                total_opstina_need_drawing['geom_missing_need_drawing_count'] += 1 if address['geom_missing_need_drawing'] > 0 else 0
+                total_opstina_need_drawing['geom_missing_need_drawing_length'] += address['geom_missing_need_drawing']
+            elif address['geom_missing_need_conflate'] > 0:
+                total_opstina_need_conflate['rgz_way_length'] += round(address['rgz_way_length'])
+                total_opstina_need_conflate['rgz_way_length_covered'] += round(address['rgz_way_length_covered'])
+                total_opstina_need_conflate['conflated_osm_way_length_sum'] += street['conflated_osm_way_length_sum']
+                total_opstina_need_conflate['geom_missing_need_conflate_count'] += 1 if address['geom_missing_need_conflate'] > 0 else 0
+                total_opstina_need_conflate['geom_missing_need_conflate_length'] += address['geom_missing_need_conflate']
+            else:
+                assert "Should not happen"
+
+        output = template.render(
+            currentDate=context['dates']['short'],
+            reportDate=context['dates']['report'],
+            osmDataDate=context['dates']['osm_data'],
+            rgzDataDate=context['dates']['rgz_data'],
+            streets_need_drawing=streets_need_drawing,
+            streets_need_conflate=streets_need_conflate,
+            opstina_name=opstina_name,
+            opstina_name_norm=normalize_name(opstina_name),
+            total_opstina_need_drawing=total_opstina_need_drawing,
+            total_opstina_need_conflate=total_opstina_need_conflate
+        )
+
+        with open(opstina_html_path, 'w', encoding='utf-8') as fh:
+            fh.write(output)
+
+    if os.path.exists(html_path):
+        print("Page data/report/geom_missing.html already exists")
+        return
+
+    print("Generating data/report/geom_missing.html")
+
+    for i, file in enumerate(sorted(os.listdir(analysis_path))):
+        if not file.endswith(".csv"):
+            continue
+        if file == "all.csv":
+            continue
+        opstina_name = file[:-4]
+        if not any(o for o in opstine if o['name'] == opstina_name):
+            opstine.append({
+                'name': opstina_name,
+                'geom_missing_need_drawing_count': 0,
+                'geom_missing_need_drawing_length': 0,
+                'geom_missing_need_conflate_count': 0,
+                'geom_missing_need_conflate_length': 0
+            })
+            output = template.render(
+                currentDate=context['dates']['short'],
+                reportDate=context['dates']['report'],
+                osmDataDate=context['dates']['osm_data'],
+                rgzDataDate=context['dates']['rgz_data'],
+                streets_need_drawing=[],
+                streets_need_conflate=[],
+                opstina_name=opstina_name,
+                total_opstina_need_drawing={
+                    'rgz_way_length': 0,
+                    'rgz_way_length_covered': 0,
+                    'conflated_osm_way_length_sum': 0,
+                    'geom_missing_need_drawing_count': 0,
+                    'geom_missing_need_drawing_length': 0
+                },
+                total_opstina_need_conflate={
+                    'rgz_way_length': 0,
+                    'rgz_way_length_covered': 0,
+                    'conflated_osm_way_length_sum': 0,
+                    'geom_missing_need_conflate_count': 0,
+                    'geom_missing_need_conflate_length': 0
+                }
+            )
+            opstina_html_path = os.path.join(geom_missing_address_path, f'{opstina_name}.html')
+            with open(opstina_html_path, 'w', encoding='utf-8') as fh:
+                fh.write(output)
+
+    gdf_top100_need_drawing = gdf_geom_missing.sort_values('geom_missing_need_drawing', ascending=False)[0:100]
+    streets_need_drawing = []
+    for _, address in gdf_top100_need_drawing.iterrows():
+        if address['is_zaseok']:
+            continue
+        street = generate_street(address)
+        street['geom_missing_need_drawing'] = address['geom_missing_need_drawing']
+        street['geom_missing_need_conflate'] = address['geom_missing_need_conflate']
+        streets_need_drawing.append(street)
+
+    gdf_top100_need_conflate = gdf_geom_missing.sort_values('geom_missing_need_conflate', ascending=False)[0:100]
+    streets_need_conflate = []
+    for _, address in gdf_top100_need_conflate.iterrows():
+        if address['is_zaseok']:
+            continue
+        street = generate_street(address)
+        street['geom_missing_need_drawing'] = address['geom_missing_need_drawing']
+        street['geom_missing_need_conflate'] = address['geom_missing_need_conflate']
+        streets_need_conflate.append(street)
+
+
+    template = env.get_template('qa/geom_missing.html.tpl')
+    output = template.render(
+        currentDate=context['dates']['short'],
+        reportDate=context['dates']['report'],
+        osmDataDate=context['dates']['osm_data'],
+        rgzDataDate=context['dates']['rgz_data'],
+        opstine=opstine,
+        streets_need_drawing=streets_need_drawing,
+        streets_need_conflate=streets_need_conflate,
         total=total,
     )
 
@@ -633,6 +991,8 @@ def main():
     generate_english_names_report(context)
     generate_int_names_report(context)
     generate_alt_names_report(context)
+    generate_name_mismatch_report(context)
+    generate_geom_missing_report(context)
 
     report_path = os.path.join(cwd, 'data/report')
     qa_html_path = os.path.join(report_path, 'qa.html')

@@ -47,6 +47,7 @@ analyze: download_from_osm
 	@echo "Analysing"
 	mkdir -p data/analysis
 	ls -S data/osm/csv/*.csv | parallel --jobs 8 python3 src/create_st_analysis.py --opstina={/.}
+	python3 src/create_st_analysis.py --merge
 
 quality_assurance: analyze
 	@echo "Doing quality assurance"

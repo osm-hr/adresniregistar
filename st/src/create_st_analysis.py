@@ -211,6 +211,30 @@ def process_all_opstina(data_path, osm_csv_path, rgz_csv_path, street_mappings, 
         do_analysis(opstina, data_path, street_mappings, df_cached_circles)
 
 
+def merge_all_opstina(data_path):
+    if os.path.exists(os.path.join(data_path, f'analysis/all.csv')):
+        print(f"    Skipping analysis/all.csv, already exists")
+        return
+
+    print("Merging all analysis")
+    analysis_path = os.path.join(data_path, 'analysis/')
+    total_analysis = len(os.listdir(analysis_path))
+    if total_analysis < 168:
+        raise Exception("Some or all analysis files missing! Bailing out")
+
+    df_all = None
+    for i, file in enumerate(sorted(os.listdir(analysis_path))):
+        if not file.endswith(".csv"):
+            continue
+        df_opstina = pd.read_csv(os.path.join(analysis_path, file))
+        if df_all is None:
+            df_all = df_opstina
+        else:
+            df_all = pd.concat([df_all, df_opstina])
+    pd.DataFrame(df_all).to_csv(os.path.join(analysis_path, 'all.csv'), index=False)
+    print("Merging analysis done")
+
+
 def main():
     cwd = os.getcwd()
     data_path = os.path.join(cwd, 'data/')
@@ -226,7 +250,12 @@ def main():
     parser = argparse.ArgumentParser(
         description='create_st_analysis.py - Analyses opstine')
     parser.add_argument('--opstina', default=None, required=False, help='Opstina to process')
+    parser.add_argument('--merge',  required=False, action='store_true', help='Should we just merge existing analysis')
     args = parser.parse_args()
+
+    if args.merge:
+        merge_all_opstina(data_path)
+        return
     if not args.opstina:
         process_all_opstina(data_path, osm_csv_path, rgz_csv_path, street_mappings, df_cached_circles)
     else:
