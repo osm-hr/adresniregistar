@@ -66,8 +66,10 @@ def calculate_geom_missing(street):
             if length > max_conflated_length:
                 max_conflated_length = length
     conflated_lengths_sum = sum(conflated_lengths)
+    conflated_lengths_sum = min(conflated_lengths_sum, conflated_max_error)
+    max_conflated_length = min(max_conflated_length, conflated_max_error)
 
-    if rgz_missing <= 50:
+    if rgz_missing <= 50 and max_conflated_length <= 50:
         # Total missing length is less than 50m, nothing here
         return 0, 0
 
