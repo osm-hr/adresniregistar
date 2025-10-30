@@ -22,6 +22,10 @@ clean_quality_assurance: clean_report
 	@echo "Cleaning QA files"
 	rm -f data/qa/wrong_street_names.csv
 	rm -f data/qa/wrong_alt_names.csv
+	rm -f data/qa/name_mismatch/*
+	rm -f data/qa/geom_missing/*
+	rm -f data/qa/name_mismatch.csv
+	rm -f data/qa/geom_missing.csv
 
 clean_report:
 	@echo "Cleaning all files from report"
@@ -53,6 +57,7 @@ quality_assurance: analyze
 	@echo "Doing quality assurance"
 	mkdir -p data/qa
 	python3 src/qa_wrong_names.py
+	python3 src/qa_geometry_errors.py
 
 report: quality_assurance
 	@echo "Generating report"
