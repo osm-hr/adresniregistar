@@ -67,44 +67,41 @@ def main():
                 streets.append(temp_e)
             continue
 
+        if 'ref:RS:ulica:left' in e['tags'] and 'ref:RS:ulica:right' in e['tags'] and e['tags']['ref:RS:ulica:left'] == e['tags']['ref:RS:ulica:right']:
+            print(f'Same value in both "ref:RS:ulica:left" and "ref:RS:ulica:right" for OSM entity {e["osm_id"]}')
+            continue
+
         if 'ref:RS:ulica:left' in e['tags']:
-            if 'name:left' not in e['tags']:
-                print(f'Missing name:left for {e["osm_id"]} and there exist ref:RS:ulica:left, skipping')
-            else:
-                e2 = copy.deepcopy(e)
-                e2['ref:RS:ulica'] = e2['tags']['ref:RS:ulica:left']
-                e2['osm_name'] = e2['tags']['name:left'] if 'name:left' in e2['tags'] else (e2['tags']['name'] if 'name' in e2['tags'] else '')
-                e2['osm_name_sr'] = e2['tags']['name:left:sr'] if 'name:left:sr' in e['tags'] else (e2['tags']['name:sr'] if 'name:sr' in e2['tags'] else '')
-                e2['osm_name_sr_latn'] = e2['tags']['name:left:sr-Latn'] if 'name:left:sr-Latn' in e2['tags'] else (e2['tags']['name:sr-Latn'] if 'name:sr-Latn' in e2['tags'] else '')
-                e2['osm_name_en'] = e2['tags']['name:left:en'] if 'name:left:en' in e2['tags'] else (e2['tags']['name:en'] if 'name:en' in e2['tags'] else '')
-                e2['osm_alt_name'] = e2['tags']['alt_name:left'] if 'alt_name:left' in e2['tags'] else (e['tags']['alt_name'] if 'alt_name' in e2['tags'] else '')
-                e2['osm_alt_name_sr'] = e2['tags']['alt_name:left:sr'] if 'alt_name:left:sr' in e['tags'] else (e2['tags']['alt_name:sr'] if 'alt_name:sr' in e2['tags'] else '')
-                e2['osm_alt_name_sr_latn'] = e2['tags']['alt_name:left:sr-Latn'] if 'alt_name:left:sr-Latn' in e2['tags'] else (e2['tags']['alt_name:sr-Latn'] if 'alt_name:sr-Latn' in e2['tags'] else '')
-                e2['osm_short_name'] = e2['tags']['short_name:left'] if 'short_name:left' in e2['tags'] else (e2['tags']['short_name'] if 'short_name' in e2['tags'] else '')
-                e2['osm_short_name_sr'] = e2['tags']['short_name:left:sr'] if 'short_name:left:sr' in e2['tags'] else (e2['tags']['short_name:sr'] if 'short_name:sr' in e2['tags'] else '')
-                e2['osm_short_name_sr_latn'] = e2['tags']['short_name:left:sr-Latn'] if 'short_name:left:sr-Latn' in e2['tags'] else (e2['tags']['short_name:sr-Latn'] if 'short_name:sr-Latn' in e2['tags'] else '')
-                e2['osm_int_name'] = e2['tags']['int_name:left'] if 'int_name:left' in e2['tags'] else (e2['tags']['int_name'] if 'int_name' in e2['tags'] else '')
-                streets.append(e2)
+            e2 = copy.deepcopy(e)
+            e2['ref:RS:ulica'] = e2['tags']['ref:RS:ulica:left']
+            e2['osm_name'] = e2['tags']['name:left'] if 'name:left' in e2['tags'] else (e2['tags']['name'] if 'name' in e2['tags'] else '')
+            e2['osm_name_sr'] = e2['tags']['name:left:sr'] if 'name:left:sr' in e['tags'] else (e2['tags']['name:sr'] if 'name:sr' in e2['tags'] else '')
+            e2['osm_name_sr_latn'] = e2['tags']['name:left:sr-Latn'] if 'name:left:sr-Latn' in e2['tags'] else (e2['tags']['name:sr-Latn'] if 'name:sr-Latn' in e2['tags'] else '')
+            e2['osm_name_en'] = e2['tags']['name:left:en'] if 'name:left:en' in e2['tags'] else (e2['tags']['name:en'] if 'name:en' in e2['tags'] else '')
+            e2['osm_alt_name'] = e2['tags']['alt_name:left'] if 'alt_name:left' in e2['tags'] else (e['tags']['alt_name'] if 'alt_name' in e2['tags'] else '')
+            e2['osm_alt_name_sr'] = e2['tags']['alt_name:left:sr'] if 'alt_name:left:sr' in e['tags'] else (e2['tags']['alt_name:sr'] if 'alt_name:sr' in e2['tags'] else '')
+            e2['osm_alt_name_sr_latn'] = e2['tags']['alt_name:left:sr-Latn'] if 'alt_name:left:sr-Latn' in e2['tags'] else (e2['tags']['alt_name:sr-Latn'] if 'alt_name:sr-Latn' in e2['tags'] else '')
+            e2['osm_short_name'] = e2['tags']['short_name:left'] if 'short_name:left' in e2['tags'] else (e2['tags']['short_name'] if 'short_name' in e2['tags'] else '')
+            e2['osm_short_name_sr'] = e2['tags']['short_name:left:sr'] if 'short_name:left:sr' in e2['tags'] else (e2['tags']['short_name:sr'] if 'short_name:sr' in e2['tags'] else '')
+            e2['osm_short_name_sr_latn'] = e2['tags']['short_name:left:sr-Latn'] if 'short_name:left:sr-Latn' in e2['tags'] else (e2['tags']['short_name:sr-Latn'] if 'short_name:sr-Latn' in e2['tags'] else '')
+            e2['osm_int_name'] = e2['tags']['int_name:left'] if 'int_name:left' in e2['tags'] else (e2['tags']['int_name'] if 'int_name' in e2['tags'] else '')
+            streets.append(e2)
 
         if 'ref:RS:ulica:right' in e['tags']:
-            if 'name:right' not in e['tags']:
-                print(f'Missing name:right for {e["osm_id"]} and there exist ref:RS:ulica:right, skipping')
-                continue
-            else:
-                e2 = copy.deepcopy(e)
-                e2['ref:RS:ulica'] = e2['tags']['ref:RS:ulica:right']
-                e2['osm_name'] = e2['tags']['name:right'] if 'name:right' in e2['tags'] else (e2['tags']['name'] if 'name' in e2['tags'] else '')
-                e2['osm_name_sr'] = e2['tags']['name:right:sr'] if 'name:right:sr' in e2['tags'] else (e2['tags']['name:sr'] if 'name:sr' in e2['tags'] else '')
-                e2['osm_name_sr_latn'] = e2['tags']['name:right:sr-Latn'] if 'name:right:sr-Latn' in e2['tags'] else (e2['tags']['name:sr-Latn'] if 'name:sr-Latn' in e2['tags'] else '')
-                e2['osm_name_en'] = e2['tags']['name:right:en'] if 'name:right:en' in e2['tags'] else (e2['tags']['name:en'] if 'name:en' in e2['tags'] else '')
-                e2['osm_alt_name'] = e2['tags']['alt_name:right'] if 'alt_name:right' in e2['tags'] else (e2['tags']['alt_name'] if 'alt_name' in e2['tags'] else '')
-                e2['osm_alt_name_sr'] = e2['tags']['alt_name:right:sr'] if 'alt_name:right:sr' in e2['tags'] else (e2['tags']['alt_name:sr'] if 'alt_name:sr' in e2['tags'] else '')
-                e2['osm_alt_name_sr_latn'] = e2['tags']['alt_name:right:sr-Latn'] if 'alt_name:right:sr-Latn' in e2['tags'] else (e2['tags']['alt_name:sr-Latn'] if 'alt_name:sr-Latn' in e2['tags'] else '')
-                e2['osm_short_name'] = e2['tags']['short_name:right'] if 'short_name:right' in e2['tags'] else (e2['tags']['short_name'] if 'short_name' in e2['tags'] else '')
-                e2['osm_short_name_sr'] = e2['tags']['short_name:right:sr'] if 'short_name:right:sr' in e2['tags'] else (e2['tags']['short_name:sr'] if 'short_name:sr' in e2['tags'] else '')
-                e2['osm_short_name_sr_latn'] = e2['tags']['short_name:right:sr-Latn'] if 'short_name:right:sr-Latn' in e2['tags'] else (e2['tags']['short_name:sr-Latn'] if 'short_name:sr-Latn' in e2['tags'] else '')
-                e2['osm_int_name'] = e2['tags']['int_name:right'] if 'int_name:right' in e2['tags'] else (e2['tags']['int_name'] if 'int_name' in e2['tags'] else '')
-                streets.append(e2)
+            e2 = copy.deepcopy(e)
+            e2['ref:RS:ulica'] = e2['tags']['ref:RS:ulica:right']
+            e2['osm_name'] = e2['tags']['name:right'] if 'name:right' in e2['tags'] else (e2['tags']['name'] if 'name' in e2['tags'] else '')
+            e2['osm_name_sr'] = e2['tags']['name:right:sr'] if 'name:right:sr' in e2['tags'] else (e2['tags']['name:sr'] if 'name:sr' in e2['tags'] else '')
+            e2['osm_name_sr_latn'] = e2['tags']['name:right:sr-Latn'] if 'name:right:sr-Latn' in e2['tags'] else (e2['tags']['name:sr-Latn'] if 'name:sr-Latn' in e2['tags'] else '')
+            e2['osm_name_en'] = e2['tags']['name:right:en'] if 'name:right:en' in e2['tags'] else (e2['tags']['name:en'] if 'name:en' in e2['tags'] else '')
+            e2['osm_alt_name'] = e2['tags']['alt_name:right'] if 'alt_name:right' in e2['tags'] else (e2['tags']['alt_name'] if 'alt_name' in e2['tags'] else '')
+            e2['osm_alt_name_sr'] = e2['tags']['alt_name:right:sr'] if 'alt_name:right:sr' in e2['tags'] else (e2['tags']['alt_name:sr'] if 'alt_name:sr' in e2['tags'] else '')
+            e2['osm_alt_name_sr_latn'] = e2['tags']['alt_name:right:sr-Latn'] if 'alt_name:right:sr-Latn' in e2['tags'] else (e2['tags']['alt_name:sr-Latn'] if 'alt_name:sr-Latn' in e2['tags'] else '')
+            e2['osm_short_name'] = e2['tags']['short_name:right'] if 'short_name:right' in e2['tags'] else (e2['tags']['short_name'] if 'short_name' in e2['tags'] else '')
+            e2['osm_short_name_sr'] = e2['tags']['short_name:right:sr'] if 'short_name:right:sr' in e2['tags'] else (e2['tags']['short_name:sr'] if 'short_name:sr' in e2['tags'] else '')
+            e2['osm_short_name_sr_latn'] = e2['tags']['short_name:right:sr-Latn'] if 'short_name:right:sr-Latn' in e2['tags'] else (e2['tags']['short_name:sr-Latn'] if 'short_name:sr-Latn' in e2['tags'] else '')
+            e2['osm_int_name'] = e2['tags']['int_name:right'] if 'int_name:right' in e2['tags'] else (e2['tags']['int_name'] if 'int_name' in e2['tags'] else '')
+            streets.append(e2)
 
         if 'ref:RS:ulica:left' not in e['tags'] and 'ref:RS:ulica:right' not in e['tags']:
             streets.append(e)
