@@ -134,12 +134,16 @@ def fix_deleted_to_added(rgz_path, rgz_last_update, oauth_session):
                 candidate_new_address = None
 
         for osm_entity_found in osm_entities_found:
-            if osm_entity_found[0] == 'n':
-                entity = api.NodeGet(osm_entity_found[1:])
-            elif osm_entity_found[0] == 'w':
-                entity = api.WayGet(osm_entity_found[1:])
-            else:
-                entity = api.RelationGet(osm_entity_found[1:])
+            try:
+                if osm_entity_found[0] == 'n':
+                    entity = api.NodeGet(osm_entity_found[1:])
+                elif osm_entity_found[0] == 'w':
+                    entity = api.WayGet(osm_entity_found[1:])
+                else:
+                    entity = api.RelationGet(osm_entity_found[1:])
+            except osmapi.errors.ElementDeletedApiError:
+                print(f'Entity {osm_entity_found} not found in OSM, skipping')
+                continue
 
             if candidate_new_address:
                 print(f'{old_address["opstina"]} - {old_address["ulica"]} {old_address["kucni_broj"]} - distance {round(transform(project, candidate_new_address["geometry"]).distance(transform(project, old_address["geometry"])))}m')
@@ -150,8 +154,15 @@ def fix_deleted_to_added(rgz_path, rgz_last_update, oauth_session):
             #     print(f'    {k}={entity["tag"][k]}')
 
             if candidate_new_address:
-                entity['tag']['ref:RS:kucni_broj'] = candidate_new_address["kucni_broj_id"]
+                if 'ref:RS:kucni_broj' in entity['tag'] and entity['tag']['ref:RS:kucni_broj'] == candidate_new_address["kucni_broj_id"]:
+                    print(f"Skipping {old_address["opstina"]} - {old_address["ulica"]} {old_address["kucni_broj"]} as already changed")
+                    continue
+                else:
+                    entity['tag']['ref:RS:kucni_broj'] = candidate_new_address["kucni_broj_id"]
             else:
+                if 'removed:ref:RS:kucni_broj' in entity['tag']:
+                    print(f"Skipping {old_address["opstina"]} - {old_address["ulica"]} {old_address["kucni_broj"]}, already had removed:ref:RS:kucni_broj")
+                    continue
                 entity['tag']['removed:ref:RS:kucni_broj'] = entity['tag']['ref:RS:kucni_broj']
                 note_text = f'Izbrisano iz RGZ-a ' + rgz_last_update
                 if 'note' not in entity['tag']:
@@ -222,12 +233,16 @@ def fix_changed(rgz_path, street_mappings, oauth_session):
         distance_diff = round(transform(project, changed_address["geometry_old"]).distance(transform(project, changed_address["geometry_new"])))
 
         for osm_entity_found in osm_entities_found:
-            if osm_entity_found[0] == 'n':
-                entity = api.NodeGet(osm_entity_found[1:])
-            elif osm_entity_found[0] == 'w':
-                entity = api.WayGet(osm_entity_found[1:])
-            else:
-                entity = api.RelationGet(osm_entity_found[1:])
+            try:
+                if osm_entity_found[0] == 'n':
+                    entity = api.NodeGet(osm_entity_found[1:])
+                elif osm_entity_found[0] == 'w':
+                    entity = api.WayGet(osm_entity_found[1:])
+                else:
+                    entity = api.RelationGet(osm_entity_found[1:])
+            except osmapi.errors.ElementDeletedApiError:
+                print(f'Entity {osm_entity_found} not found in OSM, skipping')
+                continue
 
             addrstreet = entity['tag']['addr:street']
             addrhousenumber = entity['tag']['addr:housenumber']
