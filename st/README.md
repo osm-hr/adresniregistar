@@ -54,10 +54,9 @@ kao i lokalni overpass server.
 
 * Izvršiti `python3 src/generate_st_rgz_diff.py --generate` i dobićete 3 fajla: `data/rgz/streets-added.csv` (nove ulice), `data/rgz/streets-removed.csv` (izbrisane ulice) i `data/rgz/streets-changed.csv` (promenjene ulice)
 * Izvršiti `python3 src/generate_st_rgz_diff.py --fix_deleted` - prolazi kroz obrisane ulice i ako su stvarno obrisane, briše im `ref:RS:ulica` i dodaje im `removed:ref:RS:ulica`
-* Otvoriti  `data/rgz/streets-changed.csv` i naći ćete ulice koje su promenile ime - izmeniti ime u OSM-u.
-Najbolje se radi tako što se otvori ovaj fajl u QGIS-u, i ide ulicu po ulicu koje su promenile ime. Ukoliko je stara ulica u OSM-u, učitati ulicu u iD/JOSM i promeniti ime (i staviti i `old_name` takođe).
-Ukoliko je u RGZ-u samo pravopisna greška, ne treba stavljati `old_name` (možda eventualno `alt_name` ako mislite da treba).
+* Izvršiti `python3 src/generate_st_rgz_diff.py --rename-changed` - prolazi kroz ulice sa promenjenim imenom i menja im `name` tag (i resetuje `alt_name`. Pita da li da stavi `old_name` tag (ukoliko je u RGZ-u samo pravopisna greška ili promena padeža, ne treba stavljati `old_name`).
 
+Uvek možete otvoriti ova 3 fajla u QGIS-u (CRS je EPSG:32634) da vidite šta se promenilo.
 
 ### Kreiranje vektorske mape
 
