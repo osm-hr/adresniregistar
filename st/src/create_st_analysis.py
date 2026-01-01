@@ -128,7 +128,7 @@ way[ref:RS:ulica] {
 
     # After ref:RS:ulica conflation, remove all unneeded footways etc
     gdf_osm['highway'] = df_osm['tags'].apply(lambda x: ast.literal_eval(x)['highway'])
-    gdf_osm = gdf_osm[~gdf_osm.highway.isin(['footway', 'cycleway', 'path', 'steps', 'proposed', 'construction', 'corridor', 'platform'])]
+    gdf_osm = gdf_osm[~gdf_osm.highway.isin(['footway', 'cycleway', 'path', 'steps', 'proposed', 'construction', 'corridor', 'platform', 'services', 'rest_area', 'raceway'])]
     gdf_osm.drop(['highway'], inplace=True, axis=1)
 
     gdf_osm['osm_geometry2'] = gdf_osm.osm_geometry
