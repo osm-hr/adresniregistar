@@ -161,7 +161,7 @@ def download_all_from_rgz(rgz_username, rgz_password, download_path,
         driver.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
         time.sleep(SLEEP_TIME * 5)
         total_downloaded += 1
-        if total_downloaded > 10:
+        if total_downloaded > 100:
             driver.refresh()
             time.sleep(SLEEP_TIME * 10)
             click_novo_preuzimanje(driver)
