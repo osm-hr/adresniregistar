@@ -108,7 +108,7 @@ Za ovo je potrebno da imamo [tippecanoe](https://github.com/felt/tippecanoe) pro
 `ogr2ogr data/rgz/adrese.geojson data/rgz/addresses.new.csv -dialect sqlite -sql "SELECT rgz_kucni_broj, ST_GeomFromText(rgz_geometry) AS geometry FROM 'addresses.new'" -nln adrese`
 
 * Generiše se .mbtiles fajl: `tippecanoe data/rgz/adrese.geojson -o data/rgz/brojevi.mbtiles --force`
-* Ovaj fajl se pošalje na vektor server (kredencijale tražiti od autora ovog uputstva)
+* `scp data/rgz/brojevi.mbtiles vektor:/home/debian/` (kredencijale za vektorski tile server tražiti od autora ovog uputstva)
 
 ### Kreiranje rasterske mape
 
@@ -116,7 +116,7 @@ Ovu mapu treba da okačimo na sajt i da obavestimo Peleta da je osveži.
 
 * `ogr2ogr data/rgz/rgz_adrese.shp data/rgz/addresses.new.csv -dialect sqlite -sql "SELECT rgz_ulica, rgz_kucni_broj, GeometryFromText(rgz_geometry, 4326) AS geometry FROM 'addresses.new'" -lco ENCODING=UTF-8 -s_srs EPSG:4326 -t_srs EPSG:3857`
 * `zip -j data/rgz/rgz_adrese_dump_latest.zip data/rgz/rgz_adrese.*`
-* `scp data/rgz/rgz_adrese_dump_latest.zip kokanovic:/home/branko/`
+* `scp data/rgz/rgz_adrese_dump_latest.zip kokanmain:/home/branko/`
 * ssh tamo i kopirati ga u fajl sa `rgz_ulice_dump_YYYYMMDD.zip` strukturom, zbog arhiviranja
 
 ### Konačna zamena

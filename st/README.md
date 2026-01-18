@@ -52,9 +52,9 @@ sajtu https://download-tmp.geosrbija.rs/download.
 Sad treba da imate fajlove `data/rgz/streets.old.csv` i `data/rgz/streets.new.csv`. Za ovo treba da imate `osm-password` fajl sa kredencijalima za OSM,
 kao i lokalni overpass server.
 
-* Izvršiti `python3 src/generate_st_rgz_diff.py --generate` i dobićete 3 fajla: `data/rgz/streets-added.csv` (nove ulice), `data/rgz/streets-removed.csv` (izbrisane ulice) i `data/rgz/streets-changed.csv` (promenjene ulice)
-* Izvršiti `python3 src/generate_st_rgz_diff.py --fix_deleted` - prolazi kroz obrisane ulice i ako su stvarno obrisane, briše im `ref:RS:ulica` i dodaje im `removed:ref:RS:ulica`
-* Izvršiti `python3 src/generate_st_rgz_diff.py --rename-changed` - prolazi kroz ulice sa promenjenim imenom i menja im `name` tag (i resetuje `alt_name`. Pita da li da stavi `old_name` tag (ukoliko je u RGZ-u samo pravopisna greška ili promena padeža, ne treba stavljati `old_name`).
+* Izvršiti `PYTHONPATH=../ar/src/ python3 src/generate_st_rgz_diff.py --generate` i dobićete 3 fajla: `data/rgz/streets-added.csv` (nove ulice), `data/rgz/streets-removed.csv` (izbrisane ulice) i `data/rgz/streets-changed.csv` (promenjene ulice)
+* Izvršiti `PYTHONPATH=../ar/src/ python3 src/generate_st_rgz_diff.py --fix_deleted` - prolazi kroz obrisane ulice i ako su stvarno obrisane, briše im `ref:RS:ulica` i dodaje im `removed:ref:RS:ulica`
+* Izvršiti `PYTHONPATH=../ar/src/ python3 src/generate_st_rgz_diff.py --rename-changed` - prolazi kroz ulice sa promenjenim imenom i menja im `name` tag (i resetuje `alt_name`. Pita da li da stavi `old_name` tag (ukoliko je u RGZ-u samo pravopisna greška ili promena padeža, ne treba stavljati `old_name`).
 
 Uvek možete otvoriti ova 3 fajla u QGIS-u (CRS je EPSG:32634) da vidite šta se promenilo.
 
@@ -68,7 +68,7 @@ Za ovo je potrebno da imamo [tippecanoe](https://github.com/felt/tippecanoe) pro
 `ogr2ogr data/rgz/ulice.geojson data/rgz/streets.new.csv -dialect sqlite -sql "SELECT rgz_ulica AS ulica_ime, ST_GeomFromText(rgz_geometry) AS geometry FROM 'streets.new'" -nln ulice`
 
 * Generiše se .mbtiles fajl: `tippecanoe data/rgz/ulice.geojson -o data/rgz/ulice.mbtiles --force`
-* Ovaj fajl se pošalje na vektor server (kredencijale tražiti od autora ovog uputstva)
+* `scp data/rgz/ulice.mbtiles vektor:/home/debian/` (kredencijale za vektorski tile server tražiti od autora ovog uputstva)
 
 ### Kreiranje rasterske mape
 
@@ -76,7 +76,7 @@ Ovu mapu treba da okačimo na sajt i da obavestimo Peleta da je osveži.
 
 * `ogr2ogr data/rgz/rgz_ulice.shp data/rgz/streets.new.csv -dialect sqlite -sql "SELECT rgz_ulica_mb, rgz_ulica AS rgz_ulica, GeometryFromText(rgz_geometry, 4326) AS geometry FROM 'streets.new'" -lco ENCODING=UTF-8 -s_srs EPSG:4326 -t_srs EPSG:3857`
 * `zip -j data/rgz/rgz_ulice_dump_latest.zip data/rgz/rgz_ulice.*`
-* `scp data/rgz/rgz_ulice_dump_latest.zip kokanovic:/home/branko/`
+* `scp data/rgz/rgz_ulice_dump_latest.zip kokanmain:/home/branko/`
 * ssh tamo i kopirati ga u fajl sa `rgz_ulice_dump_YYYYMMDD.zip` strukturom, zbog arhiviranja
 
 ### Konačna zamena
