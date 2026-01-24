@@ -487,6 +487,7 @@ def find_wrong_names(cwd, street_mappings: StreetMapping):
         'w149943467', 'w1343580428', 'w1164632745', 'w821891741', 'w1087728893', 'w675806843', 'w576435160',
         'w675806835', 'w684170029', 'w796441804', 'w680405070', 'w680385199', 'w680385122', 'w1337552425',
         'w1127979395', 'w1164632744', 'w283100160', 'w1393144589', 'w1391171880', 'w960701258', 'w252583559',
+        'w1076701917', 'w1076701916', 'w1076701915', 'w1076701914', 'w1076701913', 'w1076701911', 'w1076701910',  # NOMAD camp
         'r16764149'])]
     df_osm_streets['geometry'] = df_osm_streets.osm_geometry.apply(wkt.loads)
     gdf_osm_streets = gpd.GeoDataFrame(df_osm_streets, geometry='geometry', crs="EPSG:4326")
