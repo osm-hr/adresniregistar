@@ -150,7 +150,7 @@ def fix_alt_names(data_path, street_mappings: StreetMapping, oauth_session: OAut
                     proper_alt_name_sr_latn = ask_for_fix(suggestion_db, street['alt_name_sr_latn_suggestion'])
                 else:
                     proper_alt_name_sr_latn = street['alt_name_sr_latn_suggestion']
-                print(f'+alt_name:sr={proper_alt_name_sr_latn} (name="{current_street_name}")')
+                print(f'+alt_name:sr-Latn={proper_alt_name_sr_latn} (name="{current_street_name}")')
                 entity['tag']['alt_name:sr-Latn'] = proper_alt_name_sr_latn
                 any_change = True
 
