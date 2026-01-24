@@ -1,14 +1,14 @@
 import argparse
+import ast
 import json
 import os
 
 import pandas as pd
 
 from common import normalize_name
-from street_mapping import StreetMapping
 
 
-def calculate_name_match(street):
+def calculate_name_match(street, df_osm):
     total_length = 0
     average_length = 0
     total_count_wrong = 0
@@ -25,12 +25,21 @@ def calculate_name_match(street):
     assert len(found_osm_ids) == len(norm_name_matches)
     assert len(found_osm_ids) == len(osm_names)
 
-    for found_intersection, found_osm_way_length, osm_name, name_match, norm_name_match in zip(found_intersections, found_osm_way_lengths, osm_names, name_matches, norm_name_matches):
+    for found_intersection, found_osm_way_length, osm_name, name_match, norm_name_match, found_osm_id in zip(found_intersections, found_osm_way_lengths, osm_names, name_matches, norm_name_matches, found_osm_ids):
         wrong_name = osm_name != '' and not name_match and not norm_name_match
-        if wrong_name:
-            total_length = total_length + float(found_osm_way_length)
-            average_length = average_length + float(found_intersection) * float(found_osm_way_length)
-            total_count_wrong += 1
+        if not wrong_name:
+            continue
+
+        # Check if it is place=square. For those, do not report them as name mismatches
+        osm_street = df_osm[df_osm.osm_id == found_osm_id]
+        if len(osm_street) == 1 and 'tags' in osm_street.iloc[0]:
+            tags = ast.literal_eval(osm_street.iloc[0]['tags'])
+            if 'place' in tags and tags['place'] == 'square':
+                continue
+
+        total_length = total_length + float(found_osm_way_length)
+        average_length = average_length + float(found_intersection) * float(found_osm_way_length)
+        total_count_wrong += 1
     return total_length, average_length, int(total_count_wrong)
 
 
@@ -92,10 +101,18 @@ def do_analysis_name_mismatch(opstina, data_path, require_return):
         print(f"    Missing file {input_analysis_file}, cannot process opstina {opstina}")
         return
 
+    input_osm_file = os.path.join(data_path, f'osm/csv/{opstina}.csv')
+    if not require_return and not os.path.exists(input_analysis_file):
+        print(f"    Missing file {input_osm_file}, cannot process opstina {opstina}")
+        return
+
+    print(f"    Loading OSM streets in {opstina}")
+    df_osm = pd.read_csv(input_osm_file, dtype={'ref:RS:ulica': object, 'osm_id': str})
+
     print(f"    Loading analyzed streets in {opstina}")
     df_anal = pd.read_csv(input_analysis_file, dtype={'ref:RS:ulica': object, 'osm_id': str})
     df_anal = df_anal[pd.notna(df_anal.found_osm_id)]
-    df_anal[['total_length', 'average_length', 'total_count_wrong']]  = df_anal.apply(lambda x: calculate_name_match(x), axis=1, result_type='expand')
+    df_anal[['total_length', 'average_length', 'total_count_wrong']]  = df_anal.apply(lambda x: calculate_name_match(x, df_osm), axis=1, result_type='expand')
     df_anal = df_anal[df_anal.total_count_wrong > 0]
     df_anal = df_anal[['rgz_opstina', 'rgz_naselje_mb', 'rgz_naselje', 'rgz_ulica_mb', 'rgz_ulica', 'rgz_way_length', 'conflated_osm_way_length',  'total_length', 'average_length', 'total_count_wrong']]
     df_anal.to_csv(output_path, index=False)
