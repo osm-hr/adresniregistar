@@ -45,7 +45,7 @@ def main():
         return
 
     print("Load all OSM addresses")
-    df_streets = pd.read_csv(os.path.join(osm_path, 'streets.csv'), dtype={'ref:RS:ulica': object})
+    df_streets = pd.read_csv(os.path.join(osm_path, 'streets.csv'), dtype={'ref:RS:ulica': str, 'osm_short_name': str, 'osm_short_name_sr': str, 'osm_short_name_sr_latn': str, 'note': str})
     df_streets['osm_geometry'] = df_streets.osm_geometry.apply(wkt.loads)
     gdf_streets = gpd.GeoDataFrame(df_streets, geometry='osm_geometry', crs="EPSG:4326")
     gdf_streets.sindex
