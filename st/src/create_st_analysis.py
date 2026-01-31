@@ -142,6 +142,7 @@ way[ref:RS:ulica] {
     gdf_high_intersection['found_intersection'] = gdf_high_intersection['intersection_length'] / gdf_high_intersection[
         'osm_geometry2'].length
     gdf_high_intersection.rename(columns={'osm_id': 'found_osm_id'}, inplace=True)
+    gdf_high_intersection = gdf_high_intersection.sort_values('found_osm_id', ascending=True)
     gdf_high_intersection = gdf_high_intersection[gdf_high_intersection['found_intersection'] > 0.6]
     gdf_high_intersection.drop(['index_right', 'osm_name_sr', 'osm_name_sr_latn', 'osm_name_en',
                                 'osm_alt_name', 'osm_alt_name_sr', 'osm_alt_name_sr_latn', 'osm_short_name',
