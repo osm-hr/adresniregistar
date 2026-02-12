@@ -7,6 +7,7 @@ import pandas as pd
 from shapely import wkt
 
 from common import OPSTINE_TO_SKIP
+import settings
 
 
 def main():
@@ -19,26 +20,32 @@ def main():
         return
 
     print("Load opstine geometries")
-    df_opstine = pd.read_csv(os.path.join(rgz_path, 'opstina.csv'), dtype='unicode')
-    df_opstine['geometry'] = df_opstine.geometry.apply(wkt.loads)
-    gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs="EPSG:32634")
+    if settings.OPSTINE_DATA_TYPE.lower() == 'csv':
+        df_opstine = pd.read_csv(os.path.join(rgz_path, 'opstina.csv'), dtype='unicode')
+        df_opstine['geometry'] = df_opstine.geometry.apply(wkt.loads)
+        gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs="EPSG:32634")
+    elif settings.OPSTINE_DATA_TYPE.lower() == 'geojson':
+        gdf_opstine = gpd.read_file(os.path.join(rgz_path, 'opstina.geojson'))
+        gdf_opstine.rename(columns={'nationalCode': 'opstina_maticni_broj', 'text': 'opstina_imel'}, inplace=True)
+    else:
+        raise ValueError(f"Unsupported OPSTINE_DATA_TYPE: {settings.OPSTINE_DATA_TYPE}")
     gdf_opstine.to_crs("EPSG:4326", inplace=True)
     gdf_opstine.sindex
+    if settings.ENHANCE_WITH_NASELJA.lower() == 'true':
 
-    df_naselja = pd.read_csv(os.path.join(rgz_path, 'naselje.csv'), dtype='unicode')
-    df_naselja['geometry'] = df_naselja.wkt.apply(wkt.loads)
-    gdf_naselja = gpd.GeoDataFrame(df_naselja, geometry='geometry', crs="EPSG:32634")
-    gdf_naselja.to_crs("EPSG:4326", inplace=True)
-    gdf_naselja.sindex
+        df_naselja = pd.read_csv(os.path.join(rgz_path, 'naselje.csv'), dtype='unicode')
+        df_naselja['geometry'] = df_naselja.wkt.apply(wkt.loads)
+        gdf_naselja = gpd.GeoDataFrame(df_naselja, geometry='geometry', crs="EPSG:32634")
+        gdf_naselja.to_crs("EPSG:4326", inplace=True)
+        gdf_naselja.sindex
 
-    gdf_naselja = gdf_naselja.groupby('opstina_maticni_broj').agg({
-        'geometry': lambda x: x.unary_union
-    }).reset_index()
+        gdf_naselja = gdf_naselja.groupby('opstina_maticni_broj').agg({
+            'geometry': lambda x: x.unary_union
+        }).reset_index()
 
-    gdf_opstine = gdf_opstine.merge(gdf_naselja, on='opstina_maticni_broj', suffixes=('', '_naselja'))
-    gdf_opstine['geometry'] = gdf_opstine.apply(lambda row: row['geometry'].union(row['geometry_naselja']), axis=1)
-    gdf_opstine.drop(['geometry_naselja'], inplace=True, axis=1)
-
+        gdf_opstine = gdf_opstine.merge(gdf_naselja, on='opstina_maticni_broj', suffixes=('', '_naselja'))
+        gdf_opstine['geometry'] = gdf_opstine.apply(lambda row: row['geometry'].union(row['geometry_naselja']), axis=1)
+        gdf_opstine.drop(['geometry_naselja'], inplace=True, axis=1)
     all_opstina_exist = True
     for i, row in gdf_opstine.iterrows():
         opstina = row['opstina_imel']
@@ -75,7 +82,7 @@ def main():
         print(f"{i+1}/{len(gdf_opstine)} Processing {opstina}")
         addresses_in_opstina = addresses_with_opstina[addresses_with_opstina['opstina_imel'] == opstina].copy()
         addresses_in_opstina.drop(['index_right', 'opstina_maticni_broj', 'opstina_ime', 'opstina_imel',
-                   'opstina_povrsina', 'okrug_sifra'], inplace=True, axis=1)
+                   'opstina_povrsina', 'okrug_sifra'], inplace=True, axis=1, errors='ignore')
 
         if len(addresses_in_opstina) == 0:
             print(f"{opstina} doesn't seem to have any address")

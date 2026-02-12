@@ -12,6 +12,7 @@ from shapely import wkt
 
 from common import normalize_name
 from street_mapping import StreetMapping
+import settings
 
 
 def calculate_housenumber_diff(housenumber_rgz, housenumber_osm):
@@ -70,7 +71,7 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
         return
 
     print(f"    Loading OSM addresses in {opstina}")
-    df_osm = pd.read_csv(input_osm_file, dtype={'osm_housenumber': object, 'ref:RS:ulica': object, 'ref:RS:kucni_broj': object})
+    df_osm = pd.read_csv(input_osm_file, dtype={'osm_housenumber': object, settings.STREET_REF_TAG: object, settings.HOUSE_REF_TAG: object})
     df_osm['osm_geometry2'] = df_osm.osm_geometry.apply(wkt.loads)
     gdf_osm = gpd.GeoDataFrame(df_osm, geometry='osm_geometry2', crs="EPSG:4326")
     gdf_osm.drop(['osm_country', 'osm_city', 'osm_postcode'], inplace=True, axis=1)
@@ -95,10 +96,10 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
     # we take closer address. We don't worry about it here, as we will have QA to report on this.
     print(f"    Joining addresses in RGZ and OSM in {opstina} by conflation (ref:RS:kucni_broj)")
     gdf_osm['osm_housenumber'] = gdf_osm['osm_housenumber'].astype('str')  # For some reason, we need to explicitely cast this to string
-    gdf_rgz = gdf_rgz.merge(gdf_osm, how='left', left_on='rgz_kucni_broj_id', right_on='ref:RS:kucni_broj')
+    gdf_rgz = gdf_rgz.merge(gdf_osm, how='left', left_on='rgz_kucni_broj_id', right_on=settings.HOUSE_REF_TAG)
     gdf_rgz['conflated_distance'] = gdf_rgz.rgz_geometry.distance(gdf_rgz.osm_geometry)
     gdf_rgz.rename(columns={'osm_id': 'conflated_osm_id', 'osm_street': 'conflated_osm_street', 'osm_housenumber': 'conflated_osm_housenumber'}, inplace=True)
-    gdf_rgz.drop(['ref:RS:kucni_broj', 'ref:RS:ulica', 'osm_geometry', 'osm_geometry2', 'osm_street_norm', 'osm_housenumber_norm'], inplace=True, axis=1)
+    gdf_rgz.drop([settings.HOUSE_REF_TAG, settings.STREET_REF_TAG, 'osm_geometry', 'osm_geometry2', 'osm_street_norm', 'osm_housenumber_norm'], inplace=True, axis=1)
     gdf_rgz['rank'] = 1
     gdf_rgz['rank'] = gdf_rgz.sort_values('conflated_distance').groupby('rgz_kucni_broj_id')['rank'].cumsum()
     gdf_rgz = gdf_rgz[gdf_rgz['rank'] == 1]
@@ -113,7 +114,7 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
     gdf_rgz.sindex
 
     print(f"    Joining addresses in RGZ and OSM in {opstina}")
-    gdf_osm_no_conflated = gdf_osm[gdf_osm["ref:RS:kucni_broj"].isna()]
+    gdf_osm_no_conflated = gdf_osm[gdf_osm[settings.HOUSE_REF_TAG].isna()]
     joined = gdf_rgz.sjoin(gdf_osm_no_conflated, how='left', predicate='intersects')
     joined['distance'] = joined.rgz_geometry.distance(joined.osm_geometry)
     joined.sindex
@@ -131,8 +132,7 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
     matched_osm_id = joined[joined.matching].osm_id
     print(f"    Removing {len(matched_osm_id)} perfectly matched address as partially matched in {opstina}")
     joined.loc[(joined.osm_id.isin(matched_osm_id)) & (joined.matching == False), ['score']] = 0.0
-    joined.loc[(joined.osm_id.isin(matched_osm_id)) & (joined.matching == False),
-                       ['index_right', 'osm_id', 'osm_street', 'osm_housenumber', 'ref:RS:ulica', 'ref:RS:kucni_broj', 'osm_geometry', 'osm_street_norm', 'osm_housenumber_norm', 'distance']] = np.nan
+    joined.loc[(joined.osm_id.isin(matched_osm_id)) & (joined.matching == False), ['index_right', 'osm_id', 'osm_street', 'osm_housenumber', settings.STREET_REF_TAG, settings.HOUSE_REF_TAG, 'osm_geometry', 'osm_street_norm', 'osm_housenumber_norm', 'distance']] = np.nan
 
     # Since we might have multiple addresses from OSM associated to various RGZ addresses,
     # we should keep only one of those. It doesn't make sense to offer same OSM address for multiple RGZ addresses.
@@ -143,7 +143,7 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
     joined['rank'] = joined.groupby(['osm_id'])['rank'].shift().cumsum()
     joined.loc[pd.notna(joined['rank']), ['score']] = 0.0
     joined.loc[pd.notna(joined['rank']),
-               ['index_right', 'osm_id', 'osm_street', 'osm_housenumber', 'ref:RS:ulica', 'ref:RS:kucni_broj',
+               ['index_right', 'osm_id', 'osm_street', 'osm_housenumber', settings.STREET_REF_TAG, settings.HOUSE_REF_TAG,
                 'osm_geometry', 'osm_street_norm', 'osm_housenumber_norm', 'distance']] = np.nan
 
     # Out of all these calculated pairs, we want to pick only best one. For this, we use ranking function.
