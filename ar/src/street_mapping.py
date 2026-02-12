@@ -7,7 +7,7 @@ import pandas as pd
 
 import osmium
 from common import normalize_name_latin
-
+import settings
 
 class CollectRgzRefMappingHandler(osmium.SimpleHandler):
     """
@@ -18,8 +18,8 @@ class CollectRgzRefMappingHandler(osmium.SimpleHandler):
         self.mappings = {}
 
     def way(self, w):
-        if w.tags.get('ref:RS:ulica') and w.tags.get("highway") and w.tags.get("name"):
-            ref = w.tags.get("ref:RS:ulica")
+        if w.tags.get(settings.STREET_REF_TAG) and w.tags.get("highway") and w.tags.get("name"):
+            ref = w.tags.get(settings.STREET_REF_TAG)
             name = w.tags.get("name")
             if ref not in self.mappings:
                 self.mappings[ref] = []
@@ -75,7 +75,7 @@ def load_curated(curated_street_csv_path):
 
 def load_ref_mapping(cwd):
     osm_path = os.path.join(cwd, 'data/osm')
-    pbf_file = os.path.join(osm_path, 'download/serbia.osm.pbf')
+    pbf_file = os.path.join(osm_path, 'download/' + settings.COUNTRY + '.osm.pbf')
 
     crrmh = CollectRgzRefMappingHandler()
     crrmh.apply_file(pbf_file)
@@ -84,7 +84,7 @@ def load_ref_mapping(cwd):
 
 def load_osm_mappings(cwd):
     osm_path = os.path.join(cwd, 'data/osm')
-    pbf_file = os.path.join(osm_path, 'download/serbia.osm.pbf')
+    pbf_file = os.path.join(osm_path, 'download/' + settings.COUNTRY + '.osm.pbf')
 
     comh = CollectOsmMappingsHandler()
     comh.apply_file(pbf_file)
@@ -199,7 +199,7 @@ def main():
     print(f"Collected all curated ({len(curated_streets)}) mappings")
 
     ref_mappings = load_ref_mapping(cwd)
-    print(f"Collected all ref:RS:ulica ({len(ref_mappings)}) mappings")
+    print(f"Collected all {settings.STREET_REF_TAG} ({len(ref_mappings)}) mappings")
 
     osm_mappings = load_osm_mappings(cwd)
     print(f"Collected all OSM ({len(osm_mappings)}) mappings")

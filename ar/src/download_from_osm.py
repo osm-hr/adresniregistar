@@ -2,6 +2,7 @@
 
 import csv
 import os
+import settings
 
 from common import CollectRelationWaysHandler, CollectWayNodesHandler, BuildNodesCacheHandler, CollectEntitiesHandler
 
@@ -10,7 +11,7 @@ def main():
     cwd = os.getcwd()
     collect_path = os.path.join(cwd, 'data/osm')
     rgz_path = os.path.join(cwd, 'data/rgz')
-    pbf_file = os.path.join(collect_path, 'download/serbia.osm.pbf')
+    pbf_file = os.path.join(collect_path, 'download/' + settings.COUNTRY + '.osm.pbf')
     all_addresses_path = os.path.join(collect_path, 'addresses.csv')
 
     if os.path.exists(all_addresses_path) and os.path.getsize(all_addresses_path) > 1024 * 1024:
@@ -21,7 +22,7 @@ def main():
     crwh.apply_file(pbf_file)
     print(f"Collected all ways ({len(crwh.ways)}) from relations")
 
-    cwnh = CollectWayNodesHandler(crwh.ways, ['addr:street', 'addr:housenumber', 'ref:RS:kucni_broj'])
+    cwnh = CollectWayNodesHandler(crwh.ways, ['addr:street', 'addr:housenumber', settings.HOUSE_REF_TAG])
     cwnh.apply_file(pbf_file)
     print(f"Collected all nodes ({len(cwnh.nodes)}) from ways")
 
@@ -29,7 +30,7 @@ def main():
     bnch.apply_file(pbf_file)
     print(f"Found coordinates for all nodes ({len(bnch.nodes_cache)})")
 
-    ceh = CollectEntitiesHandler(bnch.nodes_cache, cwnh.ways_cache, ['addr:street', 'addr:housenumber', 'ref:RS:kucni_broj'])
+    ceh = CollectEntitiesHandler(bnch.nodes_cache, cwnh.ways_cache, ['addr:street', 'addr:housenumber', settings.HOUSE_REF_TAG])
     ceh.apply_file(pbf_file)
     print(f"Collected all addresses ({len(ceh.entities)})")
 

@@ -68,6 +68,9 @@ download_from_osm:
 	mkdir -p data/osm/csv
 	python3 src/prepare_osm_data.py
 
+download_from_dgu:
+	@./src/download_from_dgu.sh
+
 normalize_street_names:
 	@echo "Normalizing street names"
 	@if [ "$(AR_INCREMENTAL_UPDATE)" != "1" ]; then\
