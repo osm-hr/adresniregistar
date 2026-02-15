@@ -15,8 +15,12 @@ def main():
     osm_path = os.path.join(cwd, 'data/osm')
     rgz_path = os.path.join(cwd, 'data/rgz')
 
-    if not os.path.exists(os.path.join(rgz_path, 'opstina.csv')):
+    if settings.OPSTINE_DATA_TYPE.lower() == 'csv' and not os.path.exists(os.path.join(rgz_path, 'opstina.csv')):
         print("Skinite opstine.zip sa https://opendata.geosrbija.rs i otpakujte opstina.csv u data/rgz/ direktorijum")
+        return
+
+    if settings.OPSTINE_DATA_TYPE.lower() == 'geojson' and not os.path.exists(os.path.join(rgz_path, 'opstina.geojson')):
+        print("Pokrenite download_from_dgu.sh skriptu")
         return
 
     print("Load opstine geometries")

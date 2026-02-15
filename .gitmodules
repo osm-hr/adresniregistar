@@ -2,7 +2,3 @@
 	path = ar/adresniregistar-ispravci
 	url = https://github.com/osm-hr/adresniregistar-ispravci.git
 	branch = master
-[submodule "ar/dgu-parse"]
-	path = ar/dgu-parse
-	url = https://codeberg.org/ihabunek/dgu-parse.git
-	branch = main
