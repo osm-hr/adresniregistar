@@ -26,7 +26,8 @@ RUN pip install --no-cache-dir \
     osmium \
     requests-oauthlib \
     shapely \
-    geopandas
+    geopandas \
+    lxml
 
 WORKDIR /app
 
