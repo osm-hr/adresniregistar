@@ -51,7 +51,7 @@ def click_novo_preuzimanje(driver):
         try:
             time.sleep(SLEEP_TIME * 3)
             driver.find_element(By.CSS_SELECTOR, "button#newDownloadButton").click()
-            time.sleep(SLEEP_TIME)
+            time.sleep(SLEEP_TIME * 3)
             break
         except ElementClickInterceptedException as e:
             retries += 1
