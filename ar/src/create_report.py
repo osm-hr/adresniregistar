@@ -12,6 +12,7 @@ from shapely import wkt
 
 from common import AddressInBuildingResolution, OsmEntitiesCacheHandler
 from common import cyr2lat, normalize_name, normalize_name_latin, xml_escape, geojson2js, pad_housenumber
+import settings
 from street_mapping import StreetMapping
 
 
@@ -173,7 +174,7 @@ def generate_osm_files_matched_addresses(context, opstina_dir_path, opstina_name
             entity = osm_entities_cache.nodes_cache[node_id]
             already_exists = any(n for n in osm_nodes if n['id'] == node_id)
             if not already_exists:
-                new_tags = dict(entity['tags'], **{'ref:RS:kucni_broj': str(address.rgz_kucni_broj_id)})
+                new_tags = dict(entity['tags'], **{settings.HOUSE_REF_TAG: str(address.rgz_kucni_broj_id)})
                 osm_nodes.append({
                     'id': node_id,
                     'lat': entity['lat'],
@@ -187,7 +188,7 @@ def generate_osm_files_matched_addresses(context, opstina_dir_path, opstina_name
             if way_id not in osm_entities_cache.ways_cache:
                 continue
             entity = osm_entities_cache.ways_cache[way_id]
-            new_tags = dict(entity['tags'], **{'ref:RS:kucni_broj': str(address.rgz_kucni_broj_id)})
+            new_tags = dict(entity['tags'], **{settings.HOUSE_REF_TAG: str(address.rgz_kucni_broj_id)})
             osm_ways.append({
                 'id': int(address.osm_id[1:]),
                 'tags': {k: xml_escape(v) for k, v in new_tags.items()},
@@ -621,7 +622,7 @@ def generate_report(context):
     df_opstine = df_opstine[~df_opstine.okrug_sifra.isin([25, 26, 27, 28, 29])]  # remove kosovo
     df_opstine = df_opstine.merge(df_calc_opstine[['name', 'ratio']], left_on='opstina_imel', right_on='name')
     df_opstine.drop(['name', 'opstina_maticni_broj', 'opstina_ime', 'opstina_povrsina', 'okrug_sifra'], inplace=True, axis=1)
-    gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs="EPSG:32634")
+    gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs=settings.COORDINATE_SYSTEM)
     gdf_opstine.to_crs("EPSG:4326", inplace=True)
     gdf_opstine['geometry'] = gdf_opstine.simplify(tolerance=0.0005)
     gdf_opstine.to_file(opstine_js_path, driver='GeoJSON')
@@ -634,7 +635,7 @@ def load_naselja_boundaries(rgz_path):
     df_naselja['geometry'] = df_naselja.wkt.apply(wkt.loads)
     df_naselja.drop(['objectid', 'naselje_ime', 'naselje_povrsina', 'opstina_maticni_broj',
                      'opstina_ime', 'wkt'], inplace=True, axis=1)
-    gdf_naselja = gpd.GeoDataFrame(df_naselja, geometry='geometry', crs="EPSG:32634")
+    gdf_naselja = gpd.GeoDataFrame(df_naselja, geometry='geometry', crs=settings.COORDINATE_SYSTEM)
     gdf_naselja.to_crs("EPSG:4326", inplace=True)
     gdf_naselja['geometry'] = gdf_naselja.simplify(tolerance=0.0001)
     return gdf_naselja

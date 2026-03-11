@@ -11,13 +11,14 @@ from shapely import wkt
 
 from common import CollectRelationWaysHandler, CollectWayNodesHandler, BuildNodesCacheHandler, CollectEntitiesHandler, \
     AddressInBuildingResolution, cyr2lat
+import settings
 
 
 def is_simple_address(tags):
     common_tags = ['note', 'description', 'entrance', 'door', 'survey:date', 'survey_date', 'check_date', 'area',
-                   'TEXT_ANGLE', 'TEXT_SIZE', 'OBJECTID', 'ref:RS:ulica', 'ref:RS:kucni_broj',
+                   'TEXT_ANGLE', 'TEXT_SIZE', 'OBJECTID', settings.STREET_REF_TAG, settings.HOUSE_REF_TAG,
                    'building', 'building:levels', 'old_name', 'alt_name', 'source:addr', 'roof:levels',
-                   'old_addr:street', 'old_addr:housenumber', 'access', 'removed:ref:RS:kucni_broj', 'source']
+                   'old_addr:street', 'old_addr:housenumber', 'access', 'removed:'+settings.HOUSE_REF_TAG, 'source']
     for k in tags.keys():
         if not k.startswith("addr:") and k not in common_tags:
             return False
@@ -251,8 +252,8 @@ class CollectRefAddressesHandler(osmium.SimpleHandler):
         self.addresses = {}
 
     def node(self, n):
-        if n.tags.get('ref:RS:kucni_broj'):
-            ref = n.tags.get('ref:RS:kucni_broj')
+        if n.tags.get(settings.HOUSE_REF_TAG):
+            ref = n.tags.get(settings.HOUSE_REF_TAG)
             if ref not in self.addresses:
                 self.addresses[ref] = []
             self.addresses[ref].append({
@@ -262,8 +263,8 @@ class CollectRefAddressesHandler(osmium.SimpleHandler):
             })
 
     def way(self, w):
-        if w.tags.get('ref:RS:kucni_broj'):
-            ref = w.tags.get('ref:RS:kucni_broj')
+        if w.tags.get(settings.HOUSE_REF_TAG):
+            ref = w.tags.get(settings.HOUSE_REF_TAG)
             if ref not in self.addresses:
                 self.addresses[ref] = []
             self.addresses[ref].append({
@@ -273,8 +274,8 @@ class CollectRefAddressesHandler(osmium.SimpleHandler):
             })
 
     def relation(self, r):
-        if r.tags.get('ref:RS:kucni_broj'):
-            ref = r.tags.get('ref:RS:kucni_broj')
+        if r.tags.get(settings.HOUSE_REF_TAG):
+            ref = r.tags.get(settings.HOUSE_REF_TAG)
             if ref not in self.addresses:
                 self.addresses[ref] = []
             self.addresses[ref].append({
@@ -288,7 +289,7 @@ def find_unaccounted_osm_addresses(cwd):
     osm_path = os.path.join(cwd, 'data/osm')
     rgz_path = os.path.join(cwd, 'data/rgz')
     qa_path = os.path.join(cwd, 'data/qa')
-    pbf_file = os.path.join(osm_path, 'download/serbia.osm.pbf')
+    pbf_file = os.path.join(osm_path, 'download/'+settings.COUNTRY+'.osm.pbf')
 
     if os.path.exists(os.path.join(qa_path, 'unaccounted_osm_addresses.csv')):
         return
@@ -309,12 +310,12 @@ def find_unaccounted_osm_addresses(cwd):
     ceh = CollectEntitiesHandler(bnch.nodes_cache, cwnh.ways_cache, 'addr:housenumber', collect_tags=True)
     ceh.apply_file(pbf_file)
     gdf_osm_addresses = gpd.GeoDataFrame(ceh.entities, geometry='osm_geometry', crs="EPSG:4326")
-    gdf_osm_addresses = gdf_osm_addresses[pd.isna(gdf_osm_addresses['ref:RS:kucni_broj'])]
+    gdf_osm_addresses = gdf_osm_addresses[pd.isna(gdf_osm_addresses[settings.HOUSE_REF_TAG])]
     gdf_osm_addresses.sindex
     print(f"Found all building geometries ({len(ceh.entities)}) from PBF")
 
     # Remove those with "removed:ref:RS:kucni_broj" tag, as they are counted differently (as removed)
-    gdf_osm_addresses['is_removed'] = gdf_osm_addresses['tags'].apply(lambda tags: True if 'removed:ref:RS:kucni_broj' in tags else False)
+    gdf_osm_addresses['is_removed'] = gdf_osm_addresses['tags'].apply(lambda tags: True if 'removed:'+settings.HOUSE_REF_TAG in tags else False)
     gdf_osm_addresses = gdf_osm_addresses[~gdf_osm_addresses.is_removed]
 
     # For testing purposes, save and load gdf_buildings like this
@@ -326,20 +327,24 @@ def find_unaccounted_osm_addresses(cwd):
 
     df_opstine = pd.read_csv(os.path.join(rgz_path, 'opstina.csv'))
     df_opstine['geometry'] = df_opstine.geometry.apply(wkt.loads)
-    gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs="EPSG:32634")
+    gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs=settings.COORDINATE_SYSTEM)
+    print(gdf_opstine.crs)
     gdf_opstine.to_crs("EPSG:4326", inplace=True)
     gdf_opstine.sindex
     print(f"Loaded all opstine geometries ({len(gdf_opstine)})")
-
+    
+    
     addresses_per_opstina = gdf_osm_addresses.sjoin(gdf_opstine, how='inner', predicate='intersects')
+
+    print(f"Addresses per opstina count: {len(addresses_per_opstina)}")
     addresses_per_opstina.sindex
     addresses_per_opstina['name'] = addresses_per_opstina['tags'].apply(lambda x: x['name'] if 'name' in x else '')
     addresses_per_opstina['amenity'] = addresses_per_opstina['tags'].apply(lambda x: x['amenity'] if 'amenity' in x else '')
     addresses_per_opstina['shop'] = addresses_per_opstina['tags'].apply(lambda x: x['shop'] if 'shop' in x else '')
 
-    addresses_per_opstina.drop(['osm_country', 'osm_city', 'osm_postcode', 'ref:RS:kucni_broj', 'tags', 'index_right',
+    addresses_per_opstina.drop(['osm_country', 'osm_city', 'osm_postcode', settings.HOUSE_REF_TAG, 'tags', 'index_right',
                                 'opstina_maticni_broj', 'opstina_ime', 'opstina_povrsina', 'okrug_sifra', 'is_removed'],
-                               inplace=True, axis=1)
+                               inplace=True, axis=1, errors='ignore')
     print("Split all addresses per opstina")
 
     pd.DataFrame(addresses_per_opstina).to_csv(os.path.join(qa_path, 'unaccounted_osm_addresses.csv'), index=False)
@@ -350,7 +355,7 @@ def find_addresses_in_buildings(cwd):
     osm_path = os.path.join(cwd, 'data/osm')
     rgz_path = os.path.join(cwd, 'data/rgz')
     qa_path = os.path.join(cwd, 'data/qa')
-    pbf_file = os.path.join(osm_path, 'download/serbia.osm.pbf')
+    pbf_file = os.path.join(osm_path, 'download/'+settings.COUNTRY+'.osm.pbf')
 
     if os.path.exists(os.path.join(qa_path, 'addresses_in_buildings_per_opstina.csv')):
         print("File data/qa/addresses_in_buildings_per_opstina.csv already exists")
@@ -391,17 +396,29 @@ def find_addresses_in_buildings(cwd):
     print(f"Found all address nodes ({len(ceh.entities)}) from PBF")
 
     df_opstine = pd.read_csv(os.path.join(rgz_path, 'opstina.csv'))
+
+    print(df_opstine.geometry.head(10))
+    print(df_opstine.geometry.dtype)
+    print(df_opstine[df_opstine.geometry.str.contains("POINT|POLYGON", na=False) == False].head())
+
     df_opstine['geometry'] = df_opstine.geometry.apply(wkt.loads)
-    gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs="EPSG:32634")
+    gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs=settings.COORDINATE_SYSTEM)
+    print(gdf_opstine.crs)
     gdf_opstine.to_crs("EPSG:4326", inplace=True)
     gdf_opstine.sindex
     print(f"Loaded all opstine geometries ({len(gdf_opstine)})")
+
+    print(gdf_addresses.crs)
+    print(gdf_opstine.crs)
+
+    print(gdf_addresses.total_bounds)
+    print(gdf_opstine.total_bounds)
 
     addresses_per_opstina = gdf_addresses.sjoin(gdf_opstine, how='inner', predicate='intersects')
     addresses_per_opstina.sindex
     addresses_per_opstina.drop(['osm_country', 'osm_city', 'osm_postcode', 'index_right', 'opstina_maticni_broj',
                                 'opstina_ime', 'opstina_povrsina', 'okrug_sifra'],
-                               inplace=True, axis=1)
+                               inplace=True, axis=1,errors='ignore' )
     print("Split all addresses per opstina")
 
     # For testing purposes, save and load addresses_per_opstina like this
@@ -412,6 +429,14 @@ def find_addresses_in_buildings(cwd):
     # import ast
     # addresses_per_opstina['tags'] = addresses_per_opstina.apply(lambda row: ast.literal_eval(row.tags), axis=1)
     # addresses_per_opstina.sindex
+
+    print("Buildings CRS:", gdf_buildings.crs)
+    print("Addresses CRS:", addresses_per_opstina.crs)
+    print("Buildings bounds:", gdf_buildings.total_bounds)
+    print("Addresses bounds:", addresses_per_opstina.total_bounds)
+    print("Buildings empty?", gdf_buildings.empty)
+    print("Addresses empty?", addresses_per_opstina.empty)
+
 
     addresses_in_buildings_per_opstina = addresses_per_opstina.sjoin(gdf_buildings, how='inner', predicate='within')
     addresses_in_buildings_per_opstina.drop(['osm_country', 'osm_city', 'osm_postcode'], inplace=True, axis=1)
@@ -472,7 +497,7 @@ def find_duplicated_refs(cwd):
     # Finds addresses which have same ref:RS:kucni_broj reference
     osm_path = os.path.join(cwd, 'data/osm')
     rgz_path = os.path.join(cwd, 'data/rgz')
-    pbf_file = os.path.join(osm_path, 'download/serbia.osm.pbf')
+    pbf_file = os.path.join(osm_path, 'download/'+settings.COUNTRY+'.osm.pbf')
     qa_path = os.path.join(cwd, 'data/qa')
     json_file_path = os.path.join(qa_path, 'duplicated_refs.json')
 
@@ -493,7 +518,7 @@ def find_duplicated_refs(cwd):
         different_addresses = not streets_same or not housenumbers_same
         if different_addresses:
             output_dict.append({
-                'ref:RS:kucni_broj': k,
+                settings.HOUSE_REF_TAG: k,
                 'duplicates': v
             })
 
@@ -503,7 +528,7 @@ def find_duplicated_refs(cwd):
         return
     df_rgz = pd.read_csv(input_rgz_file, dtype={'rgz_kucni_broj_id': str})
     for dup in output_dict:
-        ref = dup['ref:RS:kucni_broj']
+        ref = dup[settings.HOUSE_REF_TAG]
         founed_entries = df_rgz[df_rgz.rgz_kucni_broj_id == ref]
         if len(founed_entries) > 0:
             dup['opstina_imel'] = cyr2lat(founed_entries.iloc[0]['rgz_opstina'])

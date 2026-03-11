@@ -18,7 +18,7 @@ def main():
         print("Skipping creation of data/osm/addresses.csv as it already exists")
         return
 
-    crwh = CollectRelationWaysHandler(['addr:street', 'addr:housenumber', 'ref:RS:kucni_broj'])
+    crwh = CollectRelationWaysHandler(['addr:street', 'addr:housenumber', settings.HOUSE_REF_TAG])
     crwh.apply_file(pbf_file)
     print(f"Collected all ways ({len(crwh.ways)}) from relations")
 
@@ -37,7 +37,7 @@ def main():
     with open(all_addresses_path, 'w', encoding="utf-8") as all_addresses_csv:
         writer = csv.DictWriter(
             all_addresses_csv,
-            fieldnames=['osm_id', 'osm_country', 'osm_city', 'osm_postcode', 'osm_street', 'osm_housenumber', 'ref:RS:ulica', 'ref:RS:kucni_broj', 'tags', 'note', 'osm_geometry'])
+            fieldnames=['osm_id', 'osm_country', 'osm_city', 'osm_postcode', 'osm_street', 'osm_housenumber', settings.STREET_REF_TAG, settings.HOUSE_REF_TAG, 'tags', 'note', 'osm_geometry'])
         writer.writeheader()
         for address in ceh.entities:
             writer.writerow(address)

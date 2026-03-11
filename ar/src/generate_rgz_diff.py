@@ -14,11 +14,12 @@ from shapely.ops import transform
 from requests_oauthlib import OAuth2Session
 
 from common import load_mappings, normalize_name_latin, token_loader, save_and_get_access_token
+import settings
 
 csv.field_size_limit(sys.maxsize)
 
 wgs84 = pyproj.CRS('EPSG:4326')
-utm = pyproj.CRS('EPSG:32634')
+utm = pyproj.CRS(settings.COORDINATE_SYSTEM)
 project = pyproj.Transformer.from_crs(wgs84, utm, always_xy=True).transform
 
 
@@ -53,7 +54,7 @@ def get_ref_kucni_broj_from_overpass(overpass_api, kucni_broj_id):
     response = overpass_api.query(f"""
         [out:json];
         (
-          nwr["ref:RS:kucni_broj"="{kucni_broj_id}"];
+          nwr["{settings.HOUSE_REF_TAG}"="{kucni_broj_id}"];
         );
         out body;
         // &contact=https://gitlab.com/osm-serbia/adresniregistar
@@ -75,7 +76,7 @@ def fix_deleted_to_added(rgz_path, rgz_last_update, oauth_session):
     """
     api = osmapi.OsmApi(session=oauth_session)
     api.ChangesetCreate({
-        "comment": f"RGZ address import (updating ref:RS:kucni_broj after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html",
+        "comment": f"RGZ address import (updating {settings.HOUSE_REF_TAG} after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html",
         "tag": "mechanical=yes",
         "source": "RGZ_AR"
     })
@@ -154,22 +155,22 @@ def fix_deleted_to_added(rgz_path, rgz_last_update, oauth_session):
             #     print(f'    {k}={entity["tag"][k]}')
 
             if candidate_new_address:
-                if 'ref:RS:kucni_broj' in entity['tag'] and entity['tag']['ref:RS:kucni_broj'] == candidate_new_address["kucni_broj_id"]:
+                if settings.HOUSE_REF_TAG in entity['tag'] and entity['tag'][settings.HOUSE_REF_TAG] == candidate_new_address["kucni_broj_id"]:
                     print(f"Skipping {old_address["opstina"]} - {old_address["ulica"]} {old_address["kucni_broj"]} as already changed")
                     continue
                 else:
-                    entity['tag']['ref:RS:kucni_broj'] = candidate_new_address["kucni_broj_id"]
+                    entity['tag'][settings.HOUSE_REF_TAG] = candidate_new_address["kucni_broj_id"]
             else:
-                if 'removed:ref:RS:kucni_broj' in entity['tag']:
-                    print(f"Skipping {old_address["opstina"]} - {old_address["ulica"]} {old_address["kucni_broj"]}, already had removed:ref:RS:kucni_broj")
+                if 'removed:'+settings.HOUSE_REF_TAG in entity['tag']:
+                    print(f"Skipping {old_address["opstina"]} - {old_address["ulica"]} {old_address["kucni_broj"]}, already had removed:"+settings.HOUSE_REF_TAG)
                     continue
-                entity['tag']['removed:ref:RS:kucni_broj'] = entity['tag']['ref:RS:kucni_broj']
+                entity['tag']['removed:'+settings.HOUSE_REF_TAG] = entity['tag'][settings.HOUSE_REF_TAG]
                 note_text = f'Izbrisano iz RGZ-a ' + rgz_last_update
                 if 'note' not in entity['tag']:
                     entity['tag']['note'] = note_text
                 else:
                     entity['tag']['note'] = entity['tag']['note'] + ';' + note_text
-                del entity['tag']['ref:RS:kucni_broj']
+                del entity['tag'][settings.HOUSE_REF_TAG]
 
             if osm_entity_found[0] == 'n':
                 api.NodeUpdate(entity)
@@ -179,9 +180,9 @@ def fix_deleted_to_added(rgz_path, rgz_last_update, oauth_session):
                 api.RelationUpdate(entity)
 
             if candidate_new_address:
-                print(f'Updated ref:RS:kucni_broj of {osm_entity_found} from {old_address["kucni_broj_id"]} to {candidate_new_address["kucni_broj_id"]}')
+                print(f'Updated {settings.HOUSE_REF_TAG} of {osm_entity_found} from {old_address["kucni_broj_id"]} to {candidate_new_address["kucni_broj_id"]}')
             else:
-                print(f'Removed ref:RS:kucni_broj of {osm_entity_found} and adding removed:ref:RS:kucni_broj')
+                print(f'Removed {settings.HOUSE_REF_TAG} of {osm_entity_found} and adding removed:{settings.HOUSE_REF_TAG}')
             time.sleep(0.1)
 
         #time.sleep(0.1)
@@ -330,7 +331,7 @@ def create_csv_files(rgz_path):
             continue
         address_old = addresses_old[rgz_kucni_broj_id]
         if (address_new['opstina_mb'] != address_old['opstina_mb']) or address_new['opstina'] != address_old['opstina']:
-            print(f"Opstina changed for ref:RS:kucni_broj {rgz_kucni_broj_id} from {address_old['opstina']} ({address_old['opstina_mb']}) to {address_new['opstina']} ({address_new['opstina_mb']}), fix manually")
+            print(f"Opstina changed for {settings.HOUSE_REF_TAG} {rgz_kucni_broj_id} from {address_old['opstina']} ({address_old['opstina_mb']}) to {address_new['opstina']} ({address_new['opstina_mb']}), fix manually")
             continue
             #raise Exception('Opstina changed, bailing out')
         naselje_mb_changed = address_new['naselje_mb'] != address_old['naselje_mb']
@@ -386,7 +387,7 @@ def main():
     parser = argparse.ArgumentParser(
         description='generate_rgz_diff.py - Fix OSM data after RGZ data refresh')
     parser.add_argument('--generate', required=False, help='Should we generate diff files from old and new data', action='store_true')
-    parser.add_argument('--fix_deleted_to_added', required=False, help='Should we fix deleted to added addresses - set removed:ref:RS:kucni_broj for those that do not exist anymore and change those that have new ref', action='store_true')
+    parser.add_argument('--fix_deleted_to_added', required=False, help='Should we fix deleted to added addresses - set removed:{settings.HOUSE_REF_TAG} for those that do not exist anymore and change those that have new ref', action='store_true')
     parser.add_argument('--fix_changed', required=False, help='Should we update addresses for those addresses that are changed', action='store_true')
     parser.add_argument('--rgz_update_date', default=None, required=False, help='Date of RGZ data update, in YYYY-MM-DD format, like 2023-04-23')
     args = parser.parse_args()

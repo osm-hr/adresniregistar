@@ -10,6 +10,7 @@ from jinja2 import Environment, FileSystemLoader
 from common import AddressInBuildingResolution
 from common import normalize_name, normalize_name_latin, xml_escape, housenumber_to_float
 from create_report import build_osm_entities_cache
+import settings
 from street_mapping import StreetMapping
 
 
@@ -149,7 +150,7 @@ def generate_qa_duplicated_refs(context):
                 'name': f'{street_name} {housenumber}' if len(street_name) > 0 or len(housenumber) > 0 else f'{dup["type"]} {dup["id"]}'
             })
         duplicates.append({
-            'id': address['ref:RS:kucni_broj'],
+            'id': address[settings.HOUSE_REF_TAG],
             'opstina': address['opstina_imel'],
             'links': links
         })
@@ -268,7 +269,7 @@ def generate_addresses_in_buildings(context):
                 'building_osm_link': f'https://openstreetmap.org/{osm_type}/{osm_id_right[1:]}',
                 'building_text': osm_id_right,
                 'building_address': building_address,
-                'building_has_ref': pd.notna(df_address['ref:RS:kucni_broj_right'].values[0]),
+                'building_has_ref': pd.notna(df_address[settings.HOUSE_REF_TAG + '_right'].values[0]),
                 'nodes': [],
                 'resolution': df_address['resolution'].iloc[0]
             }
@@ -281,7 +282,7 @@ def generate_addresses_in_buildings(context):
                 address['nodes'].append({
                     'link': f"https://openstreetmap.org/{osm_type}/{ node['osm_id_left'][1:]}",
                     'text': node_text,
-                    'has_ref': pd.notna(node['ref:RS:kucni_broj_right'])
+                    'has_ref': pd.notna(node[settings.HOUSE_REF_TAG + '_right'])
                 })
             addresses.append(address)
             opstina_resolution_stats[resolution] += 1
@@ -718,7 +719,7 @@ def generate_removed_addresses(context):
     if not os.path.exists(report_removed_address_path):
         os.mkdir(report_removed_address_path)
 
-    df_removed_osm_addresses = pd.read_csv(os.path.join(qa_path, 'removed_addresses.csv'), dtype={'ref:RS:kucni_broj': str})
+    df_removed_osm_addresses = pd.read_csv(os.path.join(qa_path, 'removed_addresses.csv'), dtype={settings.HOUSE_REF_TAG: str})
 
     opstine = []
     total = {
@@ -728,7 +729,7 @@ def generate_removed_addresses(context):
 
     for opstina_name, df_addresses_in_opstina in df_removed_osm_addresses.sort_values('opstina_imel').groupby('opstina_imel'):
         removed_count = len(df_addresses_in_opstina)
-        current_count = len(df_addresses_in_opstina[pd.notna(df_addresses_in_opstina['ref:RS:kucni_broj'])])
+        current_count = len(df_addresses_in_opstina[pd.notna(df_addresses_in_opstina[settings.HOUSE_REF_TAG])])
         total['removed_count'] += removed_count
         total['current_count'] += current_count
         opstine.append({
@@ -755,8 +756,8 @@ def generate_removed_addresses(context):
                 'street': df_address['osm_street'] if pd.notna(df_address['osm_street']) else '',
                 'housenumber': df_address['osm_housenumber'] if pd.notna(df_address['osm_housenumber']) else '',
                 'removal_date': df_address['removal_date'] if pd.notna(df_address['removal_date']) else '',
-                'removed_rgz_id': df_address['removed:ref:RS:kucni_broj'] if pd.notna(df_address['removed:ref:RS:kucni_broj']) else '',
-                'current_rgz_id': df_address['ref:RS:kucni_broj'] if pd.notna(df_address['ref:RS:kucni_broj']) else '',
+                'removed_rgz_id': df_address['removed:'+settings.HOUSE_REF_TAG] if pd.notna(df_address['removed:'+settings.HOUSE_REF_TAG]) else '',
+                'current_rgz_id': df_address[settings.HOUSE_REF_TAG] if pd.notna(df_address[settings.HOUSE_REF_TAG]) else '',
             }
             addresses.append(address)
 

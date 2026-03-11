@@ -6,6 +6,7 @@ import math
 import os
 import webbrowser
 from enum import Enum
+import settings
 
 import osmium
 from requests_oauthlib import OAuth2Session
@@ -468,7 +469,7 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
                     'osm_postcode': n.tags.get('addr:postcode'),
                     'osm_street': n.tags.get('addr:street'),
                     'osm_housenumber': n.tags.get('addr:housenumber'),
-                    'ref:RS:kucni_broj': n.tags.get('ref:RS:kucni_broj'),
+                    settings.HOUSE_REF_TAG: n.tags.get(settings.HOUSE_REF_TAG),
                     'tags': '{}' if not self.collect_tags else {k: v for k, v in n.tags},
                     'note': n.tags.get('note') if 'note' in n.tags else '',
                     'osm_geometry': point
@@ -493,7 +494,7 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
                     'osm_postcode': w.tags.get('addr:postcode'),
                     'osm_street': street,
                     'osm_housenumber': housenumber,
-                    'ref:RS:kucni_broj': w.tags.get('ref:RS:kucni_broj'),
+                    settings.HOUSE_REF_TAG: w.tags.get(settings.HOUSE_REF_TAG),
                     'tags': '{}' if not self.collect_tags else {k: v for k, v in w.tags},
                     'note': w.tags.get('note') if 'note' in w.tags else '',
                     'osm_geometry': geom
@@ -518,7 +519,7 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
                     'osm_postcode': r.tags.get('addr:postcode'),
                     'osm_street': street,
                     'osm_housenumber': housenumber,
-                    'ref:RS:kucni_broj': r.tags.get('ref:RS:kucni_broj'),
+                    settings.HOUSE_REF_TAG: r.tags.get(settings.HOUSE_REF_TAG),
                     'tags': '{}' if not self.collect_tags else {k: v for k, v in r.tags},
                     'note': r.tags.get('note') if 'note' in r.tags else '',
                     'osm_geometry': geom

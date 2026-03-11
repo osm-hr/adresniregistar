@@ -11,7 +11,8 @@ STREET_REF_TAG = os.getenv('STREET_REF_TAG', 'ref:HR:ulica')
 HOUSE_REF_TAG = os.getenv('HOUSE_REF_TAG', 'ref:HR:kucni_broj')
 COUNTRY = os.getenv('COUNTRY', 'croatia')
 ENHANCE_WITH_NASELJA = os.getenv('ENHANCE_WITH_NASELJA', 'false')
-OPSTINE_DATA_TYPE = os.getenv('OPSTINE_DATA_TYPE', 'geojson')  # or 'csv'
+OPSTINE_DATA_TYPE = os.getenv('OPSTINE_DATA_TYPE', 'csv')  # 'geojson' or 'csv'
+COORDINATE_SYSTEM = os.getenv('COORDINATE_SYSTEM', 'EPSG:3035') # or EPSG:32634
 
 def get_settings():
     return {
@@ -19,5 +20,6 @@ def get_settings():
         'HOUSE_REF_TAG': HOUSE_REF_TAG,
         'COUNTRY': COUNTRY,
         'ENHANCE_WITH_NASELJA': ENHANCE_WITH_NASELJA,
-        'OPSTINE_DATA_TYPE': OPSTINE_DATA_TYPE
+        'OPSTINE_DATA_TYPE': OPSTINE_DATA_TYPE,
+        'COORDINATE_SYSTEM': COORDINATE_SYSTEM
     }
