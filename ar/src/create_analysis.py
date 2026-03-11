@@ -75,7 +75,7 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
     df_osm['osm_geometry2'] = df_osm.osm_geometry.apply(wkt.loads)
     gdf_osm = gpd.GeoDataFrame(df_osm, geometry='osm_geometry2', crs="EPSG:4326")
     gdf_osm.drop(['osm_country', 'osm_city', 'osm_postcode'], inplace=True, axis=1)
-    gdf_osm.to_crs("EPSG:32634", inplace=True)
+    gdf_osm.to_crs(settings.COORDINATE_SYSTEM, inplace=True)
     gdf_osm['osm_geometry'] = gdf_osm.osm_geometry2
     gdf_osm['osm_street_norm'] = gdf_osm.osm_street.apply(normalize_name)
     gdf_osm['osm_housenumber_norm'] = gdf_osm.osm_housenumber.apply(normalize_name)
@@ -85,7 +85,7 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
     df_rgz = pd.read_csv(input_rgz_file, dtype={'rgz_kucni_broj_id': str})
     df_rgz['rgz_geometry'] = df_rgz.rgz_geometry.apply(wkt.loads)
     gdf_rgz = gpd.GeoDataFrame(df_rgz, geometry='rgz_geometry', crs="EPSG:4326")
-    gdf_rgz.to_crs("EPSG:32634", inplace=True)
+    gdf_rgz.to_crs(settings.COORDINATE_SYSTEM, inplace=True)
     gdf_rgz['rgz_ulica_norm'] = gdf_rgz[['rgz_ulica', 'rgz_ulica_mb']].apply(lambda x: normalize_name(street_mappings.get_name(x['rgz_ulica'], str(x['rgz_ulica_mb']), default_value=x['rgz_ulica'])), axis=1)
     gdf_rgz.drop(['rgz_opstina_mb'], inplace=True, axis=1)
     gdf_rgz['rgz_kucni_broj_norm'] = gdf_rgz.rgz_kucni_broj.apply(normalize_name)

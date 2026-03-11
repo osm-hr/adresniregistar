@@ -12,11 +12,12 @@ from shapely import wkt
 from shapely.ops import transform
 
 from common import normalize_name
+import settings
 
 csv.field_size_limit(sys.maxsize)
 
 wgs84 = pyproj.CRS('EPSG:4326')
-utm = pyproj.CRS('EPSG:32634')
+utm = pyproj.CRS(settings.COORDINATE_SYSTEM)
 project = pyproj.Transformer.from_crs(utm, wgs84, always_xy=True).transform
 
 

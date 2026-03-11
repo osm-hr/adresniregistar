@@ -5,6 +5,7 @@ import pandas as pd
 import geopandas as gpd
 from shapely import wkt
 from common import CollectRelationWaysHandler, CollectWayNodesHandler, BuildNodesCacheHandler, CollectEntitiesHandler
+import settings
 
 
 def get_all_buildings(pbf_file):
@@ -34,7 +35,7 @@ def get_naselje_boundaries(cwd):
     print("Load naselje geometries")
     gdf_naselje = pd.read_csv(os.path.join(rgz_path, 'naselje.csv'), dtype='unicode')
     gdf_naselje['geometry'] = gdf_naselje.wkt.apply(wkt.loads)
-    gdf_naselje = gpd.GeoDataFrame(gdf_naselje, geometry='geometry', crs="EPSG:32634")
+    gdf_naselje = gpd.GeoDataFrame(gdf_naselje, geometry='geometry', crs=settings.COORDINATE_SYSTEM)
     gdf_naselje.to_crs("EPSG:4326", inplace=True)
     gdf_naselje.sindex
     return gdf_naselje
@@ -46,7 +47,7 @@ def main():
     osm_path = os.path.join(cwd, 'data/osm')
     rgz_csv_path = os.path.join(cwd, 'data/rgz/csv')
 
-    pbf_file = os.path.join(osm_path, 'download/serbia.osm.pbf')
+    pbf_file = os.path.join(osm_path, 'download/' + settings.COUNTRY + '.osm.pbf')
 
     building_housenumber_filepath = os.path.join(data_path, 'b-hn/building_housenumber_per_naselje.csv')
 
@@ -109,7 +110,7 @@ def main():
     buildings_with_naselje = gdf_buildings.sjoin(gdf_naselje, how='inner', predicate='intersects')
     buildings_with_naselje.drop(['index_right', 'naselje_maticni_broj', 'naselje_ime', 'naselje_povrsina',
                                  'opstina_maticni_broj', 'opstina_ime', 'wkt'],
-                                inplace=True, axis=1)
+                                inplace=True, axis=1, errors='ignore')
 
     # For testing purposes, save and load buildings_with_naselje like this
     # pd.DataFrame(buildings_with_naselje).to_csv('~/adresniregistar/ar/data/temp_buildings_with_naselje.csv', index=False)
@@ -128,7 +129,7 @@ def main():
     # Prepare for export
     print("Exporting building / housenumber ratio to CSV")
     gdf_naselje.drop(['naselje_ime', 'naselje_povrsina', 'opstina_maticni_broj', 'opstina_ime', 'geometry', 'wkt'],
-                     inplace=True, axis=1)
+                     inplace=True, axis=1, errors='ignore')
     pd.DataFrame(gdf_naselje).to_csv(building_housenumber_filepath, index=False)
 
 

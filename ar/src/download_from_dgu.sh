@@ -11,6 +11,14 @@ ADMIN_ZIP_FILE="$DOWNLOAD_DIR/INSPIRE_Administrative_Units_(AU).zip"
 ADMIN_GEOJSON_FILE="opstina.geojson"
 mkdir -p "$DOWNLOAD_DIR" "$UNZIP_DIR"
 
+if [ ! -f "$ADMIN_ZIP_FILE" ]; then
+    curl -L -o "$ADMIN_ZIP_FILE" "$ADMIN_URL"
+
+    unzip -q "$ADMIN_ZIP_FILE" -d "$UNZIP_DIR"
+else
+    echo "Zip datoteka sa administrativnim jedinicama postoji, preskačem preuzimanje."
+fi
+
 if [ ! -f "$ADDR_ZIP_FILE" ]; then
     curl -L -o "$ADDR_ZIP_FILE" "$ADDR_URL"
 
@@ -20,15 +28,3 @@ else
 fi
 
 ./dgu-parse/target/release/dgu-parse ./data/rgz/unzip/
-
-duckdb -csv -c "$(cat src/dgu-consolidate_addresses.sql)" > data/rgz/addresses.csv
-
-if [ ! -f "$ADMIN_ZIP_FILE" ]; then
-    curl -L -o "$ADMIN_ZIP_FILE" "$ADMIN_URL"
-
-    unzip -q "$ADMIN_ZIP_FILE" -d "$UNZIP_DIR"
-else
-    echo "Zip datoteka sa administrativnim jedinicama postoji, preskačem preuzimanje."
-fi
-
-python3 src/parse_dgu_admin_data.py

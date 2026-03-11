@@ -10,6 +10,8 @@ from shapely import wkt
 from common import normalize_name, normalize_name_latin, cyr2lat
 from street_mapping import StreetMapping
 
+import settings
+
 
 def do_analysis(data_path, street_mappings: StreetMapping):
     qa_path = os.path.join(data_path, 'qa')
@@ -30,22 +32,22 @@ def do_analysis(data_path, street_mappings: StreetMapping):
 
     print("    Loading OSM addresses...", end='')
     df_osm = pd.read_csv(input_osm_file, dtype='unicode')
-    df_osm = df_osm[pd.notna(df_osm['ref:RS:kucni_broj'])]
+    df_osm = df_osm[pd.notna(df_osm[settings.HOUSE_REF_TAG])]
     df_osm['osm_geometry2'] = df_osm.osm_geometry.apply(wkt.loads)
     gdf_osm = gpd.GeoDataFrame(df_osm, geometry='osm_geometry2', crs="EPSG:4326")
-    gdf_osm.drop(['ref:RS:ulica', 'osm_country', 'osm_city', 'osm_postcode', 'tags'], inplace=True, axis=1)
-    gdf_osm.to_crs("EPSG:32634", inplace=True)
+    gdf_osm.drop([settings.STREET_REF_TAG, 'osm_country', 'osm_city', 'osm_postcode', 'tags'], inplace=True, axis=1)
+    gdf_osm.to_crs(settings.COORDINATE_SYSTEM, inplace=True)
     gdf_osm['osm_geometry'] = gdf_osm.osm_geometry2
     gdf_osm['osm_street_norm'] = gdf_osm.osm_street.apply(normalize_name)
     gdf_osm['osm_housenumber_norm'] = gdf_osm.osm_housenumber.apply(lambda x: normalize_name_latin(x))
     gdf_osm.sindex
-    print(f"found {len(gdf_osm)} addresses in OSM with ref:RS:kucni_broj")
+    print(f"found {len(gdf_osm)} addresses in OSM with {settings.HOUSE_REF_TAG}")
 
     print("    Loading RGZ addresses...", end='')
     df_rgz = pd.read_csv(input_rgz_file, dtype={'rgz_kucni_broj_id': str})
     df_rgz['rgz_geometry'] = df_rgz.rgz_geometry.apply(wkt.loads)
     gdf_rgz = gpd.GeoDataFrame(df_rgz, geometry='rgz_geometry', crs="EPSG:4326")
-    gdf_rgz.to_crs("EPSG:32634", inplace=True)
+    gdf_rgz.to_crs(settings.COORDINATE_SYSTEM, inplace=True)
     gdf_rgz.drop(['rgz_opstina_mb', 'rgz_opstina_mb', 'rgz_naselje_mb', 'rgz_naselje'], inplace=True, axis=1)
     gdf_rgz['rgz_ulica_proper'] = gdf_rgz[['rgz_ulica', 'rgz_ulica_mb']].apply(lambda x: street_mappings.get_name(x['rgz_ulica'], str(x['rgz_ulica_mb'])), axis=1)
     gdf_rgz['rgz_ulica_norm'] = gdf_rgz.rgz_ulica_proper.apply(normalize_name)
@@ -55,7 +57,7 @@ def do_analysis(data_path, street_mappings: StreetMapping):
     print(f"found {len(gdf_rgz)} addresses in RGZ")
 
     print("    Joining OSM and RGZ addresses...", end='')
-    joined = pd.merge(gdf_osm, gdf_rgz, how='left', left_on='ref:RS:kucni_broj', right_on='rgz_kucni_broj_id')
+    joined = pd.merge(gdf_osm, gdf_rgz, how='left', left_on=settings.HOUSE_REF_TAG, right_on='rgz_kucni_broj_id')
     joined['distance'] = joined.osm_geometry.distance(joined.rgz_geometry)
     joined['street_perfect_match'] = joined[['rgz_ulica_proper', 'osm_street']].apply(lambda x: x['rgz_ulica_proper'] == x['osm_street'], axis=1)
     joined['street_partial_match'] = joined[['rgz_ulica_norm', 'osm_street_norm']].apply(lambda x: x['rgz_ulica_norm'] == x['osm_street_norm'], axis=1)

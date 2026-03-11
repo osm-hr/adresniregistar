@@ -10,6 +10,7 @@ import overpy
 from overpy.exception import OverpassTooManyRequests, OverpassGatewayTimeout, OverpassUnknownContentType
 from shapely import geometry
 from shapely.ops import linemerge, unary_union, polygonize
+import settings
 
 
 def retry_on_error(timeout_in_seconds=60):
@@ -76,14 +77,14 @@ def get_entities(overpass_api, from_lat, from_lon, to_lat, to_lon):
         (
             nwr(area.c)["addr:housenumber"];
             nwr(area.c)["addr:street"];
-            nwr(area.c)["ref:RS:kucni_broj"];
+            nwr(area.c)["{settings.HOUSE_REF_TAG}"];
         );
         (._;>;);
         out;
         // &contact=https://gitlab.com/osm-serbia/adresniregistar
     """)
     for n in response.nodes:
-        if not n.tags.get('addr:housenumber') and not n.tags.get('addr:street') and not n.tags.get('ref:RS:kucni_broj'):
+        if not n.tags.get('addr:housenumber') and not n.tags.get('addr:street') and not n.tags.get(settings.HOUSE_REF_TAG):
             continue
         geom = geometry.Point((n.lon, n.lat))
         entities.append({
@@ -93,13 +94,13 @@ def get_entities(overpass_api, from_lat, from_lon, to_lat, to_lon):
             'osm_postcode': n.tags.get('addr:postcode'),
             'osm_street': n.tags.get('addr:street'),
             'osm_housenumber': n.tags.get('addr:housenumber'),
-            'ref:RS:kucni_broj': n.tags.get('ref:RS:kucni_broj'),
+            settings.HOUSE_REF_TAG: n.tags.get(settings.HOUSE_REF_TAG),
             'tags': '{}',
             'note': n.tags.get('note') if 'note' in n.tags else '',
             'osm_geometry': geom,
         })
     for w in response.ways:
-        if not w.tags.get('addr:housenumber') and not w.tags.get('addr:street') and not w.tags.get('ref:RS:kucni_broj'):
+        if not w.tags.get('addr:housenumber') and not w.tags.get('addr:street') and not w.tags.get(settings.HOUSE_REF_TAG):
             continue
         ls_coords = []
         for node in w.nodes:
@@ -117,13 +118,13 @@ def get_entities(overpass_api, from_lat, from_lon, to_lat, to_lon):
             'osm_postcode': w.tags.get('addr:postcode'),
             'osm_street': w.tags.get('addr:street'),
             'osm_housenumber': w.tags.get('addr:housenumber'),
-            'ref:RS:kucni_broj': w.tags.get('ref:RS:kucni_broj'),
+            settings.HOUSE_REF_TAG: w.tags.get(settings.HOUSE_REF_TAG),
             'tags': '{}',
             'note': w.tags.get('note') if 'note' in w.tags else '',
             'osm_geometry': geom
         })
     for r in response.relations:
-        if not r.tags.get('addr:housenumber') and not r.tags.get('addr:street') and not r.tags.get('ref:RS:kucni_broj'):
+        if not r.tags.get('addr:housenumber') and not r.tags.get('addr:street') and not r.tags.get(settings.HOUSE_REF_TAG):
             continue
         geom = create_geometry_from_osm_response(r, response)
         entities.append({
@@ -133,7 +134,7 @@ def get_entities(overpass_api, from_lat, from_lon, to_lat, to_lon):
             'osm_postcode': r.tags.get('addr:postcode'),
             'osm_street': r.tags.get('addr:street'),
             'osm_housenumber': r.tags.get('addr:housenumber'),
-            'ref:RS:kucni_broj': r.tags.get('ref:RS:kucni_broj'),
+            settings.HOUSE_REF_TAG: r.tags.get(settings.HOUSE_REF_TAG),
             'tags': '{}',
             'note': r.tags.get('note') if 'note' in r.tags else '',
             'osm_geometry': geom
@@ -178,7 +179,7 @@ def main():
     with open(all_addresses_path, 'w', encoding="utf-8") as all_addresses_csv:
         writer = csv.DictWriter(
             all_addresses_csv,
-            fieldnames=['osm_id', 'osm_country', 'osm_city', 'osm_postcode', 'osm_street', 'osm_housenumber', 'ref:RS:ulica', 'ref:RS:kucni_broj', 'tags', 'note', 'osm_geometry'])
+            fieldnames=['osm_id', 'osm_country', 'osm_city', 'osm_postcode', 'osm_street', 'osm_housenumber', 'ref:RS:ulica', settings.HOUSE_REF_TAG, 'tags', 'note', 'osm_geometry'])
         writer.writeheader()
         for address in all_entities:
             writer.writerow(address)
