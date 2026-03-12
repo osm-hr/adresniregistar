@@ -39,30 +39,36 @@ GML_NS = "http://www.opengis.net/gml/3.2"
 XLINK_NS = "http://www.w3.org/1999/xlink"
 BASE_NS = "http://inspire.ec.europa.eu/schemas/base/3.3"
 
-# -------------------------
-# Dynamic naming
-# -------------------------
-if ADMIN_TYPE== "Naselje":
-    prefix = "naselje"
-    geo_column = "wkt"
-    parent_column = "opstina_imel"
-elif ADMIN_TYPE == "Jedinica lokalne samouprave":
-    prefix = "opstina"
-    geo_column = "geometry"
-    parent_column = "zupanija_imel"
-
 with open(OUTPUT, "w", newline="", encoding="utf-8") as csvfile:
+
+    if (ADMIN_TYPE == "Jedinica lokalne samouprave"):
+        admin_fieldnames = [
+            "opstina_maticni_broj",
+            "opstina_ime",
+            "opstina_imel",
+            "opstina_povrsina",
+            "okrug_sifra",
+            "geometry",
+            "inspire_id"
+        ]
+    elif (ADMIN_TYPE == "Naselje"):
+        admin_fieldnames = [
+            "objectid",
+            "naselje_maticni_broj",
+            "naselje_ime",
+            "naselje_imel",
+            "naselje_povrsina",
+            "opstina_maticni_broj",
+            "opstina_ime",
+            "opstina_imel",
+            "wkt",
+            "inspire_id",
+            "opstina_inspire_id"
+        ]
+
     writer = csv.DictWriter(
         csvfile,
-        fieldnames=[
-            f"{prefix}_maticni_broj",
-            f"{prefix}_ime",
-            f"{prefix}_imel",
-            "inspire_id",
-            "parent_id",
-            parent_column,
-            geo_column
-        ]
+        fieldnames=admin_fieldnames
     )
     writer.writeheader()
 
@@ -144,15 +150,29 @@ with open(OUTPUT, "w", newline="", encoding="utf-8") as csvfile:
         else:
             geometry_wkt = ""
 
-        writer.writerow({
-            f"{prefix}_maticni_broj": maticni_broj,
-            f"{prefix}_ime": ime,
-            f"{prefix}_imel": ime,
-            "inspire_id": inspire_id,
-            "parent_id": parent_id,
-            parent_column: parent_name,
-            geo_column: geometry_wkt
-        })
+        if (ADMIN_TYPE == "Jedinica lokalne samouprave"):
+            writer.writerow({
+                "opstina_maticni_broj": maticni_broj,
+                "opstina_ime": ime,
+                "opstina_imel": ime,
+                "opstina_povrsina": "0",
+                "okrug_sifra": "0",
+                "geometry": geometry_wkt,
+                "inspire_id": inspire_id
+            })
+        elif (ADMIN_TYPE == "Naselje"):
+            writer.writerow({
+                "objectid": "0",
+                "naselje_maticni_broj": maticni_broj,
+                "naselje_ime": ime,
+                "naselje_imel": ime,
+                "naselje_povrsina": "0",
+                "opstina_ime": parent_name,
+                "opstina_imel": parent_name,
+                "wkt": geometry_wkt,
+                "opstina_inspire_id": parent_id,
+                "inspire_id": inspire_id
+            })
 
         elem.clear()
         while elem.getprevious() is not None:
