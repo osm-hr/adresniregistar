@@ -127,7 +127,8 @@ def do_resolution(input):
     #           delete all addresses, put it on building, keep POI
     #       else:
     #           all correct
-    if input['osm_id_right'].iloc[0][0] == 'n':
+    group_key = input.name
+    if group_key[0] == 'n':
         # This is node, just bail out
         return AddressInBuildingResolution.BUILDING_IS_NODE
 
@@ -458,7 +459,7 @@ def find_addresses_in_buildings(cwd):
         axis=1)
     df['addresses_number_match'] = df.apply(lambda row: address_number_match(row.osm_street_left, row.osm_street_right, row.osm_housenumber_left, row.osm_housenumber_right), axis=1)
 
-    resolutions = df.groupby(['osm_id_right']).apply(do_resolution)
+    resolutions = df.groupby(['osm_id_right']).apply(do_resolution, include_groups=False)
     df = df.join(resolutions.rename('resolution'), on='osm_id_right')
     df['resolution'] = df['resolution'].apply(lambda x: x.value)
     df = df[df.resolution != AddressInBuildingResolution.NO_ACTION.value]
