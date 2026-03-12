@@ -71,10 +71,12 @@ download_from_osm:
 download_from_dgu:
 	mkdir -p data/rgz/unzip
 	@./src/download_from_dgu.sh
-	@python3 ./src/parse_dgu_admin_data.py --input data/rgz/unzip/AdministrativeUnit.gml --output data/rgz/naselje.csv "Naselje"
+	@python3 ./src/parse_dgu_admin_data.py --input data/rgz/unzip/AdministrativeUnit.gml --output data/rgz/naselja.csv "Naselje"
 	@python3 ./src/parse_dgu_admin_data.py --input data/rgz/unzip/AdministrativeUnit.gml --output data/rgz/opstina.csv "Jedinica lokalne samouprave"
 	@duckdb -csv < src/dgu-consolidate_addresses.sql > data/rgz/addresses.csv
+	@duckdb -csv < src/dgu-convert_admin_boundaries.sql > data/rgz/naselje.csv
 	@python3 ./src/prepare_dgu_data.py
+	rm data/rgz/naselja.csv
 
 
 normalize_street_names:
