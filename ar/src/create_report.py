@@ -100,7 +100,7 @@ def build_osm_entities_cache(data_path):
     analysis_path = os.path.join(data_path, 'analysis')
     qa_path = os.path.join(data_path, 'qa')
 
-    pbf_file = os.path.join(data_path, 'osm/download/serbia.osm.pbf')
+    pbf_file = os.path.join(data_path, f'osm/download/{settings.COUNTRY}.osm.pbf')
     nodes_to_cache, ways_to_cache = [], []
 
     # Collects nodes and ways from analysis
@@ -351,6 +351,7 @@ def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselj
         osm_files_new_addresses = generate_osm_files_new_addresses(context, opstina_dir_path, opstina_name_norm, naselje, df_naselje)
         osm_files_new_per_street_addresses = generate_osm_files_new_per_street_addresses(context, opstina_dir_path, opstina_name_norm, naselje, df_naselje)
         osm_files_matched_addresses = generate_osm_files_matched_addresses(context, opstina_dir_path, opstina_name_norm, naselje, df_naselje)
+        #osm_files_matched_addresses = []
 
     naselje_path = os.path.join(naselje_dir_path, f'{naselje["name_lat"]}.html')
 
@@ -491,6 +492,13 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
     gdf_naselje = gdf_naselja[gdf_naselja.opstina_imel == opstina_name]
 
     gdf_naselje = gdf_naselje.merge(df_calc_naselja[['name_lat', 'ratio']], left_on='naselje_imel', right_on='name_lat')
+
+    if len(gdf_naselje) != len(df_calc_naselja):
+        missing_in_gdf = set(df_calc_naselja['name_lat']) - set(gdf_naselje['naselje_imel'])
+        print(f"Error in municipality: {opstina_name}")
+        print(f"Names in data but missing in GeoJSON: {missing_in_gdf}")
+
+
     assert len(gdf_naselje) == len(df_calc_naselja)
     gdf_naselje.drop(['opstina_imel', 'name_lat'], inplace=True, axis=1)
     gdf_naselje.to_file(naselja_js_path, driver='GeoJSON')
@@ -506,7 +514,8 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
         realTime=context['incremental_update'],
         showAllNaselja=False,
         naselja=naselja,
-        opstina=opstina)
+        opstina=opstina,
+        settings=settings)
     with open(opstina_html_path, 'w', encoding='utf-8') as fh:
         fh.write(output)
 
@@ -548,7 +557,8 @@ def generate_all_naselja(context, total, all_naselja):
         realTime=context['incremental_update'],
         showAllNaselja=True,
         naselja=all_naselja,
-        opstina=total)
+        opstina=total,
+        settings=settings)
     with open(all_naselja_html_path, 'w', encoding='utf-8') as fh:
         fh.write(output)
 
@@ -605,7 +615,8 @@ def generate_report(context):
             osmDataDate=context['dates']['osm_data'],
             realTime=context['incremental_update'],
             opstine=opstine,
-            total=total)
+            total=total,
+            settings=settings)
         with open(report_html_path, 'w', encoding='utf-8') as fh:
             fh.write(output)
 
@@ -634,7 +645,7 @@ def load_naselja_boundaries(rgz_path):
     df_naselja = pd.read_csv(os.path.join(rgz_path, 'naselje.csv'))
     df_naselja['geometry'] = df_naselja.wkt.apply(wkt.loads)
     df_naselja.drop(['objectid', 'naselje_ime', 'naselje_povrsina', 'opstina_maticni_broj',
-                     'opstina_ime', 'wkt'], inplace=True, axis=1)
+                     'opstina_ime', 'wkt'], inplace=True, axis=1, errors='ignore')
     gdf_naselja = gpd.GeoDataFrame(df_naselja, geometry='geometry', crs=settings.COORDINATE_SYSTEM)
     gdf_naselja.to_crs("EPSG:4326", inplace=True)
     gdf_naselja['geometry'] = gdf_naselja.simplify(tolerance=0.0001)

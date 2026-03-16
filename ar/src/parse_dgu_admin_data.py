@@ -150,6 +150,21 @@ with open(OUTPUT, "w", newline="", encoding="utf-8") as csvfile:
         else:
             geometry_wkt = ""
 
+        if ADMIN_TYPE == "Jedinica lokalne samouprave":
+            if maticni_broj == "5835":
+                ime = "Općina Privlaka"
+            elif maticni_broj == "3140":
+                ime = "Općina Otok"
+            elif maticni_broj == "4324":
+                ime = "Općina Sveta Nedelja"
+
+        if parent_id == "5835":
+            parent_name = "Općina Privlaka"
+        elif parent_id == "3140":
+            parent_name = "Općina Otok"
+        elif parent_id == "4324":
+            parent_name = "Općina Sveta Nedelja"
+
         if (ADMIN_TYPE == "Jedinica lokalne samouprave"):
             writer.writerow({
                 "opstina_maticni_broj": maticni_broj,
