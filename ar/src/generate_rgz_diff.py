@@ -76,9 +76,9 @@ def fix_deleted_to_added(rgz_path, rgz_last_update, oauth_session):
     """
     api = osmapi.OsmApi(session=oauth_session)
     api.ChangesetCreate({
-        "comment": f"RGZ address import (updating {settings.HOUSE_REF_TAG} after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html",
+        "comment": f"DGU address import (updating {settings.HOUSE_REF_TAG} after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html",
         "tag": "mechanical=yes",
-        "source": "RGZ_AR"
+        "source": "DGU_AR"
     })
 
     overpass_api = overpy.Overpass(url='http://localhost:12345/api/interpreter')

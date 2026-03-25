@@ -15,7 +15,8 @@ OPSTINE_DATA_TYPE = os.getenv('OPSTINE_DATA_TYPE', 'csv')  # 'geojson' or 'csv'
 COORDINATE_SYSTEM = os.getenv('COORDINATE_SYSTEM', 'EPSG:3035') # or EPSG:32634
 CENTER_COORDINATES = '44.5, 17'
 SW_COORDINATES = '42, 13.5'
-NE_COORDINATES = '46.5, 20'
+NE_COORDINATES = '47, 20'
+WEB_URL = 'dina.osm-hr.org'
 
 def get_settings():
     return {
@@ -27,5 +28,6 @@ def get_settings():
         'COORDINATE_SYSTEM': COORDINATE_SYSTEM,
         'CENTER_COORDINATES': CENTER_COORDINATES,
         'SW_COORDINATES': SW_COORDINATES,
-        'NE_COORDINATES': NE_COORDINATES
+        'NE_COORDINATES': NE_COORDINATES,
+        'WEB_URL': WEB_URL
     }

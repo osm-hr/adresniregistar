@@ -29,7 +29,9 @@ RUN pip install --no-cache-dir \
     shapely \
     geopandas \
     lxml \
-    Levenshtein
+    Levenshtein \
+    overpy \
+    jinja2
 
 WORKDIR /app
 

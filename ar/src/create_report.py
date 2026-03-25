@@ -160,7 +160,7 @@ def generate_osm_files_matched_addresses(context, opstina_dir_path, opstina_name
             osm_files.append(
                 {
                     'name': f'{old_counter+1}-{counter}',
-                    'url': f'https://dina.openstreetmap.rs/ar/opstine/{opstina_name}/{filename}'
+                    'url': f'https://{settings.WEB_URL}/ar/opstine/{opstina_name}/{filename}'
                 }
             )
             old_counter = counter
@@ -217,7 +217,7 @@ def generate_osm_files_matched_addresses(context, opstina_dir_path, opstina_name
         osm_files.append(
             {
                 'name': f'{old_counter + 1}-{counter}',
-                'url': f'https://dina.openstreetmap.rs/ar/opstine/{opstina_name}/{filename}'
+                'url': f'https://{settings.WEB_URL}/ar/opstine/{opstina_name}/{filename}'
             }
         )
 
@@ -243,7 +243,7 @@ def generate_osm_files_new_addresses(context, opstina_dir_path, opstina_name, na
         if len(osm_entities) == 100:
             old_counter = counter
             counter = counter + len(osm_entities)
-            output = template.render(osm_entities=osm_entities)
+            output = template.render(osm_entities=osm_entities, settings=settings)
             filename = f'{normalize_name(naselje["name_lat"])}-new-{counter}.osm'
             osm_file_path = os.path.join(naselje_dir_path, filename)
             with open(osm_file_path, 'w', encoding='utf-8') as fh:
@@ -251,11 +251,12 @@ def generate_osm_files_new_addresses(context, opstina_dir_path, opstina_name, na
             osm_files.append(
                 {
                     'name': f'{old_counter+1}-{counter}',
-                    'url': f'https://dina.openstreetmap.rs/ar/opstine/{opstina_name}/{filename}'
+                    'url': f'https://{settings.WEB_URL}/ar/opstine/{opstina_name}/{filename}'
                 }
             )
             osm_entities = []
 
+        postcode = address.get('rgz_postanski_broj', '') if 'rgz_postanski_broj' in address else ''
         osm_entities.append({
             'id': 0 - (len(osm_entities) + 1),
             'lat': location_lat,
@@ -263,14 +264,15 @@ def generate_osm_files_new_addresses(context, opstina_dir_path, opstina_name, na
             'street': street_mappings.get_name(address['rgz_ulica'], str(address['rgz_ulica_mb'])),
             'housenumber': normalize_name_latin(address['rgz_kucni_broj']),
             'ulica': address['rgz_ulica_mb'],
-            'kucni_broj': address['rgz_kucni_broj_id']
+            'kucni_broj': address['rgz_kucni_broj_id'],
+            'postcode': postcode if pd.notna(postcode) else ''
         })
 
     # Final write
     if len(osm_entities) > 0:
         old_counter = counter
         counter = counter + len(osm_entities)
-        output = template.render(osm_entities=osm_entities)
+        output = template.render(osm_entities=osm_entities, settings=settings)
         filename = f'{normalize_name(naselje["name_lat"])}-new-{counter}.osm'
         osm_file_path = os.path.join(naselje_dir_path, filename)
         with open(osm_file_path, 'w', encoding='utf-8') as fh:
@@ -278,7 +280,7 @@ def generate_osm_files_new_addresses(context, opstina_dir_path, opstina_name, na
         osm_files.append(
             {
                 'name': f'{old_counter + 1}-{counter}',
-                'url': f'https://dina.openstreetmap.rs/ar/opstine/{opstina_name}/{filename}'
+                'url': f'https://{settings.WEB_URL}/ar/opstine/{opstina_name}/{filename}'
             }
         )
 
@@ -305,6 +307,7 @@ def generate_osm_files_new_per_street_addresses(context, opstina_dir_path, opsti
             location = address['rgz_geometry'][7:-1].split(' ')
             location_lon = round(float(location[0]), 6)
             location_lat = round(float(location[1]), 6)
+            postcode = address.get('rgz_postanski_broj', '') if 'rgz_postanski_broj' in address else ''
             osm_entities.append({
                 'id': 0 - (len(osm_entities) + 1),
                 'lat': location_lat,
@@ -312,10 +315,11 @@ def generate_osm_files_new_per_street_addresses(context, opstina_dir_path, opsti
                 'street': proper_street,
                 'housenumber': normalize_name_latin(address['rgz_kucni_broj']),
                 'ulica': address['rgz_ulica_mb'],
-                'kucni_broj': address['rgz_kucni_broj_id']
+                'kucni_broj': address['rgz_kucni_broj_id'],
+                'postcode': postcode if pd.notna(postcode) else ''
             })
 
-        output = template.render(osm_entities=osm_entities)
+        output = template.render(osm_entities=osm_entities, settings=settings)
         filename = f'{normalize_name(naselje["name_lat"])}-new-st-{counter}.osm'
         counter = counter + 1
         osm_file_path = os.path.join(naselje_dir_path, filename)
@@ -324,7 +328,7 @@ def generate_osm_files_new_per_street_addresses(context, opstina_dir_path, opsti
         osm_files.append(
             {
                 'name': f'{proper_street} ({len(df_ulica)})',
-                'url': f'https://dina.openstreetmap.rs/ar/opstine/{opstina_name}/{filename}'
+                'url': f'https://{settings.WEB_URL}/ar/opstine/{opstina_name}/{filename}'
             }
         )
 
@@ -502,7 +506,7 @@ def generate_opstina(context, opstina_name, df_opstina, df_opstina_osm):
     assert len(gdf_naselje) == len(df_calc_naselja)
     gdf_naselje.drop(['opstina_imel', 'name_lat'], inplace=True, axis=1)
     gdf_naselje.to_file(naselja_js_path, driver='GeoJSON')
-    opstina['bounds'] = gdf_naselje.unary_union.bounds
+    opstina['bounds'] = gdf_naselje.geometry.union_all().bounds
 
     geojson2js(naselja_js_path, 'naselja')
 

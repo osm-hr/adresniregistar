@@ -15,9 +15,9 @@ INTERACTIVE = False  # Change if you know what are you doing
 
 def fix_wrong_streetname():
     api = osmapi.OsmApi(passwordfile='osm-password', changesetauto=True, changesetautosize=100, changesetautotags={
-        "comment": f"RGZ address import (fixing wrong/mistyped addr:street)",
+        "comment": f"DGU address import (fixing wrong/mistyped addr:street)",
         "tag": "mechanical=yes",
-        "source": "RGZ_AR"
+        "source": "DGU_AR"
     })
 
     accepted_streets, declined_streets = set(), set()
@@ -100,9 +100,9 @@ def do_opstina(data_path, street_mappings: StreetMapping, opstina):
         naselje_name_lat = cyr2lat(naselje_name)
         print(f"Processing municipality {opstina} and settlement {naselje_name_lat}")
         api = osmapi.OsmApi(passwordfile='osm-password', changesetauto=True, changesetautosize=100, changesetautotags={
-            "comment": f"RGZ address import in {opstina}/{naselje_name_lat} (adding ref:RS:kucni_broj to existing addresses, https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html)",
+            "comment": f"DGU address import in {opstina}/{naselje_name_lat} (adding ref:HR:kucni_broj to existing addresses, https://c.osm.org/t/137215)",
             "tag": "mechanical=yes",
-            "source": "RGZ_AR"
+            "source": "DGU_AR"
         })
 
         i = 0
