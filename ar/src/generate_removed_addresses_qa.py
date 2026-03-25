@@ -31,6 +31,15 @@ def load_removed_addresses_from_osm(cwd):
     ceh.apply_file(pbf_file)
     print(f"Collected all addresses ({len(ceh.entities)})")
 
+    if len(ceh.entities) == 0:
+        print("No removed addresses found in OSM data, returning empty GeoDataFrame")
+        return gpd.GeoDataFrame(
+            columns=['osm_id', 'osm_country', 'osm_city', 'osm_postcode', 'osm_street', 'osm_housenumber', 
+                    settings.HOUSE_REF_TAG, 'tags', 'note', 'osm_geometry', 'removed:'+settings.HOUSE_REF_TAG],
+            geometry='osm_geometry',
+            crs="EPSG:4326"
+        )
+
     gdf_removed_addresses = gpd.GeoDataFrame(ceh.entities, geometry='osm_geometry', crs="EPSG:4326")
     gdf_removed_addresses['removed:'+settings.HOUSE_REF_TAG] = gdf_removed_addresses.apply(lambda row: row.tags['removed:'+settings.HOUSE_REF_TAG], axis=1)
     gdf_removed_addresses.drop(['osm_country', 'osm_city', 'osm_postcode', 'tags'], inplace=True, axis=1)
@@ -96,9 +105,13 @@ def main():
 
     print("Finding opstina for each removed address")
     gdf_removed_addresses_with_opstina = gdf_removed_addresses.sjoin(gdf_opstine, how='inner', predicate='intersects')
-    gdf_removed_addresses_with_opstina['removal_date'] = gdf_removed_addresses_with_opstina.apply(
-        lambda row: extract_removal_date(row.osm_id, row.note), axis=1)
-    gdf_removed_addresses_with_opstina.drop(['index_right', 'opstina_maticni_broj', 'opstina_ime', 'opstina_povrsina', 'okrug_sifra'], inplace=True, axis=1)
+    
+    if len(gdf_removed_addresses_with_opstina) > 0:
+        gdf_removed_addresses_with_opstina['removal_date'] = gdf_removed_addresses_with_opstina.apply(
+            lambda row: extract_removal_date(row.osm_id, row.note), axis=1)
+        gdf_removed_addresses_with_opstina.drop(['index_right', 'opstina_maticni_broj', 'opstina_ime', 'opstina_povrsina', 'okrug_sifra'], inplace=True, axis=1)
+    else:
+        print("No removed addresses found with opstina information")
 
     pd.DataFrame(gdf_removed_addresses_with_opstina).to_csv(os.path.join(qa_path, 'removed_addresses.csv'), index=False)
     print("Created removed_addresses.csv")
