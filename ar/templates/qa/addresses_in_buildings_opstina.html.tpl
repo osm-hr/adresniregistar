@@ -160,7 +160,7 @@
 	Fajlovi su grupisani u grupe od po najviše 10 adresa.
 	<br/>
     <br/>
-	<b>Pre bilo kakve automatizacije, <b>obavezno</b> pročitati <a href="https://wiki.openstreetmap.org/wiki/Croatia/Projekti/Adresni_registar#Uputstvo_za_import" target="_blank">uputstvo</a></b>!
+	<b>Pre bilo kakve automatizacije, <b>obavezno</b> pročitati <a href="https://wiki.openstreetmap.org/wiki/Serbia/Projekti/Adresni_registar#Uputstvo_za_import" target="_blank">uputstvo</a></b>!
     <br/>
   <div class="card card-body">
 	  <div class="row row-cols-5">

@@ -87,7 +87,7 @@
 </tbody>
 <tfoot>
 	<tr>
-		<th>Croatia TOTAL:</th>
+		<th>Serbia TOTAL:</th>
 		<th class="d-sm-table-cell">{{ total.count }}</th>
 	</tr>
 </tfoot>
