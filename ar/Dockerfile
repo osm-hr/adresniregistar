@@ -44,7 +44,11 @@ RUN curl -L -o duckdb.zip https://github.com/duckdb/duckdb/releases/download/v1.
     && rm duckdb.zip
 
 
-COPY . .
+COPY src/ /app/src/
+COPY templates-hr/ /app/templates/
+COPY curated_streets.csv /app/curated_streets.csv
+COPY curated_streets_per_opstina.csv /app/curated_streets_per_opstina.csv
+COPY Makefile /app/Makefile
 
 RUN git clone --depth 1 https://github.com/osm-hr/adresniregistar-ispravci.git; \
      mv adresniregistar-ispravci/curated_streets.csv ./curated_streets.csv; \
