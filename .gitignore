@@ -24,3 +24,5 @@ st/token.json
 st/upload.log
 st/osm-password
 st/client_secrets
+*~
+*.bak
