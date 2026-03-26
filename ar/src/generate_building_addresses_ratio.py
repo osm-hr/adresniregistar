@@ -58,7 +58,7 @@ def main():
     gdf_naselje = get_naselje_boundaries(cwd)
 
     # Calculate addresses per naselje
-    # First union all addresses in RGZ for whole of Serbia in variable `gdf_rgz_addresses`,
+    # First union all addresses in RGZ for whole of Croatia in variable `gdf_rgz_addresses`,
     # then do spatial join and count them per naselje
     total_csvs = len(os.listdir(rgz_csv_path))
     if total_csvs < 168:

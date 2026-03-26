@@ -119,7 +119,7 @@ tagujemo u OSM-u kao <code>building=apartments</code>. Pročitajte na dnu kako s
 </tbody>
 <tfoot>
 	<tr>
-		<th>Serbia TOTAL:</th>
+		<th>Croatia TOTAL:</th>
 		<th class="d-sm-table-cell">{{ total.sz_count }}</th>
 		<th class="d-sm-table-cell">{{ total.found_in_rgz }}</th>
 		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.found_in_rgz) / total.sz_count) }}%</th>

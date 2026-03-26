@@ -107,7 +107,7 @@
 </tbody>
 <tfoot>
 	<tr>
-		<th>Serbia TOTAL:</th>
+		<th>Croatia TOTAL:</th>
 		<th class="d-sm-table-cell">{{ total.wrong_alt_name }}</th>
 		<th class="d-sm-table-cell">{{ total.missing_alt_name }}</th>
 		<th class="d-sm-table-cell">{{ total.wrong_alt_name_sr }}</th>

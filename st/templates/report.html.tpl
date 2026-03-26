@@ -179,7 +179,7 @@
         </tbody>
         <tfoot>
             <tr>
-                <th>Serbia TOTAL:</th>
+                <th>Croatia TOTAL:</th>
                 <th class="d-sm-table-cell">{{ total.rgz }}</th>
                 <th class="d-sm-table-cell">{{ total.conflated_count }}</th>
                 <th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.conflated_count) / total.rgz).replace('.', ',') }}</th>
@@ -225,7 +225,7 @@
         </tbody>
         <tfoot>
             <tr>
-                <th>Serbia TOTAL:</th>
+                <th>Croatia TOTAL:</th>
                 <th class="d-sm-table-cell">{{ '{0:0.1f}'.format(total.rgz_length / 1000.0).replace('.', ',') }}</th>
                 <th class="d-sm-table-cell">{{ '{0:0.1f}'.format(total.conflated_length_rgz / 1000.0).replace('.', ',') }}</th>
                 <th class="d-sm-table-cell">{{ '{0:0.2f}'.format((100.0 * total.conflated_length_rgz) / total.rgz_length).replace('.', ',') }}</th>

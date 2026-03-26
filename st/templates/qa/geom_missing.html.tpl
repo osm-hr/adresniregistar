@@ -153,7 +153,7 @@
 </tbody>
 <tfoot>
 	<tr>
-		<th>Serbia TOTAL:</th>
+		<th>Croatia TOTAL:</th>
 		<th class="d-sm-table-cell">{{ total.geom_missing_need_conflate_count }}</th>
 		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format(total.geom_missing_need_conflate_length / 1000.0).replace('.', ',') }}km</th>
 		<th class="d-sm-table-cell">{{ total.geom_missing_need_drawing_count }}</th>

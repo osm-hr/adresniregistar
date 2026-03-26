@@ -99,7 +99,7 @@
 </tbody>
 <tfoot>
 	<tr>
-		<th>Serbia TOTAL:</th>
+		<th>Croatia TOTAL:</th>
 		<th class="d-sm-table-cell">{{ total.wrong_name }}</th>
 		<th class="d-sm-table-cell">{{ total.missing_name }}</th>
 		<th class="d-sm-table-cell">{{ total.wrong_name_sr }}</th>

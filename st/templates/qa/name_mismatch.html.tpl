@@ -127,7 +127,7 @@
 </tbody>
 <tfoot>
 	<tr>
-		<th>Serbia TOTAL:</th>
+		<th>Croatia TOTAL:</th>
 		<th class="d-sm-table-cell">{{ total.name_mismatch_segment_count }}</th>
 		<th class="d-sm-table-cell">{{ '{0:0.2f}'.format(total.name_mismatch_length / 1000.0).replace('.', ',') }}km</th>
 	</tr>

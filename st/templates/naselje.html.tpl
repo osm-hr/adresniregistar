@@ -291,7 +291,7 @@ Podaci u poslednjoj koloni tabele prikazuju <b>samo potencijalne vrednosti</b> i
 	Fajlovi su grupisani u grupe od po najviše 10 ulica.
 	<br/>
 	<br/>
-	<b>Pre bilo kakvog importa, <b>obavezno</b> pročitati <a href="https://wiki.openstreetmap.org/wiki/Serbia/Projekti/Adresni_registar#Uputstvo_za_import" target="_blank">uputstvo</a></b>!
+	<b>Pre bilo kakvog importa, <b>obavezno</b> pročitati <a href="https://wiki.openstreetmap.org/wiki/Croatia/Projekti/Adresni_registar#Uputstvo_za_import" target="_blank">uputstvo</a></b>!
 	<br/>
   <div class="card card-body">
 	  <div class="row">
