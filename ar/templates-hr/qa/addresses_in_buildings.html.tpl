@@ -13,7 +13,7 @@
       </div>
       <div class="modal-body">
 		<ul>
-			<li><b>Opština</b> &mdash; Opština analize</li>
+			<li><b>Općina</b> &mdash; Općina analize</li>
 			<li><b>#</b> &mdash; Ukupan broj adresa unutar zgrada</li>
 		</ul>
       </div>
@@ -60,12 +60,12 @@
 	} );
     </script>
 
-<h2>Adrese unutar zgrada po opštinama</h2>
+<h2>Adrese unutar zgrada po općinama</h2>
 <br/>
-<p>Ovde možete videti ukupan broj adresa koje se nalaze unutar zgrada, po opštinama.
-    Klikom na opštinu dobijate podatke za tu opštinu. U gornjem desnom uglu je filtriranje. Ispod ove tabele se nalaze statistike po kategorijama. Više o kategorijama možete videti tamo.
+<p>Ovdje možete vidjeti ukupan broj adresa koje se nalaze unutar zgrada, po općinama.
+    Klikom na općinu dobijate podatke za tu općinu. U gornjem desnom uglu je filtriranje. Ispod ove tabele se nalaze statistike po kategorijama. Više o kategorijama možete videti tamo.
     <br/>
-    <b>Pažljivo prilikom otvaranja opština preko 5.000 adresa, računar i browser mogu da se uspore znatno!</b>
+    <b>Pažljivo prilikom otvaranja općina preko 5.000 adresa, računalo i preglednik mogu se znatno usporiti!</b>
 </p>
 <br/>
 <br/>
@@ -73,7 +73,7 @@
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-75">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>Opština</th>
+		<th>Općina</th>
 		<th>Ukupno</th>
 		<th>Adresa u zgradi</th>
 		<th>Više adresa u zgradi</th>
@@ -81,7 +81,7 @@
 		<th>POI u zgradi</th>
 		<th>POI i adresa(e) u zgradi</th>
 		<th>Nepotrebna adresa</th>
-		<th>Beleška</th>
+		<th>Bilješka</th>
 		<th>Adresa POI na zgradu</th>
 		<th>Zgrada je čvor</th>
 	</tr>
@@ -125,14 +125,14 @@
 <br/>
 <h3>Objašnjenje kolona</h3>
 <ul>
-    <li>Adresa u zgradi &mdash; Adresa unutar zgrade treba da se premesti na zgradu. Pogledajte fajlove u pojedinačnim opštinama za ovo.</li>
-    <li>Više adresa u zgradi &mdash; Zakačiti čvorove adrese(a) na zgradu.</li>
-    <li>Neslaganje adresa &mdash; Adrese unutar zgrade i na zgradi se ne poklapaju, razrešite ručno.</li>
-    <li>POI u zgradi &mdash; POI bi mogao da se premesti na zgradu (ukoliko je namena zgrade ista)</li>
-    <li>POI i adresa(e) u zgradi &mdash; Mešavina POI-a i adresa unutar zgrade, razrešite ručno.</li>
-    <li>Nepotrebna adresa &mdash; Uklonite adresu sa zgrade, već je adresa na tačkama unutar zgrade.</li>
-    <li>Beleška &mdash; Nešto nije u redu, ali postoji "note" tag na zgradi, adresi ili POI-u i ništa se ne automatizuje</li>
-    <li>Adresa POI na zgradu &mdash; Adresa POI-a može da se prekopira i na zgradu.</li>
+    <li>Adresa u zgradi &mdash; Adresa unutar zgrade treba se premjestiti na zgradu. Pogledajte fajlove u pojedinačnim općinama za ovo.</li>
+    <li>Više adresa u zgradi &mdash; Spojiti čvorove adrese(a) na zgradu.</li>
+    <li>Neslaganje adresa &mdash; Adrese unutar zgrade i na zgradi se ne poklapaju, rješite ručno.</li>
+    <li>POI u zgradi &mdash; POI bi se mogao premjestiti na zgradu (ukoliko je namjena zgrade ista)</li>
+    <li>POI i adresa(e) u zgradi &mdash; Mješavina POI-a i adresa unutar zgrade, rješite ručno.</li>
+    <li>Nepotrebna adresa &mdash; Uklonite adresu sa zgrade, već je adresa na točkama unutar zgrade.</li>
+    <li>Bilješka &mdash; Nešto nije u redu, ali postoji "note" tag na zgradi, adresi ili POI-u i ništa se ne automatizira</li>
+    <li>Adresa POI na zgradu &mdash; Adresa POI-a može se prekopirati i na zgradu.</li>
     <li>Zgrada je čvor &mdash; Ova zgrada je zapravo čvor sa tagom „building”, treba izbrisati „building” tag</li>
 </ul>
 

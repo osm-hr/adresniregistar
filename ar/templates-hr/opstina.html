@@ -13,12 +13,12 @@
       </div>
       <div class="modal-body">
 		<ul>
-			<li><b># RGZ</b> &mdash; Ukupan broj adresa u RGZ-u</li>
-			<li><b>% Konflacija</b> &mdash; Procenat adresa koje su povezane između RGZ-a i OSM-a. Da bi adrese bile povezane, adresa u OSM-u treba da ima "ref:RS:kucni_broj" tag</li>
-			<li><b># Konflacija</b> &mdash; Isto kao procenat, samo izraženo kao apsolutni broj, zgodno ako treba sortirati po ovome</li>
-			<li><b>% Pronađeno</b> &mdash; Procenat adresa iz OSM-a koje se savršeno poklapaju (i ime ulice i kućni broj) sa adresama iz RGZ-a. Ove adrese su potencijalni najbolji kandidati za konflaciju.</li>
+			<li><b># DGU</b> &mdash; Ukupan broj adresa u DGU-u</li>
+			<li><b>% Konflacija</b> &mdash; Postotak adresa koje su povezane između DGU-a i OSM-a. Da bi adrese bile povezane, adresa u OSM-u treba imati "ref:HR:kucni_broj" tag</li>
+			<li><b># Konflacija</b> &mdash; Isto kao postotak, samo izraženo kao apsolutni broj, zgodno ako treba sortirati po ovome</li>
+			<li><b>% Pronađeno</b> &mdash; Postotak adresa iz OSM-a koje se savršeno poklapaju (i ime ulice i kućni broj) sa adresama iz DGU-a. Ove adrese su potencijalni najbolji kandidati za konflaciju.</li>
 			<li><b># Pronađeno</b> &mdash; Isto kao iznad, samo apsolutna brojka</li>
-			<li><b># Nepronađeno</b> &mdash; Prosta razlika ukupnog broja RGZ adresa i pronađenih adresa</li>
+			<li><b># Nepronađeno</b> &mdash; Jednostavna razlika ukupnog broja DGU adresa i pronađenih adresa</li>
 		</ul>
       </div>
       <div class="modal-footer">
@@ -89,10 +89,10 @@
 			{% else %}
 			const map = L.map('map').setView([{{ settings.CENTER_COORDINATES }}], 13);
 			{% endif %}
-			const tiles = L.tileLayer('https://tiles.openstreetmap.rs/cir/{z}/{x}/{y}.png', {
+			const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 				maxZoom: 19,
 				minZoom: 7,
-				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+				attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 			}).addTo(map);
 			var sw = L.latLng({{ settings.SW_COORDINATES }});
 			var ne = L.latLng({{ settings.NE_COORDINATES }});
@@ -157,24 +157,24 @@
 		{% endif %}
     </script>
 
-<h2>{% if realTime %}Real-time izveštaj{% else %}Izveštaj{% endif %} po {% if showAllNaselja %}svim naseljima{% else %}naseljima{% endif %}</h2>
+<h2>{% if realTime %}Real-time izvještaj{% else %}Izvještaj{% endif %} po {% if showAllNaselja %}svim naseljima{% else %}naseljima{% endif %}</h2>
 <br/>
 {% if realTime %}
 <p>OSM podaci od <b>{{ osmDataDate }}</b></p>
 {% else %}
 	<p>
 	{% if showAllNaselja %}
-	Ovde možete videti statistike za sva naselja u Srbiji.
+	Ovdje možete videti statistike za sva naselja u Hrvatskoj.
 	{% else %}
-	Ovde možete videti statistike po naselju u okviru opštine „{{ opstina.name }}”.
+	Ovdje možete vidjeti statistike po naselju u okviru općine „{{ opstina.name }}”.
 	{% endif %}
-	Klikom na naselje dobijate podatke za to naselje.
-		U gornjem desnom uglu je filtriranje. Klikom na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.</p>
+	Klikom na naselje dobivate podatke za to naselje.
+		U gornjem desnom kutu je filtriranje. Klikom na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju dobit ćete više informacija o kolonama u ovoj tablici.</p>
 {% endif %}
 
 {% if showAllNaselja %}
 <br/>
-Vratite se na <a href="report.html">prikaz po opštinama</a>.
+Vratite se na <a href="report.html">prikaz po općinama</a>.
 {% endif %}
 
 <br/>
@@ -184,10 +184,10 @@ Vratite se na <a href="report.html">prikaz po opštinama</a>.
 <thead class="thead-dark sticky-top">
 	<tr>
 		{% if showAllNaselja %}
-		<th>Opština</th>
+		<th>Općina</th>
 		{% endif %}
 		<th>Naselje</th>
-		<th>#RGZ</th>
+		<th>#DGU</th>
 		<th class="d-sm-table-cell">% Konflacija</th>
 		<th class="d-sm-table-cell"># Konflacija</th>
 		<th class="d-lg-table-cell">% Pronađeno</th>

@@ -15,12 +15,12 @@
             Izveštaj je još u fazi izrade. Trenutno nalazi više stvari nego što treba, tako da ga uzmite sa rezervom.
             <ul>
                 <li><b>Zgrada</b> &mdash; OSM zgrada unutar koje su nađene adrese</li>
-                <li><b>Zgradina adresa</b> &mdash; Ukoliko na zgradi ima addr:street i addr:housenumber, ovde će biti prikazani</li>
-                <li><b>Zgrada ima ref:RS:kucni_broj</b> &mdash; Da li na zgradi postoji dodeljen ref:RS:kucni_broj tag</li>
+                <li><b>Zgradina adresa</b> &mdash; Ukoliko na zgradi ima addr:street i addr:housenumber, ovdje će biti prikazani</li>
+                <li><b>Zgrada ima ref:RS:kucni_broj</b> &mdash; Postoji li na zgradi dodjeljen ref:HR:kucni_broj tag</li>
                 <li><b>Broj adresa</b> &mdash; Ukupan broj pronađenih adresa unutar zgrade</li>
                 <li><b>Adresa(e)</b> &mdash; OSM adresa unutar zgrade</li>
-                <li><b>Adresa(e) imaju ref:RS:kucni_broj</b> &mdash; Da li na adresama unutar zgrade postoji dodeljen ref:RS:kucni_broj tag</li>
-                <li><b>Kategorija</b> &mdash; Opisuje kategorizaciju, tj. koji je slučaj u pitanju i kako eventualno može da se reši</li>
+                <li><b>Adresa(e) imaju ref:RS:kucni_broj</b> &mdash; Da li na adresama unutar zgrade postoji dodjeljen ref:HR:kucni_broj tag</li>
+                <li><b>Kategorija</b> &mdash; Opisuje kategorizaciju, tj. koji je slučaj u pitanju i kako se eventualno može rješiti</li>
             </ul>
         </div>
         <div class="modal-footer">
@@ -69,12 +69,12 @@
 
 <h2>Adrese unutar zgrade za "{{ opstina_name }}"</h2>
 <br/>
-<p>Ovde možete videti sve zgrade sa svim adresama unutar njihovih poligona, kao i pokušaj njihove kategorizacije.
-    Neke od ovih kategorija se mogu rešiti automatizacijim.
+<p>Ovdje možete videti sve zgrade sa svim adresama unutar njihovih poligona, kao i pokušaj njihove kategorizacije.
+    Neke od ovih kategorija se mogu riješiti automatizacijom.
     {% if len(osm_files_move_address_to_building) > 0 %}
-    U dnu se nalazi spisak fajlova.
+    Na dnu se nalazi spisak fajlova.
     {% endif %}
-    U gornjem desnom uglu je filtriranje. Klikom na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.
+    U gornjem desnom kutu je filtriranje. Klikom na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju dobit ćete više informacija o kolonama u ovoj tabeli.
     </p>
 <br/>
 <br/>
@@ -85,10 +85,10 @@
 	<tr>
 		<th>Zgrada</th>
         <th>Zgradina adresa</th>
-		<th>Zgrada ima ref:RS:kucni_broj</th>
+		<th>Zgrada ima ref:HR:kucni_broj</th>
         <th>Broj adresa</th>
         <th>Adresa(e)</th>
-        <th>Adresa(e) ima ref:RS:kucni_broj</th>
+        <th>Adresa(e) ima ref:HR:kucni_broj</th>
         <th>Kategorija</th>
 	</tr>
 </thead>
@@ -116,23 +116,23 @@
             {% if address.resolution == AddressInBuildingResolution.NO_ACTION %}
             Sve kako treba!
             {% elif address.resolution == AddressInBuildingResolution.MERGE_POI_TO_BUILDING %}
-            POI bi mogao da se premesti na zgradu (ukoliko je namena zgrade ista)
+            POI bi se mogao premjestiti na zgradu (ukoliko je namjena zgrade ista)
             {% elif address.resolution == AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING %}
-            Adresa unutar zgrade treba da se premesti na zgradu. Pogledajte fajlove iznad za ovo.
+            Adresa unutar zgrade treba se premjestiti na zgradu. Pogledajte fajlove iznad za ovo.
             {% elif address.resolution == AddressInBuildingResolution.COPY_POI_ADDRESS_TO_BUILDING %}
-            Adresa POI-a može da se prekopira i na zgradu.
+            Adresa POI-a može se prekopirati i na zgradu.
             {% elif address.resolution == AddressInBuildingResolution.ATTACH_ADDRESSES_TO_BUILDING %}
             Zakačiti čvorove adrese(a) na zgradu
             {% elif address.resolution == AddressInBuildingResolution.REMOVE_ADDRESS_FROM_BUILDING %}
-            Uklonite adresu sa zgrade, već je adresa na tačkama unutar zgrade
+            Uklonite adresu sa zgrade, već je adresa na točkama unutar zgrade
             {% elif address.resolution == AddressInBuildingResolution.ADDRESSES_NOT_MATCHING %}
-            Adrese unutar zgrade i na zgradi se ne poklapaju, razrešite ručno
+            Adrese unutar zgrade i na zgradi se ne poklapaju, riješite ručno
             {% elif address.resolution == AddressInBuildingResolution.CASE_TOO_COMPLEX %}
-            Mešavina POI-a i adresa unutar zgrade, razrešite ručno
+            Mješavina POI-a i adresa unutar zgrade, riješite ručno
             {% elif address.resolution == AddressInBuildingResolution.BUILDING_IS_NODE %}
             Ova zgrada je zapravo čvor sa tagom "building", treba izbrisati "building" tag
             {% elif address.resolution == AddressInBuildingResolution.NOTE_PRESENT %}
-            Nešto nije u redu, ali postoji "note" tag na zgradi, adresi ili POI-u i ništa se ne automatizuje
+            Nešto nije u redu, ali postoji "note" tag na zgradi, adresi ili POI-u i ništa se ne automatizira
             {% else %}
             Kategorija nepoznata
             {% endif %}
@@ -155,18 +155,18 @@
 
 <div class="collapse" id="collapseOsmFilesNew">
   Ovde su fajlovi za brisanje adresa kao čvorova i prebacivanje svih njihovih tagova na poligon zgrade.
-    Morate imati otvoren JOSM pre nego što kliknete na fajl.
+    Morate imati otvoren JOSM prije nego što kliknete na fajl.
 	Klikom na fajl ćete ga učitati u JOSM.
-	Fajlovi su grupisani u grupe od po najviše 10 adresa.
+	Fajlovi su grupirani u grupe od po najviše 10 adresa.
 	<br/>
     <br/>
-	<b>Pre bilo kakve automatizacije, <b>obavezno</b> pročitati <a href="https://wiki.openstreetmap.org/wiki/Croatia/Projekti/Adresni_registar#Uputstvo_za_import" target="_blank">uputstvo</a></b>!
+	<b>Prije bilo kakve automatizacije, <b>obavezno</b> pročitati <a href="https://wiki.openstreetmap.org/wiki/Croatia/Projekti/Adresni_registar#Uputstvo_za_import" target="_blank">uputstvo</a></b>!
     <br/>
   <div class="card card-body">
 	  <div class="row row-cols-5">
 	  	{% for osm_file in osm_files_move_address_to_building %}
 	  		<div class="col-sm">
-	  			<a href="http://localhost:8111/import?changeset_tags=source=RGZ_AR&new_layer=true&layer_name={{ osm_file.name }}&url={{ osm_file.url }}" target="_blank">{{ osm_file.name }}</a>
+	  			<a href="http://localhost:8111/import?changeset_tags=source=DGU_AR&new_layer=true&layer_name={{ osm_file.name }}&url={{ osm_file.url }}" target="_blank">{{ osm_file.name }}</a>
 			</div>
 	  	{% endfor %}
 	  </div>
@@ -182,8 +182,8 @@
 
 <h2>Broj različitih kategorija</h2>
 <br/>
-<p>Ovde možete videti ukupan broj adresa koje se nalaze unutar zgrada, po kategorijama unutar opštine „{{ opstina_name }}”.
-    Neke od kategorija se mogu rešiti automatizacijom, ali većina zahteva ljudsku pažnju.</p>
+<p>Ovdje možete vidjeti ukupan broj adresa koje se nalaze unutar zgrada, po kategorijama unutar općine „{{ opstina_name }}”.
+    Neke od kategorija se mogu riješiti automatizacijom, ali većina zahtjeva ljudsku pažnju.</p>
 <br/>
 <br/>
 
@@ -203,23 +203,23 @@
             {% if resolution == AddressInBuildingResolution.NO_ACTION %}
             Sve kako treba!
             {% elif resolution == AddressInBuildingResolution.MERGE_POI_TO_BUILDING %}
-            POI bi mogao da se premesti na zgradu (ukoliko je namena zgrade ista)
+            POI bi se mogao premjestiti na zgradu (ukoliko je namjena zgrade ista)
             {% elif resolution == AddressInBuildingResolution.MERGE_ADDRESS_TO_BUILDING %}
-            Adresa unutar zgrade treba da se premesti na zgradu. Pogledajte fajlove iznad za ovo.
+            Adresa unutar zgrade treba se premjestiti na zgradu. Pogledajte fajlove iznad za ovo.
             {% elif resolution == AddressInBuildingResolution.COPY_POI_ADDRESS_TO_BUILDING %}
-            Adresa POI-a može da se prekopira i na zgradu.
+            Adresa POI-a može se prekopirati i na zgradu.
             {% elif resolution == AddressInBuildingResolution.ATTACH_ADDRESSES_TO_BUILDING %}
-            Zakačiti čvorove adrese(a) na zgradu
+            Spojiti čvorove adrese(a) na zgradu
             {% elif resolution == AddressInBuildingResolution.REMOVE_ADDRESS_FROM_BUILDING %}
-            Uklonite adresu sa zgrade, već je adresa na tačkama unutar zgrade
+            Uklonite adresu sa zgrade, već je adresa na točkama unutar zgrade
             {% elif resolution == AddressInBuildingResolution.ADDRESSES_NOT_MATCHING %}
-            Adrese unutar zgrade i na zgradi se ne poklapaju, razrešite ručno
+            Adrese unutar zgrade i na zgradi se ne poklapaju, riješite ručno
             {% elif resolution == AddressInBuildingResolution.CASE_TOO_COMPLEX %}
-            Mešavina POI-a i adresa unutar zgrade, razrešite ručno
+            Mješavina POI-a i adresa unutar zgrade, riješite ručno
             {% elif resolution == AddressInBuildingResolution.BUILDING_IS_NODE %}
             Ova zgrada je zapravo čvor sa tagom „building”, treba izbrisati „building” tag
             {% elif resolution == AddressInBuildingResolution.NOTE_PRESENT %}
-            Nešto nije u redu, ali postoji „note” tag na zgradi, adresi ili POI-u i ništa se ne automatizuje
+            Nešto nije u redu, ali postoji „note” tag na zgradi, adresi ili POI-u i ništa se ne automatizira
             {% else %}
             Kategorija nepoznata
             {% endif %}

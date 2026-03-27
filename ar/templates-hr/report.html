@@ -13,13 +13,13 @@
       </div>
       <div class="modal-body">
 		<ul>
-			<li><b># RGZ</b> &mdash; Ukupan broj adresa u RGZ-u</li>
+			<li><b># RGZ</b> &mdash; Ukupan broj adresa u DGU-u</li>
 			<li><b># OSM</b> &mdash; Ukupan broj adresa u OSM-u (tek treba implementirati)</li>
-			<li><b>% Konflacija</b> &mdash; Procenat adresa koje su povezane između RGZ-a i OSM-a. Da bi adrese bile povezane, adresa u OSM-u treba da ima "ref:RS:kucni_broj" tag</li>
-			<li><b># Konflacija</b> &mdash; Isto kao procenat, samo izraženo kao apsolutni broj, zgodno ako treba sortirati po ovome</li>
-			<li><b>% Pronađeno</b> &mdash; Procenat adresa iz OSM-a koje se savršeno poklapaju (i ime ulice i kućni broj) sa adresama iz RGZ-a. Ove adrese su potencijalni najbolji kandidati za konflaciju.</li>
+			<li><b>% Konflacija</b> &mdash; Postotak adresa koje su povezane između DGU-a i OSM-a. Da bi adrese bile povezane, adresa u OSM-u treba imati "ref:HR:kucni_broj" tag</li>
+			<li><b># Konflacija</b> &mdash; Isto kao postotak, samo izraženo kao apsolutni broj, zgodno ako treba sortirati po ovome</li>
+			<li><b>% Pronađeno</b> &mdash; Postotak adresa iz OSM-a koje se savršeno poklapaju (i ime ulice i kućni broj) sa adresama iz DGU-a. Ove adrese su potencijalni najbolji kandidati za konflaciju.</li>
 			<li><b># Pronađeno</b> &mdash; Isto kao iznad, samo apsolutna brojka</li>
-			<li><b># Nepronađeno</b> &mdash; Prosta razlika ukupnog broja RGZ adresa i pronađenih adresa</li>
+			<li><b># Nepronađeno</b> &mdash; Jednostavna razlika ukupnog broja DGU adresa i pronađenih adresa</li>
 		</ul>
       </div>
       <div class="modal-footer">
@@ -39,9 +39,9 @@
 	  <li class="breadcrumb-item" aria-current="page"><a href="index.html">Adrese</a></li>
 	  {% endif %}
 	  {% if realTime %}
-	  <li class="breadcrumb-item" aria-current="page">Real-time izveštaj</li>
+	  <li class="breadcrumb-item" aria-current="page">Real-time izvještaj</li>
 	  {% else %}
-	  <li class="breadcrumb-item" aria-current="page">Izveštaj</li>
+	  <li class="breadcrumb-item" aria-current="page">Izvještaj</li>
 	  {% endif %}
   </ol>
 </nav>
@@ -76,10 +76,10 @@
 
 		function loadMap() {
 			const map = L.map('map').setView([{{ settings.CENTER_COORDINATES }}], 7);
-			const tiles = L.tileLayer('https://tiles.openstreetmap.rs/cir/{z}/{x}/{y}.png', {
+			const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 				maxZoom: 19,
 				minZoom: 7,
-				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+				attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 			}).addTo(map);
 			var sw = L.latLng({{ settings.SW_COORDINATES }});
 			var ne = L.latLng({{ settings.NE_COORDINATES }});
@@ -118,23 +118,23 @@
 		});
     </script>
 
-<h2>{% if realTime %}Real-time izveštaj{% else %}Izveštaj{% endif %} po opštinama</h2>
+<h2>{% if realTime %}Real-time izvještaj{% else %}Izvještaj{% endif %} po općinama</h2>
 <br/>
 {% if realTime %}
 <p>OSM podaci od <b>{{ osmDataDate }}</b></p>
 {% else %}
-<p>Ovde možete videti statistike po opštinama. Klikom na opštinu dobijate podatke za tu opštinu. U gornjem desnom uglu je filtriranje. Klikom na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.</p>
+<p>Ovde možete vidjeti statistike po općinama. Klikom na općinu dobivate podatke za tu općinu. U gornjem desnom kutu je filtriranje. Klikom na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju dobit ćete više informacija o kolonama u ovoj tabeli.</p>
 {% endif %}
 <br/>
-Ukoliko želite da vidite spisak po svim naseljima, kliknite <a href="all_naselja.html">ovde</a>.
+Ukoliko želite vidjeti spisak po svim naseljima, kliknite <a href="all_naselja.html">ovdje</a>.
 <br/>
 <br/>
 
 <table id="list" class="table table-sm table-striped table-bordered table-hover" style="width:100%">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>Opština</th>
-		<th>#RGZ</th>
+		<th>Općina</th>
+		<th>#DGU</th>
 		<th class="d-sm-table-cell">#OSM</th>
 		<th class="d-sm-table-cell">% Konflacija</th>
 		<th class="d-sm-table-cell"># Konflacija</th>

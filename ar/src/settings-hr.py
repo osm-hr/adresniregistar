@@ -7,16 +7,16 @@ and `HOUSE_REF_TAG`.
 import os
 
 # Default tags (can be overridden via env vars)
-STREET_REF_TAG = os.getenv('STREET_REF_TAG', 'ref:RS:ulica')
-HOUSE_REF_TAG = os.getenv('HOUSE_REF_TAG', 'ref:RS:kucni_broj')
-COUNTRY = os.getenv('COUNTRY', 'serbia')
-ENHANCE_WITH_NASELJA = os.getenv('ENHANCE_WITH_NASELJA', 'true')
-OPSTINE_DATA_TYPE = os.getenv('OPSTINE_DATA_TYPE', 'csv')
-COORDINATE_SYSTEM = os.getenv('COORDINATE_SYSTEM', 'EPSG:32634')
-CENTER_COORDINATES = '44.5, 21'
-SW_COORDINATES = '42, 18.5'
-NE_COORDINATES = '46.5, 23.5'
-WEB_URL = 'dina.openstreetmap.rs'
+STREET_REF_TAG = os.getenv('STREET_REF_TAG', 'ref:HR:ulica')
+HOUSE_REF_TAG = os.getenv('HOUSE_REF_TAG', 'ref:HR:kucni_broj')
+COUNTRY = os.getenv('COUNTRY', 'croatia')
+ENHANCE_WITH_NASELJA = os.getenv('ENHANCE_WITH_NASELJA', 'false')
+OPSTINE_DATA_TYPE = os.getenv('OPSTINE_DATA_TYPE', 'csv')  # 'geojson' or 'csv'
+COORDINATE_SYSTEM = os.getenv('COORDINATE_SYSTEM', 'EPSG:3035') # or EPSG:32634
+CENTER_COORDINATES = '44.5, 17'
+SW_COORDINATES = '42, 13.5'
+NE_COORDINATES = '47, 20'
+WEB_URL = 'dina.osm-hr.org'
 
 def get_settings():
     return {
