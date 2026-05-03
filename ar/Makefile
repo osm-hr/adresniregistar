@@ -62,6 +62,15 @@ clean_report:
 	rm -rf data/report/*
 	rm -f data/report.tar.gz
 
+clean_dgu:
+	@echo "Cleaning DGU data"
+	rm -rf data/rgz/unzip/*
+	rm -rf data/rgz/download/*
+	rm -rf data/rgz/csv/*
+	rm -f data/rgz/naselje.csv
+	rm -f data/rgz/opstina.csv
+	rm -f data/rgz/addresses.csv
+
 download_from_osm:
 	@./src/download_from_osm.sh
 	@echo "Preparing OSM data for analysis"
@@ -70,13 +79,21 @@ download_from_osm:
 
 download_from_dgu:
 	mkdir -p data/rgz/unzip
-	@./src/download_from_dgu.sh
-	@python3 ./src/parse_dgu_admin_data.py --input data/rgz/unzip/AdministrativeUnit.gml --output data/rgz/naselja.csv "Naselje"
-	@python3 ./src/parse_dgu_admin_data.py --input data/rgz/unzip/AdministrativeUnit.gml --output data/rgz/opstina.csv "Jedinica lokalne samouprave"
-	@duckdb -csv < src/dgu-consolidate_addresses.sql > data/rgz/addresses.csv
-	@duckdb -csv < src/dgu-convert_admin_boundaries.sql > data/rgz/naselje.csv
-	@python3 ./src/prepare_dgu_data.py
-	rm data/rgz/naselja.csv
+	@if ./src/check_dgu_feed.sh && \
+	    [ -f data/rgz/opstina.csv ] && \
+	    [ -f data/rgz/naselje.csv ] && \
+	    [ -f data/rgz/addresses.csv ]; then \
+		echo "DGU podaci su ažurni."; \
+	else \
+		$(MAKE) clean_dgu && \
+		./src/download_from_dgu.sh && \
+		python3 ./src/parse_dgu_admin_data.py --input data/rgz/unzip/AdministrativeUnit.gml --output data/rgz/naselja.csv "Naselje" && \
+		python3 ./src/parse_dgu_admin_data.py --input data/rgz/unzip/AdministrativeUnit.gml --output data/rgz/opstina.csv "Jedinica lokalne samouprave" && \
+		duckdb -csv < src/dgu-consolidate_addresses.sql > data/rgz/addresses.csv && \
+		duckdb -csv < src/dgu-convert_admin_boundaries.sql > data/rgz/naselje.csv && \
+		python3 ./src/prepare_dgu_data.py && \
+		rm data/rgz/naselja.csv; \
+	fi
 
 
 normalize_street_names:
