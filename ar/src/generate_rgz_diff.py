@@ -76,9 +76,9 @@ def fix_deleted_to_added(rgz_path, rgz_last_update, oauth_session):
     """
     api = osmapi.OsmApi(session=oauth_session)
     api.ChangesetCreate({
-        "comment": f"DGU address import (updating {settings.HOUSE_REF_TAG} after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html",
+        "comment": settings.CHANGESET_COMMENT_REF,
         "tag": "mechanical=yes",
-        "source": "DGU_AR"
+        "source": settings.CHANGESET_SOURCE
     })
 
     overpass_api = overpy.Overpass(url='http://localhost:12345/api/interpreter')
@@ -192,9 +192,9 @@ def fix_deleted_to_added(rgz_path, rgz_last_update, oauth_session):
 def fix_changed(rgz_path, street_mappings, oauth_session):
     api = osmapi.OsmApi(session=oauth_session)
     api.ChangesetCreate({
-        "comment": f"RGZ address import (updating street and housenumber after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html",
+        "comment": settings.CHANGESET_COMMENT,
         "tag": "mechanical=yes",
-        "source": "RGZ_AR"
+        "source": settings.CHANGESET_SOURCE
     })
     changeset_count = 0
 
@@ -273,9 +273,9 @@ def fix_changed(rgz_path, street_mappings, oauth_session):
                 api.ChangesetClose()
                 time.sleep(5)
                 api.ChangesetCreate({
-                    "comment": f"RGZ address import (updating street and housenumber after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html",
+                    "comment": settings.CHANGESET_COMMENT,
                     "tag": "mechanical=yes",
-                    "source": "RGZ_AR"
+                    "source": settings.CHANGESET_SOURCE
                 })
             time.sleep(0.1)
     api.ChangesetClose()

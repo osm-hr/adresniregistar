@@ -224,13 +224,33 @@ def generate_osm_files_matched_addresses(context, opstina_dir_path, opstina_name
     return osm_files
 
 
+def should_use_place_template(naselje, addresses, street_mappings):
+    if len(addresses) == 0:
+        return False
+
+    unique_streets = addresses['rgz_ulica'].dropna().unique()
+    if len(unique_streets) != 1:
+        return False
+
+    rgz_ulica = unique_streets[0]
+    rgz_ulica_mb = str(addresses[addresses['rgz_ulica'] == rgz_ulica]['rgz_ulica_mb'].iloc[0])
+    street_name = street_mappings.get_name(rgz_ulica, rgz_ulica_mb)
+
+    street_normalized = normalize_name_latin(cyr2lat(street_name))
+    naselje_normalized = normalize_name_latin(cyr2lat(naselje['name_lat']))
+    return street_normalized == naselje_normalized
+
+
 def generate_osm_files_new_addresses(context, opstina_dir_path, opstina_name, naselje, df_naselje):
     env = context['env']
     street_mappings: StreetMapping = context['street_mappings']
 
     naselje_dir_path = os.path.join(opstina_dir_path, opstina_name)
 
-    template = env.get_template('new_address.osm')
+    template_name = 'new_address.osm'
+    if settings.USE_PLACE_TAG and should_use_place_template(naselje, df_naselje, street_mappings):
+        template_name = 'new_address_place.osm'
+    template = env.get_template(template_name)
     osm_files = []
     osm_entities = []
     counter = 0
@@ -293,7 +313,10 @@ def generate_osm_files_new_per_street_addresses(context, opstina_dir_path, opsti
 
     naselje_dir_path = os.path.join(opstina_dir_path, opstina_name)
 
-    template = env.get_template('new_address.osm')
+    template_name = 'new_address.osm'
+    if settings.USE_PLACE_TAG and should_use_place_template(naselje, df_naselje, street_mappings):
+        template_name = 'new_address_place.osm'
+    template = env.get_template(template_name)
     osm_files = []
     counter = 1
     only_not_found_addresses = df_naselje[pd.isna(df_naselje.conflated_osm_id) & pd.isna(df_naselje.osm_id)]
@@ -658,7 +681,7 @@ def load_naselja_boundaries(rgz_path):
 
 def main():
     # TODO: address should be searchable with latin only
-    env = Environment(loader=FileSystemLoader(searchpath='./templates'))
+    env = Environment(loader=FileSystemLoader(searchpath=['./templates-hr', './templates']))
     env.globals.update(len=len, AddressInBuildingResolution=AddressInBuildingResolution)
     cwd = os.getcwd()
 
