@@ -4,9 +4,8 @@ set -e
 
 DOWNLOAD_DIR="data/rgz/download"
 UNZIP_DIR="data/rgz/unzip"
-DGU_DATE="2025-11-10"
-ADDR_URL="https://opendata.osm-hr.org/dgu/inspire-addresses/${DGU_DATE}/INSPIRE_Addresses_(AD).zip"
-ADMIN_URL="https://opendata.osm-hr.org/dgu/inspire-administrative-units/${DGU_DATE}/INSPIRE_Administrative_Units_(AU).zip"
+ADDR_URL="https://geoportal.dgu.hr/services/atom/INSPIRE_Addresses_(AD).zip"
+ADMIN_URL="https://geoportal.dgu.hr/services/atom/INSPIRE_Administrative_Units_(AU).zip"
 ADDR_ZIP_FILE="$DOWNLOAD_DIR/INSPIRE_Addresses_(AD).zip"
 ADMIN_ZIP_FILE="$DOWNLOAD_DIR/INSPIRE_Administrative_Units_(AU).zip"
 ADMIN_GEOJSON_FILE="opstina.geojson"
@@ -27,6 +26,11 @@ if [ ! -f "$ADDR_ZIP_FILE" ]; then
 else
     echo "Zip datoteka sa adresama postoji, preskačem preuzimanje."
 fi
+
+DGU_DATE=$(head -c 2000 "$UNZIP_DIR/Address.gml" \
+  | grep -o 'timeStamp="[^"]*"' \
+  | cut -d'"' -f2 \
+  | cut -d'T' -f1)
 
 echo $DGU_DATE > data/rgz/LATEST
 
