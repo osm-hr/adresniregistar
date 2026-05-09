@@ -4,7 +4,7 @@
   <node id='{{ osm_entity.id }}' action='modify' visible='true' lat='{{ osm_entity.lat }}' lon='{{ osm_entity.lon }}'>
     <tag k='addr:housenumber' v='{{ osm_entity.housenumber }}' />
     <tag k='addr:street' v='{{ osm_entity.street }}' />
-    {% if osm_entity.postcode %}<tag k='addr:postcode' v='{{ osm_entity.postcode }}' />{% endif %}
+    {% if osm_entity.postcode and settings.USE_POSTAL_CODE_TAG %}<tag k='addr:postcode' v='{{ osm_entity.postcode }}' />{% endif %}
     <tag k='{{ settings.HOUSE_REF_TAG}}' v='{{ osm_entity.kucni_broj }}' />
   </node>
   {% endfor %}

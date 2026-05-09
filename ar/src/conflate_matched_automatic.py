@@ -8,6 +8,7 @@ import osmapi
 import pandas as pd
 
 from common import load_mappings, normalize_name_latin, cyr2lat
+import settings
 from street_mapping import StreetMapping
 
 INTERACTIVE = False  # Change if you know what are you doing
@@ -54,7 +55,7 @@ def fix_wrong_streetname():
             print(f"Missing addr:street for https://www.openstreetmap.org/{entity_type}/{entity_id}, skipping")
             continue
 
-        print(f"({i}/{len(df_osm_qa)}) addr:street changed from '{entity['tag']['addr:street']}' => \t'{problem['rgz_ulica_proper']}' (RGZ: {problem['rgz_ulica']})")
+        print(f"({i}/{len(df_osm_qa)}) addr:street changed from '{entity['tag']['addr:street']}' => \t'{problem['rgz_ulica_proper']}' ({settings.CADASTRE_AUTHORITY_ABBR}: {problem['rgz_ulica']})")
         accepted = False
         while True:
             is_accepted = (problem['rgz_ulica'], entity['tag']['addr:street']) in accepted_streets

@@ -73,17 +73,17 @@ def load_opstine(cwd):
 
 
 def extract_removal_date(osm_id, note):
-    if 'Izbrisano iz RGZ-a' not in note:
-        print(f'Note for {osm_id} do not contain "Izbrisano iz RGZ-a" text')
+    if f'Izbrisano iz {settings.CADASTRE_AUTHORITY_ABBR}-a' not in note:
+        print(f'Note for {osm_id} do not contain "Izbrisano iz {settings.CADASTRE_AUTHORITY_ABBR}-a" text')
         return ''
 
     if ';' in note:
         notes = note.split(';')
         for n in notes:
-            if 'Izbrisano iz RGZ-a' in n:
+            if f'Izbrisano iz {settings.CADASTRE_AUTHORITY_ABBR}-a' in n:
                 note = n
                 break
-    extracted_date = note[len('Izbrisano iz RGZ-a '):]
+    extracted_date = note[len(f'Izbrisano iz {settings.CADASTRE_AUTHORITY_ABBR}-a '):]
     try:
         _ = datetime.datetime.strptime('2023-07-15', '%Y-%m-%d')
         return extracted_date

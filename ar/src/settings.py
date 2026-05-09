@@ -12,6 +12,7 @@ HOUSE_REF_TAG = os.getenv('HOUSE_REF_TAG', 'ref:RS:kucni_broj')
 COUNTRY = os.getenv('COUNTRY', 'serbia')
 ENHANCE_WITH_NASELJA = os.getenv('ENHANCE_WITH_NASELJA', 'true')
 USE_PLACE_TAG = False
+USE_POSTAL_CODE_TAG = False
 OPSTINE_DATA_TYPE = os.getenv('OPSTINE_DATA_TYPE', 'csv')
 COORDINATE_SYSTEM = os.getenv('COORDINATE_SYSTEM', 'EPSG:32634')
 CENTER_COORDINATES = '44.5, 21'
@@ -21,6 +22,7 @@ WEB_URL = 'dina.openstreetmap.rs'
 CHANGESET_COMMENT_REF = 'RGZ address import (updating {settings.HOUSE_REF_TAG} after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html'
 CHANGESET_COMMENT = 'RGZ address import (updating street and housenumber after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html'
 CHANGESET_SOURCE = 'RGZ_AR'
+CADASTRE_AUTHORITY_ABBR = 'RGZ'
 
 def get_settings():
     return {
@@ -33,5 +35,10 @@ def get_settings():
         'CENTER_COORDINATES': CENTER_COORDINATES,
         'SW_COORDINATES': SW_COORDINATES,
         'NE_COORDINATES': NE_COORDINATES,
-        'WEB_URL': WEB_URL
+        'WEB_URL': WEB_URL,
+        'CHANGESET_COMMENT_REF': CHANGESET_COMMENT_REF,
+        'CHANGESET_COMMENT': CHANGESET_COMMENT,
+        'CHANGESET_SOURCE': CHANGESET_SOURCE,
+        'CADASTRE_AUTHORITY_ABBR': CADASTRE_AUTHORITY_ABBR,
+        'USE_POSTAL_CODE_TAG': USE_POSTAL_CODE_TAG
     }

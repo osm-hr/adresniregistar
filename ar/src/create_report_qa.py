@@ -510,7 +510,7 @@ def generate_osm_import_qa_rgz_mismatch(context):
         else:
             priority = 5
         osm_type = 'way' if osm_import_qa_problem['osm_id'][0] == 'w' else 'relation' if osm_import_qa_problem['osm_id'][0] == 'r' else 'node'
-        if pd.notna(osm_import_qa_problem['note']) and 'RGZ' in osm_import_qa_problem['note'] and 'Izbrisano iz RGZ-a' not in osm_import_qa_problem['note']:
+        if pd.notna(osm_import_qa_problem['note']) and settings.CADASTRE_AUTHORITY_ABBR in osm_import_qa_problem['note'] and f'Izbrisano iz {settings.CADASTRE_AUTHORITY_ABBR}-a' not in osm_import_qa_problem['note']:
             note = osm_import_qa_problem['note']
             note_short = note[0:4] + '...' if len(note) > 4 else note
         else:
@@ -573,7 +573,7 @@ def generate_osm_import_qa_too_far(context):
         location_url = f'https://www.openstreetmap.org/?mlat={location_lat}&mlon={location_lon}#map=19/{location_lat}/{location_lon}'
 
         osm_type = 'way' if osm_import_qa_problem['osm_id'][0] == 'w' else 'relation' if osm_import_qa_problem['osm_id'][0] == 'r' else 'node'
-        if pd.notna(osm_import_qa_problem['note']) and 'RGZ' in osm_import_qa_problem['note'] and 'Izbrisano iz RGZ-a' not in osm_import_qa_problem['note']:
+        if pd.notna(osm_import_qa_problem['note']) and settings.CADASTRE_AUTHORITY_ABBR in osm_import_qa_problem['note'] and f'Izbrisano iz {settings.CADASTRE_AUTHORITY_ABBR}-a' not in osm_import_qa_problem['note']:
             note = osm_import_qa_problem['note']
             note_short = note[0:4] + '...' if len(note) > 4 else note
         else:
@@ -939,7 +939,7 @@ def main():
 
     rgz_date_file = os.path.join(rgz_path, 'LATEST')
     if not os.path.exists(rgz_date_file):
-        raise Exception("File data/rgz/LATEST missing, no way to determine date when RGZ data was retrived")
+        raise Exception(f"File data/rgz/LATEST missing, no way to determine date when {settings.CADASTRE_AUTHORITY_ABBR} data was retrived")
     with open(rgz_date_file, 'r') as file:
         file_content = file.read().rstrip()
         rgz_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y.')

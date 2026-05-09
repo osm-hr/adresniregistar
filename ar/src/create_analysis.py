@@ -81,7 +81,7 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
     gdf_osm['osm_housenumber_norm'] = gdf_osm.osm_housenumber.apply(normalize_name)
     gdf_osm.sindex
 
-    print(f"    Loading RGZ addresses in {opstina}")
+    print(f"    Loading {settings.CADASTRE_AUTHORITY_ABBR} addresses in {opstina}")
     df_rgz = pd.read_csv(input_rgz_file, dtype={'rgz_kucni_broj_id': str})
     df_rgz['rgz_geometry'] = df_rgz.rgz_geometry.apply(wkt.loads)
     gdf_rgz = gpd.GeoDataFrame(df_rgz, geometry='rgz_geometry', crs="EPSG:4326")
@@ -94,7 +94,7 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
     # First we will join RGZ and OSM on "ref:RS:kucni_broj. During this process, we calculate distance and remove extra
     # (not-needed) columns. We need to watch out if same "ref:RS:kucni_broj" exists 2 times in OSM! In this case,
     # we take closer address. We don't worry about it here, as we will have QA to report on this.
-    print(f"    Joining addresses in RGZ and OSM in {opstina} by conflation (ref:RS:kucni_broj)")
+    print(f"    Joining addresses in {settings.CADASTRE_AUTHORITY_ABBR} and OSM in {opstina} by conflation (settings.HOUSE_REF_TAG)")
     gdf_osm['osm_housenumber'] = gdf_osm['osm_housenumber'].astype('str')  # For some reason, we need to explicitely cast this to string
     gdf_rgz = gdf_rgz.merge(gdf_osm, how='left', left_on='rgz_kucni_broj_id', right_on=settings.HOUSE_REF_TAG)
     gdf_rgz['conflated_distance'] = gdf_rgz.rgz_geometry.distance(gdf_rgz.osm_geometry)
@@ -108,12 +108,12 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
 
     # Now we try to find the closest matching addresses when there is no conflation.
     # For this, we first need to create 200m buffer on which we will join RGZ to OSM.
-    print(f"    Buffering RGZ addresses for 200m in {opstina}")
+    print(f"    Buffering {settings.CADASTRE_AUTHORITY_ABBR} addresses for 200m in {opstina}")
     gdf_rgz['rgz_buffered_geometry'] = gdf_rgz.rgz_geometry.buffer(distance=200)
     gdf_rgz.set_geometry('rgz_buffered_geometry', inplace=True)
     gdf_rgz.sindex
 
-    print(f"    Joining addresses in RGZ and OSM in {opstina}")
+    print(f"    Joining addresses in {settings.CADASTRE_AUTHORITY_ABBR} and OSM in {opstina}")
     gdf_osm_no_conflated = gdf_osm[gdf_osm[settings.HOUSE_REF_TAG].isna()]
     joined = gdf_rgz.sjoin(gdf_osm_no_conflated, how='left', predicate='intersects')
     joined['distance'] = joined.rgz_geometry.distance(joined.osm_geometry)
@@ -168,7 +168,7 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
 def process_all_opstina(data_path, osm_csv_path, street_mappings):
     total_csvs = len(os.listdir(osm_csv_path))
     if total_csvs < 168:
-        raise Exception("Some or all RGZ files missing! Bailing out")
+        raise Exception(f"Some or all {settings.CADASTRE_AUTHORITY_ABBR} files missing! Bailing out")
 
     for i, file in enumerate(sorted(os.listdir(osm_csv_path))):
         if not file.endswith(".csv"):

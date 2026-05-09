@@ -139,6 +139,8 @@ report: analyze quality_assurance generate_b_hn_ratio
 		python3 src/create_report_qa.py;\
 	fi
 
+report_with_dgu_data: download_from_dgu report
+
 upload_report: report
 	echo "Uploading report"
 	@if [ "$(AR_INCREMENTAL_UPDATE)" != "1" ]; then\

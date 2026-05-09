@@ -525,7 +525,7 @@ def find_duplicated_refs(cwd):
 
     input_rgz_file = os.path.join(rgz_path, 'addresses.csv')
     if not os.path.exists(input_rgz_file):
-        print(f"    Missing file {input_rgz_file}, cannot load RGZ addresses")
+        print(f"    Missing file {input_rgz_file}, cannot load {settings.CADASTRE_AUTHORITY_ABBR} addresses")
         return
     df_rgz = pd.read_csv(input_rgz_file, dtype={'rgz_kucni_broj_id': str})
     for dup in output_dict:

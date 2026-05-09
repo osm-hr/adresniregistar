@@ -446,7 +446,8 @@ def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselj
         opstina_name=opstina_name,
         osm_files_new_addresses=osm_files_new_addresses,
         osm_files_new_per_street_addresses=osm_files_new_per_street_addresses,
-        osm_files_matched_addresses=osm_files_matched_addresses)
+        osm_files_matched_addresses=osm_files_matched_addresses,
+        settings=settings)
     with open(naselje_path, 'w', encoding='utf-8') as fh:
         fh.write(output)
 
@@ -697,7 +698,7 @@ def main():
 
     rgz_date_file = os.path.join(rgz_path, 'LATEST')
     if not os.path.exists(rgz_date_file):
-        raise Exception("File data/rgz/LATEST missing, no way to determine date when RGZ data was retrived")
+        raise Exception(f"File data/rgz/LATEST missing, no way to determine date when {settings.CADASTRE_AUTHORITY_ABBR} data was retrived")
     with open(rgz_date_file, 'r') as file:
         file_content = file.read().rstrip()
         rgz_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y.')

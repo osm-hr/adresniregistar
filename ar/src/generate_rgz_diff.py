@@ -165,7 +165,7 @@ def fix_deleted_to_added(rgz_path, rgz_last_update, oauth_session):
                     print(f"Skipping {old_address["opstina"]} - {old_address["ulica"]} {old_address["kucni_broj"]}, already had removed:"+settings.HOUSE_REF_TAG)
                     continue
                 entity['tag']['removed:'+settings.HOUSE_REF_TAG] = entity['tag'][settings.HOUSE_REF_TAG]
-                note_text = f'Izbrisano iz RGZ-a ' + rgz_last_update
+                note_text = f'Izbrisano iz {settings.CADASTRE_AUTHORITY_ABBR}-a ' + rgz_last_update
                 if 'note' not in entity['tag']:
                     entity['tag']['note'] = note_text
                 else:
@@ -385,11 +385,11 @@ def create_csv_files(rgz_path):
 
 def main():
     parser = argparse.ArgumentParser(
-        description='generate_rgz_diff.py - Fix OSM data after RGZ data refresh')
+        description=f'generate_rgz_diff.py - Fix OSM data after {settings.CADASTRE_AUTHORITY_ABBR} data refresh')
     parser.add_argument('--generate', required=False, help='Should we generate diff files from old and new data', action='store_true')
     parser.add_argument('--fix_deleted_to_added', required=False, help='Should we fix deleted to added addresses - set removed:{settings.HOUSE_REF_TAG} for those that do not exist anymore and change those that have new ref', action='store_true')
     parser.add_argument('--fix_changed', required=False, help='Should we update addresses for those addresses that are changed', action='store_true')
-    parser.add_argument('--rgz_update_date', default=None, required=False, help='Date of RGZ data update, in YYYY-MM-DD format, like 2023-04-23')
+    parser.add_argument('--rgz_update_date', default=None, required=False, help='Date of {settings.CADASTRE_AUTHORITY_ABBR} data update, in YYYY-MM-DD format, like 2023-04-23')
     args = parser.parse_args()
     cwd = os.getcwd()
     data_path = os.path.join(cwd, 'data/')
@@ -418,7 +418,7 @@ def main():
 
     if args.fix_deleted_to_added:
         if args.rgz_update_date is None:
-            print("Set --rgz_update_date with date of RGZ data update, in YYYY-MM-DD format, like --rgz_update_date 2023-04-23")
+            print(f"Set --rgz_update_date with date of {settings.CADASTRE_AUTHORITY_ABBR} data update, in YYYY-MM-DD format, like --rgz_update_date 2023-04-23")
             return
         fix_deleted_to_added(rgz_path, args.rgz_update_date, oauth_session)
     elif args.fix_changed:

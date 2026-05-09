@@ -62,9 +62,9 @@ def main():
     # then do spatial join and count them per naselje
     total_csvs = len(os.listdir(rgz_csv_path))
     if total_csvs < 168:
-        raise Exception("Some or all RGZ files missing! Bailing out")
+        raise Exception(f"Some or all {settings.CADASTRE_AUTHORITY_ABBR} files missing! Bailing out")
 
-    print("Getting all RGZ addresses")
+    print(f"Getting all {settings.CADASTRE_AUTHORITY_ABBR} addresses")
     df_rgz_per_opstina = []
     for i, file in enumerate(sorted(os.listdir(rgz_csv_path))):
         if not file.endswith(".csv"):
