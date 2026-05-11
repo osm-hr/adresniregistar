@@ -467,7 +467,7 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
                     'osm_country': n.tags.get('addr:country'),
                     'osm_city': n.tags.get('addr:city'),
                     'osm_postcode': n.tags.get('addr:postcode'),
-                    'osm_street': n.tags.get('addr:street'),
+                    'osm_street': n.tags.get('addr:street') or n.tags.get('addr:place'),
                     'osm_housenumber': n.tags.get('addr:housenumber'),
                     settings.HOUSE_REF_TAG: n.tags.get(settings.HOUSE_REF_TAG),
                     'tags': '{}' if not self.collect_tags else {k: v for k, v in n.tags},
@@ -481,7 +481,7 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
             return
         for tag_to_search in self.tags_to_search:
             if w.tags.get(tag_to_search):
-                street = w.tags.get('addr:street')
+                street = w.tags.get('addr:street') or w.tags.get('addr:place')
                 housenumber = w.tags.get('addr:housenumber')
                 geom = self.geometry_from_way([n.ref for n in w.nodes])
                 if not geom:
@@ -506,7 +506,7 @@ class CollectEntitiesHandler(osmium.SimpleHandler):
             return
         for tag_to_search in self.tags_to_search:
             if r.tags.get(tag_to_search):
-                street = r.tags.get('addr:street')
+                street = r.tags.get('addr:street') or r.tags.get('addr:place')
                 housenumber = r.tags.get('addr:housenumber')
                 geom = self.geometry_from_relation(r)
                 if not geom:

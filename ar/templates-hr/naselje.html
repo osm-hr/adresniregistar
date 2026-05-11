@@ -21,7 +21,7 @@
 			<li><b>Conflated adresa</b> &mdash; Da li je napravljena konflacija i sa kojom adresom</li>
 			<li><b>Potencijalno poklapanje</b> &mdash; Ukoliko postoji poklapanje sa nekom adresom iz OSM-a, ona će biti navedena u ovoj koloni. Ukoliko adresa ima "✅", znači da je poklapanje 100%. Ove adrese su najbolji kandidati za konflaciju.</li>
 			<li><b>Postotak poklapanja</b> &mdash; Ukoliko je nađena fuzzy adresa, ovo je postotak poklapanja. Neko pravilo je da adrese ispod 95% ne treba razmatrati.</li>
-			<li><b>Udaljenost</b> &mdash; I za adrese sa konflacijom, i za potencijalno poklapanje, pokazuje udaljenost između RGZ i OSM lokacije adrese</li>
+			<li><b>Udaljenost</b> &mdash; I za adrese sa konflacijom, i za potencijalno poklapanje, pokazuje udaljenost između DGU i OSM lokacije adrese</li>
 		</ul>
       </div>
       <div class="modal-footer">
@@ -82,7 +82,7 @@
 {% if realTime %}
 <p>OSM podaci od <b>{{ osmDataDate }}</b></p>
 {% else %}
-<p>Ovde možete vidjeti sve adrese unutar naselja „{{ naselje.name_lat }}” i status konflacije.
+<p>Ovdje možete vidjeti sve adrese unutar naselja „{{ naselje.name_lat }}” i status konflacije.
 	U gornjem desnom kutu je filtriranje.
 	Klikom na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju dobit ćete više informacija o kolonama u ovoj tabeli.</p>
 {% endif %}

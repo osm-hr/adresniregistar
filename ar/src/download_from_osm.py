@@ -18,11 +18,11 @@ def main():
         print("Skipping creation of data/osm/addresses.csv as it already exists")
         return
 
-    crwh = CollectRelationWaysHandler(['addr:street', 'addr:housenumber', settings.HOUSE_REF_TAG])
+    crwh = CollectRelationWaysHandler(['addr:street', 'addr:place', 'addr:housenumber', settings.HOUSE_REF_TAG])
     crwh.apply_file(pbf_file)
     print(f"Collected all ways ({len(crwh.ways)}) from relations")
 
-    cwnh = CollectWayNodesHandler(crwh.ways, ['addr:street', 'addr:housenumber', settings.HOUSE_REF_TAG])
+    cwnh = CollectWayNodesHandler(crwh.ways, ['addr:street', 'addr:place', 'addr:housenumber', settings.HOUSE_REF_TAG])
     cwnh.apply_file(pbf_file)
     print(f"Collected all nodes ({len(cwnh.nodes)}) from ways")
 
@@ -30,7 +30,7 @@ def main():
     bnch.apply_file(pbf_file)
     print(f"Found coordinates for all nodes ({len(bnch.nodes_cache)})")
 
-    ceh = CollectEntitiesHandler(bnch.nodes_cache, cwnh.ways_cache, ['addr:street', 'addr:housenumber', settings.HOUSE_REF_TAG])
+    ceh = CollectEntitiesHandler(bnch.nodes_cache, cwnh.ways_cache, ['addr:street', 'addr:place', 'addr:housenumber', settings.HOUSE_REF_TAG])
     ceh.apply_file(pbf_file)
     print(f"Collected all addresses ({len(ceh.entities)})")
 
