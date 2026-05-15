@@ -57,7 +57,7 @@ else
 
   if [ ! -f data/osm/download/croatia.osm.pbf ]; then
     attempts=0
-    max_attempts=36  # 36 * 5 min = 3h
+    max_attempts=240  # 240 * 5 min = 20h
     success=false
 
     while [ $attempts -lt $max_attempts ] && [ "$success" = false ]; do
