@@ -21,6 +21,7 @@ NE_COORDINATES = '47, 20'
 WEB_URL = 'dina.osm-hr.org'
 CHANGESET_COMMENT_REF = 'DGU address import (updating {settings.HOUSE_REF_TAG} after cadastre refresh), https://c.osm.org/t/137215'
 CHANGESET_COMMENT = 'DGU address import (updating street and housenumber after cadastre refresh), https://c.osm.org/t/137215'
+CHANGESET_TAGS = "import=yes,source=DGU_AR,source:url=https://dina.osm-hr.org,import:page=https://wiki.openstreetmap.org/wiki/Croatia/Import_addresses"
 CHANGESET_SOURCE = 'DGU_AR'
 CADASTRE_AUTHORITY_ABBR = 'DGU'
 
@@ -40,6 +41,7 @@ def get_settings():
         'WEB_URL': WEB_URL,
         'CHANGESET_COMMENT_REF': CHANGESET_COMMENT_REF,
         'CHANGESET_COMMENT': CHANGESET_COMMENT,
+        'CHANGESET_TAGS': CHANGESET_TAGS,
         'CHANGESET_SOURCE': CHANGESET_SOURCE,
         'CADASTRE_AUTHORITY_ABBR': CADASTRE_AUTHORITY_ABBR,
         'USE_POSTAL_CODE_TAG': USE_POSTAL_CODE_TAG
