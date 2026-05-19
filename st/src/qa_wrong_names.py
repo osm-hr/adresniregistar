@@ -9,6 +9,7 @@ import pandas as pd
 from shapely import wkt
 
 from common import cyr2lat, cyr2lat_small, cyr2intname
+import settings
 from street_mapping import StreetMapping
 
 
@@ -512,7 +513,7 @@ def find_wrong_names(cwd, street_mappings: StreetMapping):
     gdf_opstine.sindex
     print(f"Loaded all opstine geometries ({len(gdf_opstine)})")
 
-    df_osm_streets = pd.read_csv(os.path.join(osm_path, 'streets.csv'), dtype={'ref:RS:ulica': 'string'})
+    df_osm_streets = pd.read_csv(os.path.join(osm_path, 'streets.csv'), dtype={settings.STREET_REF_TAG: 'string'})
     df_osm_streets = df_osm_streets[~df_osm_streets.osm_id.isin([
         'w715908909', 'w473855550', 'w713821323', 'w367701564', 'w251497685', 'w26496536', 'w26496078', 'w36975305',
         'w149943467', 'w1343580428', 'w1164632745', 'w821891741', 'w1087728893', 'w675806843', 'w576435160',
@@ -595,7 +596,7 @@ def find_wrong_names(cwd, street_mappings: StreetMapping):
 
         streets_per_opstina_wrong_alt_names = streets_per_opstina[streets_per_opstina.is_missing_alt_name | streets_per_opstina.is_wrong_alt_name]
         streets_per_opstina_wrong_alt_names = streets_per_opstina_wrong_alt_names[
-            ['osm_id', 'osm_name', 'osm_alt_name', 'osm_alt_name_sr', 'osm_alt_name_sr_latn', 'ref:RS:ulica', 'note', 'opstina_imel', 'rgz_ulica_mb', 'rgz_ulica_proper',
+            ['osm_id', 'osm_name', 'osm_alt_name', 'osm_alt_name_sr', 'osm_alt_name_sr_latn', settings.STREET_REF_TAG, 'note', 'opstina_imel', 'rgz_ulica_mb', 'rgz_ulica_proper',
              'is_missing_alt_name', 'is_wrong_alt_name', 'alt_name_suggestion', 'is_alt_name_suggestion_partial',
              'is_missing_alt_name_sr', 'is_wrong_alt_name_sr', 'alt_name_sr_suggestion', 'is_alt_name_sr_suggestion_partial',
              'is_missing_alt_name_sr_latn', 'is_wrong_alt_name_sr_latn', 'alt_name_sr_latn_suggestion', 'is_alt_name_sr_latn_suggestion_partial',]

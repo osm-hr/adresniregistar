@@ -15,6 +15,7 @@ from shapely.ops import transform
 
 from common import cyr2lat, cyr2intname, token_loader, save_and_get_access_token
 from street_mapping import StreetMapping
+import settings
 
 csv.field_size_limit(sys.maxsize)
 
@@ -104,8 +105,8 @@ def fix_deleted(rgz_path):
             else:
                 entity = api.RelationGet(osm_entity_found[1:])
 
-            entity['tag']['removed:ref:RS:ulica'] = entity['tag']['ref:RS:ulica']
-            del entity['tag']['ref:RS:ulica']
+            entity['tag']['removed:'+settings.STREET_REF_TAG] = entity['tag'][settings.STREET_REF_TAG]
+            del entity['tag'][settings.STREET_REF_TAG]
 
             if osm_entity_found[0] == 'n':
                 api.NodeUpdate(entity)

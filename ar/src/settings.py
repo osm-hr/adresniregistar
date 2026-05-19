@@ -21,6 +21,7 @@ NE_COORDINATES = '46.5, 23.5'
 WEB_URL = 'dina.openstreetmap.rs'
 CHANGESET_COMMENT_REF = 'RGZ address import (updating {settings.HOUSE_REF_TAG} after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html'
 CHANGESET_COMMENT = 'RGZ address import (updating street and housenumber after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html'
+CHANGESET_TAGS = "mechanical=yes"
 CHANGESET_SOURCE = 'RGZ_AR'
 CADASTRE_AUTHORITY_ABBR = 'RGZ'
 
@@ -38,6 +39,7 @@ def get_settings():
         'WEB_URL': WEB_URL,
         'CHANGESET_COMMENT_REF': CHANGESET_COMMENT_REF,
         'CHANGESET_COMMENT': CHANGESET_COMMENT,
+        'CHANGESET_TAGS': CHANGESET_TAGS,
         'CHANGESET_SOURCE': CHANGESET_SOURCE,
         'CADASTRE_AUTHORITY_ABBR': CADASTRE_AUTHORITY_ABBR,
         'USE_POSTAL_CODE_TAG': USE_POSTAL_CODE_TAG

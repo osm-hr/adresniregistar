@@ -77,7 +77,7 @@ def fix_deleted_to_added(rgz_path, rgz_last_update, oauth_session):
     api = osmapi.OsmApi(session=oauth_session)
     api.ChangesetCreate({
         "comment": settings.CHANGESET_COMMENT_REF,
-        "tag": "mechanical=yes",
+        "tag": settings.CHANGESET_TAGS,
         "source": settings.CHANGESET_SOURCE
     })
 

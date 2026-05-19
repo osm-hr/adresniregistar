@@ -7,6 +7,7 @@ import pandas as pd
 from shapely import wkt
 
 from common import OPSTINE_TO_SKIP
+import settings
 
 
 def main():
@@ -45,14 +46,14 @@ def main():
         return
 
     print("Load all OSM addresses")
-    df_streets = pd.read_csv(os.path.join(osm_path, 'streets.csv'), dtype={'ref:RS:ulica': str, 'osm_short_name': str, 'osm_short_name_sr': str, 'osm_short_name_sr_latn': str, 'note': str})
+    df_streets = pd.read_csv(os.path.join(osm_path, 'streets.csv'), dtype={settings.STREET_REF_TAG: str, 'osm_short_name': str, 'osm_short_name_sr': str, 'osm_short_name_sr_latn': str, 'note': str})
     df_streets['osm_geometry'] = df_streets.osm_geometry.apply(wkt.loads)
     gdf_streets = gpd.GeoDataFrame(df_streets, geometry='osm_geometry', crs="EPSG:4326")
     gdf_streets.sindex
 
     print("Finding opstina for each OSM street")
     streets_with_opstina = gdf_streets.sjoin(gdf_opstine, how='inner', predicate='intersects')
-    streets_with_opstina['ref:RS:ulica'] = streets_with_opstina['ref:RS:ulica'].astype('str')
+    streets_with_opstina[settings.STREET_REF_TAG] = streets_with_opstina[settings.STREET_REF_TAG].astype('str')
 
     for i, opstina in enumerate(opstine_to_process):
         csv_filename = f"{opstina}.csv"
