@@ -447,6 +447,7 @@ def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselj
         osm_files_new_addresses=osm_files_new_addresses,
         osm_files_new_per_street_addresses=osm_files_new_per_street_addresses,
         osm_files_matched_addresses=osm_files_matched_addresses,
+        changeset_tags=settings.CHANGESET_TAGS+"|source:date="+context['dates']['rgz_data'],
         settings=settings)
     with open(naselje_path, 'w', encoding='utf-8') as fh:
         fh.write(output)
