@@ -701,8 +701,8 @@ def main():
     if not os.path.exists(rgz_date_file):
         raise Exception(f"File data/rgz/LATEST missing, no way to determine date when {settings.CADASTRE_AUTHORITY_ABBR} data was retrived")
     with open(rgz_date_file, 'r') as file:
-        file_content = file.read().rstrip()
-        rgz_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y.')
+        rgz_data_ISO = file.read().rstrip()
+        rgz_data_timestamp = datetime.datetime.fromisoformat(rgz_data_ISO).strftime('%d.%m.%Y.')
 
     incremental_update = False
     if os.environ.get('AR_INCREMENTAL_UPDATE', None) == "1":
@@ -729,6 +729,7 @@ def main():
             'report': datetime.datetime.now().strftime('%d.%m.%Y. %H:%M'),
             'osm_data': osm_data_timestamp,
             'rgz_data': rgz_data_timestamp,
+            'rgz_data_ISO': rgz_data_ISO,
         },
         'osm_entities_cache': osm_entities_cache,
         'street_mappings': street_mappings,
