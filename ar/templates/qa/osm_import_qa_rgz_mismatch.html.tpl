@@ -135,7 +135,7 @@
 		<th>OSM adresa</th>
         <th>OSM kućni broj</th>
         <th>Nađen u RGZ-u</th>
-        <th>RGZ opština</th>
+        <th>RGZ općina</th>
         <th>RGZ adresa</th>
         <th>RGZ adresa poklapanje</th>
         <th>RGZ kućni broj</th>

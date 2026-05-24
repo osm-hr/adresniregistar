@@ -62,10 +62,10 @@
 
 <h2>OSM adrese bez ref:RS:kucni_broj oznake</h2>
 <br/>
-<p>Ovde možete videti sve adrese u OpenStreetMap-ama koje nemaju ref:RS:kucni_broj oznaku, po opštinama.
-    Klikom na opštinu dobijate podatke za tu opštinu. U gornjem desnom uglu je filtriranje.
+<p>Ovde možete videti sve adrese u OpenStreetMap-ama koje nemaju ref:RS:kucni_broj oznaku, po općinama.
+    Klikom na općinu dobijate podatke za tu općinu. U gornjem desnom uglu je filtriranje.
     <br/>
-    <b>Pažljivo prilikom otvaranja opština preko 5.000 adresa, računar i browser mogu da se uspore znatno!</b>
+    <b>Pažljivo prilikom otvaranja općina preko 5.000 adresa, računar i browser mogu da se uspore znatno!</b>
 </p>
 <br/>
 <br/>

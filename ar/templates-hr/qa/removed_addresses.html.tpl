@@ -59,8 +59,8 @@
 
 <h2>Obrisane RGZ adrese</h2>
 <br/>
-<p>Ovde možete videti sve RGZ adrese koje smo uneli u OSM, ali su one od tad izbrisane iz RGZ-a, po opštinama.
-    Klikom na opštinu dobijate podatke za tu opštinu. U gornjem desnom uglu je filtriranje.
+<p>Ovde možete videti sve RGZ adrese koje smo uneli u OSM, ali su one od tad izbrisane iz RGZ-a, po općinama.
+    Klikom na općinu dobijate podatke za tu općinu. U gornjem desnom uglu je filtriranje.
 </p>
 <br/>
 <br/>

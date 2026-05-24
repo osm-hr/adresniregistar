@@ -60,12 +60,12 @@
 	} );
     </script>
 
-<h2>Adrese unutar zgrada po opštinama</h2>
+<h2>Adrese unutar zgrada po općinama</h2>
 <br/>
-<p>Ovde možete videti ukupan broj adresa koje se nalaze unutar zgrada, po opštinama.
-    Klikom na opštinu dobijate podatke za tu opštinu. U gornjem desnom uglu je filtriranje. Ispod ove tabele se nalaze statistike po kategorijama. Više o kategorijama možete videti tamo.
+<p>Ovde možete videti ukupan broj adresa koje se nalaze unutar zgrada, po općinama.
+    Klikom na općinu dobijate podatke za tu općinu. U gornjem desnom uglu je filtriranje. Ispod ove tabele se nalaze statistike po kategorijama. Više o kategorijama možete videti tamo.
     <br/>
-    <b>Pažljivo prilikom otvaranja opština preko 5.000 adresa, računar i browser mogu da se uspore znatno!</b>
+    <b>Pažljivo prilikom otvaranja općina preko 5.000 adresa, računar i browser mogu da se uspore znatno!</b>
 </p>
 <br/>
 <br/>
@@ -125,7 +125,7 @@
 <br/>
 <h3>Objašnjenje kolona</h3>
 <ul>
-    <li>Adresa u zgradi &mdash; Adresa unutar zgrade treba da se premesti na zgradu. Pogledajte fajlove u pojedinačnim opštinama za ovo.</li>
+    <li>Adresa u zgradi &mdash; Adresa unutar zgrade treba da se premesti na zgradu. Pogledajte fajlove u pojedinačnim općinama za ovo.</li>
     <li>Više adresa u zgradi &mdash; Zakačiti čvorove adrese(a) na zgradu.</li>
     <li>Neslaganje adresa &mdash; Adrese unutar zgrade i na zgradi se ne poklapaju, razrešite ručno.</li>
     <li>POI u zgradi &mdash; POI bi mogao da se premesti na zgradu (ukoliko je namena zgrade ista)</li>

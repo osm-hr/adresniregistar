@@ -13,7 +13,7 @@
       </div>
       <div class="modal-body">
 		<ul>
-			<li><b>RGZ opština</b> &mdash; Opština iz RGZ-a</li>
+			<li><b>RGZ općina</b> &mdash; Opština iz RGZ-a</li>
 			<li><b>OSM adresa i kućni broj</b> &mdash; Adresa i kućni broj iz OSM-a, data kao link ka OSM entitetu</li>
 			<li><b>RGZ lokacija</b> &mdash; Link ka lokaciji iz RGZ-a, da može da se uporedi sa OSM lokacijom</li>
 			<li><b>Udaljenost [m]</b> &mdash; Udaljenost između OSM entiteta i RGZ lokacije, data u metrima</li>
@@ -114,7 +114,7 @@
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-100">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>RGZ opština</th>
+		<th>RGZ općina</th>
 		<th>OSM adresa i kućni broj</th>
 		<th>RGZ lokacija</th>
         <th>Udaljenost [m]</th>

@@ -25,7 +25,7 @@ Sve komande se izvršavaju sa `make <komanda>`. Dostupne su sledeće komande:
 * `download_from_osm`
 
   Ova komanda skida najnoviji PBF Srbije sa geofabrika, izvlači sve adrese sa teritorije Srbije koje postoje u OSM-u,
-  i deli sve adrese po opštinama. Te adrese završe u data/osm/csv, a napravi se i globalna u data/osm/addresses.csv.
+  i deli sve adrese po općinama. Te adrese završe u data/osm/csv, a napravi se i globalna u data/osm/addresses.csv.
   
   
 * `normalize_street_names`
@@ -43,7 +43,7 @@ Sve komande se izvršavaju sa `make <komanda>`. Dostupne su sledeće komande:
 
 * `analyze`
 
-  Ova komanda uzme podatke iz OSM-a i RGZ-a i obrađuje adrese po opštinama. Za svaku RGZ adresu pokušava da pronađe odgovarajuću
+  Ova komanda uzme podatke iz OSM-a i RGZ-a i obrađuje adrese po općinama. Za svaku RGZ adresu pokušava da pronađe odgovarajuću
   adresu u OSM-u. Takva adresa može da se nađe (postavi se "`matching`" kolona na `True`), a ako se ne nađe, pokušava da nađe
   najpribližniju adresu u radijusu od 200m na osnovu imena ulice, kućnog broja i udaljenosti RGZ i OSM adresa. Ukoliko nađe
   takvu adresu, postavlja se "`score``" i OSM elementi, a ako nema, te kolone ostaju prazne. Rezultujući CSV se smešta u
