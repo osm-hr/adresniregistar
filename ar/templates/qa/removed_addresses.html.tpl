@@ -30,7 +30,7 @@
     <li class="breadcrumb-item" aria-current="page"><a href="../index.html">DINA</a></li>
 	<li class="breadcrumb-item" aria-current="page"><a href="index.html">Adrese</a></li>
 	<li class="breadcrumb-item" aria-current="page"><a href="qa.html">QA</a></li>
-	<li class="breadcrumb-item" aria-current="page">Obrisane RGZ adrese</li>
+	<li class="breadcrumb-item" aria-current="page">Obrisane DGU adrese</li>
   </ol>
 </nav>
     <!-- Optional JavaScript -->
@@ -57,9 +57,9 @@
 	} );
     </script>
 
-<h2>Obrisane RGZ adrese</h2>
+<h2>Obrisane DGU adrese</h2>
 <br/>
-<p>Ovde možete videti sve RGZ adrese koje smo uneli u OSM, ali su one od tad izbrisane iz RGZ-a, po općinama.
+<p>Ovde možete videti sve DGU adrese koje smo uneli u OSM, ali su one od tad izbrisane iz DGU-a, po općinama.
     Klikom na općinu dobijate podatke za tu općinu. U gornjem desnom uglu je filtriranje.
 </p>
 <br/>

@@ -16,19 +16,19 @@ Treba da imate i `parallel` program (na Debian-u se prosto instalira sa `sudo ap
 
 Sve komande se izvršavaju sa `make <komanda>`.
 
-* Pokrenuti `make clean_osm` da očistite sve generisane podatke osim RGZ podataka
-* Pokrenuti `make clean` za čišćenje svih podataka (PAŽNJA: obrisaće i RGZ podatke koji se teško skidaju)
-* Za skidanje RGZ ulica koristiti `make download_from_rgz`. Za ovo treba headless browser (ja sam stavio `geckodriver` u root dir ST modula i to radi)
+* Pokrenuti `make clean_osm` da očistite sve generisane podatke osim DGU podataka
+* Pokrenuti `make clean` za čišćenje svih podataka (PAŽNJA: obrisaće i DGU podatke koji se teško skidaju)
+* Za skidanje DGU ulica koristiti `make download_from_rgz`. Za ovo treba headless browser (ja sam stavio `geckodriver` u root dir ST modula i to radi)
 * Za generisanje izveštaja koristiti `make report` i izlaz treba da bude HTML izveštaj u data/report direktorijumu
 
-## Osvežavanje sa RGZ-a
+## Osvežavanje sa DGU-a
 
 Osvežavanje nije trivijalan posao i dosta je manuelan. Prvo treba dohvatiti nove ulice, onda uraditi automatske
 izmene u OSM-u, pa onda objaviti nove vektorske mape, pa onda tek možemo da počnemo da ih koristimo.
 
-### Skidanje novih RGZ adresa
+### Skidanje novih DGU adresa
 
-Treba da napravite fajl "idp_creds" koji ima dve linije. Prva linija je username, a druga je password za pristup RGZ
+Treba da napravite fajl "idp_creds" koji ima dve linije. Prva linija je username, a druga je password za pristup DGU
 sajtu https://download-tmp.geosrbija.rs/download. 
 
 * Bekapovati staru `data/rgz/download` fasciklu (npr. `mkdir <data-datum>; mv *.zip <data-datum>/`) i isprazniti postojeću fasciklu
@@ -42,7 +42,7 @@ sajtu https://download-tmp.geosrbija.rs/download.
 
 * Pokrenuti `PYTHONPATH=../ar/src/ python3 src/fix_missing_proper_street_names.py` i biće generisan `data/rgz/missing_streets.csv` fajl u kome su sve nove ulice kojima nedostaje pravilno imenovanje.
 * Prekopirate ih na dno `ar/curated_streets.csv` i ispraviti sve nazive da budu dobri (Ctrl+F da nađete kako su ranije kapitalizovane neke stvari)
-  * Na kraju proveriti standardne greške iz RGZ-a, kao što je trailing space
+  * Na kraju proveriti standardne greške iz DGU-a, kao što je trailing space
 * Sortirajte curated listu sa `PYTHONPATH=../ar/src/ python3 src/sort_curated_streets.py --input-curated-streets ../ar/curated_streets.csv --output-curated-streets curated_streets-sorted.csv`
 * Uporedite ih i ako je sve OK, zamenite `ar/curated_streets.csv` sa `curated_streets-sorted.csv`, a `curated_streets-sorted.csv` obrisati.
 * Sada izbrisati `ar/data/mapping/mapping.csv` i regenerisati ga ponovnim pokretanjem `python3 src/street_mapping.py` iz AR modula.
@@ -54,7 +54,7 @@ kao i lokalni overpass server.
 
 * Izvršiti `PYTHONPATH=../ar/src/ python3 src/generate_st_rgz_diff.py --generate` i dobićete 3 fajla: `data/rgz/streets-added.csv` (nove ulice), `data/rgz/streets-removed.csv` (izbrisane ulice) i `data/rgz/streets-changed.csv` (promenjene ulice)
 * Izvršiti `PYTHONPATH=../ar/src/ python3 src/generate_st_rgz_diff.py --fix_deleted` - prolazi kroz obrisane ulice i ako su stvarno obrisane, briše im `ref:RS:ulica` i dodaje im `removed:ref:RS:ulica`
-* Izvršiti `PYTHONPATH=../ar/src/ python3 src/generate_st_rgz_diff.py --rename-changed` - prolazi kroz ulice sa promenjenim imenom i menja im `name` tag (i resetuje `alt_name`. Pita da li da stavi `old_name` tag (ukoliko je u RGZ-u samo pravopisna greška ili promena padeža, ne treba stavljati `old_name`).
+* Izvršiti `PYTHONPATH=../ar/src/ python3 src/generate_st_rgz_diff.py --rename-changed` - prolazi kroz ulice sa promenjenim imenom i menja im `name` tag (i resetuje `alt_name`. Pita da li da stavi `old_name` tag (ukoliko je u DGU-u samo pravopisna greška ili promena padeža, ne treba stavljati `old_name`).
 
 Uvek možete otvoriti ova 3 fajla u QGIS-u (CRS je EPSG:32634) da vidite šta se promenilo.
 

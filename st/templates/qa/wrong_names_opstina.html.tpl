@@ -22,9 +22,9 @@
             <ul>
 			<li><b>OSM id</b> &mdash; ID ulice u OSM-u</li>
 			<li><b>„ref:RS:ulica” tag</b> &mdash; Označava samo da li postoji „ref:RS:ulica” tag ili ne. Zgodno je za filtriranje</li>
-			<li><b>„name” tag</b> &mdash; Stanje „name” taga. Ovaj tag može da bude pogrešan samo ukoliko postoji „ref:RS:ulica” tag, pa je onda pogrešan u odnosu na RGZ. <b>PAŽNJA:</b> moguće je da je ime dobro, a da je zapravo pogrešan „ref:RS:ulica” tag</li>
-			<li><b>„name:sr” tag</b> &mdash; Stanje „name:sr” taga. Ukoliko postoji „ref:RS:ulica” tag, onda se gleda da li je pogrešan u odnosu na RGZ. Ako ga nema, onda se gleda da li je pogrešan u odnosu na „name” tag</li>
-			<li><b>„name:sr-Latn” tag</b> &mdash; Stanje „name:sr-Latn” taga. Ukoliko postoji „ref:RS:ulica” tag, onda se gleda da li je pogrešan u odnosu na RGZ. Ako ga nema, onda se gleda da li je pogrešan u odnosu na „name” tag</li>
+			<li><b>„name” tag</b> &mdash; Stanje „name” taga. Ovaj tag može da bude pogrešan samo ukoliko postoji „ref:RS:ulica” tag, pa je onda pogrešan u odnosu na DGU. <b>PAŽNJA:</b> moguće je da je ime dobro, a da je zapravo pogrešan „ref:RS:ulica” tag</li>
+			<li><b>„name:sr” tag</b> &mdash; Stanje „name:sr” taga. Ukoliko postoji „ref:RS:ulica” tag, onda se gleda da li je pogrešan u odnosu na DGU. Ako ga nema, onda se gleda da li je pogrešan u odnosu na „name” tag</li>
+			<li><b>„name:sr-Latn” tag</b> &mdash; Stanje „name:sr-Latn” taga. Ukoliko postoji „ref:RS:ulica” tag, onda se gleda da li je pogrešan u odnosu na DGU. Ako ga nema, onda se gleda da li je pogrešan u odnosu na „name” tag</li>
             </ul>
         </div>
         <div class="modal-footer">

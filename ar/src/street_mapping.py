@@ -168,14 +168,14 @@ def process_opstina(mapping, opstina, data_path, curated_streets, ref_mappings, 
 
 def main():
     """
-    Here we denote "Name" as normal street name, "NAME" as RGZ name (capitalized) and "nname" as normalized name,
+    Here we denote "Name" as normal street name, "NAME" as DGU name (capitalized) and "nname" as normalized name,
     We need to create mapping "NAME"->"Name".
     From OSM, we can get 3 mappings:
     1. "ref:RS:ulica" -> list("Name)
     2. "nname (latin)" -> list("Name")
     3. "nname (ascii)" -> list("Name")
 
-    Then, for each "NAME" street in RGZ:
+    Then, for each "NAME" street in DGU:
     * we try to find it in special, human mapped list (part of source code)
     * if not, we check if there is "ref:RS:ulica" mapping to Name
       If there is and there is only one mapping, we use it. If there are multiple mappings, we ignore it.
@@ -284,19 +284,19 @@ class StreetMapping:
 
     def get_all_rgz_names(self):
         """
-        Gets a list with all RGZ names known
+        Gets a list with all DGU names known
         """
         return self.street_mappings.keys()
 
     def get_all_names_for_rgz_name(self, rgz_name):
         """
-        Gets array with all OSM names for a given RGZ name, with additional data (source, refs)
+        Gets array with all OSM names for a given DGU name, with additional data (source, refs)
         """
         return self.street_mappings[rgz_name]
 
     def get_name(self, rgz_name: str, ulica_id: str, default_value: str = ''):
         """
-        Gets name for given RGZ name and opstina
+        Gets name for given DGU name and opstina
         """
         if rgz_name not in self.street_mappings:
             print(f"WARNING: street {rgz_name} not found in street mappings!")

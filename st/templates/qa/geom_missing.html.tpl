@@ -15,15 +15,15 @@
         Ovaj izveštaj proverava da li u blizini ulice ima nepovezana ulica sa sličnom geometrijom i pogrešnim imenom ulice. Potrebno je proveriti zašto se ovo dešava:
         <ul>
             <li>Može biti da je ime slično i da ga treba izmeniti da odgovora pravom imenu ulice i uraditi konflaciju ulice</li>
-            <li>Takođe je moguće da je to neka dodatna ulica koja nije povezana sa RGZ-om (nema „<code>ref:RS:ulica</code>” tag), pa onda treba naći odgovaraju ulicu u RGZ-u i povezati je</li>
-            <li>Treći scenario je da ovakva ulica uopšte ne postoji u RGZ-u i onda treba obrisati ime ove ulice u OSM-u skroz</li>
+            <li>Takođe je moguće da je to neka dodatna ulica koja nije povezana sa DGU-om (nema „<code>ref:RS:ulica</code>” tag), pa onda treba naći odgovaraju ulicu u DGU-u i povezati je</li>
+            <li>Treći scenario je da ovakva ulica uopšte ne postoji u DGU-u i onda treba obrisati ime ove ulice u OSM-u skroz</li>
         </ul>
         <br><br>
         Kolone u tabeli:
 		<ul>
 			<li><b>Opština</b> &mdash; Opština analize</li>
 			<li><b># pogrešnih imena”</b> &mdash; Ukupan broj segmenata ulice kojima je ime pogrešno</li>
-			<li><b>Dužina pogrešnih imena”</b> &mdash; Ukupna dužina svih segmenata ulice. Za dužinu segmenta se ne uzima celokupna dužina iz OSM-a nego samo onaj deo koji je u geometrijski poklopljen sa geometrijom RGZ ulice</li>
+			<li><b>Dužina pogrešnih imena”</b> &mdash; Ukupna dužina svih segmenata ulice. Za dužinu segmenta se ne uzima celokupna dužina iz OSM-a nego samo onaj deo koji je u geometrijski poklopljen sa geometrijom DGU ulice</li>
 		</ul>
       </div>
       <div class="modal-footer">
@@ -120,7 +120,7 @@
 
 <h2>Nedostajuće geometrije ulica</h2>
 <br/>
-<p>Ovde možete videti sve ulice kojima se geometrije u RGZ-u i u OSM-u ne poklapaju. Razlikujemo dva slučaja:
+<p>Ovde možete videti sve ulice kojima se geometrije u DGU-u i u OSM-u ne poklapaju. Razlikujemo dva slučaja:
 <ul>
     <li>
         <b>Potrebna konflacija</b> &mdash; OSM ima kandidate ulice, ali nisu povezane.
@@ -182,9 +182,9 @@
         <tr>
             <th>Opština</th>
             <th>Naselje</th>
-            <th>Id (RGZ)</th>
-            <th>Ulica (RGZ)</th>
-            <th>Dužina (RGZ)</th>
+            <th>Id (DGU)</th>
+            <th>Ulica (DGU)</th>
+            <th>Dužina (DGU)</th>
             <th>Ukupna dužina potencijalnih puteva</th>
             <th>Conflated putevi</th>
             <th>Potencijalni putevi (% poklapanja, dužina)</th>
@@ -252,9 +252,9 @@
         <tr>
             <th>Opština</th>
             <th>Naselje</th>
-            <th>Id (RGZ)</th>
-            <th>Ulica (RGZ)</th>
-            <th>Dužina (RGZ)</th>
+            <th>Id (DGU)</th>
+            <th>Ulica (DGU)</th>
+            <th>Dužina (DGU)</th>
             <th>Ukupna dužina puteva za iscrtati</th>
             <th>Conflated putevi</th>
             <th>Potencijalni putevi (% poklapanja, dužina)</th>

@@ -16,7 +16,7 @@
                 <li><b>Naselje</b> &mdash; Naselje za koju se odnosi izveštaj</li>
                 <li><b>Odnos</b> &mdash; Količnik broja zgrada i broja kućnih brojeva</li>
                 <li><b>Broj zgrada (OSM)</b> &mdash; Ukupan broj pronađenih zgrada u OSM-u na teritoriji ovog naselja</li>
-                <li><b>Broj kućnih brojeva (RGZ)</b> &mdash; Ukupan broj pronađenih kućnih brojeva u RGZ-u na teritoriji ovog naselja</li>
+                <li><b>Broj kućnih brojeva (DGU)</b> &mdash; Ukupan broj pronađenih kućnih brojeva u DGU-u na teritoriji ovog naselja</li>
             </ul>
         </div>
         <div class="modal-footer">
@@ -59,7 +59,7 @@
 
 <h2>Broj zgrada i kućnih brojeva za opštinu „{{ opstina }}”</h2>
 <br/>
-<p>Ovde možete videti broj zgrada iz OSM-a, kao i broj kućnih brojeva iz RGZ-a, kao i njihov odnos u opštini „{{ opstina }}”.
+<p>Ovde možete videti broj zgrada iz OSM-a, kao i broj kućnih brojeva iz DGU-a, kao i njihov odnos u opštini „{{ opstina }}”.
     Ovo može da pomogne da se vidi gde najviše fale zgrade u OSM-u jer zgrade i kućni brojevi treba da su korelisani.
     U gornjem desnom uglu je filtriranje. Klikom na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.
     </p>
@@ -72,7 +72,7 @@
 		<th>Naselje</th>
         <th>Odnos</th>
         <th>Broj zgrada (OSM)</th>
-        <th>Broj kućnih brojeva (RGZ)</th>
+        <th>Broj kućnih brojeva (DGU)</th>
 	</tr>
 </thead>
 <tbody>

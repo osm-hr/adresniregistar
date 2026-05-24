@@ -12,7 +12,7 @@
         </button>
       </div>
         <div class="modal-body">
-            Ovaj izveštaj proverava da li ime ulice treba da ima pridružen „alt_name” tag. Ime ulice se uzima iz RGZ-a ako postoji
+            Ovaj izveštaj proverava da li ime ulice treba da ima pridružen „alt_name” tag. Ime ulice se uzima iz DGU-a ako postoji
             (ako je way spojen preko „ref:RS:ulica” taga), a ako ne postoji - uzima se „name”/„name:sr”/„name:sr-Latn” tag.
             Heuristika proverava da li ime ulice sadrži broj (ili kao arapske cifre, ili kao napisane brojeve), ili reč "doktor" i pokušava
             da pogodi koji bi „alt_name” tag trebao da bude (ovo su jedine provere za sad).
@@ -31,9 +31,9 @@
             Kolone u tabeli:
             <ul>
                 <li><b>OSM</b> &mdash; Link ka OSM ulici i ime ulice u OSM-u</li>
-                <li><b>„ref:RS:ulica” tag</b> &mdash; Označava da li je ulica spojena sa RGZ-om preko „ref:RS:ulica” taga. Ukoliko jeste, prikaza je simbol „✅” i identifikator ulice u RGZ-u</li>
-                <li><b>RGZ ime</b> &mdash; Ukoliko je OSM ulica spojena sa RGZ-om, ovde je navedeno ime ulice u RGZ-u</li>
-                <li><b>„name” tag</b> &mdash; Vrednost „name” taga iz OSM-a. Navedena su i RGZ i OSM imena, čisto da čovek može da ih proveri oba</li>
+                <li><b>„ref:RS:ulica” tag</b> &mdash; Označava da li je ulica spojena sa DGU-om preko „ref:RS:ulica” taga. Ukoliko jeste, prikaza je simbol „✅” i identifikator ulice u DGU-u</li>
+                <li><b>DGU ime</b> &mdash; Ukoliko je OSM ulica spojena sa DGU-om, ovde je navedeno ime ulice u DGU-u</li>
+                <li><b>„name” tag</b> &mdash; Vrednost „name” taga iz OSM-a. Navedena su i DGU i OSM imena, čisto da čovek može da ih proveri oba</li>
                 <li><b>„alt_name” tag</b> &mdash; Stanje „alt_name” taga na osnovu algoritma. Pogledajte iznad kako da tumačite ovu kolonu</li>
                 <li><b>„alt_name:sr” tag</b> &mdash; Stanje „alt_name:sr” taga na osnovu algoritma. Pogledajte iznad kako da tumačite ovu kolonu</li>
                 <li><b>„alt_name:sr-Latn” tag</b> &mdash; Stanje „alt_name:sr-Latn” taga na osnovu algoritma. Pogledajte iznad kako da tumačite ovu kolonu</li>
@@ -168,7 +168,7 @@
 	<tr>
 		<th>OSM id</th>
 		<th>„ref:RS:ulica” tag</th>
-		<th>RGZ ime (OSM „name” tag)</th>
+		<th>DGU ime (OSM „name” tag)</th>
         <th>„name” tag</th>
         <th>„alt_name” tag</th>
         <th>„alt_name:sr” tag</th>

@@ -166,7 +166,7 @@
 	  <div class="row row-cols-5">
 	  	{% for osm_file in osm_files_move_address_to_building %}
 	  		<div class="col-sm">
-	  			<a href="http://localhost:8111/import?changeset_tags=source=RGZ_AR&new_layer=true&layer_name={{ osm_file.name }}&url={{ osm_file.url }}" target="_blank">{{ osm_file.name }}</a>
+	  			<a href="http://localhost:8111/import?changeset_tags=source=DGU_AR&new_layer=true&layer_name={{ osm_file.name }}&url={{ osm_file.url }}" target="_blank">{{ osm_file.name }}</a>
 			</div>
 	  	{% endfor %}
 	  </div>

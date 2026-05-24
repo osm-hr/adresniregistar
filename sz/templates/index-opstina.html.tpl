@@ -109,7 +109,7 @@
 <h2>Analiza stambenih zajednica za opštinu „{{ opstina_name }}”</h2>
 <br/>
 
-<p>Ovde je spisak svih stambenih zajednica iz RGZ-a za opštinu „{{ opstina_name }}”.
+<p>Ovde je spisak svih stambenih zajednica iz DGU-a za opštinu „{{ opstina_name }}”.
 <br/>
 U gornjem desnom uglu je filtriranje.
 Klikom na "Pomoć" u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli. Ispod tabele se nalaze dodatni grafici.

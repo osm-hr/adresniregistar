@@ -26,7 +26,7 @@ def is_wrong_name_sr(rgz_proper_name, osm_name, osm_name_sr):
             # We have "name" tag
             return osm_name != osm_name_sr
         else:
-            # We don't have RGZ name, nor "name" tag, nothing can be wrong
+            # We don't have DGU name, nor "name" tag, nothing can be wrong
             return False
 
 
@@ -43,7 +43,7 @@ def is_wrong_name_sr_latn(rgz_proper_name, osm_name, osm_name_sr_latn):
             # We have "name" tag, compare with it
             return cyr2lat_small(osm_name) != osm_name_sr_latn
         else:
-            # We don't have RGZ name, nor "name" tag, nothing can be wrong
+            # We don't have DGU name, nor "name" tag, nothing can be wrong
             return False
 
 
@@ -95,7 +95,7 @@ def is_wrong_int_name(rgz_proper_name, osm_name, osm_int_name):
             # We have "name" tag, compare with it
             return cyr2intname(osm_name) != osm_int_name
         else:
-            # We don't have RGZ name, nor "name" tag, nothing can be wrong
+            # We don't have DGU name, nor "name" tag, nothing can be wrong
             return False
 
 
@@ -327,7 +327,7 @@ def check_alt_name(rgz_proper_name, osm_name, alt_name, is_latin: bool = False):
     elif pd.notna(osm_name):
         name_to_check = osm_name
     else:
-        # There is no RGZ name, nor "name" tag, bail out
+        # There is no DGU name, nor "name" tag, bail out
         return False, False, '', False
     name_to_check_lower = name_to_check.lower()
 
@@ -528,7 +528,7 @@ def find_wrong_names(cwd, street_mappings: StreetMapping):
 
     df_rgz_streets = pd.read_csv(os.path.join(rgz_path, 'streets.csv'))
     df_rgz_streets['rgz_ulica_mb'] = df_rgz_streets['rgz_ulica_mb'].astype('str')
-    print(f"Loaded all {len(df_rgz_streets)} RGZ streets")
+    print(f"Loaded all {len(df_rgz_streets)} DGU streets")
 
     streets_per_opstina = gdf_osm_streets.sjoin(gdf_opstine, how='inner', predicate='intersects')
     streets_per_opstina.sindex
@@ -536,7 +536,7 @@ def find_wrong_names(cwd, street_mappings: StreetMapping):
     streets_per_opstina.drop(['index_right', 'opstina_maticni_broj', 'opstina_povrsina', 'okrug_sifra'], inplace=True, axis=1)
     print("Split all addresses per opstina")
 
-    # Merge with RGZ streets and find out proper street names
+    # Merge with DGU streets and find out proper street names
     streets_per_opstina = streets_per_opstina.merge(df_rgz_streets[['rgz_opstina', 'rgz_ulica_mb', 'rgz_ulica']], how='left', left_on='ref:RS:ulica', right_on='rgz_ulica_mb')
     streets_per_opstina['rgz_ulica_proper'] = streets_per_opstina[['rgz_ulica', 'rgz_ulica_mb']].apply(
         lambda x: street_mappings.get_name(x['rgz_ulica'], x['rgz_ulica_mb'], default_value='') if pd.notna(x['rgz_ulica']) and x['rgz_ulica'] != '' else np.nan, axis=1)

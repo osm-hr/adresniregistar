@@ -45,9 +45,9 @@ def fix_alt_names(data_path, street_mappings: StreetMapping, oauth_session: OAut
         additional_comment = f'in {opstina} '
     api = osmapi.OsmApi(session=oauth_session)
     api.ChangesetCreate({
-        "comment": f"RGZ address import {additional_comment}(fixing alt_name on conflated ways, https://community.openstreetmap.org/t/topic/9338/18)",
+        "comment": f"DGU address import {additional_comment}(fixing alt_name on conflated ways, https://community.openstreetmap.org/t/topic/9338/18)",
         "tag": "mechanical=yes",
-        "source": "RGZ_ST"
+        "source": "DGU_ST"
     })
 
     qa_path = os.path.join(data_path, 'qa')

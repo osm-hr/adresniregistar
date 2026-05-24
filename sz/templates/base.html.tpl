@@ -48,8 +48,8 @@
 <footer class="footer">
 	<div class="container-fluid py-1 mt-3 mb-0 bg-light">
 		<small class="text-secondary text-center">
-			Data &copy; <a href="https://opendata.geosrbija.rs/">RGZ</a> &amp; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, <br/>
-			RGZ podaci od {{ rgzDataDate }}, izveštaj generisan u {{ reportDate }}
+			Data &copy; <a href="https://opendata.geosrbija.rs/">DGU</a> &amp; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, <br/>
+			DGU podaci od {{ rgzDataDate }}, izveštaj generisan u {{ reportDate }}
 		</small>
 	</div>
 </footer>

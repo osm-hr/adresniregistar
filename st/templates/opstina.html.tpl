@@ -15,25 +15,25 @@
 	    <h5>Analiza po broju:</h5>
 	    <ul>
 			<li><b>Naselje</b> &mdash; Naselje za koje se odnose podaci</li>
-			<li><b>#RGZ (broj ulica)</b> &mdash; Ukupan broj različitih ulica u RGZ-u, bez zaseoka i ulica koje geometrijom podsećaju na zaseoke</li>
-			<li><b>Konflacija (bar jedan way)</b> &mdash; Ukupna broj RGZ ulica koje imaju bar jedan segment (jedan OSM way) spojen sa RGZ-om (tj. imaju ispravan „ref:RS:ulica” tag)</li>
-			<li><b>Konflacija [%]</b> &mdash; Procenat svih ulica u RGZ-u kojima je bar jedan segment spojen sa RGZ-om</li>
-			<li><b>Pronađeno (bar jedan way)</b> &mdash; Ukupan broj svih ulica u RGZ-u koje imaju bar jednog potencijalnog kandidata za spajanje sa RGZ-om (ovo znači da generalno neka ulica u blizini postoji u OSM-u, ali ne mora da znači da je to baš ulica iz RGZ-a)</li>
-			<li><b>Pronađeno [%]</b> &mdash; Procenat svih ulica u RGZ-u koje imaju bar jednog potencijalnog kandidata za spajanje sa RGZ-om</li>
-			<li><b>Nepronađeno (bar jedan way)</b> &mdash; Ukupan broj ulica iz RGZ-a koje nemaju nijednog kandidata za spajanje sa RGZ-om (dakle, razlika između ukupnih iz RGZ-a i zbira spojenih i pronađenih). Ovim se ukazuje da verovatno ništa oko ove ulice nije ni ucrtano u OSM-u</li>
-			<li><b>Nepronađeno [%]</b> &mdash; Procenat broja ulica iz RGZ-a koje nemaju nijednog kandidata za spajanje sa RGZ-om</li>
+			<li><b>#DGU (broj ulica)</b> &mdash; Ukupan broj različitih ulica u DGU-u, bez zaseoka i ulica koje geometrijom podsećaju na zaseoke</li>
+			<li><b>Konflacija (bar jedan way)</b> &mdash; Ukupna broj DGU ulica koje imaju bar jedan segment (jedan OSM way) spojen sa DGU-om (tj. imaju ispravan „ref:RS:ulica” tag)</li>
+			<li><b>Konflacija [%]</b> &mdash; Procenat svih ulica u DGU-u kojima je bar jedan segment spojen sa DGU-om</li>
+			<li><b>Pronađeno (bar jedan way)</b> &mdash; Ukupan broj svih ulica u DGU-u koje imaju bar jednog potencijalnog kandidata za spajanje sa DGU-om (ovo znači da generalno neka ulica u blizini postoji u OSM-u, ali ne mora da znači da je to baš ulica iz DGU-a)</li>
+			<li><b>Pronađeno [%]</b> &mdash; Procenat svih ulica u DGU-u koje imaju bar jednog potencijalnog kandidata za spajanje sa DGU-om</li>
+			<li><b>Nepronađeno (bar jedan way)</b> &mdash; Ukupan broj ulica iz DGU-a koje nemaju nijednog kandidata za spajanje sa DGU-om (dakle, razlika između ukupnih iz DGU-a i zbira spojenih i pronađenih). Ovim se ukazuje da verovatno ništa oko ove ulice nije ni ucrtano u OSM-u</li>
+			<li><b>Nepronađeno [%]</b> &mdash; Procenat broja ulica iz DGU-a koje nemaju nijednog kandidata za spajanje sa DGU-om</li>
 		</ul>
         <h5>Analiza po dužini:</h5>
 		<ul>
 			<li><b>Naselje</b> &mdash; Naselje za koje se odnose podaci</li>
-			<li><b>#RGZ [km]</b> &mdash; Ukupna dužina (u kilometrima) svih ulica u RGZ-u, uključujući i zaseoke</li>
-			<li><b>RGZ konflacija [km]</b> &mdash; Ukupna dužina (u kilometrima) svih delova ulica RGZ-a koje su spojene sa OSM-om. Ukoliko je ovaj broj manji od dužine RGZ ulice, postoji delovi RGZ ulice koji nisu spojeni u OSM-u</li>
-			<li><b>RGZ konflacija [%]</b> &mdash; Procenat kilometraže svih ulica RGZ-a koje su spojene sa OSM-om</li>
-			<li><b>OSM konflacija [km]</b> &mdash; Ukupna dužina (u kilometrima) svih ulica u OSM-u koje su spojene sa RGZ-om (tj. imaju ispravan „ref:RS:ulica” tag)</li>
-			<li><b>OSM konflacija [%]</b> &mdash; Procenat kilometraže svih ulica u OSM-u koje su spojene sa RGZ-om</li>
-			<li><b>Pronađeno [km]</b> &mdash; Ukupna dužina (u kilometrima) svih ulica u OSM-u koje su potencijalni kandidati za spajanje sa RGZ-om (ovo znači da generalno neka ulica u blizini postoji u OSM-u, ali ne mora da znači da je to baš ulica iz RGZ-a)</li>
-			<li><b>Pronađeno [%]</b> &mdash; Procenat kilometraže svih ulica u OSM-u koje su potencijalni kandidati za spajanje sa RGZ-om</li>
-			<li><b>Nepronađeno [km]</b> &mdash; Preostala dužina (u kilometrima) ulica koje nisu nađene (dakle, razlika između RGZ kilometraže i OSM kilometraže). Ovim se ukazuje da verovatno ništa oko ove ulice nije ni ucrtano u OSM-u</li>
+			<li><b>#DGU [km]</b> &mdash; Ukupna dužina (u kilometrima) svih ulica u DGU-u, uključujući i zaseoke</li>
+			<li><b>DGU konflacija [km]</b> &mdash; Ukupna dužina (u kilometrima) svih delova ulica DGU-a koje su spojene sa OSM-om. Ukoliko je ovaj broj manji od dužine DGU ulice, postoji delovi DGU ulice koji nisu spojeni u OSM-u</li>
+			<li><b>DGU konflacija [%]</b> &mdash; Procenat kilometraže svih ulica DGU-a koje su spojene sa OSM-om</li>
+			<li><b>OSM konflacija [km]</b> &mdash; Ukupna dužina (u kilometrima) svih ulica u OSM-u koje su spojene sa DGU-om (tj. imaju ispravan „ref:RS:ulica” tag)</li>
+			<li><b>OSM konflacija [%]</b> &mdash; Procenat kilometraže svih ulica u OSM-u koje su spojene sa DGU-om</li>
+			<li><b>Pronađeno [km]</b> &mdash; Ukupna dužina (u kilometrima) svih ulica u OSM-u koje su potencijalni kandidati za spajanje sa DGU-om (ovo znači da generalno neka ulica u blizini postoji u OSM-u, ali ne mora da znači da je to baš ulica iz DGU-a)</li>
+			<li><b>Pronađeno [%]</b> &mdash; Procenat kilometraže svih ulica u OSM-u koje su potencijalni kandidati za spajanje sa DGU-om</li>
+			<li><b>Nepronađeno [km]</b> &mdash; Preostala dužina (u kilometrima) ulica koje nisu nađene (dakle, razlika između DGU kilometraže i OSM kilometraže). Ovim se ukazuje da verovatno ništa oko ove ulice nije ni ucrtano u OSM-u</li>
 			<li><b>Nepronađeno [%]</b> &mdash; Procenat kilometraže ulica koje nisu nađene</li>
 		</ul>
       </div>
@@ -147,7 +147,7 @@ Ovde možete videti statistike po naselju u okviru opštine „{{ opstina.name }
 Klikom na naselje dobijate podatke za to naselje.
 U gornjem desnom uglu je filtriranje. Kliknite na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju da razumete kako da tumačite kolone u ovoj tabeli.</p>
 
-<p>Dostupne su dve analize &ndash; jedna gleda ukupno pokrivene kilometre puta koji su povezani sa RGZ-om („Analiza po dužini”), dok druga pokriva slučajeve kada je bar jedna RGZ ulica povezana („Analiza po broju”).</p>
+<p>Dostupne su dve analize &ndash; jedna gleda ukupno pokrivene kilometre puta koji su povezani sa DGU-om („Analiza po dužini”), dok druga pokriva slučajeve kada je bar jedna DGU ulica povezana („Analiza po broju”).</p>
 <p>Ispod tabele možete da nađete interaktivnu mapu opštine „{{ opstina.name }}” sa prikazom procenta konflacije po naseljima za analizu po dužini.</p>
 <br/>
 <br/>
@@ -166,7 +166,7 @@ U gornjem desnom uglu je filtriranje. Kliknite na <a href="" data-toggle="modal"
       <thead class="thead-dark sticky-top">
         <tr>
             <th>Naselje</th>
-            <th>#RGZ (broj ulica)</th>
+            <th>#DGU (broj ulica)</th>
             <th class="d-sm-table-cell">Konflacija (bar jedan way)</th>
             <th class="d-sm-table-cell">Konflacija [%]</th>
             <th class="d-lg-table-cell">Pronađeno (bar jedan way)</th>
@@ -208,9 +208,9 @@ U gornjem desnom uglu je filtriranje. Kliknite na <a href="" data-toggle="modal"
       <thead class="thead-dark sticky-top">
         <tr>
             <th>Naselje</th>
-            <th>#RGZ [km]</th>
-            <th class="d-sm-table-cell">RGZ konflacija [km]</th>
-            <th class="d-sm-table-cell">RGZ konflacija [%]</th>
+            <th>#DGU [km]</th>
+            <th class="d-sm-table-cell">DGU konflacija [km]</th>
+            <th class="d-sm-table-cell">DGU konflacija [%]</th>
             <th class="d-sm-table-cell">OSM konflacija [km]</th>
             <th class="d-sm-table-cell">OSM konflacija [%]</th>
             <th class="d-lg-table-cell">Pronađeno [km]</th>

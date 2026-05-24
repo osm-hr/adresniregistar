@@ -12,7 +12,7 @@
         </button>
       </div>
       <div class="modal-body">
-        Ovaj izveštaj proverava da li ime ulice treba da ima pridružen „alt_name” tag. Ime ulice se uzima iz RGZ-a ako postoji
+        Ovaj izveštaj proverava da li ime ulice treba da ima pridružen „alt_name” tag. Ime ulice se uzima iz DGU-a ako postoji
         (ako je way spojen preko „ref:RS:ulica” taga), a ako ne postoji - uzima se „name”/„name:sr”/„name:sr-Latn” tag.
         Heuristika proverava da li ime ulice sadrži broj (ili kao arapske cifre, ili kao napisane brojeve), ili reč "doktor" i pokušava
         da pogodi koji bi „alt_name” tag trebao da bude (ovo su jedine provere za sad).

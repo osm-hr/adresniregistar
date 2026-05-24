@@ -45,7 +45,7 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping, df_cached_ci
     gdf_osm.set_geometry('osm_geometry', inplace=True)
     gdf_osm.sindex
 
-    print(f"    Loading RGZ streets in {opstina}")
+    print(f"    Loading DGU streets in {opstina}")
     df_rgz = pd.read_csv(input_rgz_file, dtype={'rgz_ulica_mb': str})
     df_rgz['rgz_geometry'] = df_rgz.rgz_geometry.apply(wkt.loads)
     gdf_rgz = gpd.GeoDataFrame(df_rgz, geometry='rgz_geometry', crs="EPSG:4326")
@@ -58,10 +58,10 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping, df_cached_ci
     gdf_rgz.sindex
 
     # Join with cached streets
-    print(f"    Joining streets in RGZ and cached circles")
+    print(f"    Joining streets in DGU and cached circles")
     gdf_rgz['is_zaseok'] = gdf_rgz['rgz_ulica_mb'].apply(lambda x: x[6] == '2')
 
-    print(f"    Joining streets in RGZ and OSM in {opstina} by conflation (ref:RS:ulica)")
+    print(f"    Joining streets in DGU and OSM in {opstina} by conflation (ref:RS:ulica)")
     gdf_rgz = gdf_rgz.merge(gdf_osm, how='left', left_on='rgz_ulica_mb', right_on='ref:RS:ulica')
     gdf_rgz.rename(columns={'osm_id': 'conflated_osm_id'}, inplace=True)
     gdf_rgz.drop(['osm_name', 'osm_name_sr', 'osm_name_sr_latn', 'osm_name_en',
@@ -81,14 +81,14 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping, df_cached_ci
     gdf_rgz.drop(['osm_way_length'], inplace=True, axis=1)
     gdf_rgz.sindex
 
-    # Add "rgz_way_length_covered" column - length of RGZ geometry covered with conflation
+    # Add "rgz_way_length_covered" column - length of DGU geometry covered with conflation
     gdf_rgz_osm_buffer = gdf_rgz.copy()
     gdf_rgz_osm_buffer['osm_buffered_geometry'] = gdf_rgz.osm_geometry.buffer(distance=30, cap_style=2)
     gdf_rgz_osm_buffer.set_geometry('osm_buffered_geometry', inplace=True)
     gdf_rgz['rgz_way_length_covered'] = gdf_rgz.intersection(gdf_rgz_osm_buffer).length
     gdf_rgz.fillna(value={'rgz_way_length_covered': 0}, inplace=True)
 
-    print(f"    Buffering RGZ streets for 15m in {opstina}")
+    print(f"    Buffering DGU streets for 15m in {opstina}")
     gdf_rgz['rgz_buffered_geometry'] = gdf_rgz.rgz_geometry.buffer(distance=30)
     gdf_rgz.set_geometry('rgz_buffered_geometry', inplace=True)
     gdf_rgz.sindex
@@ -133,8 +133,8 @@ way[ref:RS:ulica] {
 
     gdf_osm['osm_geometry2'] = gdf_osm.osm_geometry
 
-    # Join buffered RGZ with OSM streets, filter those where 60% of length is in RGZ buffer
-    print(f"    Joining streets in RGZ and OSM in {opstina} that have high length")
+    # Join buffered DGU with OSM streets, filter those where 60% of length is in DGU buffer
+    print(f"    Joining streets in DGU and OSM in {opstina} that have high length")
     gdf_osm_no_conflated = gdf_osm[gdf_osm["ref:RS:ulica"].isna()]
     gdf_high_intersection = gdf_rgz.sjoin(gdf_osm_no_conflated, how='inner', predicate='intersects')
     gdf_high_intersection['intersection_length'] = gdf_high_intersection['rgz_buffered_geometry'].intersection(
@@ -151,8 +151,8 @@ way[ref:RS:ulica] {
                                inplace=True, axis=1)
 
     gdf_high_intersection['same_street_names'] = gdf_high_intersection.apply(lambda x: x['rgz_ulica_norm'] == x['osm_name_norm'] or pd.isna(x['rgz_ulica_norm']) or pd.isna(x['osm_name_norm']), axis=1)
-    # Bring back high IoU to RGZ. We can have here duplicated OSM streets that are in multiple RGZ streets.
-    # We need to associate only one RGZ street per each OSM street, those with highest IoU.
+    # Bring back high IoU to DGU. We can have here duplicated OSM streets that are in multiple DGU streets.
+    # We need to associate only one DGU street per each OSM street, those with highest IoU.
     gdf_merge_with_iou = gdf_rgz.merge(gdf_high_intersection[
                                            ['rgz_naselje_mb', 'rgz_ulica_mb', 'osm_name', 'osm_name_norm',
                                             'found_intersection', 'found_osm_id', 'osm_way_length', 'same_street_names']], how='left',
@@ -161,7 +161,7 @@ way[ref:RS:ulica] {
     gdf_merge_with_iou['rank'] = gdf_merge_with_iou.sort_values(['same_street_names', 'found_intersection'],  ascending=[False, False]).groupby('found_osm_id')['rank'].cumsum()
     gdf_merge_with_iou = gdf_merge_with_iou[gdf_merge_with_iou['rank'] == 1]
 
-    # Bring back high IoU to RGZ. Now we have duplicated RGZ street that have multiple OSM candidates, collapse them
+    # Bring back high IoU to DGU. Now we have duplicated DGU street that have multiple OSM candidates, collapse them
     gdf_rgz = gdf_rgz.merge(gdf_merge_with_iou[
                                 ['rgz_naselje_mb', 'rgz_ulica_mb', 'osm_name', 'osm_name_norm', 'found_intersection',
                                  'found_osm_id', 'osm_way_length']], how='left', on=['rgz_naselje_mb', 'rgz_ulica_mb'])

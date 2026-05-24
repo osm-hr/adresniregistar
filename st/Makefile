@@ -33,10 +33,10 @@ clean_report:
 	rm -f data/report.tar.gz
 
 download_from_rgz:
-	@echo "Download streets from RGZ"
+	@echo "Download streets from DGU"
 	mkdir -p data/rgz/download
 	python3 src/download_st_from_rgz.py
-	@echo "Prepare RGZ data for analysis"
+	@echo "Prepare DGU data for analysis"
 	python3 src/prepare_rgz_street_data.py.py
 	@echo "Created data/rgz/streets.csv"
 

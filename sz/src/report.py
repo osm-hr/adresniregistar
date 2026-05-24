@@ -147,7 +147,7 @@ def main():
 
     rgz_date_file = os.path.join(cwd, 'data/LATEST')
     if not os.path.exists(rgz_date_file):
-        raise Exception("File data/LATEST missing, no way to determine date when RGZ data was retrived")
+        raise Exception("File data/LATEST missing, no way to determine date when DGU data was retrived")
     with open(rgz_date_file, 'r') as file:
         file_content = file.read().rstrip()
         rgz_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y.')

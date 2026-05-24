@@ -46,9 +46,9 @@
     <h3>Geometrijski QA</h3>
     <br/>
     <h3><a href="name_mismatch.html">Neslaganje imena</a></h3>
-    <p>Pronalazi nepovezane segmente OSM ulica koji se preklapaju sa RGZ geometrijama, a imaju pogrešna imena.</p>
+    <p>Pronalazi nepovezane segmente OSM ulica koji se preklapaju sa DGU geometrijama, a imaju pogrešna imena.</p>
     <h3><a href="geom_missing.html">Nedostajuće geometrije</a></h3>
-    <p>Pronalazi greške između RGZ i OSM geometrija</p>
+    <p>Pronalazi greške između DGU i OSM geometrija</p>
     <br/><br/>
     <h3>Jezički QA</h3>
     <br/>

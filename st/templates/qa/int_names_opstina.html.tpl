@@ -14,7 +14,7 @@
         <div class="modal-body">
             <ul>
                 <li><b>OSM ulica</b> &mdash; Ime ulice i link na OSM way</li>
-                <li><b>„ref:RS:ulica” tag</b> &mdash; Označava da li je ulica spojena sa RGZ-om preko „ref:RS:ulica” taga. Ukoliko jeste, koristi se RGZ ime da se zaključi vrednost „int_name” taga</li>
+                <li><b>„ref:RS:ulica” tag</b> &mdash; Označava da li je ulica spojena sa DGU-om preko „ref:RS:ulica” taga. Ukoliko jeste, koristi se DGU ime da se zaključi vrednost „int_name” taga</li>
                 <li><b>Pogrešan „int_name” tag</b> &mdash; Tag postoji, ali mislimo da je pogrešan. U nastavku su navedene trenutna vrednost taga i (posle strelice) šta bi trebalo da bude vrednost tog taga</li>
                 <li><b>Nedostaje „int_name” tag</b> &mdash; Na ovom OSM way-u nema „int_name” taga. U nastavku je navedena vrednost taga koji treba da se stavi</li>
             </ul>

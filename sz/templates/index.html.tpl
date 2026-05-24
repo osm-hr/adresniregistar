@@ -64,7 +64,7 @@
 <h2>Analiza stambenih zajednica</h2>
 <br/>
 
-<p>Ovde je spisak svih stambenih zajednica iz RGZ-a. Ovo nam pomaže da sve zgrade koje se vode kao stambene zajednice
+<p>Ovde je spisak svih stambenih zajednica iz DGU-a. Ovo nam pomaže da sve zgrade koje se vode kao stambene zajednice
 tagujemo u OSM-u kao <code>building=apartments</code>. Pročitajte na dnu kako su ovi podaci izgenerisani i kako da ih tumačite.
     Klikom na opštinu dobijate podatke za tu opštinu. U gornjem desnom uglu je filtriranje.
     U gornjem desnom uglu je filtriranje. Klikom na "Pomoć" u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.
@@ -160,18 +160,18 @@ Plotly.newPlot('tester', data, layout, {displayModeBar: false});
 
 <hr/>
 <br/>
-<p>RGZ, nažalost, u spisku stambenih zajednica daje samo opštinu, ulicu i broj. Ne daje identifikator adrese iz adresnom registra,
+<p>DGU, nažalost, u spisku stambenih zajednica daje samo opštinu, ulicu i broj. Ne daje identifikator adrese iz adresnom registra,
 ne daje geografsku širinu i visinu adrese, a često se ni imena ulica iz registra stambenih zajednica i adresnog registra ne slažu!
 Zbog ovoga je proces spajanja ovih adresa otežan i ovde je pokušano da se spoji što se više moglo, ali ne treba očekivati 100% poklapanja.
 <br/>
 <br/>
-Prvo se, na osnovu opštine, ulice i kućnog broja, proba da nađe takva adresa u adresnom registru RGZ-a. Ako se to ne uspe (obično jer se ulice
+Prvo se, na osnovu opštine, ulice i kućnog broja, proba da nađe takva adresa u adresnom registru DGU-a. Ako se to ne uspe (obično jer se ulice
 razlikuju), odustajemo. Sve što je pronađeno se vidi kao pronađeno u koloni <b>„Pronađeno u AR-u”.</b>. Time smo dobili identifikator
 stambene zajednice iz adresnog registra.
 <br/>
 <br/>
 Sledeći korak je pronalaženje tog identifikatora unutar OSM-a na osnovu
-<a href="https://dina.openstreetmap.rs/ar" target="_blank">uvoza RGZ adresa</a>. Ukoliko se adresa ne pronađe, odustajemo i čekamo
+<a href="https://dina.openstreetmap.rs/ar" target="_blank">uvoza DGU adresa</a>. Ukoliko se adresa ne pronađe, odustajemo i čekamo
 da bude uneta u uvozu. Ako je pronađena, videćemo je u koloni <b>„Pronađeno u OSM-u”.</b>. Time smo dobili OSM entitet.
 <br/>
 <br/>

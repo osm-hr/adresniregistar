@@ -30,22 +30,22 @@ Sve komande se izvršavaju sa `make <komanda>`. Dostupne su sledeće komande:
   
 * `normalize_street_names`
 
-  Ova komanda prolazi kroz sve RGZ ulice i pokušava da od formata gde su sve ulice velikim slovom (npr. "ПЕТРА ДРАПШИНА")
+  Ova komanda prolazi kroz sve DGU ulice i pokušava da od formata gde su sve ulice velikim slovom (npr. "ПЕТРА ДРАПШИНА")
   pretvori heuristikom u gramatički ispravan format ("Петра Драпшина"). Izlaz se zapisuje u fajl data/mapping/mapping.csv
-  gde imamo ulicu iz RGZ-a velikim slovima, ulicu kako se pravilno piše, i način kako smo došli do ovoga zaključka i koje
+  gde imamo ulicu iz DGU-a velikim slovima, ulicu kako se pravilno piše, i način kako smo došli do ovoga zaključka i koje
   ulice iz OSM-a su dovele do ove odluke (radi debagovanja). Naravno, ovaj ceo proces ima grešaka i ovo je best effort
   heuristika. Za heuristiku se koristi fajl "curated_streets.csv" gde mogu da se ubace sve što želimo odmah da prebacimo
   ručno (override-ujemo heuristiku). Zatim se koristi OSM podaci da se nađu te ulice preko "ref:RS:ulica" taga jer
   pretpostavljamo da su u OSM-u unete dobro. Posle toga se koristi i OSM podaci bez "ref:RS:ulica" taga gde se koristi
-  normalizacija ulica iz RGZ-a i OSM-a da se one match-uju i da proba tako da se nađe kako se ulica pravilno piše.
+  normalizacija ulica iz DGU-a i OSM-a da se one match-uju i da proba tako da se nađe kako se ulica pravilno piše.
   Ako ni to ne uspe, algoritam uskače i pokušava, što je bolje moguće da pravilno napiše ulicu. Naravno, greške su neminovne.
 
 
 * `analyze`
 
-  Ova komanda uzme podatke iz OSM-a i RGZ-a i obrađuje adrese po općinama. Za svaku RGZ adresu pokušava da pronađe odgovarajuću
+  Ova komanda uzme podatke iz OSM-a i DGU-a i obrađuje adrese po općinama. Za svaku DGU adresu pokušava da pronađe odgovarajuću
   adresu u OSM-u. Takva adresa može da se nađe (postavi se "`matching`" kolona na `True`), a ako se ne nađe, pokušava da nađe
-  najpribližniju adresu u radijusu od 200m na osnovu imena ulice, kućnog broja i udaljenosti RGZ i OSM adresa. Ukoliko nađe
+  najpribližniju adresu u radijusu od 200m na osnovu imena ulice, kućnog broja i udaljenosti DGU i OSM adresa. Ukoliko nađe
   takvu adresu, postavlja se "`score``" i OSM elementi, a ako nema, te kolone ostaju prazne. Rezultujući CSV se smešta u
   data/analasis direktorijum.
 
@@ -68,7 +68,7 @@ Sve komande se izvršavaju sa `make <komanda>`. Dostupne su sledeće komande:
 
   Ova komanda uploaduje izgenerisane HTML fajlove na DINA platformu.
 
-## Osvežavanje sa RGZ-a
+## Osvežavanje sa DGU-a
 
 Osvežavanje nije trivijalan posao i dosta je manuelan. Prvo treba dohvatiti nove adrese, onda uraditi automatske
 izmene u OSM-u, pa onda objaviti nove vektorske mape, pa onda tek možemo da počnemo da ih koristimo.
@@ -76,9 +76,9 @@ izmene u OSM-u, pa onda objaviti nove vektorske mape, pa onda tek možemo da po�
 Savetuje se da se u isto vreme radi ažuriranje i ulica i adresa (kućnih brojeva) i to tako što se prvo uradi ažuriranje ulica
 (zato što se tad popunjuvaju pravilna imena novododatih ulica)!
 
-### Skidanje novih RGZ adresa
+### Skidanje novih DGU adresa
 
-Treba da napravite fajl "idp_creds" koji ima dve linije. Prva linija je username, a druga je password za pristup RGZ
+Treba da napravite fajl "idp_creds" koji ima dve linije. Prva linija je username, a druga je password za pristup DGU
 sajtu https://download-tmp.geosrbija.rs/download. 
 
 * Bekapovati staru `data/rgz/download` fasciklu (npr. `mkdir <data-datum>; mv *.zip <data-datum>/`)

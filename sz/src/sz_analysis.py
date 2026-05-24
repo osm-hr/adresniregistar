@@ -134,12 +134,12 @@ def join_dz_rgz_osm(ar_data_path: str, df_sz, opstina):
     df_osm = df_osm[pd.notna(df_osm['ref:RS:kucni_broj'])]
     df_osm['ref:RS:kucni_broj'] = df_osm['ref:RS:kucni_broj'].astype('string')
 
-    # Take RGZ data and normalize for join
+    # Take DGU data and normalize for join
     df_rgz = pd.read_csv(os.path.join(ar_data_path, f'rgz/csv/{normalize_name(opstina_latin.lower())}.csv'), dtype={'rgz_kucni_broj_id': str})
     df_rgz['rgz_ulica_norm'] = df_rgz.rgz_ulica.apply(lambda x: normalize_street(x))
     df_rgz['rgz_kucni_broj_id'] = df_rgz['rgz_kucni_broj_id'].astype('string')
 
-    # Join stambene zajednice and RGZ by opstina, normalized street and housenumber
+    # Join stambene zajednice and DGU by opstina, normalized street and housenumber
     df_sz_rgz = df_sz.merge(df_rgz, how='left',
                          left_on=['sz_opstina', 'sz_ulica_norm', 'sz_kucni_broj'],
                          right_on=['rgz_opstina', 'rgz_ulica_norm', 'rgz_kucni_broj'])
@@ -203,7 +203,7 @@ def main(ar_data_path: str):
     # sometimes there are duplicates in original dataset, remove them
     df_sz.drop_duplicates(subset=['sz_opstina', 'sz_ulica', 'sz_kucni_broj'], keep='first', inplace=True)
 
-    # Join with RGZ and OSM data per opstina
+    # Join with DGU and OSM data per opstina
     df_sz_rgz_osms = []
     for i, opstina in enumerate(list(df_sz.sz_opstina.unique())):
         print(f'{i+1}/{len(df_sz.sz_opstina.unique())} Processing {opstina}')

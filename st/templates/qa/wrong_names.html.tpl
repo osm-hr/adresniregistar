@@ -16,9 +16,9 @@
 			<li><b>Opština</b> &mdash; Opština analize</li>
 			<li><b># name pogrešan</b> &mdash; Ukupan broj adresa gde se „name” tag i „ref:RS:ulica” tag ne slažu. Ne znači da je ime pogrešno, možda je i „ref:RS:ulica” tag pogrešan!</li>
 			<li><b># name nedostaje</b> &mdash; Ukupan broj adresa gde „ref:RS:ulica” tag postoji, ali „name” tag ne postoji</li>
-			<li><b># name:sr pogrešan</b> &mdash; Ukupan broj adresa gde se „name:sr” tag nekako ne slaže. Ukoliko postoji „ref:RS:ulica” tag, gleda se da li se „name:sr” slaže sa imenom ulice iz RGZ-a, a ako ga nema, onda se gleda da li se slaže sa „name” tagom</li>
+			<li><b># name:sr pogrešan</b> &mdash; Ukupan broj adresa gde se „name:sr” tag nekako ne slaže. Ukoliko postoji „ref:RS:ulica” tag, gleda se da li se „name:sr” slaže sa imenom ulice iz DGU-a, a ako ga nema, onda se gleda da li se slaže sa „name” tagom</li>
 			<li><b># name:sr nedostaje</b> &mdash; Ukupan broj adresa gde „name:sr” tag ne postoji</li>
-			<li><b># name:sr-Latn pogrešan</b> &mdash; Ukupan broj adresa gde se „name:sr-Latn” tag nekako ne slaže. Ukoliko postoji „ref:RS:ulica” tag, gleda se da li se „name:sr-Latn” slaže sa latiničnim imenom ulice iz RGZ-a, a ako ga nema, onda se gleda da li se slaže sa latiničnom verzijom „name” taga</li>
+			<li><b># name:sr-Latn pogrešan</b> &mdash; Ukupan broj adresa gde se „name:sr-Latn” tag nekako ne slaže. Ukoliko postoji „ref:RS:ulica” tag, gleda se da li se „name:sr-Latn” slaže sa latiničnim imenom ulice iz DGU-a, a ako ga nema, onda se gleda da li se slaže sa latiničnom verzijom „name” taga</li>
 			<li><b># name:sr-Latn nedostaje</b> &mdash; Ukupan broj adresa gde „name:sr-Latn” tag ne postoji</li>
 		</ul>
       </div>

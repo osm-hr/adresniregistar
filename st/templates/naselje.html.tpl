@@ -15,21 +15,21 @@
       </div>
       <div class="modal-body">
 		<ul>
-			<li><b>Id (RGZ)</b> &mdash; Identifikator ulice u RGZ-u (ono što se stavlja u „ref:RS:ulica” tag).
+			<li><b>Id (DGU)</b> &mdash; Identifikator ulice u DGU-u (ono što se stavlja u „ref:RS:ulica” tag).
 			Možete da filtrirate po tipu ulice, a dublje objašnjenje kako se formira identifikator možete da vidite <a href="https://community.openstreetmap.org/t/topic/9338/14" target="_blank">ovde na forumu</a>.</li>
-			<li><b>Ulica (RGZ)</b> &mdash; Ime ulice iz RGZ-a, a posle strelice i pravilno ime ulice kako treba uneti u OSM.
+			<li><b>Ulica (DGU)</b> &mdash; Ime ulice iz DGU-a, a posle strelice i pravilno ime ulice kako treba uneti u OSM.
 			Ukoliko nema imena ulice posle strelice, znači da ulice još nema u <a href="https://dina.openstreetmap.rs/ar/street_mapping.html" target="_blank">registru</a>.
-			Klikom na ulicu se otvara geojson.io portal na kome može da se vidi i RGZ ulica (crvenom bojom) i sve conflated OSM ulice (plavom bojom).
+			Klikom na ulicu se otvara geojson.io portal na kome može da se vidi i DGU ulica (crvenom bojom) i sve conflated OSM ulice (plavom bojom).
 			Ukoliko na početku ulice ima simbol „⭕”, algoritam je detektovao da je u pitanju zaseok, tj. virtuelna ulica (ne postoji fizički put). Ovo su ulice koje ne treba da se unose.
 			</li>
-			<li><b>Dužina (RGZ)</b> &mdash; Ukupna dužina ulice u RGZ-u (u metrima)</li>
-			<li><b>Dužina konflacije (RGZ)</b> &mdash; Ukupna dužina onog dela ulice iz RGZ-a koji su spojeni preko „ref:RS:ulica” taga (u metrima). Ukoliko je ovaj broj manji od dužine ulice, postoji delovi RGZ ulice koji nisu spojeni u OSM-u</li>
-			<li><b>Nedostaje konflacija (RGZ)</b> &mdash; Ukupna dužina onih delova ulice iu RGZ-u koja nisu spojeni preko „ref:RS:ulica” taga (u metrima). Zapravo, razlika između ukupne dužine ulice i dužine konflacije</li>
-			<li><b>Dužina konflacije (OSM)</b> &mdash; Zbir dužina OSM way-eva koji su spojeni preko „ref:RS:ulica” taga sa RGZ ulicom (u metrima). Može biti veća od RGZ dužine.</li>
-			<li><b>Conflated putevi</b> &mdash; Spisak svih nađenih puteva u OSM-u koji su spojeni sa RGZ ulicom preko „ref:RS:ulica” taga.</li>
-			<li><b>Max greška konflacije (m)</b> &mdash; Greška konflacije između RGZ ulice i OSM ulica (u metrima). Najveća udaljenost koju dve tačke na ovim ulicama mogu imati. Ova vrednost obično ne sme biti preko par stotina metara</li>
-			<li><b>Potencijalni putevi (% poklapanja, dužina)</b> &mdash; Spisak svih potencijalno nađenih OSM puteva koje treba spojiti sa RGZ-om. Za svaki OSM put je naveden procenat poklapanja sa RGZ putem i njegova OSM dužina.
-			Ukoliko je ime puta <s>precrtano</s>, to označava da se ime iz RGZ-a i ime iz OSM-a ne slažu. Ukoliko ime puta ima prefiks „✅”, to znači da se ime RGZ i OSM puta kompletno slažu. <b>PAŽNJA:</b> u ovoj koloni može biti dosta grešaka i ne unositi ovo automatizovano</li>
+			<li><b>Dužina (DGU)</b> &mdash; Ukupna dužina ulice u DGU-u (u metrima)</li>
+			<li><b>Dužina konflacije (DGU)</b> &mdash; Ukupna dužina onog dela ulice iz DGU-a koji su spojeni preko „ref:RS:ulica” taga (u metrima). Ukoliko je ovaj broj manji od dužine ulice, postoji delovi DGU ulice koji nisu spojeni u OSM-u</li>
+			<li><b>Nedostaje konflacija (DGU)</b> &mdash; Ukupna dužina onih delova ulice iu DGU-u koja nisu spojeni preko „ref:RS:ulica” taga (u metrima). Zapravo, razlika između ukupne dužine ulice i dužine konflacije</li>
+			<li><b>Dužina konflacije (OSM)</b> &mdash; Zbir dužina OSM way-eva koji su spojeni preko „ref:RS:ulica” taga sa DGU ulicom (u metrima). Može biti veća od DGU dužine.</li>
+			<li><b>Conflated putevi</b> &mdash; Spisak svih nađenih puteva u OSM-u koji su spojeni sa DGU ulicom preko „ref:RS:ulica” taga.</li>
+			<li><b>Max greška konflacije (m)</b> &mdash; Greška konflacije između DGU ulice i OSM ulica (u metrima). Najveća udaljenost koju dve tačke na ovim ulicama mogu imati. Ova vrednost obično ne sme biti preko par stotina metara</li>
+			<li><b>Potencijalni putevi (% poklapanja, dužina)</b> &mdash; Spisak svih potencijalno nađenih OSM puteva koje treba spojiti sa DGU-om. Za svaki OSM put je naveden procenat poklapanja sa DGU putem i njegova OSM dužina.
+			Ukoliko je ime puta <s>precrtano</s>, to označava da se ime iz DGU-a i ime iz OSM-a ne slažu. Ukoliko ime puta ima prefiks „✅”, to znači da se ime DGU i OSM puta kompletno slažu. <b>PAŽNJA:</b> u ovoj koloni može biti dosta grešaka i ne unositi ovo automatizovano</li>
 		</ul>
       </div>
       <div class="modal-footer">
@@ -192,11 +192,11 @@ Podaci u poslednjoj koloni tabele prikazuju <b>samo potencijalne vrednosti</b> i
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-100">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>Id (RGZ)</th>
-		<th>Ulica (RGZ)</th>
-		<th>Dužina (RGZ)</th>
-		<th>Dužina konflacije (RGZ)</th>
-		<th>Nedostaje konflacija (RGZ)</th>
+		<th>Id (DGU)</th>
+		<th>Ulica (DGU)</th>
+		<th>Dužina (DGU)</th>
+		<th>Dužina konflacije (DGU)</th>
+		<th>Nedostaje konflacija (DGU)</th>
 		<th>Dužina konflacije (OSM)</th>
 		<th>Conflated putevi</th>
 		<th>Max greška konflacije (m)</th>
@@ -285,7 +285,7 @@ Podaci u poslednjoj koloni tabele prikazuju <b>samo potencijalne vrednosti</b> i
 
 <div class="collapse" id="collapseOsmFilesMatched">
   <br/>
-  Ovde su fajlovi za import ulica iz RGZ-a koje se 100% poklapaju po imenu sa ulicama u OSM-u.
+  Ovde su fajlovi za import ulica iz DGU-a koje se 100% poklapaju po imenu sa ulicama u OSM-u.
 	Morate imati otvoren JOSM pre nego što kliknete na fajl.
 	Klikom na fajl ćete ga učitati u JOSM.
 	Fajlovi su grupisani u grupe od po najviše 10 ulica.
@@ -297,7 +297,7 @@ Podaci u poslednjoj koloni tabele prikazuju <b>samo potencijalne vrednosti</b> i
 	  <div class="row">
 	  	{% for osm_file in osm_files_matched_streets %}
 	  		<div class="col-sm-2">
-	  			<a href="http://localhost:8111/import?changeset_tags=source=RGZ_ST&new_layer=true&layer_name={{ naselje.name_lat }}-{{ osm_file.name }}&url={{ osm_file.url }}" target="hiddenIframe">{{ osm_file.name }}</a>
+	  			<a href="http://localhost:8111/import?changeset_tags=source=DGU_ST&new_layer=true&layer_name={{ naselje.name_lat }}-{{ osm_file.name }}&url={{ osm_file.url }}" target="hiddenIframe">{{ osm_file.name }}</a>
 			</div>
 	  	{% endfor %}
 	  </div>
