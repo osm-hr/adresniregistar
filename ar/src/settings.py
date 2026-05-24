@@ -24,6 +24,7 @@ CHANGESET_COMMENT = 'RGZ address import (updating street and housenumber after c
 CHANGESET_TAGS = "mechanical=yes"
 CHANGESET_SOURCE = 'RGZ_AR'
 CADASTRE_AUTHORITY_ABBR = 'RGZ'
+RUN_DECAPITALIZE_NAMES = True
 
 def get_settings():
     return {
@@ -42,5 +43,6 @@ def get_settings():
         'CHANGESET_TAGS': CHANGESET_TAGS,
         'CHANGESET_SOURCE': CHANGESET_SOURCE,
         'CADASTRE_AUTHORITY_ABBR': CADASTRE_AUTHORITY_ABBR,
-        'USE_POSTAL_CODE_TAG': USE_POSTAL_CODE_TAG
+        'USE_POSTAL_CODE_TAG': USE_POSTAL_CODE_TAG,
+        'RUN_DECAPITALIZE_NAMES': RUN_DECAPITALIZE_NAMES,
     }

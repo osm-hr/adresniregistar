@@ -92,6 +92,8 @@ def load_osm_mappings(cwd):
 
 
 def best_effort_decapitalize(name):
+    if (not settings.RUN_DECAPITALIZE_NAMES):
+        return name
     name = name.title()
     if '.' in name and '. ' not in name and name[0:name.find('.')].isnumeric():
         name = name[:name.find('.') + 1] + ' ' + name[name.find('.') + 1:]

@@ -24,6 +24,7 @@ CHANGESET_COMMENT = 'DGU address import (updating street and housenumber after c
 CHANGESET_TAGS = "comment=DGU address import (updating street and housenumber)|import=yes|source=DGU_AR|source:url=https://dina.osm-hr.org|import:page=https://wiki.openstreetmap.org/wiki/Croatia/Import_addresses"
 CHANGESET_SOURCE = 'DGU_AR'
 CADASTRE_AUTHORITY_ABBR = 'DGU'
+RUN_DECAPITALIZE_NAMES = False
 
 
 
@@ -44,5 +45,6 @@ def get_settings():
         'CHANGESET_TAGS': CHANGESET_TAGS,
         'CHANGESET_SOURCE': CHANGESET_SOURCE,
         'CADASTRE_AUTHORITY_ABBR': CADASTRE_AUTHORITY_ABBR,
-        'USE_POSTAL_CODE_TAG': USE_POSTAL_CODE_TAG
+        'USE_POSTAL_CODE_TAG': USE_POSTAL_CODE_TAG,
+        'RUN_DECAPITALIZE_NAMES': RUN_DECAPITALIZE_NAMES,
     }
