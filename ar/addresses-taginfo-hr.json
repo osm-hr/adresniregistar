@@ -1,12 +1,12 @@
 {
      "data_format": 1,
-     "data_url": "https://gitlab.com/osm-serbia/adresniregistar/-/raw/main/addresses-taginfo.json",
+     "data_url": "https://raw.githubusercontent.com/osm-hr/adresniregistar/refs/heads/main/ar/addresses-taginfo-hr.json",
      "project": {
          "name": "Croatia address import (DGU)",
          "description": "Import of DGU addresses in Croatia",
          "project_url": "https://dina.osm-hr.org/ar/",
          "doc_url": "https://wiki.openstreetmap.org/wiki/Croatia/Projekti/Adresni_registar",
-         "icon_url": "https://github.com/openstreetmap-polska/aed-mapa/raw/main/web/favicon/favicon-16x16.png",
+         "icon_url": "https://raw.githubusercontent.com/osm-hr/adresniregistar/refs/heads/main/ar/favicon-16x16-hr.png",
          "contact_name": "Janko Mihelić",
          "contact_email": "janjko+taginfo@gmail.com"
      },
