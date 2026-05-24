@@ -58,13 +58,13 @@
 <h2>Engleski nazivi ulica</h2>
 <br/>
 <p>Ovde možete da vidite potencijalne probleme sa „name:en” tagom za ulice u OpenStreetMap-apa. Moguće je da „name:en” tag bude nepotreban, a moguće je i da bude označen kao „sumnjiv”.
-    Klikom na opštinu dobijate detaljnije podatke za tu opštinu. U gornjem desnom uglu je filtriranje.
+    Klikom na općinu dobijate detaljnije podatke za tu općinu. U gornjem desnom uglu je filtriranje.
     <br/>
     <br/>
     Da biste bolje razumeli značenje kolona u tabeli, pogledajte <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a>.
     <br/>
     <br/>
-    <b>Pažljivo prilikom otvaranja opština preko 5.000 adresa, računar i browser mogu da se uspore znatno!</b>
+    <b>Pažljivo prilikom otvaranja općina preko 5.000 adresa, računar i browser mogu da se uspore znatno!</b>
 </p>
 <br/>
 <br/>

@@ -132,11 +132,11 @@
 		});
     </script>
 
-<h2>Izveštaj po opštinama</h2>
+<h2>Izveštaj po općinama</h2>
 <br/>
-<p>Ovde možete videti statistike po opštinama. Klikom na opštinu dobijate podatke za tu opštinu. U gornjem desnom uglu je filtriranje. Kliknite na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju da razumete kako da tumačite kolone u ovoj tabeli.</p>
+<p>Ovde možete videti statistike po općinama. Klikom na općinu dobijate podatke za tu općinu. U gornjem desnom uglu je filtriranje. Kliknite na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju da razumete kako da tumačite kolone u ovoj tabeli.</p>
 <p>Dostupne su dve analize &ndash; jedna gleda ukupno pokrivene kilometre puta koji su povezani sa RGZ-om („Analiza po dužini”), dok druga pokriva slučajeve kada je bar jedna RGZ ulica povezana („Analiza po broju”).</p>
-<p>Ispod tabele možete da nađete interaktivnu mapu sa prikazom procenta konflacije po opštinama za analizu po dužini.</p>
+<p>Ispod tabele možete da nađete interaktivnu mapu sa prikazom procenta konflacije po općinama za analizu po dužini.</p>
 <br/>
 <br/>
 
