@@ -44,7 +44,7 @@ sajtu https://download-tmp.geosrbija.rs/download.
 * Prekopirate ih na dno `ar/curated_streets.csv` i ispraviti sve nazive da budu dobri (Ctrl+F da nađete kako su ranije kapitalizovane neke stvari)
   * Na kraju proveriti standardne greške iz DGU-a, kao što je trailing space
 * Sortirajte curated listu sa `PYTHONPATH=../ar/src/ python3 src/sort_curated_streets.py --input-curated-streets ../ar/curated_streets.csv --output-curated-streets curated_streets-sorted.csv`
-* Uporedite ih i ako je sve OK, zamenite `ar/curated_streets.csv` sa `curated_streets-sorted.csv`, a `curated_streets-sorted.csv` obrisati.
+* Usporedite ih i ako je sve OK, zamenite `ar/curated_streets.csv` sa `curated_streets-sorted.csv`, a `curated_streets-sorted.csv` obrisati.
 * Sada izbrisati `ar/data/mapping/mapping.csv` i regenerirati ga ponovnim pokretanjem `python3 src/street_mapping.py` iz AR modula.
 
 ### Automatske izmene u OSM-u

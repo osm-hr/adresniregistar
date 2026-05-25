@@ -15,7 +15,7 @@
 		<ul>
 			<li><b>DGU općina</b> &mdash; Općina iz DGU-a</li>
 			<li><b>OSM adresa i kućni broj</b> &mdash; Adresa i kućni broj iz OSM-a, data kao link ka OSM entitetu</li>
-			<li><b>DGU lokacija</b> &mdash; Link ka lokaciji iz DGU-a, da može da se uporedi sa OSM lokacijom</li>
+			<li><b>DGU lokacija</b> &mdash; Link ka lokaciji iz DGU-a, da se može usporediti sa OSM lokacijom</li>
 			<li><b>Udaljenost [m]</b> &mdash; Udaljenost između OSM entiteta i DGU lokacije, data u metrima</li>
 			<li><b>Beleška</b> &mdash; Ukoliko postoji „note” tag kod OSM entiteta koji sadrži reč „DGU”, ona će biti prikazana ovdje</li>
 		</ul>
