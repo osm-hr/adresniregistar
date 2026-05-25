@@ -17,7 +17,7 @@
 			<li><b>OSM adresa i kućni broj</b> &mdash; Adresa i kućni broj iz OSM-a, data kao link ka OSM entitetu</li>
 			<li><b>DGU lokacija</b> &mdash; Link ka lokaciji iz DGU-a, da se može usporediti sa OSM lokacijom</li>
 			<li><b>Udaljenost [m]</b> &mdash; Udaljenost između OSM entiteta i DGU lokacije, data u metrima</li>
-			<li><b>Beleška</b> &mdash; Ukoliko postoji „note” tag kod OSM entiteta koji sadrži reč „DGU”, ona će biti prikazana ovdje</li>
+			<li><b>Bilješka</b> &mdash; Ukoliko postoji „note” tag kod OSM entiteta koji sadrži reč „DGU”, ona će biti prikazana ovdje</li>
 		</ul>
       </div>
       <div class="modal-footer">
@@ -103,7 +103,7 @@
       <option value="gt1000">Preko 1000m</option>
     </select>
     <br/>
-    <label for="errorType">Ima belešku:</label>
+    <label for="errorType">Ima bilješku:</label>
     <select name="noteType" id="noteTypeSelect">
       <option value="all"></option>
       <option value="yes">Da</option>
@@ -118,7 +118,7 @@
 		<th>OSM adresa i kućni broj</th>
 		<th>DGU lokacija</th>
         <th>Udaljenost [m]</th>
-        <th>Beleška</th>
+        <th>Bilješka</th>
 	</tr>
 </thead>
 <tbody>
