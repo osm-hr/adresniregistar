@@ -7,7 +7,7 @@ Pokrenuti `python3 -m pip install -r requirements.txt` za instalaciju svih zavis
 
 Za sad treba skinuti i .ods fajl sa https://data.gov.rs/sr/datasets/registar-stambenikh-zajednitsa-2/ i sačuvati ga u `data/registarstambenihzajednica.csv`.
 
-## Korišćenje
+## Korištenje
 
 Za generiranje `data/sz_analysis.csv` (izlaz analize) možete pokrenuti `python3 src/sz_analysis.py --data-path <putanja>`.
 

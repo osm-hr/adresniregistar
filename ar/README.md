@@ -12,7 +12,7 @@ Pored toga u direktorijum data/rgz treba skinuti sa opendata.geosrbija.rs opstin
 
 Za sad treba skinuti i opstina.zip sa https://opendata.geosrbija.rs (dok se ne automatizuje) i otpakovati opstina.csv u data/rgz direktorijum.
 
-## Korišćenje
+## Korištenje
 
 Sve komande se izvršavaju sa `make <komanda>`. Dostupne su sledeće komande:
 

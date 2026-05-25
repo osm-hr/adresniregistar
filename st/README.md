@@ -12,7 +12,7 @@ ST modul zavisi da u AR modulu postoji `data/mapping/mapping.csv` fajl koji se g
 
 Treba da imate i `parallel` program (na Debian-u se prosto instalira sa `sudo apt install parallel`).
 
-## Korišćenje
+## Korištenje
 
 Sve komande se izvršavaju sa `make <komanda>`.
 
