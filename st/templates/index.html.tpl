@@ -12,7 +12,7 @@
         </button>
       </div>
       <div class="modal-body">
-          Odaberite izveštaj da vidite sve opštine, naselja i ulice i da li su nađene u OSM-u.
+          Odaberite izveštaj da vidite sve općine, naselja i ulice i da li su nađene u OSM-u.
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Zatvori</button>

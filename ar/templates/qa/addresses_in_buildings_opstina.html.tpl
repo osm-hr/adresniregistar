@@ -182,7 +182,7 @@
 
 <h2>Broj različitih kategorija</h2>
 <br/>
-<p>Ovde možete videti ukupan broj adresa koje se nalaze unutar zgrada, po kategorijama unutar opštine „{{ opstina_name }}”.
+<p>Ovde možete videti ukupan broj adresa koje se nalaze unutar zgrada, po kategorijama unutar općine „{{ opstina_name }}”.
     Neke od kategorija se mogu rešiti automatizacijom, ali većina zahteva ljudsku pažnju.</p>
 <br/>
 <br/>

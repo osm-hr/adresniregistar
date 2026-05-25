@@ -106,10 +106,10 @@
 	} );
     </script>
 
-<h2>Analiza stambenih zajednica za opštinu „{{ opstina_name }}”</h2>
+<h2>Analiza stambenih zajednica za općinu „{{ opstina_name }}”</h2>
 <br/>
 
-<p>Ovde je spisak svih stambenih zajednica iz DGU-a za opštinu „{{ opstina_name }}”.
+<p>Ovde je spisak svih stambenih zajednica iz DGU-a za općinu „{{ opstina_name }}”.
 <br/>
 U gornjem desnom uglu je filtriranje.
 Klikom na "Pomoć" u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli. Ispod tabele se nalaze dodatni grafici.
@@ -123,7 +123,7 @@ Klikom na "Pomoć" u gornjem meniju dobićete više informacija o kolonama u ovo
       <option value="all"></option>
       <option value="yes">Nađeno</option>
       <option value="no">Nije nađeno</option>
-      <option value="no_notfound">&nbsp;&nbsp; Ulica i broj nisu nađeni u opštini</option>
+      <option value="no_notfound">&nbsp;&nbsp; Ulica i broj nisu nađeni u općini</option>
       <option value="no_dup">&nbsp;&nbsp; Više naselja sa istom ulicom i brojem</option>
     </select>
 

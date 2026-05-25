@@ -143,12 +143,12 @@
 <br/>
 
 <p>
-Ovde možete videti statistike po naselju u okviru opštine „{{ opstina.name }}”.
+Ovde možete videti statistike po naselju u okviru općine „{{ opstina.name }}”.
 Klikom na naselje dobijate podatke za to naselje.
 U gornjem desnom uglu je filtriranje. Kliknite na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju da razumete kako da tumačite kolone u ovoj tabeli.</p>
 
 <p>Dostupne su dve analize &ndash; jedna gleda ukupno pokrivene kilometre puta koji su povezani sa DGU-om („Analiza po dužini”), dok druga pokriva slučajeve kada je bar jedna DGU ulica povezana („Analiza po broju”).</p>
-<p>Ispod tabele možete da nađete interaktivnu mapu opštine „{{ opstina.name }}” sa prikazom procenta konflacije po naseljima za analizu po dužini.</p>
+<p>Ispod tabele možete da nađete interaktivnu mapu općine „{{ opstina.name }}” sa prikazom procenta konflacije po naseljima za analizu po dužini.</p>
 <br/>
 <br/>
 

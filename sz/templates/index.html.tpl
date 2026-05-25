@@ -15,8 +15,8 @@
 		<ul>
 			<li><b>Opština</b> &mdash; Opština sa stambenim zajednicama</li>
 			<li><b>Broj stambenih zajednica</b> &mdash; Ukupan broj stambenih zajednica u registru</li>
-			<li><b>Pronađeno u AR-u</b> &mdash; Broj pronađenih stambenih zajednica u adresnom registru na osnovu opštine, ulice i kućnog broja</li>
-			<li><b>Pronađeno u AR-u [%]</b> &mdash; Broj pronađenih stambenih zajednica u adresnom registru na osnovu opštine, ulice i kućnog broja</li>
+			<li><b>Pronađeno u AR-u</b> &mdash; Broj pronađenih stambenih zajednica u adresnom registru na osnovu općine, ulice i kućnog broja</li>
+			<li><b>Pronađeno u AR-u [%]</b> &mdash; Broj pronađenih stambenih zajednica u adresnom registru na osnovu općine, ulice i kućnog broja</li>
 			<li><b>Pronađeno u OSM-u</b> &mdash; Broj pronađenih stambenih zajednica na osnovu <code>ref:RS:kucni_broj</code> taga u OSM-u</li>
 			<li><b>Pronađeno u OSM-u [%]</b> &mdash; Procenat pronađenih stambenih zajednica (u odnosu na one nađene u adresnom registru) na osnovu <code>ref:RS:kucni_broj</code> taga u OSM-u</li>
 			<li><b>Apartments</b> &mdash; Broj onih stambenih zajednica nađenih u OSM-u koje su pravilno tagovane kao <code>building=apartments</code> u OSM-u</li>
@@ -66,7 +66,7 @@
 
 <p>Ovde je spisak svih stambenih zajednica iz DGU-a. Ovo nam pomaže da sve zgrade koje se vode kao stambene zajednice
 tagujemo u OSM-u kao <code>building=apartments</code>. Pročitajte na dnu kako su ovi podaci izgenerisani i kako da ih tumačite.
-    Klikom na opštinu dobijate podatke za tu opštinu. U gornjem desnom uglu je filtriranje.
+    Klikom na općinu dobijate podatke za tu općinu. U gornjem desnom uglu je filtriranje.
     U gornjem desnom uglu je filtriranje. Klikom na "Pomoć" u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.
 </p>
 <br/>
@@ -160,12 +160,12 @@ Plotly.newPlot('tester', data, layout, {displayModeBar: false});
 
 <hr/>
 <br/>
-<p>DGU, nažalost, u spisku stambenih zajednica daje samo opštinu, ulicu i broj. Ne daje identifikator adrese iz adresnom registra,
+<p>DGU, nažalost, u spisku stambenih zajednica daje samo općinu, ulicu i broj. Ne daje identifikator adrese iz adresnom registra,
 ne daje geografsku širinu i visinu adrese, a često se ni imena ulica iz registra stambenih zajednica i adresnog registra ne slažu!
 Zbog ovoga je proces spajanja ovih adresa otežan i ovde je pokušano da se spoji što se više moglo, ali ne treba očekivati 100% poklapanja.
 <br/>
 <br/>
-Prvo se, na osnovu opštine, ulice i kućnog broja, proba da nađe takva adresa u adresnom registru DGU-a. Ako se to ne uspe (obično jer se ulice
+Prvo se, na osnovu općine, ulice i kućnog broja, proba da nađe takva adresa u adresnom registru DGU-a. Ako se to ne uspe (obično jer se ulice
 razlikuju), odustajemo. Sve što je pronađeno se vidi kao pronađeno u koloni <b>„Pronađeno u AR-u”.</b>. Time smo dobili identifikator
 stambene zajednice iz adresnog registra.
 <br/>
@@ -180,7 +180,7 @@ da li je vrednost tog taga <code>apartments</code>. Idealan slučaj koji nam tre
 kao <code>building=apartments</code> ili da je adresa čvor koji je zakačen za liniju koja je tagovana kao <code>building=apartments</code>.
 <br/>
 <br/>
-Ostale opštine iz Srbije koje nisu navedene nemaju nijednu stambenu zajednicu na spisku.
+Ostale općine iz Srbije koje nisu navedene nemaju nijednu stambenu zajednicu na spisku.
 
 </p>
 
