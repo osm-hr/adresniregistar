@@ -13,10 +13,10 @@
       </div>
         <div class="modal-body">
             <ul>
-                <li><b>Općina</b> &mdash; Općina za koju se odnosi izvještaj</li>
+                <li><b>Opština</b> &mdash; Opština za koju se odnosi izveštaj</li>
                 <li><b>Odnos</b> &mdash; Količnik broja zgrada i broja kućnih brojeva</li>
-                <li><b>Broj zgrada (OSM)</b> &mdash; Ukupan broj pronađenih zgrada u OSM-u na teritoriji ove općine</li>
-                <li><b>Broj kućnih brojeva (DGU)</b> &mdash; Ukupan broj pronađenih kućnih brojeva u DGU-u na teritoriji ove općine</li>
+                <li><b>Broj zgrada (OSM)</b> &mdash; Ukupan broj pronađenih zgrada u OSM-u na teritoriji ove opštine</li>
+                <li><b>Broj kućnih brojeva (RGZ)</b> &mdash; Ukupan broj pronađenih kućnih brojeva u RGZ-u na teritoriji ove opštine</li>
             </ul>
         </div>
         <div class="modal-footer">
@@ -56,10 +56,10 @@
 	} );
     </script>
 
-<h2>Broj zgrada i kućnih brojeva po općinama</h2>
+<h2>Broj zgrada i kućnih brojeva po opštinama</h2>
 <br/>
-<p>Ovde možete vidjeti broj zgrada iz OSM-a, kao i broj kućnih brojeva iz DGU-a, kao i njihov odnos.
-    Klikom na općinu dobijate podatke za tu općinu.
+<p>Ovde možete videti broj zgrada iz OSM-a, kao i broj kućnih brojeva iz RGZ-a, kao i njihov odnos.
+    Klikom na opštinu dobijate podatke za tu opštinu.
     Ovo može da pomogne da se vidi gde najviše fale zgrade u OSM-u jer zgrade i kućni brojevi treba da su korelisani.
     U gornjem desnom uglu je filtriranje. Klikom na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.
     </p>
@@ -70,10 +70,10 @@
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-50">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>Općina</th>
+		<th>Opština</th>
         <th>Odnos</th>
         <th>Broj zgrada (OSM)</th>
-        <th>Broj kućnih brojeva (DGU)</th>
+        <th>Broj kućnih brojeva (RGZ)</th>
 	</tr>
 </thead>
 <tbody>

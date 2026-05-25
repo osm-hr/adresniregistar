@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<osm version='0.6' generator='DGU_AR_Generator'>
+<osm version='0.6' generator='RGZ_AR_Generator'>
   {% for osm_node in osm_nodes_to_delete %}
   <node id='{{ osm_node.id }}' action='delete' visible='true' version='{{ osm_node.version }}' lat='{{ osm_node.lat }}' lon='{{ osm_node.lon }}'>
     {% for k, v in osm_node.tags.items() %}

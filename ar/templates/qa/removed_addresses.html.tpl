@@ -13,9 +13,9 @@
       </div>
       <div class="modal-body">
 		<ul>
-			<li><b>Općina</b> &mdash; Općina analize</li>
-			<li><b># „removed:ref:HR:kucni_broj”</b> &mdash; Ukupan broj obrisanih adresa sa „removed:ref:HR:kucni_broj” oznakama</li>
-			<li><b># „ref:HR:kucni_broj”</b> &mdash; Ukupan broj obrisanih adresa koje imaju i „removed:ref:HR:kucni_broj” i „ref:HR:kucni_broj” oznaku</li>
+			<li><b>Opština</b> &mdash; Opština analize</li>
+			<li><b># „removed:ref:RS:kucni_broj”</b> &mdash; Ukupan broj obrisanih adresa sa „removed:ref:RS:kucni_broj” oznakama</li>
+			<li><b># „ref:RS:kucni_broj”</b> &mdash; Ukupan broj obrisanih adresa koje imaju i „removed:ref:RS:kucni_broj” i „ref:RS:kucni_broj” oznaku</li>
 		</ul>
       </div>
       <div class="modal-footer">
@@ -30,7 +30,7 @@
     <li class="breadcrumb-item" aria-current="page"><a href="../index.html">DINA</a></li>
 	<li class="breadcrumb-item" aria-current="page"><a href="index.html">Adrese</a></li>
 	<li class="breadcrumb-item" aria-current="page"><a href="qa.html">QA</a></li>
-	<li class="breadcrumb-item" aria-current="page">Obrisane DGU adrese</li>
+	<li class="breadcrumb-item" aria-current="page">Obrisane RGZ adrese</li>
   </ol>
 </nav>
     <!-- Optional JavaScript -->
@@ -57,10 +57,10 @@
 	} );
     </script>
 
-<h2>Obrisane DGU adrese</h2>
+<h2>Obrisane RGZ adrese</h2>
 <br/>
-<p>Ovde možete vidjeti sve DGU adrese koje smo uneli u OSM, ali su one od tad izbrisane iz DGU-a, po općinama.
-    Klikom na općinu dobijate podatke za tu općinu. U gornjem desnom uglu je filtriranje.
+<p>Ovde možete videti sve RGZ adrese koje smo uneli u OSM, ali su one od tad izbrisane iz RGZ-a, po opštinama.
+    Klikom na opštinu dobijate podatke za tu opštinu. U gornjem desnom uglu je filtriranje.
 </p>
 <br/>
 <br/>
@@ -68,9 +68,9 @@
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-25">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>Općina</th>
-		<th># „removed:ref:HR:kucni_broj”</th>
-		<th># „ref:HR:kucni_broj”</th>
+		<th>Opština</th>
+		<th># „removed:ref:RS:kucni_broj”</th>
+		<th># „ref:RS:kucni_broj”</th>
 	</tr>
 </thead>
 <tbody>

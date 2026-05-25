@@ -12,14 +12,14 @@
         </button>
       </div>
         <div class="modal-body">
-            Izvještaj je još u fazi izrade. Trenutno nalazi više stvari nego što treba, tako da ga uzmite sa rezervom.
+            Izveštaj je još u fazi izrade. Trenutno nalazi više stvari nego što treba, tako da ga uzmite sa rezervom.
             <ul>
                 <li><b>Zgrada</b> &mdash; OSM zgrada unutar koje su nađene adrese</li>
                 <li><b>Zgradina adresa</b> &mdash; Ukoliko na zgradi ima addr:street i addr:housenumber, ovde će biti prikazani</li>
-                <li><b>Zgrada ima ref:HR:kucni_broj</b> &mdash; Da li na zgradi postoji dodeljen ref:HR:kucni_broj tag</li>
+                <li><b>Zgrada ima ref:RS:kucni_broj</b> &mdash; Da li na zgradi postoji dodeljen ref:RS:kucni_broj tag</li>
                 <li><b>Broj adresa</b> &mdash; Ukupan broj pronađenih adresa unutar zgrade</li>
                 <li><b>Adresa(e)</b> &mdash; OSM adresa unutar zgrade</li>
-                <li><b>Adresa(e) imaju ref:HR:kucni_broj</b> &mdash; Da li na adresama unutar zgrade postoji dodeljen ref:HR:kucni_broj tag</li>
+                <li><b>Adresa(e) imaju ref:RS:kucni_broj</b> &mdash; Da li na adresama unutar zgrade postoji dodeljen ref:RS:kucni_broj tag</li>
                 <li><b>Kategorija</b> &mdash; Opisuje kategorizaciju, tj. koji je slučaj u pitanju i kako eventualno može da se reši</li>
             </ul>
         </div>
@@ -69,7 +69,7 @@
 
 <h2>Adrese unutar zgrade za "{{ opstina_name }}"</h2>
 <br/>
-<p>Ovde možete vidjeti sve zgrade sa svim adresama unutar njihovih poligona, kao i pokušaj njihove kategorizacije.
+<p>Ovde možete videti sve zgrade sa svim adresama unutar njihovih poligona, kao i pokušaj njihove kategorizacije.
     Neke od ovih kategorija se mogu rešiti automatizacijim.
     {% if len(osm_files_move_address_to_building) > 0 %}
     U dnu se nalazi spisak fajlova.
@@ -85,10 +85,10 @@
 	<tr>
 		<th>Zgrada</th>
         <th>Zgradina adresa</th>
-		<th>Zgrada ima ref:HR:kucni_broj</th>
+		<th>Zgrada ima ref:RS:kucni_broj</th>
         <th>Broj adresa</th>
         <th>Adresa(e)</th>
-        <th>Adresa(e) ima ref:HR:kucni_broj</th>
+        <th>Adresa(e) ima ref:RS:kucni_broj</th>
         <th>Kategorija</th>
 	</tr>
 </thead>
@@ -166,7 +166,7 @@
 	  <div class="row row-cols-5">
 	  	{% for osm_file in osm_files_move_address_to_building %}
 	  		<div class="col-sm">
-	  			<a href="http://localhost:8111/import?changeset_tags=source=DGU_AR&new_layer=true&layer_name={{ osm_file.name }}&url={{ osm_file.url }}" target="_blank">{{ osm_file.name }}</a>
+	  			<a href="http://localhost:8111/import?changeset_tags=source=RGZ_AR&new_layer=true&layer_name={{ osm_file.name }}&url={{ osm_file.url }}" target="_blank">{{ osm_file.name }}</a>
 			</div>
 	  	{% endfor %}
 	  </div>
@@ -182,7 +182,7 @@
 
 <h2>Broj različitih kategorija</h2>
 <br/>
-<p>Ovde možete vidjeti ukupan broj adresa koje se nalaze unutar zgrada, po kategorijama unutar općine „{{ opstina_name }}”.
+<p>Ovde možete videti ukupan broj adresa koje se nalaze unutar zgrada, po kategorijama unutar opštine „{{ opstina_name }}”.
     Neke od kategorija se mogu rešiti automatizacijom, ali većina zahteva ljudsku pažnju.</p>
 <br/>
 <br/>

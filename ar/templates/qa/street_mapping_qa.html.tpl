@@ -13,13 +13,13 @@
       </div>
       <div class="modal-body">
 		<ul>
-			<li><b>DGU ulica</b> &mdash; Ime ulice u DGU-u</li>
+			<li><b>RGZ ulica</b> &mdash; Ime ulice u RGZ-u</li>
 			<li><b>Ispravan naziv</b> &mdash; Kako DINA platforma misli da treba da bude pravilno ime ulice</li>
 			<li><b>Izvor</b> &mdash; Odakle DINA platforma misli da je ovo pravilno ime ulice.
 			Može biti: „ručno provereno” (ljudi su ručno gledali kroz tabelu i proveravali), „OSM” (neko je koristio već ovo ime u OSM-u),
-			„ref:HR:ulica” (neka ulica je povezana sa registrom i nosi ovo ime) i „Algoritam” (nikako drugačije ulica nije nađena, pa je algoritam heuristikom pokušao da nađe najbolje ime za ulicu)</li>
-			<li><b>Reference</b> &mdash; Ukoliko je ime uzeto iz OSM-a ili preko ref:HR:ulica taga, ovde su navedene neke reference (ukoliko ih ima više od 5, samo prvih 5 su navedene)</li>
-			<li><b>Izuzeci po ID-ovima ulica</b> &mdash; Ukoliko u nekoj općini, po nekom ID-u ulice, standardni naziv nije tačan, ID ulice će biti naveden ovde</li>
+			„ref:RS:ulica” (neka ulica je povezana sa registrom i nosi ovo ime) i „Algoritam” (nikako drugačije ulica nije nađena, pa je algoritam heuristikom pokušao da nađe najbolje ime za ulicu)</li>
+			<li><b>Reference</b> &mdash; Ukoliko je ime uzeto iz OSM-a ili preko ref:RS:ulica taga, ovde su navedene neke reference (ukoliko ih ima više od 5, samo prvih 5 su navedene)</li>
+			<li><b>Izuzeci po ID-ovima ulica</b> &mdash; Ukoliko u nekoj opštini, po nekom ID-u ulice, standardni naziv nije tačan, ID ulice će biti naveden ovde</li>
 		</ul>
       </div>
       <div class="modal-footer">
@@ -47,7 +47,7 @@
 
 <h2>Ispravni nazivi ulica</h2>
 <br/>
-<p>Pošto su nazivi ulica u DGU-u napisani velikim slovima, koristi se ova tabela da pretvori nazive iz DGU-a u nazive kakve treba imati u OSM-u.
+<p>Pošto su nazivi ulica u RGZ-u napisani velikim slovima, koristi se ova tabela da pretvori nazive iz RGZ-a u nazive kakve treba imati u OSM-u.
     <br/>
     Na osnovu ovih naziva se generišu imena ulica za uvoz adresa, kao i detektuju sve greške u QA analizama.
     <br/>
@@ -57,7 +57,7 @@
     a možete poslati izmenu <a href="https://gitlab.com/osm-serbia/adresniregistar/-/blob/main/ar/curated_streets.csv?ref_type=heads">direktno kao PR</a>, ako Vam je to lakše.
     Ukoliko se, pak ne slažete sa nekim ispravkama, najbolje je da koristite forum (ukoliko imate i on-the-ground informaciju kao npr. sliku sa tablom adrese - tim bolje!).
     <br/>
-    Zbog velike količine podataka (36.000 adresa u DGU-u), ova tabela nema napredne funkcije pretrage i sortiranja (pošto bi strana bi bila prespora).
+    Zbog velike količine podataka (36.000 adresa u RGZ-u), ova tabela nema napredne funkcije pretrage i sortiranja (pošto bi strana bi bila prespora).
     Stoga je sortiranje ispod već urađeno, i to po azbučnom redu, a za pretragu koristite Ctrl+F mogućnosti browser-a.
 </p>
 <br/>
@@ -66,7 +66,7 @@
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-75">
 <thead class="thead-dark sticky-top">
 	<tr>
-        <th>DGU ulica</th>
+        <th>RGZ ulica</th>
 		<th>Ispravan naziv</th>
 		<th>Izvor</th>
 		<th>Reference</th>
@@ -85,8 +85,8 @@
             Algoritam
         {% elif street_name.source == 'OSM' %}
             OSM
-        {% elif street_name.source == 'ref:HR:ulica' %}
-            ref:HR:ulica
+        {% elif street_name.source == 'ref:RS:ulica' %}
+            ref:RS:ulica
         {% else %}
             Nepoznat
         {% endif %}

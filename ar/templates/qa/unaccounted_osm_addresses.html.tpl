@@ -13,8 +13,8 @@
       </div>
       <div class="modal-body">
 		<ul>
-			<li><b>Općina</b> &mdash; Općina analize</li>
-			<li><b>#</b> &mdash; Ukupan broj adresa bez ref:HR:kucni_broj oznaka</li>
+			<li><b>Opština</b> &mdash; Opština analize</li>
+			<li><b>#</b> &mdash; Ukupan broj adresa bez ref:RS:kucni_broj oznaka</li>
 		</ul>
       </div>
       <div class="modal-footer">
@@ -29,7 +29,7 @@
     <li class="breadcrumb-item" aria-current="page"><a href="../index.html">DINA</a></li>
 	<li class="breadcrumb-item" aria-current="page"><a href="index.html">Adrese</a></li>
 	<li class="breadcrumb-item" aria-current="page"><a href="qa.html">QA</a></li>
-	<li class="breadcrumb-item" aria-current="page">OSM adrese bez ref:HR:kucni_broj</li>
+	<li class="breadcrumb-item" aria-current="page">OSM adrese bez ref:RS:kucni_broj</li>
   </ol>
 </nav>
     <!-- Optional JavaScript -->
@@ -60,12 +60,12 @@
 	} );
     </script>
 
-<h2>OSM adrese bez ref:HR:kucni_broj oznake</h2>
+<h2>OSM adrese bez ref:RS:kucni_broj oznake</h2>
 <br/>
-<p>Ovde možete vidjeti sve adrese u OpenStreetMap-ama koje nemaju ref:HR:kucni_broj oznaku, po općinama.
-    Klikom na općinu dobijate podatke za tu općinu. U gornjem desnom uglu je filtriranje.
+<p>Ovde možete videti sve adrese u OpenStreetMap-ama koje nemaju ref:RS:kucni_broj oznaku, po opštinama.
+    Klikom na opštinu dobijate podatke za tu opštinu. U gornjem desnom uglu je filtriranje.
     <br/>
-    <b>Pažljivo prilikom otvaranja općina preko 5.000 adresa, računalo i browser mogu da se uspore znatno!</b>
+    <b>Pažljivo prilikom otvaranja opština preko 5.000 adresa, računar i browser mogu da se uspore znatno!</b>
 </p>
 <br/>
 <br/>
@@ -73,7 +73,7 @@
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-25">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>Općina</th>
+		<th>Opština</th>
 		<th>#</th>
 	</tr>
 </thead>
