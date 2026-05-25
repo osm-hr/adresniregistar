@@ -81,7 +81,7 @@ def get_entities(overpass_api, from_lat, from_lon, to_lat, to_lon):
         );
         (._;>;);
         out;
-        // &contact=https://gitlab.com/osm-serbia/adresniregistar
+        // &contact=https://github.com/osm-hr/adresniregistar
     """)
     for n in response.nodes:
         if not n.tags.get('addr:housenumber') and not n.tags.get('addr:street') and not n.tags.get(settings.HOUSE_REF_TAG):

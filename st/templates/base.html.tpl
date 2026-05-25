@@ -88,7 +88,7 @@
 			<a class="nav-link" href="https://metrics.improveosm.org/named-roads/total-metrics-per-interval?duration=weekly&locationType=country&locationId=191&unit=km&from=2016-02-14&to={{ currentDate }}">Progress</a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" href="https://gitlab.com/osm-serbia/adresniregistar">Github</a>
+			<a class="nav-link" href="https://github.com/osm-hr/adresniregistar/">Github</a>
 		</li>
 		<li>
 			<a class="nav-link" href="" data-toggle="modal" data-target="#exampleModal">Pomoć</a>

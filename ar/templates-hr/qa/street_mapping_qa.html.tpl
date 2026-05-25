@@ -52,7 +52,7 @@
     Na osnovu ovih naziva se generišu imena ulica za uvoz adresa, kao i detektuju sve greške u QA analizama.
     <br/>
     Kako smo došli do baš ovakvih naziva možete pogledati na <a href="https://community.openstreetmap.org/t/pravilno-imenovanje-ulica/96891">temi na forumu</a>.
-    Ukoliko primetite neku grešku, molimo Vas da prijavite grešku <a href="https://gitlab.com/osm-serbia/adresniregistar/-/issues/new">ovde</a> (potrebno je prvo se registrovati), ili ostavite komentar na istoj
+    Ukoliko primetite neku grešku, molimo Vas da prijavite grešku <a href="https://github.com/osm-hr/adresniregistar/issues/new">ovde</a> (potrebno je prvo se registrirati), ili ostavite komentar na istoj
     <a href="https://community.openstreetmap.org/t/pravilno-imenovanje-ulica/96891">temi na forumu</a>,
     a možete poslati izmenu <a href="https://gitlab.com/osm-serbia/adresniregistar/-/blob/main/ar/curated_streets.csv?ref_type=heads">direktno kao PR</a>, ako Vam je to lakše.
     Ukoliko se, pak ne slažete sa nekim ispravkama, najbolje je da koristite forum (ukoliko imate i on-the-ground informaciju kao npr. sliku sa tablom adrese - tim bolje!).

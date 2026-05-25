@@ -31,7 +31,7 @@
 			<a class="nav-link" href="https://community.openstreetmap.org/t/registar-stambenih-zajednica-otvoreni-podaci/87583">Forum</a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" href="https://gitlab.com/osm-serbia/adresniregistar">Github</a>
+			<a class="nav-link" href="https://github.com/osm-hr/adresniregistar">Github</a>
 		</li>
 		<li>
 			<a class="nav-link" href="" data-toggle="modal" data-target="#exampleModal">Pomoć</a>

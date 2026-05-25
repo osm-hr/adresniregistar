@@ -57,7 +57,7 @@ def get_ref_kucni_broj_from_overpass(overpass_api, kucni_broj_id):
           nwr["{settings.HOUSE_REF_TAG}"="{kucni_broj_id}"];
         );
         out body;
-        // &contact=https://gitlab.com/osm-serbia/adresniregistar
+        // &contact=https://github.com/osm-hr/adresniregistar
     """)
     results = []
     for n in response.nodes:

@@ -50,7 +50,7 @@ def get_ref_ulica_from_overpass(overpass_api, rgz_ulica_mb):
           nwr["ref:RS:ulica"="{rgz_ulica_mb}"];
         );
         out body;
-        // &contact=https://gitlab.com/osm-serbia/adresniregistar
+        // &contact=https://github.com/osm-hr/adresniregistar
     """)
     results = []
     for n in response.nodes:
