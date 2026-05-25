@@ -129,10 +129,10 @@ def get_resolution(cah: CollectApartmentsHandler, df_addresses_in_buildings, osm
 
 def join_dz_rgz_osm(ar_data_path: str, df_sz, opstina):
     opstina_latin = cyr2lat(opstina)
-    # Take OSM data with ref:RS:kucni_broj
-    df_osm = pd.read_csv(os.path.join(ar_data_path, f'osm/csv/{opstina_latin}.csv'), dtype={'ref:RS:ulica': object, 'ref:RS:kucni_broj': object})
-    df_osm = df_osm[pd.notna(df_osm['ref:RS:kucni_broj'])]
-    df_osm['ref:RS:kucni_broj'] = df_osm['ref:RS:kucni_broj'].astype('string')
+    # Take OSM data with ref:HR:kucni_broj
+    df_osm = pd.read_csv(os.path.join(ar_data_path, f'osm/csv/{opstina_latin}.csv'), dtype={'ref:RS:ulica': object, 'ref:HR:kucni_broj': object})
+    df_osm = df_osm[pd.notna(df_osm['ref:HR:kucni_broj'])]
+    df_osm['ref:HR:kucni_broj'] = df_osm['ref:HR:kucni_broj'].astype('string')
 
     # Take DGU data and normalize for join
     df_rgz = pd.read_csv(os.path.join(ar_data_path, f'rgz/csv/{normalize_name(opstina_latin.lower())}.csv'), dtype={'rgz_kucni_broj_id': str})
@@ -157,7 +157,7 @@ def join_dz_rgz_osm(ar_data_path: str, df_sz, opstina):
     df_sz_rgz['rgz_kucni_broj_id'] = df_sz_rgz.apply(lambda row: row['rgz_kucni_broj_id'] if row['found_in_rgz'] else '', axis=1)
 
     # join with OSM
-    df_sz_rgz_osm = df_sz_rgz.merge(df_osm, how='left', left_on='rgz_kucni_broj_id', right_on='ref:RS:kucni_broj')
+    df_sz_rgz_osm = df_sz_rgz.merge(df_osm, how='left', left_on='rgz_kucni_broj_id', right_on='ref:HR:kucni_broj')
     df_sz_rgz_osm.drop(['osm_country', 'osm_city', 'osm_postcode', 'ref:RS:ulica', 'osm_geometry', 'tags'], inplace=True, axis=1)
     df_sz_rgz_osm['found_in_osm'] = pd.notna(df_sz_rgz_osm['osm_id'])
 

@@ -71,8 +71,8 @@ def get_ref_kucni_broj_from_overpass(overpass_api, kucni_broj_id):
 
 def fix_deleted_to_added(rgz_path, rgz_last_update, oauth_session):
     """
-    Nalazi kucne brojeve koji su obrisani i koji su onda dodati sa novim ref:RS:kucni_broj,
-    sa istim imenom ulice i kucnim brojom i unutar 100m i update-uje im ref:RS:kucni_broj
+    Nalazi kucne brojeve koji su obrisani i koji su onda dodati sa novim ref:HR:kucni_broj,
+    sa istim imenom ulice i kucnim brojom i unutar 100m i update-uje im ref:HR:kucni_broj
     """
     api = osmapi.OsmApi(session=oauth_session)
     api.ChangesetCreate({

@@ -8,7 +8,7 @@ import os
 
 # Default tags (can be overridden via env vars)
 STREET_REF_TAG = os.getenv('STREET_REF_TAG', 'ref:RS:ulica')
-HOUSE_REF_TAG = os.getenv('HOUSE_REF_TAG', 'ref:RS:kucni_broj')
+HOUSE_REF_TAG = os.getenv('HOUSE_REF_TAG', 'ref:HR:kucni_broj')
 COUNTRY = os.getenv('COUNTRY', 'serbia')
 ENHANCE_WITH_NASELJA = os.getenv('ENHANCE_WITH_NASELJA', 'true')
 USE_PLACE_TAG = False

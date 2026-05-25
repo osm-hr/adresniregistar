@@ -17,8 +17,8 @@
 			<li><b>Broj stambenih zajednica</b> &mdash; Ukupan broj stambenih zajednica u registru</li>
 			<li><b>Pronađeno u AR-u</b> &mdash; Broj pronađenih stambenih zajednica u adresnom registru na osnovu općine, ulice i kućnog broja</li>
 			<li><b>Pronađeno u AR-u [%]</b> &mdash; Broj pronađenih stambenih zajednica u adresnom registru na osnovu općine, ulice i kućnog broja</li>
-			<li><b>Pronađeno u OSM-u</b> &mdash; Broj pronađenih stambenih zajednica na osnovu <code>ref:RS:kucni_broj</code> taga u OSM-u</li>
-			<li><b>Pronađeno u OSM-u [%]</b> &mdash; Procenat pronađenih stambenih zajednica (u odnosu na one nađene u adresnom registru) na osnovu <code>ref:RS:kucni_broj</code> taga u OSM-u</li>
+			<li><b>Pronađeno u OSM-u</b> &mdash; Broj pronađenih stambenih zajednica na osnovu <code>ref:HR:kucni_broj</code> taga u OSM-u</li>
+			<li><b>Pronađeno u OSM-u [%]</b> &mdash; Procenat pronađenih stambenih zajednica (u odnosu na one nađene u adresnom registru) na osnovu <code>ref:HR:kucni_broj</code> taga u OSM-u</li>
 			<li><b>Apartments</b> &mdash; Broj onih stambenih zajednica nađenih u OSM-u koje su pravilno tagovane kao <code>building=apartments</code> u OSM-u</li>
 			<li><b>Apartments [%]</b> &mdash; Procenat onih stambenih zajednica nađenih u OSM-u (u odnosu na sve nađene u OSM-u) koje su pravilno tagovane kao <code>building=apartments</code> u OSM-u</li>
 		</ul>

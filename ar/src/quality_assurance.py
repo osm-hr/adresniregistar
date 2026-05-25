@@ -246,7 +246,7 @@ def do_resolution(input):
 
 class CollectRefAddressesHandler(osmium.SimpleHandler):
     """
-    Iterates for all addresses with ref:RS:kucni_broj and collect them
+    Iterates for all addresses with ref:HR:kucni_broj and collect them
     """
     def __init__(self):
         osmium.SimpleHandler.__init__(self)
@@ -315,7 +315,7 @@ def find_unaccounted_osm_addresses(cwd):
     gdf_osm_addresses.sindex
     print(f"Found all building geometries ({len(ceh.entities)}) from PBF")
 
-    # Remove those with "removed:ref:RS:kucni_broj" tag, as they are counted differently (as removed)
+    # Remove those with "removed:ref:HR:kucni_broj" tag, as they are counted differently (as removed)
     gdf_osm_addresses['is_removed'] = gdf_osm_addresses['tags'].apply(lambda tags: True if 'removed:'+settings.HOUSE_REF_TAG in tags else False)
     gdf_osm_addresses = gdf_osm_addresses[~gdf_osm_addresses.is_removed]
 
@@ -495,7 +495,7 @@ def find_addresses_in_buildings(cwd):
 
 
 def find_duplicated_refs(cwd):
-    # Finds addresses which have same ref:RS:kucni_broj reference
+    # Finds addresses which have same ref:HR:kucni_broj reference
     osm_path = os.path.join(cwd, 'data/osm')
     rgz_path = os.path.join(cwd, 'data/rgz')
     pbf_file = os.path.join(osm_path, 'download/'+settings.COUNTRY+'.osm.pbf')

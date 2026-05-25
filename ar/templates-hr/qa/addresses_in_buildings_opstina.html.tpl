@@ -16,10 +16,10 @@
             <ul>
                 <li><b>Zgrada</b> &mdash; OSM zgrada unutar koje su nađene adrese</li>
                 <li><b>Zgradina adresa</b> &mdash; Ukoliko na zgradi ima addr:street i addr:housenumber, ovdje će biti prikazani</li>
-                <li><b>Zgrada ima ref:RS:kucni_broj</b> &mdash; Postoji li na zgradi dodjeljen ref:HR:kucni_broj tag</li>
+                <li><b>Zgrada ima ref:HR:kucni_broj</b> &mdash; Postoji li na zgradi dodjeljen ref:HR:kucni_broj tag</li>
                 <li><b>Broj adresa</b> &mdash; Ukupan broj pronađenih adresa unutar zgrade</li>
                 <li><b>Adresa(e)</b> &mdash; OSM adresa unutar zgrade</li>
-                <li><b>Adresa(e) imaju ref:RS:kucni_broj</b> &mdash; Da li na adresama unutar zgrade postoji dodjeljen ref:HR:kucni_broj tag</li>
+                <li><b>Adresa(e) imaju ref:HR:kucni_broj</b> &mdash; Da li na adresama unutar zgrade postoji dodjeljen ref:HR:kucni_broj tag</li>
                 <li><b>Kategorija</b> &mdash; Opisuje kategorizaciju, tj. koji je slučaj u pitanju i kako se eventualno može rješiti</li>
             </ul>
         </div>

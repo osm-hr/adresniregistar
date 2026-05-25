@@ -18,7 +18,7 @@
 			<li><b>Nađen u AR-u</b> &mdash; Ako je stambena zajednica nađena u adresnom registru, ovde će biti ✅ i ulica i kućni broj, kao i identifikator kako stoje u AR-u.
 			Ako nije nađeno, stajaće ❌. Ako nema ništa dodatno upisano, takva ulica i kućni broj ne postoje u AR-u. Ako piše "dup", tu su
 			navedena naselja koja imaju istu ulicu i broj i zbog te dvosmislenosti se ne zna za koje naselje se ulica odnosi</li>
-			<li><b>Nađen u OSM-u</b> &mdash; Ako je stambena zajednica sa identifikatorom iz AR-a nađena u OSM-u preko <code>ref:RS:kucni_broj</code> taga,
+			<li><b>Nađen u OSM-u</b> &mdash; Ako je stambena zajednica sa identifikatorom iz AR-a nađena u OSM-u preko <code>ref:HR:kucni_broj</code> taga,
 			ovde će biti ulica i broj iz OSM-a i link ka OSM entitetu</li>
 			<li><b>Stanje u OSM-u</b> &mdash; U idealnom slučaju, čvor iz OSM-a će biti zakačen na zgradu tagovanu kao <code>building=apartments</code> ili će adresa
 			već biti na zgradi ili relaciji koja je ovako tagovana. Ukoliko to nije slučaj iz nekog razloga, ovde će biti upisano stanje.</li>

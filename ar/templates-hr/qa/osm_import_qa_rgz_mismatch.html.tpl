@@ -97,7 +97,7 @@
 
 <h2>Kvalitet uvoza - nepoklapanje sa DGU-om</h2>
 <br/>
-<p>Ovde možete vidjeti OSM adrese koje imaju tag <code>ref:RS:kucni_broj</code>, ali se nešto ne poklapa sa DGU-om.
+<p>Ovde možete vidjeti OSM adrese koje imaju tag <code>ref:HR:kucni_broj</code>, ali se nešto ne poklapa sa DGU-om.
     <br/>
     Može biti da u DGU-u nema te reference, da je ulica delimično (⚠️) ili potpuno (❌) pogrešna, ili da je kućni broj delimično (⚠️) ili potpuno (❌) pogrešan.
     <br/>

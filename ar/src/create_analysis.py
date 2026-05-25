@@ -91,8 +91,8 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
     gdf_rgz['rgz_kucni_broj_norm'] = gdf_rgz.rgz_kucni_broj.apply(normalize_name)
     gdf_rgz.sindex
 
-    # First we will join DGU and OSM on "ref:RS:kucni_broj. During this process, we calculate distance and remove extra
-    # (not-needed) columns. We need to watch out if same "ref:RS:kucni_broj" exists 2 times in OSM! In this case,
+    # First we will join DGU and OSM on "ref:HR:kucni_broj. During this process, we calculate distance and remove extra
+    # (not-needed) columns. We need to watch out if same "ref:HR:kucni_broj" exists 2 times in OSM! In this case,
     # we take closer address. We don't worry about it here, as we will have QA to report on this.
     print(f"    Joining addresses in {settings.CADASTRE_AUTHORITY_ABBR} and OSM in {opstina} by conflation (settings.HOUSE_REF_TAG)")
     gdf_osm['osm_housenumber'] = gdf_osm['osm_housenumber'].astype('str')  # For some reason, we need to explicitely cast this to string

@@ -53,7 +53,7 @@ Sve komande se izvršavaju sa `make <komanda>`. Dostupne su sledeće komande:
 * `quality_assurance`
 
   Ova komanda radi razne analize koje se posle koriste prilikom generiranja report-a. Trenutno se rade dve analize:
-  * ref:RS:kucni_broj duplikati - nalazimo sve kućne brojeve koji imaju dupli `ref:RS:kucni_broj` tag
+  * ref:HR:kucni_broj duplikati - nalazimo sve kućne brojeve koji imaju dupli `ref:HR:kucni_broj` tag
   * analiza adresa unutar zgrada. Ukoliko imamo adresu ili POI koji je unutar zgrade (way-a building-a), detektujemo ga
   ovde i pokušavamo da uradimo kategorizaciju, tj. da vidimo da li je ovo OK ili nije, i ako nije, šta možemo da uradimo
   ovo ovoga.
@@ -95,7 +95,7 @@ kao i lokalni overpass server.
 
 * Izvršiti `python3 src/generate_rgz_diff.py --generate` i dobićete 3 fajla: `data/rgz/addresses-added.csv` (nove adrese), `data/rgz/addresses-removed.csv` (izbrisane adrese) i `data/rgz/addresses-changed.csv` (promenjene adrese)
 * Učitati `data/rgz/addresses-added.csv` i `data/rgz/addresses-removed.csv` i vidjeti da izbrisane adrese nisu zamenjene nekim drugim adresama (ovlaš, da nema nešto očigledno)
-* Izvršiti `python3 src/generate_rgz_diff.py --fix_deleted_to_added --rgz_update_date YYYY-MM-DD` - prolazi kroz obrisane adrese i ako su stvarno obrisane, briše im `ref:RS:kucni_broj` i dodaje im `removed:ref:RS:kucni_broj`, a ako su dodate sa novim ID-om, menja `ref:RS:kucni_broj`
+* Izvršiti `python3 src/generate_rgz_diff.py --fix_deleted_to_added --rgz_update_date YYYY-MM-DD` - prolazi kroz obrisane adrese i ako su stvarno obrisane, briše im `ref:HR:kucni_broj` i dodaje im `removed:ref:HR:kucni_broj`, a ako su dodate sa novim ID-om, menja `ref:HR:kucni_broj`
 * Izvršiti `python3 src/generate_rgz_diff.py --fix_changed` - prolazi kroz promenjene adrese i menja ih u OSM-u sa novim vrednostima
 
 ### Kreiranje vektorske mape

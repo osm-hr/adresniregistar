@@ -14,8 +14,8 @@
       <div class="modal-body">
 		<ul>
 			<li><b>Općina</b> &mdash; Općina analize</li>
-			<li><b># „removed:ref:RS:kucni_broj”</b> &mdash; Ukupan broj obrisanih adresa sa „removed:ref:RS:kucni_broj” oznakama</li>
-			<li><b># „ref:RS:kucni_broj”</b> &mdash; Ukupan broj obrisanih adresa koje imaju i „removed:ref:RS:kucni_broj” i „ref:RS:kucni_broj” oznaku</li>
+			<li><b># „removed:ref:HR:kucni_broj”</b> &mdash; Ukupan broj obrisanih adresa sa „removed:ref:HR:kucni_broj” oznakama</li>
+			<li><b># „ref:HR:kucni_broj”</b> &mdash; Ukupan broj obrisanih adresa koje imaju i „removed:ref:HR:kucni_broj” i „ref:HR:kucni_broj” oznaku</li>
 		</ul>
       </div>
       <div class="modal-footer">
@@ -69,8 +69,8 @@
 <thead class="thead-dark sticky-top">
 	<tr>
 		<th>Općina</th>
-		<th># „removed:ref:RS:kucni_broj”</th>
-		<th># „ref:RS:kucni_broj”</th>
+		<th># „removed:ref:HR:kucni_broj”</th>
+		<th># „ref:HR:kucni_broj”</th>
 	</tr>
 </thead>
 <tbody>

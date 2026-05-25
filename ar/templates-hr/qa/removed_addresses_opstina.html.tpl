@@ -17,8 +17,8 @@
                 <li><b>Ulica</b> &mdash; Ulica iz adrese (addr:street oznaka)</li>
                 <li><b>Kućni broj</b> &mdash; Kućni broj iz adrese (addr:housenumber oznaka)</li>
                 <li><b>Datum brisanja</b> &mdash; Datum prvog primećivanja da adresa nije više u DGU-u</li>
-                <li><b>„removed:ref:RS:kucni_broj” tag</b> &mdash; „removed:ref:RS:kucni_broj” oznaka na adresi, vrednost koju je adresa nekad imala u DGU-u</li>
-                <li><b>„ref:RS:kucni_broj” tag</b> &mdash; „ref:RS:kucni_broj” oznaka na adresi, ukoliko trenutno postoji. Ako postoje obe vrednosti, treba obrisati „removed:ref:RS:kucni_broj” oznaku</li>
+                <li><b>„removed:ref:HR:kucni_broj” tag</b> &mdash; „removed:ref:HR:kucni_broj” oznaka na adresi, vrednost koju je adresa nekad imala u DGU-u</li>
+                <li><b>„ref:HR:kucni_broj” tag</b> &mdash; „ref:HR:kucni_broj” oznaka na adresi, ukoliko trenutno postoji. Ako postoje obe vrednosti, treba obrisati „removed:ref:HR:kucni_broj” oznaku</li>
             </ul>
         </div>
         <div class="modal-footer">
@@ -64,7 +64,7 @@
 <p>Ovde možete vidjeti sve DGU adrese koje smo uneli u OSM, ali su one od tad izbrisane iz DGU-a.
     Adresa brisanja je najranije vreme kada smo primetili da adresa više nije u DGU-u. Ukoliko imate lokalno znanje,
     slobodno obrišite ove adrese (ili cele zgrade ukoliko više ne postoji).
-    Ukoliko postoji „removed:ref:RS:kucni_broj” oznake, sigurno treba obrisati „removed:ref:RS:kucni_broj” oznaku!
+    Ukoliko postoji „removed:ref:HR:kucni_broj” oznake, sigurno treba obrisati „removed:ref:HR:kucni_broj” oznaku!
     U suprotnom, dogovor zajednice je da ih ostavimo neke vreme (npr. 2 godine) jer neko može da ih koristi za navođenje ili su možda još u upotrebi.
     U gornjem desnom uglu je filtriranje. Klikom na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.
     </p>
@@ -79,8 +79,8 @@
         <th>Ulica</th>
         <th>Broj</th>
         <th>Datum brisanja</th>
-        <th>„removed:ref:RS:kucni_broj” tag</th>
-        <th>„ref:RS:kucni_broj” tag</th>
+        <th>„removed:ref:HR:kucni_broj” tag</th>
+        <th>„ref:HR:kucni_broj” tag</th>
 	</tr>
 </thead>
 <tbody>

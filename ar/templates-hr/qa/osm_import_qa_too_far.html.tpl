@@ -89,7 +89,7 @@
 
 <h2>Kvalitet uvoza - prevelike udaljenosti</h2>
 <br/>
-<p>Ovde možete vidjeti OSM adrese koje imaju tag <code>ref:RS:kucni_broj</code>, ali je udaljenost u odnosu na DGU prevelika.
+<p>Ovde možete vidjeti OSM adrese koje imaju tag <code>ref:HR:kucni_broj</code>, ali je udaljenost u odnosu na DGU prevelika.
     <br/>
     Udaljenosti mogu da se filtriraju po par vrednosti - preko 30m, 50m, 100m i 1000m.
 </p>

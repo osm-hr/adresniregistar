@@ -133,7 +133,7 @@ def do_opstina(data_path, street_mappings: StreetMapping, opstina):
             else:
                 entity = api.WayGet(entity_id)
 
-            if 'ref:RS:kucni_broj' in entity['tag']:
+            if 'ref:HR:kucni_broj' in entity['tag']:
                 print(f"Already done {entity['tag']['addr:street']} {entity['tag']['addr:housenumber']}, skipping")
                 continue
 
@@ -143,9 +143,9 @@ def do_opstina(data_path, street_mappings: StreetMapping, opstina):
 
             while True:
                 if INTERACTIVE:
-                    response = input(f"({i}/{len(df_naselje)}) Are you sure you want to add ref:RS:kucni_broj={rgz_kucni_broj} to {current_street_name} {entity['tag']['addr:housenumber']} (Y/n/c)?")
+                    response = input(f"({i}/{len(df_naselje)}) Are you sure you want to add ref:HR:kucni_broj={rgz_kucni_broj} to {current_street_name} {entity['tag']['addr:housenumber']} (Y/n/c)?")
                 else:
-                    print(f"({i}/{len(df_naselje)}) +ref:RS:kucni_broj={rgz_kucni_broj} @ {current_street_name} {entity['tag']['addr:housenumber']}")
+                    print(f"({i}/{len(df_naselje)}) +ref:HR:kucni_broj={rgz_kucni_broj} @ {current_street_name} {entity['tag']['addr:housenumber']}")
                     response = 'y'
                     time.sleep(1)
                 if response == '' or response.lower() == 'y' or response.lower() == u'з':
@@ -160,7 +160,7 @@ def do_opstina(data_path, street_mappings: StreetMapping, opstina):
             if not accepted:
                 continue
 
-            entity['tag']['ref:RS:kucni_broj'] = rgz_kucni_broj
+            entity['tag']['ref:HR:kucni_broj'] = rgz_kucni_broj
 
             # Check street name and ask for it
             proper_street_name = street_mappings.get_name(address['rgz_ulica'], '123')

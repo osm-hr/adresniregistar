@@ -33,7 +33,7 @@
     <li class="breadcrumb-item" aria-current="page"><a href="../../index.html">DINA</a></li>
 	<li class="breadcrumb-item" aria-current="page"><a href="../index.html">Adrese</a></li>
 	<li class="breadcrumb-item" aria-current="page"><a href="../qa.html">QA</a></li>
-    <li class="breadcrumb-item" aria-current="page"><a href="../unaccounted_osm_addresses.html">OSM adrese bez ref:RS:kucni_broj</a></li>
+    <li class="breadcrumb-item" aria-current="page"><a href="../unaccounted_osm_addresses.html">OSM adrese bez ref:HR:kucni_broj</a></li>
     <li class="breadcrumb-item" aria-current="page">{{ opstina_name }}</li>
   </ol>
 </nav>
@@ -65,9 +65,9 @@
 	} );
     </script>
 
-<h2>OSM adrese bez ref:RS:kucni_broj oznake za općinu „{{ opstina_name }}”</h2>
+<h2>OSM adrese bez ref:HR:kucni_broj oznake za općinu „{{ opstina_name }}”</h2>
 <br/>
-<p>Ovde možete vidjeti sve adrese u OpenStreetMap-ama koje nemaju ref:RS:kucni_broj oznaku.
+<p>Ovde možete vidjeti sve adrese u OpenStreetMap-ama koje nemaju ref:HR:kucni_broj oznaku.
     Ovo znači ili da nisu spojene sa DGU podacima, ili da je teško spojiti ih sa DGU podacima (postoje na terenu, treba izaći na teren i proveriti...).
     U gornjem desnom uglu je filtriranje. Klikom na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.
     </p>
