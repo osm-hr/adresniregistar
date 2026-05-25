@@ -43,7 +43,7 @@
   <ol class="breadcrumb">
     <li class="breadcrumb-item" aria-current="page"><a href="../../../index.html">DINA</a></li>
 	<li class="breadcrumb-item" aria-current="page"><a href="../../index.html">Ulice</a></li>
-	<li class="breadcrumb-item" aria-current="page"><a href="../../report.html">Izveštaj</a></li>
+	<li class="breadcrumb-item" aria-current="page"><a href="../../report.html">Izvještaj</a></li>
 	<li class="breadcrumb-item active" aria-current="page"><a href="../{{ opstina_name }}.html">{{ opstina_name }}</a></li>
 	<li class="breadcrumb-item active" aria-current="page">{{ naselje.name_lat }}</li>
   </ol>
@@ -150,7 +150,7 @@
     </script>
 
 
-<h2>Izveštaj za {{ naselje.name_lat }}</h2>
+<h2>Izvještaj za {{ naselje.name_lat }}</h2>
 <br/>
 
 <p>Ovde možete videti sve ulice unutar naselja „{{ naselje.name_lat }}” i status konflacije. U gornjem desnom uglu je filtriranje.

@@ -14,10 +14,10 @@
         </button>
       </div>
       <div class="modal-body">
-        Na ovom izveštaju se nalazi sve ulice kojima se geometrije u DGU-u i u OSM-u ne poklapaju. Izveštaj sadrži dve tabele i objašnjeno je na samoj strani detaljno šta one predstavljaju.
+        Na ovom izvještaju se nalazi sve ulice kojima se geometrije u DGU-u i u OSM-u ne poklapaju. Izvještaj sadrži dve tabele i objašnjeno je na samoj strani detaljno šta one predstavljaju.
         Detaljna objašnjenja kolona u tabelama:
 		<ul>
-		    <li><b>Naselje</b> &mdash; Naselje kojem pripada ulica. Klik na naselje vodi do izveštaja za sve ulice u tom naselju.</li>
+		    <li><b>Naselje</b> &mdash; Naselje kojem pripada ulica. Klik na naselje vodi do izvještaja za sve ulice u tom naselju.</li>
 			<li><b>Id (DGU)</b> &mdash; Identifikator ulice u DGU-u (ono što se stavlja u „ref:RS:ulica” tag).
 			Možete da filtrirate po tipu ulice, a dublje objašnjenje kako se formira identifikator možete da vidite <a href="https://community.openstreetmap.org/t/topic/9338/14" target="_blank">ovde na forumu</a>.</li>
 			<li><b>Ulica (DGU)</b> &mdash; Ime ulice iz DGU-a, a posle strelice i pravilno ime ulice kako treba uneti u OSM.
@@ -169,7 +169,7 @@
     </script>
 
 
-<h2>Izveštaj nedostajućih geometrija za {{ opstina_name }}</h2>
+<h2>Izvještaj nedostajućih geometrija za {{ opstina_name }}</h2>
 <br/>
 
 <p>Ovde možete videti sve ulice unutar općine „{{ opstina_name }}” kojima se geometrije u DGU-u i u OSM-u ne poklapaju. Razlikujemo dva slučaja:

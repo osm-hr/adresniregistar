@@ -19,7 +19,7 @@ Sve komande se izvršavaju sa `make <komanda>`.
 * Pokrenuti `make clean_osm` da očistite sve generisane podatke osim DGU podataka
 * Pokrenuti `make clean` za čišćenje svih podataka (PAŽNJA: obrisaće i DGU podatke koji se teško skidaju)
 * Za skidanje DGU ulica koristiti `make download_from_rgz`. Za ovo treba headless browser (ja sam stavio `geckodriver` u root dir ST modula i to radi)
-* Za generisanje izveštaja koristiti `make report` i izlaz treba da bude HTML izveštaj u data/report direktorijumu
+* Za generisanje izvještaja koristiti `make report` i izlaz treba da bude HTML izvještaj u data/report direktorijumu
 
 ## Osvežavanje sa DGU-a
 

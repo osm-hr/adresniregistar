@@ -33,7 +33,7 @@
 	  {% if realTime %}
 	  <li class="breadcrumb-item" aria-current="page"><a href="{% if not showAllNaselja %}../{% endif %}../../index.html">DINA</a></li>
 	  <li class="breadcrumb-item" aria-current="page"><a href="{% if not showAllNaselja %}../{% endif %}../index.html">Adrese</a></li>
-	  <li class="breadcrumb-item" aria-current="page"><a href="{% if not showAllNaselja %}../{% endif %}report.html">Real-time izveštaj</a></li>
+	  <li class="breadcrumb-item" aria-current="page"><a href="{% if not showAllNaselja %}../{% endif %}report.html">Real-time izvještaj</a></li>
 	  {% else %}
 	  <li class="breadcrumb-item" aria-current="page"><a href="{% if not showAllNaselja %}../{% endif %}../index.html">DINA</a></li>
 	  <li class="breadcrumb-item" aria-current="page"><a href="{% if not showAllNaselja %}../{% endif %}index.html">Adrese</a></li>
@@ -157,7 +157,7 @@
 		{% endif %}
     </script>
 
-<h2>{% if realTime %}Real-time izveštaj{% else %}Izveštaj{% endif %} po {% if showAllNaselja %}svim naseljima{% else %}naseljima{% endif %}</h2>
+<h2>{% if realTime %}Real-time izvještaj{% else %}Izvještaj{% endif %} po {% if showAllNaselja %}svim naseljima{% else %}naseljima{% endif %}</h2>
 <br/>
 {% if realTime %}
 <p>OSM podaci od <b>{{ osmDataDate }}</b></p>

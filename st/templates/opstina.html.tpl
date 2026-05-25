@@ -48,7 +48,7 @@
   <ol class="breadcrumb">
     <li class="breadcrumb-item" aria-current="page"><a href="../../index.html">DINA</a></li>
     <li class="breadcrumb-item" aria-current="page"><a href="../index.html">Ulice</a></li>
-    <li class="breadcrumb-item" aria-current="page"><a href="../report.html">Izveštaj</a></li>
+    <li class="breadcrumb-item" aria-current="page"><a href="../report.html">Izvještaj</a></li>
     <li class="breadcrumb-item active" aria-current="page">{{ opstina.name }}</li>
   </ol>
 </nav>
@@ -139,7 +139,7 @@
 		});
     </script>
 
-<h2>Izveštaj po naseljima</h2>
+<h2>Izvještaj po naseljima</h2>
 <br/>
 
 <p>

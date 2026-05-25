@@ -13,7 +13,7 @@
       </div>
         <div class="modal-body">
             <ul>
-                <li><b>Naselje</b> &mdash; Naselje za koju se odnosi izveštaj</li>
+                <li><b>Naselje</b> &mdash; Naselje za koju se odnosi izvještaj</li>
                 <li><b>Odnos</b> &mdash; Količnik broja zgrada i broja kućnih brojeva</li>
                 <li><b>Broj zgrada (OSM)</b> &mdash; Ukupan broj pronađenih zgrada u OSM-u na teritoriji ovog naselja</li>
                 <li><b>Broj kućnih brojeva (DGU)</b> &mdash; Ukupan broj pronađenih kućnih brojeva u DGU-u na teritoriji ovog naselja</li>
@@ -30,7 +30,7 @@
   <ol class="breadcrumb">
     <li class="breadcrumb-item" aria-current="page"><a href="../../index.html">Adrese</a></li>
 	<li class="breadcrumb-item" aria-current="page"><a href="../index.html">Adrese</a></li>
-	<li class="breadcrumb-item" aria-current="page"><a href="../qa.html">Izveštaji</a></li>
+	<li class="breadcrumb-item" aria-current="page"><a href="../qa.html">Izvještaji</a></li>
     <li class="breadcrumb-item" aria-current="page"><a href="index.html">Odnos zgrada i kućnih brojeva</a></li>
     <li class="breadcrumb-item" aria-current="page">{{ opstina }}</li>
   </ol>

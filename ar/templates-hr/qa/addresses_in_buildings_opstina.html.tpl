@@ -12,7 +12,7 @@
         </button>
       </div>
         <div class="modal-body">
-            Izveštaj je još u fazi izrade. Trenutno nalazi više stvari nego što treba, tako da ga uzmite sa rezervom.
+            Izvještaj je još u fazi izrade. Trenutno nalazi više stvari nego što treba, tako da ga uzmite sa rezervom.
             <ul>
                 <li><b>Zgrada</b> &mdash; OSM zgrada unutar koje su nađene adrese</li>
                 <li><b>Zgradina adresa</b> &mdash; Ukoliko na zgradi ima addr:street i addr:housenumber, ovdje će biti prikazani</li>

@@ -48,7 +48,7 @@
   <ol class="breadcrumb">
     <li class="breadcrumb-item" aria-current="page"><a href="../index.html">DINA</a></li>
     <li class="breadcrumb-item" aria-current="page"><a href="index.html">Ulice</a></li>
-    <li class="breadcrumb-item" aria-current="page">Izveštaj</li>
+    <li class="breadcrumb-item" aria-current="page">Izvještaj</li>
   </ol>
 </nav>
     <!-- Optional JavaScript -->
@@ -132,7 +132,7 @@
 		});
     </script>
 
-<h2>Izveštaj po općinama</h2>
+<h2>Izvještaj po općinama</h2>
 <br/>
 <p>Ovde možete videti statistike po općinama. Klikom na općinu dobijate podatke za tu općinu. U gornjem desnom uglu je filtriranje. Kliknite na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju da razumete kako da tumačite kolone u ovoj tabeli.</p>
 <p>Dostupne su dve analize &ndash; jedna gleda ukupno pokrivene kilometre puta koji su povezani sa DGU-om („Analiza po dužini”), dok druga pokriva slučajeve kada je bar jedna DGU ulica povezana („Analiza po broju”).</p>

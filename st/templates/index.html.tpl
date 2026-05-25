@@ -12,7 +12,7 @@
         </button>
       </div>
       <div class="modal-body">
-          Odaberite izveštaj da vidite sve općine, naselja i ulice i da li su nađene u OSM-u.
+          Odaberite izvještaj da vidite sve općine, naselja i ulice i da li su nađene u OSM-u.
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Zatvori</button>
@@ -37,11 +37,11 @@
 <script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
 
 <div class="text-center">
-    <h1><a href="report.html">Dnevni izveštaj</a></h1>
-    <p>Dnevni izveštaj o OSM ulicama</p>
+    <h1><a href="report.html">Dnevni izvještaj</a></h1>
+    <p>Dnevni izvještaj o OSM ulicama</p>
     <br/><br/>
     <h1><a href="qa.html">Quality assurance</a></h1>
-    <p>Razni izveštaji koji pomažu kvalitetu ulica u Srbiji</p>
+    <p>Razni izvještaji koji pomažu kvalitetu ulica u Srbiji</p>
 </div>
 
 {% endblock %}

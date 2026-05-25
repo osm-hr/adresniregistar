@@ -13,7 +13,7 @@
       </div>
         <div class="modal-body">
             <ul>
-                <li><b>Općina</b> &mdash; Općina za koju se odnosi izveštaj</li>
+                <li><b>Općina</b> &mdash; Općina za koju se odnosi izvještaj</li>
                 <li><b>Odnos</b> &mdash; Količnik broja zgrada i broja kućnih brojeva</li>
                 <li><b>Broj zgrada (OSM)</b> &mdash; Ukupan broj pronađenih zgrada u OSM-u na teritoriji ove općine</li>
                 <li><b>Broj kućnih brojeva (DGU)</b> &mdash; Ukupan broj pronađenih kućnih brojeva u DGU-u na teritoriji ove općine</li>
