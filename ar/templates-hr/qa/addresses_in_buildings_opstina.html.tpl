@@ -154,7 +154,7 @@
 </div>
 
 <div class="collapse" id="collapseOsmFilesNew">
-  Ovde su fajlovi za brisanje adresa kao čvorova i prebacivanje svih njihovih tagova na poligon zgrade.
+  Ovdje su fajlovi za brisanje adresa kao čvorova i prebacivanje svih njihovih tagova na poligon zgrade.
     Morate imati otvoren JOSM prije nego što kliknete na fajl.
 	Klikom na fajl ćete ga učitati u JOSM.
 	Fajlovi su grupirani u grupe od po najviše 10 adresa.

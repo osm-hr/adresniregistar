@@ -16,7 +16,7 @@
       <div class="modal-body">
 		<ul>
 			<li><b>Id (DGU)</b> &mdash; Identifikator ulice u DGU-u (ono što se stavlja u „ref:RS:ulica” tag).
-			Možete da filtrirate po tipu ulice, a dublje objašnjenje kako se formira identifikator možete da vidite <a href="https://community.openstreetmap.org/t/topic/9338/14" target="_blank">ovde na forumu</a>.</li>
+			Možete da filtrirate po tipu ulice, a dublje objašnjenje kako se formira identifikator možete da vidite <a href="https://community.openstreetmap.org/t/topic/9338/14" target="_blank">ovdje na forumu</a>.</li>
 			<li><b>Ulica (DGU)</b> &mdash; Ime ulice iz DGU-a, a posle strelice i pravilno ime ulice kako treba uneti u OSM.
 			Ukoliko nema imena ulice posle strelice, znači da ulice još nema u <a href="https://dina.openstreetmap.rs/ar/street_mapping.html" target="_blank">registru</a>.
 			Klikom na ulicu se otvara geojson.io portal na kome može da se vidi i DGU ulica (crvenom bojom) i sve conflated OSM ulice (plavom bojom).
@@ -153,7 +153,7 @@
 <h2>Izvještaj za {{ naselje.name_lat }}</h2>
 <br/>
 
-<p>Ovde možete vidjeti sve ulice unutar naselja „{{ naselje.name_lat }}” i status konflacije. U gornjem desnom uglu je filtriranje.
+<p>Ovdje možete vidjeti sve ulice unutar naselja „{{ naselje.name_lat }}” i status konflacije. U gornjem desnom uglu je filtriranje.
 Podaci u poslednjoj koloni tabele prikazuju <b>samo potencijalne vrednosti</b> i treba ih koristiti samo kao savete. Potrebno je svaku ulicu otvoriti u editoru i obratiti pažnju prilikom uvoza!
 </p>
 	<p>
@@ -285,7 +285,7 @@ Podaci u poslednjoj koloni tabele prikazuju <b>samo potencijalne vrednosti</b> i
 
 <div class="collapse" id="collapseOsmFilesMatched">
   <br/>
-  Ovde su fajlovi za import ulica iz DGU-a koje se 100% poklapaju po imenu sa ulicama u OSM-u.
+  Ovdje su fajlovi za import ulica iz DGU-a koje se 100% poklapaju po imenu sa ulicama u OSM-u.
 	Morate imati otvoren JOSM pre nego što kliknete na fajl.
 	Klikom na fajl ćete ga učitati u JOSM.
 	Fajlovi su grupisani u grupe od po najviše 10 ulica.

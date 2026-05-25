@@ -68,7 +68,7 @@
 
 <h2>Alternativni nazivi ulica</h2>
 <br/>
-<p>Ovde možete da vidite potencijalne probleme sa „alt_name” tagom za ulice u OpenStreetMap-apa. Moguće je da neka verzija „alt_name” taga fali, a moguće je i da je pogrešna.
+<p>Ovdje možete da vidite potencijalne probleme sa „alt_name” tagom za ulice u OpenStreetMap-apa. Moguće je da neka verzija „alt_name” taga fali, a moguće je i da je pogrešna.
     Klikom na općinu dobijate detaljnije podatke za tu općinu. U gornjem desnom uglu je filtriranje.
     <br/>
     <br/>

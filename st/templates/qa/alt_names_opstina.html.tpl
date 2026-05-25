@@ -32,7 +32,7 @@
             <ul>
                 <li><b>OSM</b> &mdash; Link ka OSM ulici i ime ulice u OSM-u</li>
                 <li><b>„ref:RS:ulica” tag</b> &mdash; Označava da li je ulica spojena sa DGU-om preko „ref:RS:ulica” taga. Ukoliko jeste, prikaza je simbol „✅” i identifikator ulice u DGU-u</li>
-                <li><b>DGU ime</b> &mdash; Ukoliko je OSM ulica spojena sa DGU-om, ovde je navedeno ime ulice u DGU-u</li>
+                <li><b>DGU ime</b> &mdash; Ukoliko je OSM ulica spojena sa DGU-om, ovdje je navedeno ime ulice u DGU-u</li>
                 <li><b>„name” tag</b> &mdash; Vrednost „name” taga iz OSM-a. Navedena su i DGU i OSM imena, čisto da čovek može da ih proveri oba</li>
                 <li><b>„alt_name” tag</b> &mdash; Stanje „alt_name” taga na osnovu algoritma. Pogledajte iznad kako da tumačite ovu kolonu</li>
                 <li><b>„alt_name:sr” tag</b> &mdash; Stanje „alt_name:sr” taga na osnovu algoritma. Pogledajte iznad kako da tumačite ovu kolonu</li>
@@ -132,7 +132,7 @@
 
 <h2>Alternativni nazivi ulica</h2>
 <br/>
-<p>Ovde možete da vidite potencijalne probleme sa „alt_name” tagom za ulice u OpenStreetMap-apa za općinu „{{ opstina_name }}”. Moguće je da „alt_name” tag fali, a moguće je i da je pogrešan.
+<p>Ovdje možete da vidite potencijalne probleme sa „alt_name” tagom za ulice u OpenStreetMap-apa za općinu „{{ opstina_name }}”. Moguće je da „alt_name” tag fali, a moguće je i da je pogrešan.
     <br/>
     Savetujemo da pročitate <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju da bolje razumete kako da tumačite tabelu.
     U gornjem desnom uglu je filtriranje.

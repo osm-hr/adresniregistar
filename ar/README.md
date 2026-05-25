@@ -55,7 +55,7 @@ Sve komande se izvršavaju sa `make <komanda>`. Dostupne su sledeće komande:
   Ova komanda radi razne analize koje se posle koriste prilikom generiranja report-a. Trenutno se rade dve analize:
   * ref:HR:kucni_broj duplikati - nalazimo sve kućne brojeve koji imaju dupli `ref:HR:kucni_broj` tag
   * analiza adresa unutar zgrada. Ukoliko imamo adresu ili POI koji je unutar zgrade (way-a building-a), detektujemo ga
-  ovde i pokušavamo da uradimo kategorizaciju, tj. da vidimo da li je ovo OK ili nije, i ako nije, šta možemo da uradimo
+  ovdje i pokušavamo da uradimo kategorizaciju, tj. da vidimo da li je ovo OK ili nije, i ako nije, šta možemo da uradimo
   ovo ovoga.
 
 

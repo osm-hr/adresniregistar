@@ -12,7 +12,7 @@
         </button>
       </div>
       <div class="modal-body">
-		  Ovde su izlistane sve adrese iz OSM-a kojima je "ref:HR:kucni_broj" dupliciran, tj. više OSM adresa deli istu referencu ka DGU adresi.
+		  Ovdje su izlistane sve adrese iz OSM-a kojima je "ref:HR:kucni_broj" dupliciran, tj. više OSM adresa deli istu referencu ka DGU adresi.
 		  <br/>
 		  Ovo ne sme da se dešava i verovatno je samo jedna adresa iz OSM-a "prava", tj. dobra dok su ostale greška.
       </div>

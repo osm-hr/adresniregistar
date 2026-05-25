@@ -57,7 +57,7 @@
 
 <h2>Engleski nazivi ulica</h2>
 <br/>
-<p>Ovde možete da vidite potencijalne probleme sa „name:en” tagom za ulice u OpenStreetMap-apa. Moguće je da „name:en” tag bude nepotreban, a moguće je i da bude označen kao „sumnjiv”.
+<p>Ovdje možete da vidite potencijalne probleme sa „name:en” tagom za ulice u OpenStreetMap-apa. Moguće je da „name:en” tag bude nepotreban, a moguće je i da bude označen kao „sumnjiv”.
     Klikom na općinu dobijate detaljnije podatke za tu općinu. U gornjem desnom uglu je filtriranje.
     <br/>
     <br/>

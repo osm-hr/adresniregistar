@@ -99,7 +99,7 @@
 
 <h2>Neslaganje imena ulica</h2>
 <br/>
-<p>Ovde možete da vidite sve ulice preko čije geometrije prelazi ulica sa različitim imenom (i ta ulica nije povezana preko <code>ref:RS:ulica</code> taga sa DGU ulicama. To znači da ulica nije dobro povezana, ili da u blizini ima druga ulica koja nije dobro povezana.
+<p>Ovdje možete da vidite sve ulice preko čije geometrije prelazi ulica sa različitim imenom (i ta ulica nije povezana preko <code>ref:RS:ulica</code> taga sa DGU ulicama. To znači da ulica nije dobro povezana, ili da u blizini ima druga ulica koja nije dobro povezana.
     Klikom na općinu dobijate detaljnije podatke za tu općinu. U gornjem desnom uglu je filtriranje.
     <br/>
     <br/>

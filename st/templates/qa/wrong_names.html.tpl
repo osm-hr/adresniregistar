@@ -60,7 +60,7 @@
 
 <h2>Loši nazivi ulica</h2>
 <br/>
-<p>Ovde možete da vidite sve ulice u OpenStreetMap-apa koje na neki način nemaju dobar neki od „name” tagova. U obzir su uzete i ulice koje imaju „ref:RS:ulica” tag (urađena konflacija), kao i one bez konflacije.
+<p>Ovdje možete da vidite sve ulice u OpenStreetMap-apa koje na neki način nemaju dobar neki od „name” tagova. U obzir su uzete i ulice koje imaju „ref:RS:ulica” tag (urađena konflacija), kao i one bez konflacije.
     Klikom na općinu dobijate detaljnije podatke za tu općinu. U gornjem desnom uglu je filtriranje.
     <br/>
     <br/>

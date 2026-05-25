@@ -64,7 +64,7 @@
 <h2>Analiza stambenih zajednica</h2>
 <br/>
 
-<p>Ovde je spisak svih stambenih zajednica iz DGU-a. Ovo nam pomaže da sve zgrade koje se vode kao stambene zajednice
+<p>Ovdje je spisak svih stambenih zajednica iz DGU-a. Ovo nam pomaže da sve zgrade koje se vode kao stambene zajednice
 tagujemo u OSM-u kao <code>building=apartments</code>. Pročitajte na dnu kako su ovi podaci izgenerirani i kako da ih tumačite.
     Klikom na općinu dobijate podatke za tu općinu. U gornjem desnom uglu je filtriranje.
     U gornjem desnom uglu je filtriranje. Klikom na "Pomoć" u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.
@@ -162,7 +162,7 @@ Plotly.newPlot('tester', data, layout, {displayModeBar: false});
 <br/>
 <p>DGU, nažalost, u spisku stambenih zajednica daje samo općinu, ulicu i broj. Ne daje identifikator adrese iz adresnom registra,
 ne daje geografsku širinu i visinu adrese, a često se ni imena ulica iz registra stambenih zajednica i adresnog registra ne slažu!
-Zbog ovoga je proces spajanja ovih adresa otežan i ovde je pokušano da se spoji što se više moglo, ali ne treba očekivati 100% poklapanja.
+Zbog ovoga je proces spajanja ovih adresa otežan i ovdje je pokušano da se spoji što se više moglo, ali ne treba očekivati 100% poklapanja.
 <br/>
 <br/>
 Prvo se, na osnovu općine, ulice i kućnog broja, proba da nađe takva adresa u adresnom registru DGU-a. Ako se to ne uspe (obično jer se ulice

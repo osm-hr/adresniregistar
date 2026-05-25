@@ -41,7 +41,7 @@
 
     <h2>Quality assurance</h2>
     <br/>
-    <p>Ovde možete vidjeti neke od QA izvještaja</p>
+    <p>Ovdje možete vidjeti neke od QA izvještaja</p>
     <br/>
     <h3>Geometrijski QA</h3>
     <br/>

@@ -18,8 +18,8 @@
 			<li><b>Izvor</b> &mdash; Odakle DINA platforma misli da je ovo pravilno ime ulice.
 			Može biti: „ručno provereno” (ljudi su ručno gledali kroz tabelu i proveravali), „OSM” (neko je koristio već ovo ime u OSM-u),
 			„ref:HR:ulica” (neka ulica je povezana sa registrom i nosi ovo ime) i „Algoritam” (nikako drugačije ulica nije nađena, pa je algoritam heuristikom pokušao da nađe najbolje ime za ulicu)</li>
-			<li><b>Reference</b> &mdash; Ukoliko je ime uzeto iz OSM-a ili preko ref:HR:ulica taga, ovde su navedene neke reference (ukoliko ih ima više od 5, samo prvih 5 su navedene)</li>
-			<li><b>Izuzeci po ID-ovima ulica</b> &mdash; Ukoliko u nekoj općini, po nekom ID-u ulice, standardni naziv nije tačan, ID ulice će biti naveden ovde</li>
+			<li><b>Reference</b> &mdash; Ukoliko je ime uzeto iz OSM-a ili preko ref:HR:ulica taga, ovdje su navedene neke reference (ukoliko ih ima više od 5, samo prvih 5 su navedene)</li>
+			<li><b>Izuzeci po ID-ovima ulica</b> &mdash; Ukoliko u nekoj općini, po nekom ID-u ulice, standardni naziv nije tačan, ID ulice će biti naveden ovdje</li>
 		</ul>
       </div>
       <div class="modal-footer">
@@ -52,7 +52,7 @@
     Na osnovu ovih naziva se generišu imena ulica za uvoz adresa, kao i detektuju sve greške u QA analizama.
     <br/>
     Kako smo došli do baš ovakvih naziva možete pogledati na <a href="https://community.openstreetmap.org/t/upisivanje-dgu-adresa-u-hrvatsku/137215">temi na forumu</a>.
-    Ukoliko primetite neku grešku, molimo Vas da prijavite grešku <a href="https://github.com/osm-hr/adresniregistar/issues/new">ovde</a> (potrebno je prvo se registrirati), ili ostavite komentar na istoj
+    Ukoliko primetite neku grešku, molimo Vas da prijavite grešku <a href="https://github.com/osm-hr/adresniregistar/issues/new">ovdje</a> (potrebno je prvo se registrirati), ili ostavite komentar na istoj
     <a href="https://community.openstreetmap.org/t/upisivanje-dgu-adresa-u-hrvatsku/137215/1">temi na forumu</a>,
     a možete poslati izmenu <a href="https://github.com/osm-hr/adresniregistar-ispravci/">direktno kao PR</a>, ako Vam je to lakše.
     Ukoliko se, pak ne slažete sa nekim ispravkama, najbolje je da koristite forum (ukoliko imate i on-the-ground informaciju kao npr. sliku sa tablom adrese - tim bolje!).

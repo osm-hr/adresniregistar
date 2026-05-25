@@ -56,7 +56,7 @@
 
 <h2>Int nazivi ulica</h2>
 <br/>
-<p>Ovde možete da vidite potencijalne probleme sa „int_name” tagom za ulice u OpenStreetMap-apa. Moguće je da „int_name” tag fali, a moguće je i da je pogrešan.
+<p>Ovdje možete da vidite potencijalne probleme sa „int_name” tagom za ulice u OpenStreetMap-apa. Moguće je da „int_name” tag fali, a moguće je i da je pogrešan.
     Klikom na općinu dobijate detaljnije podatke za tu općinu. U gornjem desnom uglu je filtriranje.
     <br/>
     <br/>

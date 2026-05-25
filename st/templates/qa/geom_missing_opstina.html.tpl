@@ -19,7 +19,7 @@
 		<ul>
 		    <li><b>Naselje</b> &mdash; Naselje kojem pripada ulica. Klik na naselje vodi do izvještaja za sve ulice u tom naselju.</li>
 			<li><b>Id (DGU)</b> &mdash; Identifikator ulice u DGU-u (ono što se stavlja u „ref:RS:ulica” tag).
-			Možete da filtrirate po tipu ulice, a dublje objašnjenje kako se formira identifikator možete da vidite <a href="https://community.openstreetmap.org/t/topic/9338/14" target="_blank">ovde na forumu</a>.</li>
+			Možete da filtrirate po tipu ulice, a dublje objašnjenje kako se formira identifikator možete da vidite <a href="https://community.openstreetmap.org/t/topic/9338/14" target="_blank">ovdje na forumu</a>.</li>
 			<li><b>Ulica (DGU)</b> &mdash; Ime ulice iz DGU-a, a posle strelice i pravilno ime ulice kako treba uneti u OSM.
 			Ukoliko nema imena ulice posle strelice, znači da ulice još nema u <a href="https://dina.openstreetmap.rs/ar/street_mapping.html" target="_blank">registru</a>.
 			Klikom na ulicu se otvara geojson.io portal na kome može da se vidi i DGU ulica (crvenom bojom) i sve conflated OSM ulice (plavom bojom).
@@ -172,7 +172,7 @@
 <h2>Izvještaj nedostajućih geometrija za {{ opstina_name }}</h2>
 <br/>
 
-<p>Ovde možete vidjeti sve ulice unutar općine „{{ opstina_name }}” kojima se geometrije u DGU-u i u OSM-u ne poklapaju. Razlikujemo dva slučaja:
+<p>Ovdje možete vidjeti sve ulice unutar općine „{{ opstina_name }}” kojima se geometrije u DGU-u i u OSM-u ne poklapaju. Razlikujemo dva slučaja:
 <ul>
     <li>
         <b>Potrebna konflacija</b> &mdash; OSM ima kandidate ulice, ali nisu povezane. U ovom slučaju treba prosto povezati te ulice ukoliko je to moguće
