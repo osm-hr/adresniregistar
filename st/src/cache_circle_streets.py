@@ -24,7 +24,7 @@ def is_circle(geom) -> bool:
 
     geometries = list(shapely.get_parts(geom))
 
-    if len(geometries) >= 100:  # This is cutoff for what we thing circle geometry can be in RGZ. This speeds up this O(N^2) calculations
+    if len(geometries) >= 100:  # This is cutoff for what we thing circle geometry can be in DGU. This speeds up this O(N^2) calculations
         return False
 
     # We iterate for all LineStrings in this MultiLineString. We check each pair of LineString and compare them to see
@@ -108,7 +108,7 @@ def main():
         print(f"    Skipping creation of cache_circle, already exists")
         return
 
-    print(f"Loading RGZ streets")
+    print(f"Loading DGU streets")
     df_rgz = pd.read_csv(input_rgz_file)
     df_rgz['rgz_geometry'] = df_rgz.rgz_geometry.apply(wkt.loads)
     gdf_rgz = gpd.GeoDataFrame(df_rgz, geometry='rgz_geometry', crs="EPSG:4326")

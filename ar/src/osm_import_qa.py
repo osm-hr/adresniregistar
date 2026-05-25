@@ -27,7 +27,7 @@ def do_analysis(data_path, street_mappings: StreetMapping):
 
     input_rgz_file = os.path.join(data_path, 'rgz/addresses.csv')
     if not os.path.exists(input_rgz_file):
-        print(f"    Missing file {input_rgz_file}, cannot load RGZ addresses")
+        print(f"    Missing file {input_rgz_file}, cannot load DGU addresses")
         return
 
     print("    Loading OSM addresses...", end='')
@@ -43,7 +43,7 @@ def do_analysis(data_path, street_mappings: StreetMapping):
     gdf_osm.sindex
     print(f"found {len(gdf_osm)} addresses in OSM with {settings.HOUSE_REF_TAG}")
 
-    print("    Loading RGZ addresses...", end='')
+    print("    Loading DGU addresses...", end='')
     df_rgz = pd.read_csv(input_rgz_file, dtype={'rgz_kucni_broj_id': str})
     df_rgz['rgz_geometry'] = df_rgz.rgz_geometry.apply(wkt.loads)
     gdf_rgz = gpd.GeoDataFrame(df_rgz, geometry='rgz_geometry', crs="EPSG:4326")
@@ -54,9 +54,9 @@ def do_analysis(data_path, street_mappings: StreetMapping):
     gdf_rgz['rgz_kucni_broj_norm'] = gdf_rgz.rgz_kucni_broj.apply(lambda x: normalize_name_latin(x))
     gdf_rgz['rgz_opstina_lat'] = gdf_rgz['rgz_opstina'].apply(lambda x: cyr2lat(x))
     gdf_rgz.sindex
-    print(f"found {len(gdf_rgz)} addresses in RGZ")
+    print(f"found {len(gdf_rgz)} addresses in DGU")
 
-    print("    Joining OSM and RGZ addresses...", end='')
+    print("    Joining OSM and DGU addresses...", end='')
     joined = pd.merge(gdf_osm, gdf_rgz, how='left', left_on=settings.HOUSE_REF_TAG, right_on='rgz_kucni_broj_id')
     joined['distance'] = joined.osm_geometry.distance(joined.rgz_geometry)
     joined['street_perfect_match'] = joined[['rgz_ulica_proper', 'osm_street']].apply(lambda x: x['rgz_ulica_proper'] == x['osm_street'], axis=1)

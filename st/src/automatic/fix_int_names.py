@@ -29,9 +29,9 @@ def fix_int_names(data_path, street_mappings: StreetMapping, oauth_session: OAut
         additional_comment = f'in {opstina} '
     api = osmapi.OsmApi(session=oauth_session)
     api.ChangesetCreate({
-        "comment": f"RGZ street import {additional_comment}(fixing and adding int_name on street names, https://community.openstreetmap.org/t/uvoz-adresnog-registra-pravila-tagovanja-ulica-u-srbiji/106126)",
+        "comment": f"DGU street import {additional_comment}(fixing and adding int_name on street names, https://community.openstreetmap.org/t/uvoz-adresnog-registra-pravila-tagovanja-ulica-u-srbiji/106126)",
         "tag": "mechanical=yes",
-        "source": "RGZ_ST"
+        "source": "DGU_ST"
     })
 
     qa_path = os.path.join(data_path, 'qa')
@@ -67,7 +67,7 @@ def fix_int_names(data_path, street_mappings: StreetMapping, oauth_session: OAut
         if 'name' not in entity['tag']:
             print(f"Entity {osm_id} do not have name, skipping")
             continue
-        is_conflated = 'ref:RS:ulica' in entity['tag']
+        is_conflated = 'ref:HR:ulica' in entity['tag']
 
         current_street_name = entity['tag']['name']
         current_int_name = entity['tag']['int_name'] if 'int_name' in entity['tag'] else None
@@ -76,7 +76,7 @@ def fix_int_names(data_path, street_mappings: StreetMapping, oauth_session: OAut
         if is_conflated:
             rgz_name = street['rgz_ulica_proper']
             if rgz_name != current_street_name:
-                print(f"RGZ {rgz_name} and current name {current_street_name} do not match, skipping")
+                print(f"DGU {rgz_name} and current name {current_street_name} do not match, skipping")
                 continue
             proper_int_name = cyr2intname(rgz_name)
             if current_int_name and current_int_name == proper_int_name:

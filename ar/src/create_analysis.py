@@ -91,8 +91,8 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
     gdf_rgz['rgz_kucni_broj_norm'] = gdf_rgz.rgz_kucni_broj.apply(normalize_name)
     gdf_rgz.sindex
 
-    # First we will join RGZ and OSM on "ref:RS:kucni_broj. During this process, we calculate distance and remove extra
-    # (not-needed) columns. We need to watch out if same "ref:RS:kucni_broj" exists 2 times in OSM! In this case,
+    # First we will join DGU and OSM on "ref:HR:kucni_broj. During this process, we calculate distance and remove extra
+    # (not-needed) columns. We need to watch out if same "ref:HR:kucni_broj" exists 2 times in OSM! In this case,
     # we take closer address. We don't worry about it here, as we will have QA to report on this.
     print(f"    Joining addresses in {settings.CADASTRE_AUTHORITY_ABBR} and OSM in {opstina} by conflation (settings.HOUSE_REF_TAG)")
     gdf_osm['osm_housenumber'] = gdf_osm['osm_housenumber'].astype('str')  # For some reason, we need to explicitely cast this to string
@@ -107,7 +107,7 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
     gdf_rgz.sindex
 
     # Now we try to find the closest matching addresses when there is no conflation.
-    # For this, we first need to create 200m buffer on which we will join RGZ to OSM.
+    # For this, we first need to create 200m buffer on which we will join DGU to OSM.
     print(f"    Buffering {settings.CADASTRE_AUTHORITY_ABBR} addresses for 200m in {opstina}")
     gdf_rgz['rgz_buffered_geometry'] = gdf_rgz.rgz_geometry.buffer(distance=200)
     gdf_rgz.set_geometry('rgz_buffered_geometry', inplace=True)
@@ -119,7 +119,7 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
     joined['distance'] = joined.rgz_geometry.distance(joined.osm_geometry)
     joined.sindex
 
-    # At this point we have multiple rows for each RGZ address (those are RGZ-OSM pair within 200m).
+    # At this point we have multiple rows for each DGU address (those are DGU-OSM pair within 200m).
     # For each pair, we will calculate "score" of how close they are matching with name. Also calculate perfect matches.
     print(f"    Calculating score and matches for addresses in {opstina}")
     joined['score'] = joined.apply(lambda row: calculate_score(
@@ -134,8 +134,8 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
     joined.loc[(joined.osm_id.isin(matched_osm_id)) & (joined.matching == False), ['score']] = 0.0
     joined.loc[(joined.osm_id.isin(matched_osm_id)) & (joined.matching == False), ['index_right', 'osm_id', 'osm_street', 'osm_housenumber', settings.STREET_REF_TAG, settings.HOUSE_REF_TAG, 'osm_geometry', 'osm_street_norm', 'osm_housenumber_norm', 'distance']] = np.nan
 
-    # Since we might have multiple addresses from OSM associated to various RGZ addresses,
-    # we should keep only one of those. It doesn't make sense to offer same OSM address for multiple RGZ addresses.
+    # Since we might have multiple addresses from OSM associated to various DGU addresses,
+    # we should keep only one of those. It doesn't make sense to offer same OSM address for multiple DGU addresses.
     # Sort by score and take first one, reset other.
     print(f"    Removing duplicated partially matched addresses in {opstina}")
     joined.sort_values(['osm_id', 'score'], ascending=[True, False], inplace=True)
@@ -148,7 +148,7 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping):
 
     # Out of all these calculated pairs, we want to pick only best one. For this, we use ranking function.
     # Sort by matching and score (and osm_id to always get consistent result), and get cumulative sum rank.
-    # Once we take only rank=1, we get best candidates. This is how we remove rest of all those RGZ-OSM pairs.
+    # Once we take only rank=1, we get best candidates. This is how we remove rest of all those DGU-OSM pairs.
     print(f"    Finding best matches for addresses in {opstina}")
     joined.sort_values(['rgz_kucni_broj_id', 'matching', 'score', 'osm_id'], ascending=[True, False, False, False], inplace=True)
     joined['rank'] = 1

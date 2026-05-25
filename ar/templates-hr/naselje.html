@@ -15,7 +15,7 @@
       </div>
       <div class="modal-body">
 		<ul>
-			<li><b>Id (RGZ)</b> &mdash; Identifikator adrese u DGU-u</li>
+			<li><b>Id (DGU)</b> &mdash; Identifikator adrese u DGU-u</li>
 			<li><b>Ulica i kućni broj (DGU)</b> &mdash; Ime ulice iz DGU-a</li>
 			<li><b>Lokacija (DGU)</b> &mdash; Pozicija adrese iz DGU-a</li>
 			<li><b>Conflated adresa</b> &mdash; Da li je napravljena konflacija i sa kojom adresom</li>
@@ -36,7 +36,7 @@
 	  {% if realTime %}
 	  <li class="breadcrumb-item" aria-current="page"><a href="../../../../index.html">DINA</a></li>
 	  <li class="breadcrumb-item" aria-current="page"><a href="../../../index.html">Adrese</a></li>
-	  <li class="breadcrumb-item" aria-current="page"><a href="../../report.html">Real-time izveštaj</a></li>
+	  <li class="breadcrumb-item" aria-current="page"><a href="../../report.html">Real-time izvještaj</a></li>
 	  {% else %}
 	  <li class="breadcrumb-item" aria-current="page"><a href="../../../index.html">DINA</a></li>
 	  <li class="breadcrumb-item" aria-current="page"><a href="../../index.html">Adrese</a></li>
@@ -77,7 +77,7 @@
     </script>
 
 
-<h2>{% if realTime %}Real-time izveštaj{% else %}Izveštaj{% endif %} za {{ naselje.name_lat }}</h2>
+<h2>{% if realTime %}Real-time izvještaj{% else %}Izvještaj{% endif %} za {{ naselje.name_lat }}</h2>
 <br/>
 {% if realTime %}
 <p>OSM podaci od <b>{{ osmDataDate }}</b></p>
@@ -192,7 +192,7 @@
 {% if len(osm_files_matched_addresses) > 0 %}
 <div class="collapse" id="collapseOsmFilesMatched">
   <br/>
-  Ovde su datoteke za import adresa iz DGU-a koje se 100% poklapaju po adresi i kućnom broju sa adresama u OSM-u.
+  Ovdje su datoteke za import adresa iz DGU-a koje se 100% poklapaju po adresi i kućnom broju sa adresama u OSM-u.
 	Morate imati otvoren JOSM prije klikanja na datoteku.
 	Klikom na datoteku ćete ju učitati u JOSM.
 	Datoteke su grupirane u grupe od po najviše 100 adresa.

@@ -117,8 +117,8 @@ def main(output_csv_file_path, output_csv_folder):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='prepare_rgz_data.py - Extract RGZ .zip files and creates addresses.csv')
-    parser.add_argument('--output-csv-file', default=None, required=True, help='Output CSV file for all RGZ streets')
-    parser.add_argument('--output-csv-folder', default=None, required=True, help='Output directory for RGZ streets per municipality')
+        description='prepare_rgz_data.py - Extract DGU .zip files and creates addresses.csv')
+    parser.add_argument('--output-csv-file', default=None, required=True, help='Output CSV file for all DGU streets')
+    parser.add_argument('--output-csv-folder', default=None, required=True, help='Output directory for DGU streets per municipality')
     args = parser.parse_args()
     main(args.output_csv_file, args.output_csv_folder)

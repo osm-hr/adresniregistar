@@ -54,7 +54,7 @@ class OsmEntitiesOverpassCacheHandler:
                     node(id:{node_id_list});
                 );
                 out meta;
-                // &contact=https://gitlab.com/osm-serbia/adresniregistar
+                // &contact=https://github.com/osm-hr/adresniregistar
             """)
             for n in response.nodes:
                 if n.id not in self.nodes_cache:
@@ -77,7 +77,7 @@ class OsmEntitiesOverpassCacheHandler:
                 );
                 (._;>;);
                 out meta;
-                // &contact=https://gitlab.com/osm-serbia/adresniregistar
+                // &contact=https://github.com/osm-hr/adresniregistar
             """)
             for n in response.nodes:
                 if n.id not in self.nodes_cache:

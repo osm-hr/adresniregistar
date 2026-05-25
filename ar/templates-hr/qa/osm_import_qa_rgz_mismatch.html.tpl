@@ -13,7 +13,7 @@
       </div>
       <div class="modal-body">
 		<ul>
-			<li><b>Opština</b> &mdash; Opština analize</li>
+			<li><b>Općina</b> &mdash; Općina analize</li>
 			<li><b>#</b> &mdash; Ukupan broj adresa unutar zgrada</li>
 		</ul>
       </div>
@@ -29,7 +29,7 @@
     <li class="breadcrumb-item" aria-current="page"><a href="../index.html">DINA</a></li>
 	<li class="breadcrumb-item" aria-current="page"><a href="index.html">Adrese</a></li>
 	<li class="breadcrumb-item" aria-current="page"><a href="qa.html">QA</a></li>
-	<li class="breadcrumb-item" aria-current="page">Kvalitet uvoza - nepoklapanje sa RGZ-om</li>
+	<li class="breadcrumb-item" aria-current="page">Kvalitet uvoza - nepoklapanje sa DGU-om</li>
   </ol>
 </nav>
     <!-- Optional JavaScript -->
@@ -95,11 +95,11 @@
 	} );
     </script>
 
-<h2>Kvalitet uvoza - nepoklapanje sa RGZ-om</h2>
+<h2>Kvalitet uvoza - nepoklapanje sa DGU-om</h2>
 <br/>
-<p>Ovde možete videti OSM adrese koje imaju tag <code>ref:RS:kucni_broj</code>, ali se nešto ne poklapa sa RGZ-om.
+<p>Ovdje možete vidjeti OSM adrese koje imaju tag <code>ref:HR:kucni_broj</code>, ali se nešto ne poklapa sa DGU-om.
     <br/>
-    Može biti da u RGZ-u nema te reference, da je ulica delimično (⚠️) ili potpuno (❌) pogrešna, ili da je kućni broj delimično (⚠️) ili potpuno (❌) pogrešan.
+    Može biti da u DGU-u nema te reference, da je ulica delimično (⚠️) ili potpuno (❌) pogrešna, ili da je kućni broj delimično (⚠️) ili potpuno (❌) pogrešan.
     <br/>
     Nisu sve stvari isto bitne, pa postoji i kolona prioritet. Sa gornje desne strane tabele je filter kojim može da se isfiltrira tip greške.
     <br/>
@@ -134,12 +134,12 @@
 		<th>OSM entitet</th>
 		<th>OSM adresa</th>
         <th>OSM kućni broj</th>
-        <th>Nađen u RGZ-u</th>
-        <th>RGZ opština</th>
-        <th>RGZ adresa</th>
-        <th>RGZ adresa poklapanje</th>
-        <th>RGZ kućni broj</th>
-        <th>RGZ kućni broj poklapanje</th>
+        <th>Nađen u DGU-u</th>
+        <th>DGU općina</th>
+        <th>DGU adresa</th>
+        <th>DGU adresa poklapanje</th>
+        <th>DGU kućni broj</th>
+        <th>DGU kućni broj poklapanje</th>
         <th>Beleška</th>
 	</tr>
 </thead>

@@ -25,14 +25,14 @@ def fix_names(data_path, street_mappings: StreetMapping, oauth_session: OAuth2Se
         additional_comment = f'in {opstina} '
     api = osmapi.OsmApi(session=oauth_session)
     api.ChangesetCreate({
-        "comment": f"RGZ address import {additional_comment}(fixing name:sr and name:sr-Latn on conflated ways, https://community.openstreetmap.org/t/topic/9338/18)",
+        "comment": f"DGU address import {additional_comment}(fixing name:sr and name:sr-Latn on conflated ways, https://community.openstreetmap.org/t/topic/9338/18)",
         "tag": "mechanical=yes",
-        "source": "RGZ_ST"
+        "source": "DGU_ST"
     })
 
     qa_path = os.path.join(data_path, 'qa')
     df_wrong_names = pd.read_csv(os.path.join(qa_path, 'wrong_street_names.csv'))
-    df_wrong_names = df_wrong_names[pd.notna(df_wrong_names['ref:RS:ulica'])]
+    df_wrong_names = df_wrong_names[pd.notna(df_wrong_names['ref:HR:ulica'])]
     df_wrong_names = df_wrong_names[~df_wrong_names.wrong_name]
     df_wrong_names = df_wrong_names[~df_wrong_names.missing_name]
     if opstina:
@@ -66,8 +66,8 @@ def fix_names(data_path, street_mappings: StreetMapping, oauth_session: OAuth2Se
         if 'name' not in entity['tag']:
             print(f"Entity {osm_id} do not have name, skipping")
             continue
-        if 'ref:RS:ulica' not in entity['tag']:
-            print(f"Entity {osm_id} do not have ref:RS:ulica, skipping")
+        if 'ref:HR:ulica' not in entity['tag']:
+            print(f"Entity {osm_id} do not have ref:HR:ulica, skipping")
             continue
 
         current_street_name = entity['tag']['name']

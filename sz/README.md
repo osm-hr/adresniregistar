@@ -7,13 +7,13 @@ Pokrenuti `python3 -m pip install -r requirements.txt` za instalaciju svih zavis
 
 Za sad treba skinuti i .ods fajl sa https://data.gov.rs/sr/datasets/registar-stambenikh-zajednitsa-2/ i sačuvati ga u `data/registarstambenihzajednica.csv`.
 
-## Korišćenje
+## Korištenje
 
-Za generisanje `data/sz_analysis.csv` (izlaz analize) možete pokrenuti `python3 src/sz_analysis.py --data-path <putanja>`.
+Za generiranje `data/sz_analysis.csv` (izlaz analize) možete pokrenuti `python3 src/sz_analysis.py --data-path <putanja>`.
 
-`--data-path` je putanja do `ar/` direktorijuma gde se nalaze već generisani fajlovi (pogledajti [README.md](../ar/README.md) ar/ projekta).
+`--data-path` je putanja do `ar/` direktorijuma gde se nalaze već generirani fajlovi (pogledajti [README.md](../ar/README.md) ar/ projekta).
 
-Kada imate `data/sz_analysis.csv`, možete pokrenuti `python3 src/report.py` da izgenerišete HTML fajlove u `output/` direktorijumu.
+Kada imate `data/sz_analysis.csv`, možete pokrenuti `python3 src/report.py` da izgenerirate HTML fajlove u `output/` direktorijumu.
 
 Postoji i skripta `run.sh` koja radi sve ovo i upload-uje na server.
 

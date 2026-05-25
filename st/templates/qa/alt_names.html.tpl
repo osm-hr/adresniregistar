@@ -12,8 +12,8 @@
         </button>
       </div>
       <div class="modal-body">
-        Ovaj izveštaj proverava da li ime ulice treba da ima pridružen „alt_name” tag. Ime ulice se uzima iz RGZ-a ako postoji
-        (ako je way spojen preko „ref:RS:ulica” taga), a ako ne postoji - uzima se „name”/„name:sr”/„name:sr-Latn” tag.
+        Ovaj izvještaj proverava da li ime ulice treba da ima pridružen „alt_name” tag. Ime ulice se uzima iz DGU-a ako postoji
+        (ako je way spojen preko „ref:HR:ulica” taga), a ako ne postoji - uzima se „name”/„name:sr”/„name:sr-Latn” tag.
         Heuristika proverava da li ime ulice sadrži broj (ili kao arapske cifre, ili kao napisane brojeve), ili reč "doktor" i pokušava
         da pogodi koji bi „alt_name” tag trebao da bude (ovo su jedine provere za sad).
         Zbog specifičnosti srpskog jezika (rodovi, padeži i sl.), nekad ne može da se odredi kako bi „alt_name” trebalo da izgleda,
@@ -21,7 +21,7 @@
         <br><br>
         Kolone u tabeli:
 		<ul>
-			<li><b>Opština</b> &mdash; Opština analize</li>
+			<li><b>Općina</b> &mdash; Općina analize</li>
 			<li><b># Pogrešan „alt_name”</b> &mdash; Ukupan broj adresa gde „alt_name” tag postoji, ali heuristika sumnja da nije pravilno napisan. Ne znači da je „alt_name” pogrešan, možda je i „name” tag pogrešan, a možda i algoritam greši!</li>
 			<li><b># Nedostaje „alt_name”</b> &mdash; Ukupan broj adresa gde heuristika kaže da „alt_name” tag treba da postoji, ali nije nađen</li>
 			<li><b># Pogrešan „alt_name:sr”</b> &mdash; Ukupan broj adresa gde „alt_name:sr” tag postoji, ali heuristika sumnja da nije pravilno napisan. Ne znači da je „alt_name:sr” pogrešan, možda je i „name:sr” tag pogrešan, a možda i algoritam greši!</li>
@@ -68,14 +68,14 @@
 
 <h2>Alternativni nazivi ulica</h2>
 <br/>
-<p>Ovde možete da vidite potencijalne probleme sa „alt_name” tagom za ulice u OpenStreetMap-apa. Moguće je da neka verzija „alt_name” taga fali, a moguće je i da je pogrešna.
-    Klikom na opštinu dobijate detaljnije podatke za tu opštinu. U gornjem desnom uglu je filtriranje.
+<p>Ovdje možete da vidite potencijalne probleme sa „alt_name” tagom za ulice u OpenStreetMap-apa. Moguće je da neka verzija „alt_name” taga fali, a moguće je i da je pogrešna.
+    Klikom na općinu dobijate detaljnije podatke za tu općinu. U gornjem desnom uglu je filtriranje.
     <br/>
     <br/>
     Da biste bolje razumeli značenje kolona u tabeli, pogledajte <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a>.
     <br/>
     <br/>
-    <b>Pažljivo prilikom otvaranja opština preko 5.000 adresa, računar i browser mogu da se uspore znatno!</b>
+    <b>Pažljivo prilikom otvaranja općina preko 5.000 adresa, računar i browser mogu da se uspore znatno!</b>
 </p>
 <br/>
 <br/>
@@ -83,7 +83,7 @@
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-50">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>Opština</th>
+		<th>Općina</th>
 		<th># Pogrešan „alt_name”</th>
 		<th># Nedostaje „alt_name”</th>
 		<th># Pogrešan „alt_name:sr”</th>

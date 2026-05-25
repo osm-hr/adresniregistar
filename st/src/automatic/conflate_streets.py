@@ -19,9 +19,9 @@ def do_opstina(data_path, street_mappings: StreetMapping, opstina, oauth_session
 
     api = osmapi.OsmApi(session=oauth_session)
     api.ChangesetCreate({
-        "comment": f"RGZ address import in {opstina} (adding ref:RS:ulica to existing ways, https://community.openstreetmap.org/t/topic/9338/18)",
+        "comment": f"DGU address import in {opstina} (adding ref:HR:ulica to existing ways, https://community.openstreetmap.org/t/topic/9338/18)",
         "tag": "mechanical=yes",
-        "source": "RGZ_ST"
+        "source": "DGU_ST"
     })
 
     analysis_path = os.path.join(data_path, 'analysis')
@@ -60,18 +60,18 @@ def do_opstina(data_path, street_mappings: StreetMapping, opstina, oauth_session
             current_street_name = entity['tag']['name']
 
             print(f'https://www.openstreetmap.org/way/{way_id}')
-            if 'ref:RS:ulica' in entity['tag']:
+            if 'ref:HR:ulica' in entity['tag']:
                 print(f"Already done {current_street_name}, skipping")
                 continue
 
-            entity['tag']['ref:RS:ulica'] = str(address.rgz_ulica_mb)
+            entity['tag']['ref:HR:ulica'] = str(address.rgz_ulica_mb)
             accepted = False
 
             while True:
                 if INTERACTIVE:
-                    response = input(f"({i}/{len(only_matched_addresses)}) Are you sure you want to add ref:RS:ulica={str(address.rgz_ulica_mb)} to {current_street_name} (Y/n/c)?")
+                    response = input(f"({i}/{len(only_matched_addresses)}) Are you sure you want to add ref:HR:ulica={str(address.rgz_ulica_mb)} to {current_street_name} (Y/n/c)?")
                 else:
-                    print(f"({i}/{len(only_matched_addresses)}) +ref:RS:ulica={str(address.rgz_ulica_mb)} @ {current_street_name}")
+                    print(f"({i}/{len(only_matched_addresses)}) +ref:HR:ulica={str(address.rgz_ulica_mb)} @ {current_street_name}")
                     response = 'y'
                 if response == '' or response.lower() == 'y' or response.lower() == u'з':
                     accepted = True
@@ -103,7 +103,7 @@ def main():
     data_path = os.path.join(cwd, 'data')
 
     parser = argparse.ArgumentParser(
-        description='conflate_streets.py - Adds ref:RS:ulica to ways it is possible to do so')
+        description='conflate_streets.py - Adds ref:HR:ulica to ways it is possible to do so')
     parser.add_argument('--opstina', default='', required=False, help='Opstina to process')
     args = parser.parse_args()
 

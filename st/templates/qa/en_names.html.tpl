@@ -13,7 +13,7 @@
       </div>
       <div class="modal-body">
 		<ul>
-			<li><b>Opština</b> &mdash; Opština analize</li>
+			<li><b>Općina</b> &mdash; Općina analize</li>
 			<li><b># Nepotreban name:en</b> &mdash; Ukupan broj adresa gde postoji „name:en” tag, a nema potrebe da postoji</li>
 			<li><b># Sumnjiv name:en</b> &mdash; Ukupan broj adresa gde postoji „name:en” tag, ali se dosta razlikuje od ostalih imena.
 			    Sumnjivi engleski ne znači da je naziv loš, ali navedeni su jer je često bilo slučajeva da se npr. „Bulevar umetonosti” na engleskom zove kao „Art boulevard” što je pogrešno.</li>
@@ -57,14 +57,14 @@
 
 <h2>Engleski nazivi ulica</h2>
 <br/>
-<p>Ovde možete da vidite potencijalne probleme sa „name:en” tagom za ulice u OpenStreetMap-apa. Moguće je da „name:en” tag bude nepotreban, a moguće je i da bude označen kao „sumnjiv”.
-    Klikom na opštinu dobijate detaljnije podatke za tu opštinu. U gornjem desnom uglu je filtriranje.
+<p>Ovdje možete da vidite potencijalne probleme sa „name:en” tagom za ulice u OpenStreetMap-apa. Moguće je da „name:en” tag bude nepotreban, a moguće je i da bude označen kao „sumnjiv”.
+    Klikom na općinu dobijate detaljnije podatke za tu općinu. U gornjem desnom uglu je filtriranje.
     <br/>
     <br/>
     Da biste bolje razumeli značenje kolona u tabeli, pogledajte <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a>.
     <br/>
     <br/>
-    <b>Pažljivo prilikom otvaranja opština preko 5.000 adresa, računar i browser mogu da se uspore znatno!</b>
+    <b>Pažljivo prilikom otvaranja općina preko 5.000 adresa, računar i browser mogu da se uspore znatno!</b>
 </p>
 <br/>
 <br/>
@@ -72,7 +72,7 @@
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-50">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>Opština</th>
+		<th>Općina</th>
 		<th># Nepotreban name:en</th>
 		<th># Sumnjiv name:en</th>
 	</tr>

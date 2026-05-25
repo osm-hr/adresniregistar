@@ -12,7 +12,7 @@
         </button>
       </div>
       <div class="modal-body">
-		  Ovde su izlistane sve adrese iz OSM-a kojima je "ref:RS:kucni_broj" dupliciran, tj. više OSM adresa deli istu referencu ka RGZ adresi.
+		  Ovdje su izlistane sve adrese iz OSM-a kojima je "ref:HR:kucni_broj" dupliciran, tj. više OSM adresa deli istu referencu ka DGU adresi.
 		  <br/>
 		  Ovo ne sme da se dešava i verovatno je samo jedna adresa iz OSM-a "prava", tj. dobra dok su ostale greška.
       </div>
@@ -28,7 +28,7 @@
     <li class="breadcrumb-item" aria-current="page"><a href="../index.html">DINA</a></li>
 	<li class="breadcrumb-item" aria-current="page"><a href="index.html">Adrese</a></li>
 	<li class="breadcrumb-item" aria-current="page"><a href="qa.html">QA</a></li>
-	<li class="breadcrumb-item active" aria-current="page">ref:RS:kucni_broj duplikati</li>
+	<li class="breadcrumb-item active" aria-current="page">ref:HR:kucni_broj duplikati</li>
   </ol>
 </nav>
 
@@ -57,8 +57,8 @@ $(document).ready( function () {
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-50">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>ref:RS:kucni_broj</th>
-		<th>Opština</th>
+		<th>ref:HR:kucni_broj</th>
+		<th>Općina</th>
 		<th>Duplikati</th>
 	</tr>
 </thead>

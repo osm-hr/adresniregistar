@@ -14,9 +14,9 @@
         <div class="modal-body">
             <ul>
                 <li><b>OSM ulica</b> &mdash; Ime ulice i link na OSM way</li>
-                <li><b>„ref:RS:ulica” tag</b> &mdash; Označava da li je ulica spojena sa RGZ-om preko „ref:RS:ulica” taga. Ukoliko jeste, koristi se RGZ ime da se zaključi vrednost „int_name” taga</li>
-                <li><b>Pogrešan „int_name” tag</b> &mdash; Tag postoji, ali mislimo da je pogrešan. U nastavku su navedene trenutna vrednost taga i (posle strelice) šta bi trebalo da bude vrednost tog taga</li>
-                <li><b>Nedostaje „int_name” tag</b> &mdash; Na ovom OSM way-u nema „int_name” taga. U nastavku je navedena vrednost taga koji treba da se stavi</li>
+                <li><b>„ref:HR:ulica” tag</b> &mdash; Označava da li je ulica spojena sa DGU-om preko „ref:HR:ulica” taga. Ukoliko jeste, koristi se DGU ime da se zaključi vrijednost „int_name” taga</li>
+                <li><b>Pogrešan „int_name” tag</b> &mdash; Tag postoji, ali mislimo da je pogrešan. U nastavku su navedene trenutna vrijednost taga i (posle strelice) šta bi trebalo da bude vrijednost tog taga</li>
+                <li><b>Nedostaje „int_name” tag</b> &mdash; Na ovom OSM way-u nema „int_name” taga. U nastavku je navedena vrijednost taga koji treba da se stavi</li>
             </ul>
         </div>
         <div class="modal-footer">
@@ -98,16 +98,16 @@
 
 <h2>Int nazivi ulica</h2>
 <br/>
-<p>Ovde možete da vidite potencijalne probleme sa „int_name” tagom za ulice u OpenStreetMap-apa za opštinu „{{ opstina_name }}”. Moguće je da „int_name” tag fali, a moguće je i da je pogrešan.
+<p>Ovdje možete da vidite potencijalne probleme sa „int_name” tagom za ulice u OpenStreetMap-apa za općinu „{{ opstina_name }}”. Moguće je da „int_name” tag fali, a moguće je i da je pogrešan.
     <br/>
-    Savetujemo da pročitate <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju da bolje razumete kako da tumačite tabelu.
+    Savjetujemo da pročitate <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju da bolje razumete kako da tumačite tabelu.
     U gornjem desnom uglu je filtriranje.
 </p>
 <br/>
 <br/>
 
 <div class="text-right">
-    <label for="errorType">Postoji ref:RS:ulica tag:</label>
+    <label for="errorType">Postoji ref:HR:ulica tag:</label>
     <select name="refExists" id="refExistsSelect">
       <option value="all"></option>
       <option value="yes">Da</option>
@@ -126,7 +126,7 @@
 <thead class="thead-dark sticky-top">
 	<tr>
 		<th>OSM ulica</th>
-		<th>„ref:RS:ulica” tag</th>
+		<th>„ref:HR:ulica” tag</th>
         <th>Pogrešan „int_name” tag</th>
         <th>Nedostaje „int_name” tag</th>
 	</tr>

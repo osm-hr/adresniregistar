@@ -13,12 +13,12 @@
       </div>
       <div class="modal-body">
 		<ul>
-			<li><b>Opština</b> &mdash; Opština analize</li>
-			<li><b># name pogrešan</b> &mdash; Ukupan broj adresa gde se „name” tag i „ref:RS:ulica” tag ne slažu. Ne znači da je ime pogrešno, možda je i „ref:RS:ulica” tag pogrešan!</li>
-			<li><b># name nedostaje</b> &mdash; Ukupan broj adresa gde „ref:RS:ulica” tag postoji, ali „name” tag ne postoji</li>
-			<li><b># name:sr pogrešan</b> &mdash; Ukupan broj adresa gde se „name:sr” tag nekako ne slaže. Ukoliko postoji „ref:RS:ulica” tag, gleda se da li se „name:sr” slaže sa imenom ulice iz RGZ-a, a ako ga nema, onda se gleda da li se slaže sa „name” tagom</li>
+			<li><b>Općina</b> &mdash; Općina analize</li>
+			<li><b># name pogrešan</b> &mdash; Ukupan broj adresa gde se „name” tag i „ref:HR:ulica” tag ne slažu. Ne znači da je ime pogrešno, možda je i „ref:HR:ulica” tag pogrešan!</li>
+			<li><b># name nedostaje</b> &mdash; Ukupan broj adresa gde „ref:HR:ulica” tag postoji, ali „name” tag ne postoji</li>
+			<li><b># name:sr pogrešan</b> &mdash; Ukupan broj adresa gde se „name:sr” tag nekako ne slaže. Ukoliko postoji „ref:HR:ulica” tag, gleda se da li se „name:sr” slaže sa imenom ulice iz DGU-a, a ako ga nema, onda se gleda da li se slaže sa „name” tagom</li>
 			<li><b># name:sr nedostaje</b> &mdash; Ukupan broj adresa gde „name:sr” tag ne postoji</li>
-			<li><b># name:sr-Latn pogrešan</b> &mdash; Ukupan broj adresa gde se „name:sr-Latn” tag nekako ne slaže. Ukoliko postoji „ref:RS:ulica” tag, gleda se da li se „name:sr-Latn” slaže sa latiničnim imenom ulice iz RGZ-a, a ako ga nema, onda se gleda da li se slaže sa latiničnom verzijom „name” taga</li>
+			<li><b># name:sr-Latn pogrešan</b> &mdash; Ukupan broj adresa gde se „name:sr-Latn” tag nekako ne slaže. Ukoliko postoji „ref:HR:ulica” tag, gleda se da li se „name:sr-Latn” slaže sa latiničnim imenom ulice iz DGU-a, a ako ga nema, onda se gleda da li se slaže sa latiničnom verzijom „name” taga</li>
 			<li><b># name:sr-Latn nedostaje</b> &mdash; Ukupan broj adresa gde „name:sr-Latn” tag ne postoji</li>
 		</ul>
       </div>
@@ -60,14 +60,14 @@
 
 <h2>Loši nazivi ulica</h2>
 <br/>
-<p>Ovde možete da vidite sve ulice u OpenStreetMap-apa koje na neki način nemaju dobar neki od „name” tagova. U obzir su uzete i ulice koje imaju „ref:RS:ulica” tag (urađena konflacija), kao i one bez konflacije.
-    Klikom na opštinu dobijate detaljnije podatke za tu opštinu. U gornjem desnom uglu je filtriranje.
+<p>Ovdje možete da vidite sve ulice u OpenStreetMap-apa koje na neki način nemaju dobar neki od „name” tagova. U obzir su uzete i ulice koje imaju „ref:HR:ulica” tag (urađena konflacija), kao i one bez konflacije.
+    Klikom na općinu dobijate detaljnije podatke za tu općinu. U gornjem desnom uglu je filtriranje.
     <br/>
     <br/>
     Da biste bolje razumeli značenje kolona u tabeli, pogledajte <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a>.
     <br/>
     <br/>
-    <b>Pažljivo prilikom otvaranja opština preko 5.000 adresa, računar i browser mogu da se uspore znatno!</b>
+    <b>Pažljivo prilikom otvaranja općina preko 5.000 adresa, računar i browser mogu da se uspore znatno!</b>
 </p>
 <br/>
 <br/>
@@ -75,7 +75,7 @@
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-75">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>Opština</th>
+		<th>Općina</th>
 		<th># name pogrešan</th>
 		<th># name nedostaje</th>
 		<th># name:sr pogrešan</th>

@@ -12,18 +12,18 @@
         </button>
       </div>
       <div class="modal-body">
-        Ovaj izveštaj proverava da li u blizini ulice ima nepovezana ulica sa sličnom geometrijom i pogrešnim imenom ulice. Potrebno je proveriti zašto se ovo dešava:
+        Ovaj izvještaj proverava da li u blizini ulice ima nepovezana ulica sa sličnom geometrijom i pogrešnim imenom ulice. Potrebno je provjeriti zašto se ovo dešava:
         <ul>
             <li>Može biti da je ime slično i da ga treba izmeniti da odgovora pravom imenu ulice i uraditi konflaciju ulice</li>
-            <li>Takođe je moguće da je to neka dodatna ulica koja nije povezana sa RGZ-om (nema „<code>ref:RS:ulica</code>” tag), pa onda treba naći odgovaraju ulicu u RGZ-u i povezati je</li>
-            <li>Treći scenario je da ovakva ulica uopšte ne postoji u RGZ-u i onda treba obrisati ime ove ulice u OSM-u skroz</li>
+            <li>Takođe je moguće da je to neka dodatna ulica koja nije povezana sa DGU-om (nema „<code>ref:HR:ulica</code>” tag), pa onda treba naći odgovaraju ulicu u DGU-u i povezati je</li>
+            <li>Treći scenario je da ovakva ulica uopšte ne postoji u DGU-u i onda treba obrisati ime ove ulice u OSM-u skroz</li>
         </ul>
         <br><br>
         Kolone u tabeli:
 		<ul>
-			<li><b>Opština</b> &mdash; Opština analize</li>
+			<li><b>Općina</b> &mdash; Općina analize</li>
 			<li><b># pogrešnih imena”</b> &mdash; Ukupan broj segmenata ulice kojima je ime pogrešno</li>
-			<li><b>Dužina pogrešnih imena”</b> &mdash; Ukupna dužina svih segmenata ulice. Za dužinu segmenta se ne uzima celokupna dužina iz OSM-a nego samo onaj deo koji je u geometrijski poklopljen sa geometrijom RGZ ulice</li>
+			<li><b>Dužina pogrešnih imena”</b> &mdash; Ukupna dužina svih segmenata ulice. Za dužinu segmenta se ne uzima celokupna dužina iz OSM-a nego samo onaj deo koji je u geometrijski poklopljen sa geometrijom DGU ulice</li>
 		</ul>
       </div>
       <div class="modal-footer">
@@ -99,8 +99,8 @@
 
 <h2>Neslaganje imena ulica</h2>
 <br/>
-<p>Ovde možete da vidite sve ulice preko čije geometrije prelazi ulica sa različitim imenom (i ta ulica nije povezana preko <code>ref:RS:ulica</code> taga sa RGZ ulicama. To znači da ulica nije dobro povezana, ili da u blizini ima druga ulica koja nije dobro povezana.
-    Klikom na opštinu dobijate detaljnije podatke za tu opštinu. U gornjem desnom uglu je filtriranje.
+<p>Ovdje možete da vidite sve ulice preko čije geometrije prelazi ulica sa različitim imenom (i ta ulica nije povezana preko <code>ref:HR:ulica</code> taga sa DGU ulicama. To znači da ulica nije dobro povezana, ili da u blizini ima druga ulica koja nije dobro povezana.
+    Klikom na općinu dobijate detaljnije podatke za tu općinu. U gornjem desnom uglu je filtriranje.
     <br/>
     <br/>
     Da biste bolje razumeli značenje kolona u tabeli, pogledajte <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a>.
@@ -111,7 +111,7 @@
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-50">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>Opština</th>
+		<th>Općina</th>
 		<th># pogrešnih imena</th>
 		<th>Dužina pogrešnih imena</th>
 	</tr>
@@ -140,11 +140,11 @@
 <table id="list2" class="table table-sm table-striped table-bordered table-hover w-100">
 <thead class="thead-dark sticky-top">
 	<tr>
-	    <th>Opština</th>
+	    <th>Općina</th>
 	    <th>Naselje</th>
-		<th>Id (RGZ)</th>
-		<th>Ulica (RGZ)</th>
-		<th>Dužina (RGZ)</th>
+		<th>Id (DGU)</th>
+		<th>Ulica (DGU)</th>
+		<th>Dužina (DGU)</th>
 		<th>Broj neslaganja</th>
 		<th>Relativna dužina neslaganja</th>
 		<th>Conflated putevi</th>

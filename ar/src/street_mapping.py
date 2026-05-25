@@ -11,7 +11,7 @@ import settings
 
 class CollectRgzRefMappingHandler(osmium.SimpleHandler):
     """
-    Iterates for all ways and creates mapping ref:RS:ulica -> name
+    Iterates for all ways and creates mapping ref:HR:ulica -> name
     """
     def __init__(self):
         osmium.SimpleHandler.__init__(self)
@@ -138,10 +138,10 @@ def convert_rgz_name_to_osm_name(rgz_id, rgz_name, curated_streets, ref_mappings
     if rgz_name in curated_streets:
         return curated_streets[rgz_name], 'curated', ''
 
-    # Find in ref:RS:ulica mappings next
+    # Find in ref:HR:ulica mappings next
     if rgz_id in ref_mappings:
         if len(ref_mappings[rgz_id]) == 1:
-            return ref_mappings[rgz_id][0]['name'], 'ref:RS:ulica', ','.join(ref_mappings[rgz_id][0]['refs'])
+            return ref_mappings[rgz_id][0]['name'], 'ref:HR:ulica', ','.join(ref_mappings[rgz_id][0]['refs'])
 
     # Find from latin normalized name
     normalized_name = normalize_name_latin(rgz_name)
@@ -170,20 +170,20 @@ def process_opstina(mapping, opstina, data_path, curated_streets, ref_mappings, 
 
 def main():
     """
-    Here we denote "Name" as normal street name, "NAME" as RGZ name (capitalized) and "nname" as normalized name,
+    Here we denote "Name" as normal street name, "NAME" as DGU name (capitalized) and "nname" as normalized name,
     We need to create mapping "NAME"->"Name".
     From OSM, we can get 3 mappings:
-    1. "ref:RS:ulica" -> list("Name)
+    1. "ref:HR:ulica" -> list("Name)
     2. "nname (latin)" -> list("Name")
     3. "nname (ascii)" -> list("Name")
 
-    Then, for each "NAME" street in RGZ:
+    Then, for each "NAME" street in DGU:
     * we try to find it in special, human mapped list (part of source code)
-    * if not, we check if there is "ref:RS:ulica" mapping to Name
+    * if not, we check if there is "ref:HR:ulica" mapping to Name
       If there is and there is only one mapping, we use it. If there are multiple mappings, we ignore it.
     * If not, we calculate "NAME"->"nname (latin)". Then we try to find "Name" that matches that normalized name.
       If there is only one, we use it. If there are multiple names, we cannot pick any particular.
-    * If we cannot find it from curated list, nor "ref:RS:ulica" nor OSM, we guess it by making only first letter capital and adding more rules
+    * If we cannot find it from curated list, nor "ref:HR:ulica" nor OSM, we guess it by making only first letter capital and adding more rules
     ** If streets ends with latin number, we capitalize that
     ** If some words ends with "ић" or "ића", we capitalize that word
     """
@@ -286,19 +286,19 @@ class StreetMapping:
 
     def get_all_rgz_names(self):
         """
-        Gets a list with all RGZ names known
+        Gets a list with all DGU names known
         """
         return self.street_mappings.keys()
 
     def get_all_names_for_rgz_name(self, rgz_name):
         """
-        Gets array with all OSM names for a given RGZ name, with additional data (source, refs)
+        Gets array with all OSM names for a given DGU name, with additional data (source, refs)
         """
         return self.street_mappings[rgz_name]
 
     def get_name(self, rgz_name: str, ulica_id: str, default_value: str = ''):
         """
-        Gets name for given RGZ name and opstina
+        Gets name for given DGU name and opstina
         """
         if rgz_name not in self.street_mappings:
             print(f"WARNING: street {rgz_name} not found in street mappings!")

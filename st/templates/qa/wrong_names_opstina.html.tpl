@@ -15,16 +15,16 @@
             Sve kolone imaju jedan od tri znaka - „✅”, „⚠️️” ili „❌”. Ovi znaci znače:
             <ul>
                 <li>✅ &mdash; Sve je u redu sa ovim tagom</li>
-                <li>⚠️️ &mdash; Tag ne postoji. U nastavku je <s>precrtano</s> napisano šta mislimo da bi trebalo da stoji za vrednost ovog taga</li>
-                <li>❌ &mdash; Tag postoji, ali mislimo da je pogrešan. U nastavku su navedene trenutna vrednost taga i (posle strelice) šta bi trebalo da bude vrednost tog taga</li>
+                <li>⚠️️ &mdash; Tag ne postoji. U nastavku je <s>precrtano</s> napisano šta mislimo da bi trebalo da stoji za vrijednost ovog taga</li>
+                <li>❌ &mdash; Tag postoji, ali mislimo da je pogrešan. U nastavku su navedene trenutna vrijednost taga i (posle strelice) šta bi trebalo da bude vrijednost tog taga</li>
             </ul>
             Semantika kolona je sledeća:
             <ul>
 			<li><b>OSM id</b> &mdash; ID ulice u OSM-u</li>
-			<li><b>„ref:RS:ulica” tag</b> &mdash; Označava samo da li postoji „ref:RS:ulica” tag ili ne. Zgodno je za filtriranje</li>
-			<li><b>„name” tag</b> &mdash; Stanje „name” taga. Ovaj tag može da bude pogrešan samo ukoliko postoji „ref:RS:ulica” tag, pa je onda pogrešan u odnosu na RGZ. <b>PAŽNJA:</b> moguće je da je ime dobro, a da je zapravo pogrešan „ref:RS:ulica” tag</li>
-			<li><b>„name:sr” tag</b> &mdash; Stanje „name:sr” taga. Ukoliko postoji „ref:RS:ulica” tag, onda se gleda da li je pogrešan u odnosu na RGZ. Ako ga nema, onda se gleda da li je pogrešan u odnosu na „name” tag</li>
-			<li><b>„name:sr-Latn” tag</b> &mdash; Stanje „name:sr-Latn” taga. Ukoliko postoji „ref:RS:ulica” tag, onda se gleda da li je pogrešan u odnosu na RGZ. Ako ga nema, onda se gleda da li je pogrešan u odnosu na „name” tag</li>
+			<li><b>„ref:HR:ulica” tag</b> &mdash; Označava samo da li postoji „ref:HR:ulica” tag ili ne. Zgodno je za filtriranje</li>
+			<li><b>„name” tag</b> &mdash; Stanje „name” taga. Ovaj tag može da bude pogrešan samo ukoliko postoji „ref:HR:ulica” tag, pa je onda pogrešan u odnosu na DGU. <b>PAŽNJA:</b> moguće je da je ime dobro, a da je zapravo pogrešan „ref:HR:ulica” tag</li>
+			<li><b>„name:sr” tag</b> &mdash; Stanje „name:sr” taga. Ukoliko postoji „ref:HR:ulica” tag, onda se gleda da li je pogrešan u odnosu na DGU. Ako ga nema, onda se gleda da li je pogrešan u odnosu na „name” tag</li>
+			<li><b>„name:sr-Latn” tag</b> &mdash; Stanje „name:sr-Latn” taga. Ukoliko postoji „ref:HR:ulica” tag, onda se gleda da li je pogrešan u odnosu na DGU. Ako ga nema, onda se gleda da li je pogrešan u odnosu na „name” tag</li>
             </ul>
         </div>
         <div class="modal-footer">
@@ -115,15 +115,15 @@
 
 <h2>Loši nazivi ulica</h2>
 <br/>
-<p>Ovde možete da vidite sve ulice u OpenStreetMap-apa koje na neki način nemaju dobar neki od „name” tagova za opštinu „{{ opstina_name }}”.
-    Svaka kolona ima svoje specifično značenje i ovde je natrpano dosta informacija na jednom mestu, pa <b>savetujemo da pročitate <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a></b> u gornjem meniju da bolje razumete kako da tumačite tabelu.
+<p>Ovdje možete da vidite sve ulice u OpenStreetMap-apa koje na neki način nemaju dobar neki od „name” tagova za općinu „{{ opstina_name }}”.
+    Svaka kolona ima svoje specifično značenje i ovdje je natrpano dosta informacija na jednom mestu, pa <b>savjetujemo da pročitate <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a></b> u gornjem meniju da bolje razumete kako da tumačite tabelu.
     U gornjem desnom uglu je filtriranje po raznim kriterijumima.
 </p>
 <br/>
 <br/>
 
 <div class="text-right">
-    <label for="errorType">Postoji ref:RS:ulica tag:</label>
+    <label for="errorType">Postoji ref:HR:ulica tag:</label>
     <select name="refExists" id="refExistsSelect">
       <option value="all"></option>
       <option value="yes">Da</option>
@@ -146,7 +146,7 @@
 <thead class="thead-dark sticky-top">
 	<tr>
 		<th>OSM id</th>
-		<th>„ref:RS:ulica” tag</th>
+		<th>„ref:HR:ulica” tag</th>
         <th>„name” tag</th>
         <th>„name:sr” tag</th>
         <th>„name:sr-Latn” tag</th>

@@ -13,12 +13,12 @@
       </div>
       <div class="modal-body">
 		<ul>
-			<li><b>Opština</b> &mdash; Opština sa stambenim zajednicama</li>
+			<li><b>Općina</b> &mdash; Općina sa stambenim zajednicama</li>
 			<li><b>Broj stambenih zajednica</b> &mdash; Ukupan broj stambenih zajednica u registru</li>
-			<li><b>Pronađeno u AR-u</b> &mdash; Broj pronađenih stambenih zajednica u adresnom registru na osnovu opštine, ulice i kućnog broja</li>
-			<li><b>Pronađeno u AR-u [%]</b> &mdash; Broj pronađenih stambenih zajednica u adresnom registru na osnovu opštine, ulice i kućnog broja</li>
-			<li><b>Pronađeno u OSM-u</b> &mdash; Broj pronađenih stambenih zajednica na osnovu <code>ref:RS:kucni_broj</code> taga u OSM-u</li>
-			<li><b>Pronađeno u OSM-u [%]</b> &mdash; Procenat pronađenih stambenih zajednica (u odnosu na one nađene u adresnom registru) na osnovu <code>ref:RS:kucni_broj</code> taga u OSM-u</li>
+			<li><b>Pronađeno u AR-u</b> &mdash; Broj pronađenih stambenih zajednica u adresnom registru na osnovu općine, ulice i kućnog broja</li>
+			<li><b>Pronađeno u AR-u [%]</b> &mdash; Broj pronađenih stambenih zajednica u adresnom registru na osnovu općine, ulice i kućnog broja</li>
+			<li><b>Pronađeno u OSM-u</b> &mdash; Broj pronađenih stambenih zajednica na osnovu <code>ref:HR:kucni_broj</code> taga u OSM-u</li>
+			<li><b>Pronađeno u OSM-u [%]</b> &mdash; Procenat pronađenih stambenih zajednica (u odnosu na one nađene u adresnom registru) na osnovu <code>ref:HR:kucni_broj</code> taga u OSM-u</li>
 			<li><b>Apartments</b> &mdash; Broj onih stambenih zajednica nađenih u OSM-u koje su pravilno tagovane kao <code>building=apartments</code> u OSM-u</li>
 			<li><b>Apartments [%]</b> &mdash; Procenat onih stambenih zajednica nađenih u OSM-u (u odnosu na sve nađene u OSM-u) koje su pravilno tagovane kao <code>building=apartments</code> u OSM-u</li>
 		</ul>
@@ -64,9 +64,9 @@
 <h2>Analiza stambenih zajednica</h2>
 <br/>
 
-<p>Ovde je spisak svih stambenih zajednica iz RGZ-a. Ovo nam pomaže da sve zgrade koje se vode kao stambene zajednice
-tagujemo u OSM-u kao <code>building=apartments</code>. Pročitajte na dnu kako su ovi podaci izgenerisani i kako da ih tumačite.
-    Klikom na opštinu dobijate podatke za tu opštinu. U gornjem desnom uglu je filtriranje.
+<p>Ovdje je spisak svih stambenih zajednica iz DGU-a. Ovo nam pomaže da sve zgrade koje se vode kao stambene zajednice
+tagujemo u OSM-u kao <code>building=apartments</code>. Pročitajte na dnu kako su ovi podaci izgenerirani i kako da ih tumačite.
+    Klikom na općinu dobijate podatke za tu općinu. U gornjem desnom uglu je filtriranje.
     U gornjem desnom uglu je filtriranje. Klikom na "Pomoć" u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.
 </p>
 <br/>
@@ -75,7 +75,7 @@ tagujemo u OSM-u kao <code>building=apartments</code>. Pročitajte na dnu kako s
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-100">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>Opština</th>
+		<th>Općina</th>
 		<th>Broj stambenih zajednica</th>
 		<th>Pronađeno u AR-u</th>
 		<th>Pronađeno u AR-u [%]</th>
@@ -160,27 +160,27 @@ Plotly.newPlot('tester', data, layout, {displayModeBar: false});
 
 <hr/>
 <br/>
-<p>RGZ, nažalost, u spisku stambenih zajednica daje samo opštinu, ulicu i broj. Ne daje identifikator adrese iz adresnom registra,
+<p>DGU, nažalost, u spisku stambenih zajednica daje samo općinu, ulicu i broj. Ne daje identifikator adrese iz adresnom registra,
 ne daje geografsku širinu i visinu adrese, a često se ni imena ulica iz registra stambenih zajednica i adresnog registra ne slažu!
-Zbog ovoga je proces spajanja ovih adresa otežan i ovde je pokušano da se spoji što se više moglo, ali ne treba očekivati 100% poklapanja.
+Zbog ovoga je proces spajanja ovih adresa otežan i ovdje je pokušano da se spoji što se više moglo, ali ne treba očekivati 100% poklapanja.
 <br/>
 <br/>
-Prvo se, na osnovu opštine, ulice i kućnog broja, proba da nađe takva adresa u adresnom registru RGZ-a. Ako se to ne uspe (obično jer se ulice
+Prvo se, na osnovu općine, ulice i kućnog broja, proba da nađe takva adresa u adresnom registru DGU-a. Ako se to ne uspe (obično jer se ulice
 razlikuju), odustajemo. Sve što je pronađeno se vidi kao pronađeno u koloni <b>„Pronađeno u AR-u”.</b>. Time smo dobili identifikator
 stambene zajednice iz adresnog registra.
 <br/>
 <br/>
 Sledeći korak je pronalaženje tog identifikatora unutar OSM-a na osnovu
-<a href="https://dina.openstreetmap.rs/ar" target="_blank">uvoza RGZ adresa</a>. Ukoliko se adresa ne pronađe, odustajemo i čekamo
+<a href="https://dina.openstreetmap.rs/ar" target="_blank">uvoza DGU adresa</a>. Ukoliko se adresa ne pronađe, odustajemo i čekamo
 da bude uneta u uvozu. Ako je pronađena, videćemo je u koloni <b>„Pronađeno u OSM-u”.</b>. Time smo dobili OSM entitet.
 <br/>
 <br/>
 Kada imamo OSM entitet, možemo da vidimo da li je on čvor, linija ili relacija, da li je tagovan kao <code>building</code> i
-da li je vrednost tog taga <code>apartments</code>. Idealan slučaj koji nam treba je da je adresa ili linija koja je tagovana
-kao <code>building=apartments</code> ili da je adresa čvor koji je zakačen za liniju koja je tagovana kao <code>building=apartments</code>.
+da li je vrijednost tog taga <code>apartments</code>. Idealan slučaj koji nam treba je da je adresa ili linija koja je tagirana
+kao <code>building=apartments</code> ili da je adresa čvor koji je zakačen za liniju koja je tagirana kao <code>building=apartments</code>.
 <br/>
 <br/>
-Ostale opštine iz Srbije koje nisu navedene nemaju nijednu stambenu zajednicu na spisku.
+Ostale općine iz Srbije koje nisu navedene nemaju nijednu stambenu zajednicu na spisku.
 
 </p>
 

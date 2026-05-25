@@ -12,11 +12,7 @@ import osmium
 from requests_oauthlib import OAuth2Session
 from shapely import geometry
 
-OPSTINE_TO_SKIP = ['VITINA', 'VUČITRN', 'GLOGOVAC', 'GNJILANE', 'GORA', 'DEČANI', 'ĐAKOVICA',
-                   'ZVEČAN', 'ZUBIN POTOK', 'ISTOK', 'KAČANIK', 'KLINA', 'KOSOVSKA MITROVICA',
-                   'KOSOVO POLJE', 'KOSOVSKA KAMENICA', 'LEPOSAVIĆ', 'LIPLJAN', 'NOVO BRDO',
-                   'OBILIĆ', 'ORAHOVAC', 'PEĆ', 'PODUJEVO', 'PRIŠTINA', 'PRIZREN', 'SRBICA',
-                   'SUVA REKA', 'UROŠEVAC', 'ŠTIMLJE', 'ŠTRPCE']
+OPSTINE_TO_SKIP = [ ]
 
 
 class AddressInBuildingResolution(Enum):
@@ -85,9 +81,9 @@ cyr_to_lat_small = {
 }
 
 housenumber_order = {
-    'a': 1, 'b': 2, 'v': 3, 'g': 4, 'd': 5, 'đ': 6, 'e': 7, 'ž': 8, 'z': 9, 'i': 10,
-    'j': 11, 'k': 12, 'l': 13, 'lj': 14, 'm': 15, 'n': 16, 'nj': 17, 'o': 18, 'p': 19, 'r': 20,
-    's': 21, 't': 22, 'ć': 23, 'u': 24, 'f': 25, 'h': 26, 'c': 27, 'č': 28, 'dž': 29, 'š': 30,
+    'a': 1, 'b': 2, 'c': 3, 'č': 4, 'ć': 5, 'd': 6, 'dž': 7, 'đ': 8, 'e': 9, 'f': 10, 'g': 11,
+    'h': 12, 'i': 13, 'j': 14, 'k': 15, 'l': 16, 'lj': 17, 'm': 18, 'n': 19, 'nj': 20, 'o':
+    21, 'p': 22, 'r': 23, 's': 24, 'š': 25, 't': 26, 'u': 27, 'v': 28, 'z': 29, 'ž': 30,
 }
 
 

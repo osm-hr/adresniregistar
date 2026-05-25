@@ -12,8 +12,8 @@
         </button>
       </div>
         <div class="modal-body">
-            Ovaj izveštaj proverava da li ime ulice treba da ima pridružen „alt_name” tag. Ime ulice se uzima iz RGZ-a ako postoji
-            (ako je way spojen preko „ref:RS:ulica” taga), a ako ne postoji - uzima se „name”/„name:sr”/„name:sr-Latn” tag.
+            Ovaj izvještaj proverava da li ime ulice treba da ima pridružen „alt_name” tag. Ime ulice se uzima iz DGU-a ako postoji
+            (ako je way spojen preko „ref:HR:ulica” taga), a ako ne postoji - uzima se „name”/„name:sr”/„name:sr-Latn” tag.
             Heuristika proverava da li ime ulice sadrži broj (ili kao arapske cifre, ili kao napisane brojeve), ili reč "doktor" i pokušava
             da pogodi koji bi „alt_name” tag trebao da bude (ovo su jedine provere za sad).
             Zbog specifičnosti srpskog jezika (rodovi, padeži i sl.), nekad ne može da se odredi kako bi „alt_name” trebalo da izgleda,
@@ -25,15 +25,15 @@
                     <s>Precrtano</s> je navedeno kako algoritam kaže da tag treba da izgleda.
                     Ukoliko ima deo sa kurzivom opkružen zvezdicama, to znači da se ovaj deo imena ulice samo nagađa</li>
                 <li>Ukoliko „alt_name” ima simbol „❌️”, znači da ovaj tag postoji, ali heuristika misli da nije ispravan-.
-                    U nastavku je navedeno trenutna vrednosti i koju vrednost algoritam misli da treba da bude.
+                    U nastavku je navedeno trenutna vrijednosti i koju vrijednost algoritam misli da treba da bude.
                     Ukoliko ima deo sa kurzivom opkružen zvezdicama, to znači da se ovaj deo imena ulice samo nagađa</li>
             </ul>
             Kolone u tabeli:
             <ul>
                 <li><b>OSM</b> &mdash; Link ka OSM ulici i ime ulice u OSM-u</li>
-                <li><b>„ref:RS:ulica” tag</b> &mdash; Označava da li je ulica spojena sa RGZ-om preko „ref:RS:ulica” taga. Ukoliko jeste, prikaza je simbol „✅” i identifikator ulice u RGZ-u</li>
-                <li><b>RGZ ime</b> &mdash; Ukoliko je OSM ulica spojena sa RGZ-om, ovde je navedeno ime ulice u RGZ-u</li>
-                <li><b>„name” tag</b> &mdash; Vrednost „name” taga iz OSM-a. Navedena su i RGZ i OSM imena, čisto da čovek može da ih proveri oba</li>
+                <li><b>„ref:HR:ulica” tag</b> &mdash; Označava da li je ulica spojena sa DGU-om preko „ref:HR:ulica” taga. Ukoliko jeste, prikaza je simbol „✅” i identifikator ulice u DGU-u</li>
+                <li><b>DGU ime</b> &mdash; Ukoliko je OSM ulica spojena sa DGU-om, ovdje je navedeno ime ulice u DGU-u</li>
+                <li><b>„name” tag</b> &mdash; Vrijednost „name” taga iz OSM-a. Navedena su i DGU i OSM imena, čisto da čovek može da ih provjeri oba</li>
                 <li><b>„alt_name” tag</b> &mdash; Stanje „alt_name” taga na osnovu algoritma. Pogledajte iznad kako da tumačite ovu kolonu</li>
                 <li><b>„alt_name:sr” tag</b> &mdash; Stanje „alt_name:sr” taga na osnovu algoritma. Pogledajte iznad kako da tumačite ovu kolonu</li>
                 <li><b>„alt_name:sr-Latn” tag</b> &mdash; Stanje „alt_name:sr-Latn” taga na osnovu algoritma. Pogledajte iznad kako da tumačite ovu kolonu</li>
@@ -132,16 +132,16 @@
 
 <h2>Alternativni nazivi ulica</h2>
 <br/>
-<p>Ovde možete da vidite potencijalne probleme sa „alt_name” tagom za ulice u OpenStreetMap-apa za opštinu „{{ opstina_name }}”. Moguće je da „alt_name” tag fali, a moguće je i da je pogrešan.
+<p>Ovdje možete da vidite potencijalne probleme sa „alt_name” tagom za ulice u OpenStreetMap-apa za općinu „{{ opstina_name }}”. Moguće je da „alt_name” tag fali, a moguće je i da je pogrešan.
     <br/>
-    Savetujemo da pročitate <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju da bolje razumete kako da tumačite tabelu.
+    Savjetujemo da pročitate <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju da bolje razumete kako da tumačite tabelu.
     U gornjem desnom uglu je filtriranje.
 </p>
 <br/>
 <br/>
 
 <div class="text-right">
-    <label for="errorType">Postoji ref:RS:ulica tag:</label>
+    <label for="errorType">Postoji ref:HR:ulica tag:</label>
     <select name="refExists" id="refExistsSelect">
       <option value="all"></option>
       <option value="yes">Da</option>
@@ -167,8 +167,8 @@
 <thead class="thead-dark sticky-top">
 	<tr>
 		<th>OSM id</th>
-		<th>„ref:RS:ulica” tag</th>
-		<th>RGZ ime (OSM „name” tag)</th>
+		<th>„ref:HR:ulica” tag</th>
+		<th>DGU ime (OSM „name” tag)</th>
         <th>„name” tag</th>
         <th>„alt_name” tag</th>
         <th>„alt_name:sr” tag</th>

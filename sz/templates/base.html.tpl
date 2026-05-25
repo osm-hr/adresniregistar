@@ -31,7 +31,7 @@
 			<a class="nav-link" href="https://community.openstreetmap.org/t/registar-stambenih-zajednica-otvoreni-podaci/87583">Forum</a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" href="https://gitlab.com/osm-serbia/adresniregistar">Github</a>
+			<a class="nav-link" href="https://github.com/osm-hr/adresniregistar">Github</a>
 		</li>
 		<li>
 			<a class="nav-link" href="" data-toggle="modal" data-target="#exampleModal">Pomoć</a>
@@ -48,8 +48,8 @@
 <footer class="footer">
 	<div class="container-fluid py-1 mt-3 mb-0 bg-light">
 		<small class="text-secondary text-center">
-			Data &copy; <a href="https://opendata.geosrbija.rs/">RGZ</a> &amp; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, <br/>
-			RGZ podaci od {{ rgzDataDate }}, izveštaj generisan u {{ reportDate }}
+			Data &copy; <a href="https://opendata.geosrbija.rs/">DGU</a> &amp; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, <br/>
+			DGU podaci od {{ rgzDataDate }}, izvještaj generiran u {{ reportDate }}
 		</small>
 	</div>
 </footer>

@@ -109,7 +109,7 @@ def generate_osm_files_matched_streets(context, opstina_dir_path, opstina_name, 
 
             found_any = True
             entity = osm_entities_cache.ways_cache[way_id]
-            new_tags = dict(entity['tags'], **{'ref:RS:ulica': str(address.rgz_ulica_mb)})
+            new_tags = dict(entity['tags'], **{'ref:HR:ulica': str(address.rgz_ulica_mb)})
             osm_ways.append({
                 'id': way_id,
                 'tags': {k: xml_escape(v) for k, v in new_tags.items()},
@@ -206,7 +206,7 @@ def generate_street(address):
     rgz_way_length_uncovered = max(round(address['rgz_way_length']) - round(address['rgz_way_length_covered']), 0)
     if pd.notna(address['rgz_ulica_proper']):
         rgz_ulica_proper = address['rgz_ulica_proper']
-        copy_text = f"ref:RS:ulica={address['rgz_ulica_mb']}\\nname={rgz_ulica_proper}\\nname:sr={rgz_ulica_proper}\\nname:sr-Latn={cyr2lat_small(rgz_ulica_proper)}\\nint_name={cyr2intname(rgz_ulica_proper)}"
+        copy_text = f"ref:HR:ulica={address['rgz_ulica_mb']}\\nname={rgz_ulica_proper}\\nname:sr={rgz_ulica_proper}\\nname:sr-Latn={cyr2lat_small(rgz_ulica_proper)}\\nint_name={cyr2intname(rgz_ulica_proper)}"
     else:
         copy_text = None
     return {
@@ -507,7 +507,7 @@ def main():
 
     rgz_date_file = os.path.join(rgz_path, 'LATEST')
     if not os.path.exists(rgz_date_file):
-        raise Exception("File data/rgz/LATEST missing, no way to determine date when RGZ data was retrived")
+        raise Exception("File data/rgz/LATEST missing, no way to determine date when DGU data was retrived")
     with open(rgz_date_file, 'r') as file:
         file_content = file.read().rstrip()
         rgz_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y.')

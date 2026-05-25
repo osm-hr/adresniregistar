@@ -13,7 +13,7 @@
       </div>
       <div class="modal-body">
 		<ul>
-			<li><b>Opština</b> &mdash; Opština analize</li>
+			<li><b>Općina</b> &mdash; Općina analize</li>
 			<li><b># Pogrešan „int_name”</b> &mdash; Ukupan broj adresa gde se „int_name” tag i „name” tag ne slažu. Ne znači da je „int_name” pogrešan, možda je i „name” tag pogrešan!</li>
 			<li><b># Nedostaje „int_name”</b> &mdash; Ukupan broj adresa gde „int_name” tag ne postoji.</li>
 		</ul>
@@ -56,14 +56,14 @@
 
 <h2>Int nazivi ulica</h2>
 <br/>
-<p>Ovde možete da vidite potencijalne probleme sa „int_name” tagom za ulice u OpenStreetMap-apa. Moguće je da „int_name” tag fali, a moguće je i da je pogrešan.
-    Klikom na opštinu dobijate detaljnije podatke za tu opštinu. U gornjem desnom uglu je filtriranje.
+<p>Ovdje možete da vidite potencijalne probleme sa „int_name” tagom za ulice u OpenStreetMap-apa. Moguće je da „int_name” tag fali, a moguće je i da je pogrešan.
+    Klikom na općinu dobijate detaljnije podatke za tu općinu. U gornjem desnom uglu je filtriranje.
     <br/>
     <br/>
     Da biste bolje razumeli značenje kolona u tabeli, pogledajte <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a>.
     <br/>
     <br/>
-    <b>Pažljivo prilikom otvaranja opština preko 5.000 adresa, računar i browser mogu da se uspore znatno!</b>
+    <b>Pažljivo prilikom otvaranja općina preko 5.000 adresa, računar i browser mogu da se uspore znatno!</b>
 </p>
 <br/>
 <br/>
@@ -71,7 +71,7 @@
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-50">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>Opština</th>
+		<th>Općina</th>
 		<th># Pogrešan „int_name”</th>
 		<th># Nedostaje „int_name”</th>
 	</tr>

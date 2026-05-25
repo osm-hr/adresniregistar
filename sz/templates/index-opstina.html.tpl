@@ -15,13 +15,13 @@
 		<ul>
 			<li><b>Ime (SZ)</b> &mdash; Ime kako je navedeno u registru stambenih zajednica</li>
 			<li><b>Ulica i kućni broj (SZ)</b> &mdash; Ime ulice i kućni broj u registru stambenih zajednica</li>
-			<li><b>Nađen u AR-u</b> &mdash; Ako je stambena zajednica nađena u adresnom registru, ovde će biti ✅ i ulica i kućni broj, kao i identifikator kako stoje u AR-u.
+			<li><b>Nađen u AR-u</b> &mdash; Ako je stambena zajednica nađena u adresnom registru, ovdje će biti ✅ i ulica i kućni broj, kao i identifikator kako stoje u AR-u.
 			Ako nije nađeno, stajaće ❌. Ako nema ništa dodatno upisano, takva ulica i kućni broj ne postoje u AR-u. Ako piše "dup", tu su
 			navedena naselja koja imaju istu ulicu i broj i zbog te dvosmislenosti se ne zna za koje naselje se ulica odnosi</li>
-			<li><b>Nađen u OSM-u</b> &mdash; Ako je stambena zajednica sa identifikatorom iz AR-a nađena u OSM-u preko <code>ref:RS:kucni_broj</code> taga,
-			ovde će biti ulica i broj iz OSM-a i link ka OSM entitetu</li>
+			<li><b>Nađen u OSM-u</b> &mdash; Ako je stambena zajednica sa identifikatorom iz AR-a nađena u OSM-u preko <code>ref:HR:kucni_broj</code> taga,
+			ovdje će biti ulica i broj iz OSM-a i link ka OSM entitetu</li>
 			<li><b>Stanje u OSM-u</b> &mdash; U idealnom slučaju, čvor iz OSM-a će biti zakačen na zgradu tagovanu kao <code>building=apartments</code> ili će adresa
-			već biti na zgradi ili relaciji koja je ovako tagovana. Ukoliko to nije slučaj iz nekog razloga, ovde će biti upisano stanje.</li>
+			već biti na zgradi ili relaciji koja je ovako tagirana. Ukoliko to nije slučaj iz nekog razloga, ovdje će biti upisano stanje.</li>
 		</ul>
       </div>
       <div class="modal-footer">
@@ -106,10 +106,10 @@
 	} );
     </script>
 
-<h2>Analiza stambenih zajednica za opštinu „{{ opstina_name }}”</h2>
+<h2>Analiza stambenih zajednica za općinu „{{ opstina_name }}”</h2>
 <br/>
 
-<p>Ovde je spisak svih stambenih zajednica iz RGZ-a za opštinu „{{ opstina_name }}”.
+<p>Ovdje je spisak svih stambenih zajednica iz DGU-a za općinu „{{ opstina_name }}”.
 <br/>
 U gornjem desnom uglu je filtriranje.
 Klikom na "Pomoć" u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli. Ispod tabele se nalaze dodatni grafici.
@@ -123,7 +123,7 @@ Klikom na "Pomoć" u gornjem meniju dobićete više informacija o kolonama u ovo
       <option value="all"></option>
       <option value="yes">Nađeno</option>
       <option value="no">Nije nađeno</option>
-      <option value="no_notfound">&nbsp;&nbsp; Ulica i broj nisu nađeni u opštini</option>
+      <option value="no_notfound">&nbsp;&nbsp; Ulica i broj nisu nađeni u općini</option>
       <option value="no_dup">&nbsp;&nbsp; Više naselja sa istom ulicom i brojem</option>
     </select>
 
@@ -134,9 +134,9 @@ Klikom na "Pomoć" u gornjem meniju dobićete više informacija o kolonama u ovo
       <option value="all"></option>
       <option value="yes">Nađeno</option>
       <option value="yes_nodedetached">&nbsp;&nbsp; Čvor van zgrade</option>
-      <option value="yes_notbuilding">&nbsp;&nbsp; Nije tagovana kao zgrada</option>
-      <option value="yes_notapartments">&nbsp;&nbsp; Nije tagovana kao building=apartments</option>
-      <option value="yes_apartments">&nbsp;&nbsp; Tagovana kao building=apartment</option>
+      <option value="yes_notbuilding">&nbsp;&nbsp; Nije tagirana kao zgrada</option>
+      <option value="yes_notapartments">&nbsp;&nbsp; Nije tagirana kao building=apartments</option>
+      <option value="yes_apartments">&nbsp;&nbsp; Tagirana kao building=apartment</option>
       <option value="no">Nije nađeno</option>
 </select>
 </div>
@@ -182,9 +182,9 @@ Klikom na "Pomoć" u gornjem meniju dobićete više informacija o kolonama u ovo
 		    {% elif address.resolution == ApartmentResolution.NODE_DETACHED %}
 		    ❌ Čvor van zgrade
 		    {% elif address.resolution == ApartmentResolution.OSM_ENTITY_NOT_BUILDING %}
-		    ❌ Nije tagovana kao zgrada
+		    ❌ Nije tagirana kao zgrada
 		    {% elif address.resolution == ApartmentResolution.OSM_ENTITY_NOT_APARTMENT %}
-		    ❌ Nije tagovana kao building=apartments
+		    ❌ Nije tagirana kao building=apartments
 		    {% elif address.resolution == ApartmentResolution.OSM_ENTITY_APARTMENT %}
 		    ✅
 		    {% else %}

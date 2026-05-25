@@ -30,7 +30,7 @@ def generate_wrong_names_report(context):
     if not os.path.exists(wrong_names_osm_address_path):
         os.mkdir(wrong_names_osm_address_path)
 
-    df_wrong_street_names = pd.read_csv(os.path.join(qa_path, 'wrong_street_names.csv'), dtype={'ref:RS:ulica': 'string'})
+    df_wrong_street_names = pd.read_csv(os.path.join(qa_path, 'wrong_street_names.csv'), dtype={'ref:HR:ulica': 'string'})
 
     opstine = []
     total = {
@@ -99,7 +99,7 @@ def generate_wrong_names_report(context):
             street = {
                 'osm_link': f'https://openstreetmap.org/{osm_type}/{osm_id[1:]}',
                 'osm_id': osm_id,
-                'has_ref_rs_ulica': True if pd.notna(df_street['ref:RS:ulica']) and df_street['ref:RS:ulica'] else False,
+                'has_ref_rs_ulica': True if pd.notna(df_street['ref:HR:ulica']) and df_street['ref:HR:ulica'] else False,
                 'osm_name': df_street['osm_name'] if pd.notna(df_street['osm_name']) else '',
                 'osm_name_proper': df_street['rgz_ulica_proper'] if pd.notna(df_street['rgz_ulica_proper']) else '',
                 'osm_name_sr': df_street['osm_name_sr'] if pd.notna(df_street['osm_name_sr']) else '',
@@ -190,7 +190,7 @@ def generate_english_names_report(context):
     if not os.path.exists(en_names_osm_address_path):
         os.mkdir(en_names_osm_address_path)
 
-    df_wrong_street_names = pd.read_csv(os.path.join(qa_path, 'wrong_street_names.csv'), dtype={'ref:RS:ulica': 'string'})
+    df_wrong_street_names = pd.read_csv(os.path.join(qa_path, 'wrong_street_names.csv'), dtype={'ref:HR:ulica': 'string'})
 
     opstine = []
     total = {
@@ -230,7 +230,7 @@ def generate_english_names_report(context):
             street = {
                 'osm_link': f'https://openstreetmap.org/{osm_type}/{osm_id[1:]}',
                 'osm_id': osm_id,
-                'has_ref_rs_ulica': True if pd.notna(df_street['ref:RS:ulica']) and df_street['ref:RS:ulica'] else False,
+                'has_ref_rs_ulica': True if pd.notna(df_street['ref:HR:ulica']) and df_street['ref:HR:ulica'] else False,
                 'osm_name': df_street['osm_name'] if pd.notna(df_street['osm_name']) else '',
                 'osm_name_en': df_street['osm_name_en'],
                 'unneeded_name_en': df_street['unneeded_name_en'],
@@ -309,7 +309,7 @@ def generate_int_names_report(context):
     if not os.path.exists(int_names_osm_address_path):
         os.mkdir(int_names_osm_address_path)
 
-    df_wrong_street_names = pd.read_csv(os.path.join(qa_path, 'wrong_street_names.csv'), dtype={'ref:RS:ulica': 'string'})
+    df_wrong_street_names = pd.read_csv(os.path.join(qa_path, 'wrong_street_names.csv'), dtype={'ref:HR:ulica': 'string'})
 
     opstine = []
     total = {
@@ -357,7 +357,7 @@ def generate_int_names_report(context):
             street = {
                 'osm_link': f'https://openstreetmap.org/{osm_type}/{osm_id[1:]}',
                 'osm_id': osm_id,
-                'has_ref_rs_ulica': True if pd.notna(df_street['ref:RS:ulica']) and df_street['ref:RS:ulica'] else False,
+                'has_ref_rs_ulica': True if pd.notna(df_street['ref:HR:ulica']) and df_street['ref:HR:ulica'] else False,
                 'osm_name': df_street['osm_name'] if pd.notna(df_street['osm_name']) else '',
                 'osm_int_name': df_street['osm_int_name'],
                 'osm_int_name_proper': osm_int_name_proper,
@@ -449,8 +449,8 @@ def generate_alt_names_report(context):
     if not os.path.exists(alt_names_osm_address_path):
         os.mkdir(alt_names_osm_address_path)
 
-    df_wrong_alt_names = pd.read_csv(os.path.join(qa_path, 'wrong_alt_names.csv'), dtype={'ref:RS:ulica': 'string'})
-    df_wrong_alt_names['ref:RS:ulica'] = df_wrong_alt_names['ref:RS:ulica'].astype(object).where(df_wrong_alt_names['ref:RS:ulica'].notnull(), np.nan)
+    df_wrong_alt_names = pd.read_csv(os.path.join(qa_path, 'wrong_alt_names.csv'), dtype={'ref:HR:ulica': 'string'})
+    df_wrong_alt_names['ref:HR:ulica'] = df_wrong_alt_names['ref:HR:ulica'].astype(object).where(df_wrong_alt_names['ref:HR:ulica'].notnull(), np.nan)
 
     opstine = []
     total = {
@@ -502,8 +502,8 @@ def generate_alt_names_report(context):
             street = {
                 'osm_link': f'https://openstreetmap.org/{osm_type}/{osm_id[1:]}',
                 'osm_id': osm_id,
-                'has_ref_rs_ulica': True if pd.notna(df_street['ref:RS:ulica']) and df_street['ref:RS:ulica'] else False,
-                'ref_rs_ulica': df_street['ref:RS:ulica'] if pd.notna(df_street['ref:RS:ulica']) else '',
+                'has_ref_rs_ulica': True if pd.notna(df_street['ref:HR:ulica']) and df_street['ref:HR:ulica'] else False,
+                'ref_rs_ulica': df_street['ref:HR:ulica'] if pd.notna(df_street['ref:HR:ulica']) else '',
                 'rgz_ulica_proper': df_street['rgz_ulica_proper'] if pd.notna(df_street['rgz_ulica_proper']) else '',
                 'osm_name': df_street['osm_name'] if pd.notna(df_street['osm_name']) else '',
                 'osm_alt_name': df_street['osm_alt_name'],
@@ -963,7 +963,7 @@ def main():
 
     rgz_date_file = os.path.join(rgz_path, 'LATEST')
     if not os.path.exists(rgz_date_file):
-        raise Exception("File data/rgz/LATEST missing, no way to determine date when RGZ data was retrived")
+        raise Exception("File data/rgz/LATEST missing, no way to determine date when DGU data was retrived")
     with open(rgz_date_file, 'r') as file:
         file_content = file.read().rstrip()
         rgz_data_timestamp = datetime.datetime.fromisoformat(file_content).strftime('%d.%m.%Y.')

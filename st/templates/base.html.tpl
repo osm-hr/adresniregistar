@@ -4,7 +4,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>RGZ - uvoz ulica</title>
+    <title>DGU - uvoz ulica</title>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
@@ -65,7 +65,7 @@
 <body>
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-	<a class="navbar-brand" href="#">Uvoz RGZ ulica u OSM</a>
+	<a class="navbar-brand" href="#">Uvoz DGU ulica u OSM</a>
 	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample03" aria-controls="navbarsExample03" aria-expanded="false" aria-label="Toggle navigation">
 	<span class="navbar-toggler-icon"></span>
 	</button>
@@ -88,7 +88,7 @@
 			<a class="nav-link" href="https://metrics.improveosm.org/named-roads/total-metrics-per-interval?duration=weekly&locationType=country&locationId=191&unit=km&from=2016-02-14&to={{ currentDate }}">Progress</a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" href="https://gitlab.com/osm-serbia/adresniregistar">Github</a>
+			<a class="nav-link" href="https://github.com/osm-hr/adresniregistar/">Github</a>
 		</li>
 		<li>
 			<a class="nav-link" href="" data-toggle="modal" data-target="#exampleModal">Pomoć</a>
@@ -105,8 +105,8 @@
 <footer class="footer">
 	<div class="container-fluid py-1 mt-3 mb-0 bg-light">
 		<small class="text-secondary text-center">
-			Data &copy; <a href="https://opendata.geosrbija.rs/">RGZ</a> &amp; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, <br/>
-			RGZ podaci od {{ rgzDataDate }}, OSM podaci od {{ osmDataDate }}, izveštaj generisan u {{ reportDate }}
+			Data &copy; <a href="https://opendata.geosrbija.rs/">DGU</a> &amp; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, <br/>
+			DGU podaci od {{ rgzDataDate }}, OSM podaci od {{ osmDataDate }}, izvještaj generiran u {{ reportDate }}
 		</small>
 	</div>
 </footer>

@@ -14,23 +14,23 @@
         </button>
       </div>
       <div class="modal-body">
-        Na ovom izveštaju se nalazi sve ulice kojima se geometrije u RGZ-u i u OSM-u ne poklapaju. Izveštaj sadrži dve tabele i objašnjeno je na samoj strani detaljno šta one predstavljaju.
+        Na ovom izvještaju se nalazi sve ulice kojima se geometrije u DGU-u i u OSM-u ne poklapaju. Izvještaj sadrži dve tabele i objašnjeno je na samoj strani detaljno šta one predstavljaju.
         Detaljna objašnjenja kolona u tabelama:
 		<ul>
-		    <li><b>Naselje</b> &mdash; Naselje kojem pripada ulica. Klik na naselje vodi do izveštaja za sve ulice u tom naselju.</li>
-			<li><b>Id (RGZ)</b> &mdash; Identifikator ulice u RGZ-u (ono što se stavlja u „ref:RS:ulica” tag).
-			Možete da filtrirate po tipu ulice, a dublje objašnjenje kako se formira identifikator možete da vidite <a href="https://community.openstreetmap.org/t/topic/9338/14" target="_blank">ovde na forumu</a>.</li>
-			<li><b>Ulica (RGZ)</b> &mdash; Ime ulice iz RGZ-a, a posle strelice i pravilno ime ulice kako treba uneti u OSM.
+		    <li><b>Naselje</b> &mdash; Naselje kojem pripada ulica. Klik na naselje vodi do izvještaja za sve ulice u tom naselju.</li>
+			<li><b>Id (DGU)</b> &mdash; Identifikator ulice u DGU-u (ono što se stavlja u „ref:HR:ulica” tag).
+			Možete da filtrirate po tipu ulice, a dublje objašnjenje kako se formira identifikator možete da vidite <a href="https://community.openstreetmap.org/t/topic/9338/14" target="_blank">ovdje na forumu</a>.</li>
+			<li><b>Ulica (DGU)</b> &mdash; Ime ulice iz DGU-a, a posle strelice i pravilno ime ulice kako treba uneti u OSM.
 			Ukoliko nema imena ulice posle strelice, znači da ulice još nema u <a href="https://dina.openstreetmap.rs/ar/street_mapping.html" target="_blank">registru</a>.
-			Klikom na ulicu se otvara geojson.io portal na kome može da se vidi i RGZ ulica (crvenom bojom) i sve conflated OSM ulice (plavom bojom).
+			Klikom na ulicu se otvara geojson.io portal na kome može da se vidi i DGU ulica (crvenom bojom) i sve conflated OSM ulice (plavom bojom).
 			Ukoliko na početku ulice ima simbol „⭕”, algoritam je detektovao da je u pitanju zaseok, tj. virtuelna ulica (ne postoji fizički put). Ovo su ulice koje ne treba da se unose.
 			</li>
-			<li><b>Dužina (RGZ)</b> &mdash; Ukupna dužina ulice u RGZ-u (u metrima)</li>
-			<li><b>Ukupna dužina potencijalnih puteva</b> &mdash; Ukupna dužina onog dela svih potencijalnih kandidata segmenata kojima se OSM geometrija poklapa sa geometrijom iz RGZ-a. Dužina koja se računa je samo onaj deo OSM puta koji se poklapa sa RGZ geometrijom. Npr. ako je dužina puta 50m, a procenat poklapanja 80%, onda se računa 40m.</li>
-			<li><b>Ukupna dužina puteva za iscrtati</b> &mdash; Ukupna dužina greške RGZ-a gde je možda potrebno ucrtati puteve</li>
-			<li><b>Conflated putevi</b> &mdash; Spisak svih nađenih puteva u OSM-u koji su spojeni sa RGZ ulicom preko „ref:RS:ulica” taga.</li>
-			<li><b>Potencijalni putevi (% poklapanja, dužina)</b> &mdash; Spisak svih potencijalno nađenih OSM puteva koje treba spojiti sa RGZ-om. Za svaki OSM put je naveden procenat poklapanja sa RGZ putem i njegova OSM dužina.
-			Ukoliko je ime puta <s>precrtano</s>, to označava da se ime iz RGZ-a i ime iz OSM-a ne slažu. Ukoliko ime puta ima prefiks „✅”, to znači da se ime RGZ i OSM puta kompletno slažu. <b>PAŽNJA:</b> u ovoj koloni može biti dosta grešaka i ne unositi ovo automatizovano</li>
+			<li><b>Dužina (DGU)</b> &mdash; Ukupna dužina ulice u DGU-u (u metrima)</li>
+			<li><b>Ukupna dužina potencijalnih puteva</b> &mdash; Ukupna dužina onog dela svih potencijalnih kandidata segmenata kojima se OSM geometrija poklapa sa geometrijom iz DGU-a. Dužina koja se računa je samo onaj deo OSM puta koji se poklapa sa DGU geometrijom. Npr. ako je dužina puta 50m, a procenat poklapanja 80%, onda se računa 40m.</li>
+			<li><b>Ukupna dužina puteva za iscrtati</b> &mdash; Ukupna dužina greške DGU-a gde je možda potrebno ucrtati puteve</li>
+			<li><b>Conflated putevi</b> &mdash; Spisak svih nađenih puteva u OSM-u koji su spojeni sa DGU ulicom preko „ref:HR:ulica” taga.</li>
+			<li><b>Potencijalni putevi (% poklapanja, dužina)</b> &mdash; Spisak svih potencijalno nađenih OSM puteva koje treba spojiti sa DGU-om. Za svaki OSM put je naveden procenat poklapanja sa DGU putem i njegova OSM dužina.
+			Ukoliko je ime puta <s>precrtano</s>, to označava da se ime iz DGU-a i ime iz OSM-a ne slažu. Ukoliko ime puta ima prefiks „✅”, to znači da se ime DGU i OSM puta kompletno slažu. <b>PAŽNJA:</b> u ovoj koloni može biti dosta grešaka i ne unositi ovo automatizovano</li>
 		</ul>
       </div>
       <div class="modal-footer">
@@ -169,18 +169,18 @@
     </script>
 
 
-<h2>Izveštaj nedostajućih geometrija za {{ opstina_name }}</h2>
+<h2>Izvještaj nedostajućih geometrija za {{ opstina_name }}</h2>
 <br/>
 
-<p>Ovde možete videti sve ulice unutar opštine „{{ opstina_name }}” kojima se geometrije u RGZ-u i u OSM-u ne poklapaju. Razlikujemo dva slučaja:
+<p>Ovdje možete vidjeti sve ulice unutar općine „{{ opstina_name }}” kojima se geometrije u DGU-u i u OSM-u ne poklapaju. Razlikujemo dva slučaja:
 <ul>
     <li>
         <b>Potrebna konflacija</b> &mdash; OSM ima kandidate ulice, ali nisu povezane. U ovom slučaju treba prosto povezati te ulice ukoliko je to moguće
     </li>
     <li>
-        <b>Potrebno crtanje</b> &mdash; U OSM-u nema ulice. U ovom slučaju proveriti zašto se ovo dešava:
+        <b>Potrebno crtanje</b> &mdash; U OSM-u nema ulice. U ovom slučaju provjeriti zašto se ovo dešava:
         <ul>
-            <li>Može biti da je RGZ geometrija skroz pogrešna i tad ne treba raditi ništa</li>
+            <li>Može biti da je DGU geometrija skroz pogrešna i tad ne treba raditi ništa</li>
             <li>Može biti da je postoji OSM ulica, ali da je bila predugačka i analiza je nije razmatrala. Tad treba preseći ulicu i povezati samo njen deo</li>
             <li>Može biti da ne postoji OSM put i da ga treba ucrtati i povezati</li>
         </ul>
@@ -233,9 +233,9 @@
       <thead class="thead-dark sticky-top">
         <tr>
             <th>Naselje</th>
-            <th>Id (RGZ)</th>
-            <th>Ulica (RGZ)</th>
-            <th>Dužina (RGZ)</th>
+            <th>Id (DGU)</th>
+            <th>Ulica (DGU)</th>
+            <th>Dužina (DGU)</th>
             <th>Ukupna dužina potencijalnih puteva</th>
             <th>Conflated putevi</th>
             <th>Potencijalni putevi (% poklapanja, dužina)</th>
@@ -312,9 +312,9 @@
       <thead class="thead-dark sticky-top">
         <tr>
             <th>Naselje</th>
-            <th>Id (RGZ)</th>
-            <th>Ulica (RGZ)</th>
-            <th>Dužina (RGZ)</th>
+            <th>Id (DGU)</th>
+            <th>Ulica (DGU)</th>
+            <th>Dužina (DGU)</th>
             <th>Ukupna dužina puteva za iscrtati</th>
             <th>Conflated putevi</th>
             <th>Potencijalni putevi (% poklapanja, dužina)</th>

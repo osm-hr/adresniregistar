@@ -33,7 +33,7 @@ def main(input_curated_streets_file_path, output_curated_streets_file_path):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='prepare_rgz_data.py - Extract RGZ .zip files and creates addresses.csv')
+        description='prepare_rgz_data.py - Extract DGU .zip files and creates addresses.csv')
     parser.add_argument('--input-curated-streets', default=None, required=True, help='Input CSV file with curated streets')
     parser.add_argument('--output-curated-streets', default=None, required=True, help='Output CSV file with curated streets')
     args = parser.parse_args()

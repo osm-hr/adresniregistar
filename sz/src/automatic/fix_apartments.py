@@ -27,9 +27,9 @@ def fix_apartments(data_path, opstina: str=None):
     if opstina:
         additional_comment = f'in {opstina} '
     api = osmapi.OsmApi(passwordfile='osm-password', changesetauto=True, changesetautosize=1000 if opstina else 100, changesetautotags={
-        "comment": f"RGZ apartment fixing {additional_comment}(automatically setting building=apartments, https://community.openstreetmap.org/t/registar-stambenih-zajednica-otvoreni-podaci/87583/27)",
+        "comment": f"DGU apartment fixing {additional_comment}(automatically setting building=apartments, https://community.openstreetmap.org/t/registar-stambenih-zajednica-otvoreni-podaci/87583/27)",
         "tag": "mechanical=yes",
-        "source": "RGZ_SZ"
+        "source": "DGU_SZ"
     })
 
     df_data = pd.read_csv(os.path.join(data_path, 'sz_analysis.csv'))
