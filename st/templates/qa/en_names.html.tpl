@@ -13,7 +13,7 @@
       </div>
       <div class="modal-body">
 		<ul>
-			<li><b>Opština</b> &mdash; Opština analize</li>
+			<li><b>Općina</b> &mdash; Općina analize</li>
 			<li><b># Nepotreban name:en</b> &mdash; Ukupan broj adresa gde postoji „name:en” tag, a nema potrebe da postoji</li>
 			<li><b># Sumnjiv name:en</b> &mdash; Ukupan broj adresa gde postoji „name:en” tag, ali se dosta razlikuje od ostalih imena.
 			    Sumnjivi engleski ne znači da je naziv loš, ali navedeni su jer je često bilo slučajeva da se npr. „Bulevar umetonosti” na engleskom zove kao „Art boulevard” što je pogrešno.</li>
@@ -72,7 +72,7 @@
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-50">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>Opština</th>
+		<th>Općina</th>
 		<th># Nepotreban name:en</th>
 		<th># Sumnjiv name:en</th>
 	</tr>

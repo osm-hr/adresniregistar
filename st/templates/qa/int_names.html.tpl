@@ -13,7 +13,7 @@
       </div>
       <div class="modal-body">
 		<ul>
-			<li><b>Opština</b> &mdash; Opština analize</li>
+			<li><b>Općina</b> &mdash; Općina analize</li>
 			<li><b># Pogrešan „int_name”</b> &mdash; Ukupan broj adresa gde se „int_name” tag i „name” tag ne slažu. Ne znači da je „int_name” pogrešan, možda je i „name” tag pogrešan!</li>
 			<li><b># Nedostaje „int_name”</b> &mdash; Ukupan broj adresa gde „int_name” tag ne postoji.</li>
 		</ul>
@@ -71,7 +71,7 @@
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-50">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>Opština</th>
+		<th>Općina</th>
 		<th># Pogrešan „int_name”</th>
 		<th># Nedostaje „int_name”</th>
 	</tr>

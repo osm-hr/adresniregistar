@@ -13,7 +13,7 @@
       </div>
       <div class="modal-body">
 		<ul>
-			<li><b>Opština</b> &mdash; Opština analize</li>
+			<li><b>Općina</b> &mdash; Općina analize</li>
 			<li><b>#</b> &mdash; Ukupan broj adresa bez ref:RS:kucni_broj oznaka</li>
 		</ul>
       </div>
@@ -73,7 +73,7 @@
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-25">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>Opština</th>
+		<th>Općina</th>
 		<th>#</th>
 	</tr>
 </thead>

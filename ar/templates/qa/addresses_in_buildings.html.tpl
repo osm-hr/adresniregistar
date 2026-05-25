@@ -13,7 +13,7 @@
       </div>
       <div class="modal-body">
 		<ul>
-			<li><b>Opština</b> &mdash; Opština analize</li>
+			<li><b>Općina</b> &mdash; Općina analize</li>
 			<li><b>#</b> &mdash; Ukupan broj adresa unutar zgrada</li>
 		</ul>
       </div>
@@ -73,7 +73,7 @@
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-75">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>Opština</th>
+		<th>Općina</th>
 		<th>Ukupno</th>
 		<th>Adresa u zgradi</th>
 		<th>Više adresa u zgradi</th>

@@ -14,7 +14,7 @@
       <div class="modal-body">
 	    <h5>Analiza po broju:</h5>
 	    <ul>
-			<li><b>Opština</b> &mdash; Opština za koje se odnose podaci</li>
+			<li><b>Općina</b> &mdash; Općina za koje se odnose podaci</li>
 			<li><b>#DGU (broj ulica)</b> &mdash; Ukupan broj različitih ulica u DGU-u, bez zaseoka i ulica koje geometrijom podsećaju na zaseoke</li>
 			<li><b>Konflacija (bar jedan way)</b> &mdash; Ukupna broj DGU ulica koje imaju bar jedan segment (jedan OSM way) spojen sa DGU-om (tj. imaju ispravan „ref:RS:ulica” tag)</li>
 			<li><b>Konflacija [%]</b> &mdash; Procenat svih ulica u DGU-u kojima je bar jedan segment spojen sa DGU-om</li>
@@ -25,7 +25,7 @@
 		</ul>
         <h5>Analiza po dužini:</h5>
 		<ul>
-			<li><b>Opština</b> &mdash; Opština za koju se odnose podaci</li>
+			<li><b>Općina</b> &mdash; Općina za koju se odnose podaci</li>
 			<li><b>#DGU [km]</b> &mdash; Ukupna dužina (u kilometrima) svih ulica u DGU-u</li>
 			<li><b>DGU konflacija [km]</b> &mdash; Ukupna dužina (u kilometrima) svih delova ulica DGU-a koje su spojene sa OSM-om. Ukoliko je ovaj broj manji od dužine DGU ulice, postoji delovi DGU ulice koji nisu spojeni u OSM-u</li>
 			<li><b>DGU konflacija [%]</b> &mdash; Procenat kilometraže svih ulica DGU-a koje su spojene sa OSM-om</li>
@@ -153,7 +153,7 @@
         <table id="list-by-count" class="table table-sm table-striped table-bordered table-hover w-100">
         <thead class="thead-dark sticky-top">
             <tr>
-                <th>Opština</th>
+                <th>Općina</th>
                 <th>#DGU (broj ulica)</th>
                 <th class="d-sm-table-cell">Konflacija (bar jedan way)</th>
                 <th class="d-sm-table-cell">Konflacija [%]</th>
@@ -195,7 +195,7 @@
       <table id="list-by-km" class="table table-sm table-striped table-bordered table-hover w-100">
         <thead class="thead-dark sticky-top">
             <tr>
-                <th>Opština</th>
+                <th>Općina</th>
                 <th>#DGU [km]</th>
                 <th class="d-sm-table-cell">DGU konflacija [km]</th>
                 <th class="d-sm-table-cell">DGU konflacija [%]</th>

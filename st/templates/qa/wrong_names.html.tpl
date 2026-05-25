@@ -13,7 +13,7 @@
       </div>
       <div class="modal-body">
 		<ul>
-			<li><b>Opština</b> &mdash; Opština analize</li>
+			<li><b>Općina</b> &mdash; Općina analize</li>
 			<li><b># name pogrešan</b> &mdash; Ukupan broj adresa gde se „name” tag i „ref:RS:ulica” tag ne slažu. Ne znači da je ime pogrešno, možda je i „ref:RS:ulica” tag pogrešan!</li>
 			<li><b># name nedostaje</b> &mdash; Ukupan broj adresa gde „ref:RS:ulica” tag postoji, ali „name” tag ne postoji</li>
 			<li><b># name:sr pogrešan</b> &mdash; Ukupan broj adresa gde se „name:sr” tag nekako ne slaže. Ukoliko postoji „ref:RS:ulica” tag, gleda se da li se „name:sr” slaže sa imenom ulice iz DGU-a, a ako ga nema, onda se gleda da li se slaže sa „name” tagom</li>
@@ -75,7 +75,7 @@
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-75">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>Opština</th>
+		<th>Općina</th>
 		<th># name pogrešan</th>
 		<th># name nedostaje</th>
 		<th># name:sr pogrešan</th>

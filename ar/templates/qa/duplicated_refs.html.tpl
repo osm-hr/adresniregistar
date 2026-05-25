@@ -58,7 +58,7 @@ $(document).ready( function () {
 <thead class="thead-dark sticky-top">
 	<tr>
 		<th>ref:RS:kucni_broj</th>
-		<th>Opština</th>
+		<th>Općina</th>
 		<th>Duplikati</th>
 	</tr>
 </thead>

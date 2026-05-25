@@ -13,7 +13,7 @@
       </div>
         <div class="modal-body">
             <ul>
-                <li><b>Opština</b> &mdash; Opština za koju se odnosi izveštaj</li>
+                <li><b>Općina</b> &mdash; Općina za koju se odnosi izveštaj</li>
                 <li><b>Odnos</b> &mdash; Količnik broja zgrada i broja kućnih brojeva</li>
                 <li><b>Broj zgrada (OSM)</b> &mdash; Ukupan broj pronađenih zgrada u OSM-u na teritoriji ove općine</li>
                 <li><b>Broj kućnih brojeva (DGU)</b> &mdash; Ukupan broj pronađenih kućnih brojeva u DGU-u na teritoriji ove općine</li>
@@ -70,7 +70,7 @@
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-50">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>Opština</th>
+		<th>Općina</th>
         <th>Odnos</th>
         <th>Broj zgrada (OSM)</th>
         <th>Broj kućnih brojeva (DGU)</th>

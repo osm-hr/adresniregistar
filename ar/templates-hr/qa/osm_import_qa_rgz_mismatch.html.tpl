@@ -13,7 +13,7 @@
       </div>
       <div class="modal-body">
 		<ul>
-			<li><b>Opština</b> &mdash; Opština analize</li>
+			<li><b>Općina</b> &mdash; Općina analize</li>
 			<li><b>#</b> &mdash; Ukupan broj adresa unutar zgrada</li>
 		</ul>
       </div>

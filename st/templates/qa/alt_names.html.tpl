@@ -21,7 +21,7 @@
         <br><br>
         Kolone u tabeli:
 		<ul>
-			<li><b>Opština</b> &mdash; Opština analize</li>
+			<li><b>Općina</b> &mdash; Općina analize</li>
 			<li><b># Pogrešan „alt_name”</b> &mdash; Ukupan broj adresa gde „alt_name” tag postoji, ali heuristika sumnja da nije pravilno napisan. Ne znači da je „alt_name” pogrešan, možda je i „name” tag pogrešan, a možda i algoritam greši!</li>
 			<li><b># Nedostaje „alt_name”</b> &mdash; Ukupan broj adresa gde heuristika kaže da „alt_name” tag treba da postoji, ali nije nađen</li>
 			<li><b># Pogrešan „alt_name:sr”</b> &mdash; Ukupan broj adresa gde „alt_name:sr” tag postoji, ali heuristika sumnja da nije pravilno napisan. Ne znači da je „alt_name:sr” pogrešan, možda je i „name:sr” tag pogrešan, a možda i algoritam greši!</li>
@@ -83,7 +83,7 @@
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-50">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>Opština</th>
+		<th>Općina</th>
 		<th># Pogrešan „alt_name”</th>
 		<th># Nedostaje „alt_name”</th>
 		<th># Pogrešan „alt_name:sr”</th>

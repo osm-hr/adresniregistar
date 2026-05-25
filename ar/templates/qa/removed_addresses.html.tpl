@@ -13,7 +13,7 @@
       </div>
       <div class="modal-body">
 		<ul>
-			<li><b>Opština</b> &mdash; Opština analize</li>
+			<li><b>Općina</b> &mdash; Općina analize</li>
 			<li><b># „removed:ref:RS:kucni_broj”</b> &mdash; Ukupan broj obrisanih adresa sa „removed:ref:RS:kucni_broj” oznakama</li>
 			<li><b># „ref:RS:kucni_broj”</b> &mdash; Ukupan broj obrisanih adresa koje imaju i „removed:ref:RS:kucni_broj” i „ref:RS:kucni_broj” oznaku</li>
 		</ul>
@@ -68,7 +68,7 @@
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-25">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>Opština</th>
+		<th>Općina</th>
 		<th># „removed:ref:RS:kucni_broj”</th>
 		<th># „ref:RS:kucni_broj”</th>
 	</tr>

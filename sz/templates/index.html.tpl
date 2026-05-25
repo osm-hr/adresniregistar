@@ -13,7 +13,7 @@
       </div>
       <div class="modal-body">
 		<ul>
-			<li><b>Opština</b> &mdash; Opština sa stambenim zajednicama</li>
+			<li><b>Općina</b> &mdash; Općina sa stambenim zajednicama</li>
 			<li><b>Broj stambenih zajednica</b> &mdash; Ukupan broj stambenih zajednica u registru</li>
 			<li><b>Pronađeno u AR-u</b> &mdash; Broj pronađenih stambenih zajednica u adresnom registru na osnovu općine, ulice i kućnog broja</li>
 			<li><b>Pronađeno u AR-u [%]</b> &mdash; Broj pronađenih stambenih zajednica u adresnom registru na osnovu općine, ulice i kućnog broja</li>
@@ -75,7 +75,7 @@ tagujemo u OSM-u kao <code>building=apartments</code>. Pročitajte na dnu kako s
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-100">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>Opština</th>
+		<th>Općina</th>
 		<th>Broj stambenih zajednica</th>
 		<th>Pronađeno u AR-u</th>
 		<th>Pronađeno u AR-u [%]</th>

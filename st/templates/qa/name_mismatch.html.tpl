@@ -21,7 +21,7 @@
         <br><br>
         Kolone u tabeli:
 		<ul>
-			<li><b>Opština</b> &mdash; Opština analize</li>
+			<li><b>Općina</b> &mdash; Općina analize</li>
 			<li><b># pogrešnih imena”</b> &mdash; Ukupan broj segmenata ulice kojima je ime pogrešno</li>
 			<li><b>Dužina pogrešnih imena”</b> &mdash; Ukupna dužina svih segmenata ulice. Za dužinu segmenta se ne uzima celokupna dužina iz OSM-a nego samo onaj deo koji je u geometrijski poklopljen sa geometrijom DGU ulice</li>
 		</ul>
@@ -111,7 +111,7 @@
 <table id="list" class="table table-sm table-striped table-bordered table-hover w-50">
 <thead class="thead-dark sticky-top">
 	<tr>
-		<th>Opština</th>
+		<th>Općina</th>
 		<th># pogrešnih imena</th>
 		<th>Dužina pogrešnih imena</th>
 	</tr>
@@ -140,7 +140,7 @@
 <table id="list2" class="table table-sm table-striped table-bordered table-hover w-100">
 <thead class="thead-dark sticky-top">
 	<tr>
-	    <th>Opština</th>
+	    <th>Općina</th>
 	    <th>Naselje</th>
 		<th>Id (DGU)</th>
 		<th>Ulica (DGU)</th>
