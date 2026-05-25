@@ -62,8 +62,8 @@
 
 <h2>Adrese unutar zgrada po općinama</h2>
 <br/>
-<p>Ovde možete videti ukupan broj adresa koje se nalaze unutar zgrada, po općinama.
-    Klikom na općinu dobijate podatke za tu općinu. U gornjem desnom uglu je filtriranje. Ispod ove tabele se nalaze statistike po kategorijama. Više o kategorijama možete videti tamo.
+<p>Ovde možete vidjeti ukupan broj adresa koje se nalaze unutar zgrada, po općinama.
+    Klikom na općinu dobijate podatke za tu općinu. U gornjem desnom uglu je filtriranje. Ispod ove tabele se nalaze statistike po kategorijama. Više o kategorijama možete vidjeti tamo.
     <br/>
     <b>Pažljivo prilikom otvaranja općina preko 5.000 adresa, računar i browser mogu da se uspore znatno!</b>
 </p>

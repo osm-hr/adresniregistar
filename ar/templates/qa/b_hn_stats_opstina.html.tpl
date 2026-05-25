@@ -59,7 +59,7 @@
 
 <h2>Broj zgrada i kućnih brojeva za općinu „{{ opstina }}”</h2>
 <br/>
-<p>Ovde možete videti broj zgrada iz OSM-a, kao i broj kućnih brojeva iz DGU-a, kao i njihov odnos u općini „{{ opstina }}”.
+<p>Ovde možete vidjeti broj zgrada iz OSM-a, kao i broj kućnih brojeva iz DGU-a, kao i njihov odnos u općini „{{ opstina }}”.
     Ovo može da pomogne da se vidi gde najviše fale zgrade u OSM-u jer zgrade i kućni brojevi treba da su korelisani.
     U gornjem desnom uglu je filtriranje. Klikom na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.
     </p>

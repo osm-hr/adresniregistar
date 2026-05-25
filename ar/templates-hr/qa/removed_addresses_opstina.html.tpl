@@ -61,7 +61,7 @@
 
 <h2>Obrisane DGU adrese za općinu „{{ opstina_name }}”</h2>
 <br/>
-<p>Ovde možete videti sve DGU adrese koje smo uneli u OSM, ali su one od tad izbrisane iz DGU-a.
+<p>Ovde možete vidjeti sve DGU adrese koje smo uneli u OSM, ali su one od tad izbrisane iz DGU-a.
     Adresa brisanja je najranije vreme kada smo primetili da adresa više nije u DGU-u. Ukoliko imate lokalno znanje,
     slobodno obrišite ove adrese (ili cele zgrade ukoliko više ne postoji).
     Ukoliko postoji „removed:ref:RS:kucni_broj” oznake, sigurno treba obrisati „removed:ref:RS:kucni_broj” oznaku!

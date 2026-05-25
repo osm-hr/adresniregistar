@@ -152,7 +152,7 @@
 <h2>Izvještaj neslaganja imena za {{ opstina_name }}</h2>
 <br/>
 
-<p>Ovde možete videti sve ulice unutar općine „{{ opstina_name }}” koje imaju bar jednu ulicu kojoj se poklapa geometrija, a ima pogrešno ime.
+<p>Ovde možete vidjeti sve ulice unutar općine „{{ opstina_name }}” koje imaju bar jednu ulicu kojoj se poklapa geometrija, a ima pogrešno ime.
 
 Potrebno je proveriti zašto se ovo dešava:
 <ul>

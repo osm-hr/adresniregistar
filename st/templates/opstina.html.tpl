@@ -143,7 +143,7 @@
 <br/>
 
 <p>
-Ovde možete videti statistike po naselju u okviru općine „{{ opstina.name }}”.
+Ovde možete vidjeti statistike po naselju u okviru općine „{{ opstina.name }}”.
 Klikom na naselje dobijate podatke za to naselje.
 U gornjem desnom uglu je filtriranje. Kliknite na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju da razumete kako da tumačite kolone u ovoj tabeli.</p>
 

@@ -69,7 +69,7 @@
 
 <h2>Adrese unutar zgrade za "{{ opstina_name }}"</h2>
 <br/>
-<p>Ovde možete videti sve zgrade sa svim adresama unutar njihovih poligona, kao i pokušaj njihove kategorizacije.
+<p>Ovde možete vidjeti sve zgrade sa svim adresama unutar njihovih poligona, kao i pokušaj njihove kategorizacije.
     Neke od ovih kategorija se mogu rešiti automatizacijim.
     {% if len(osm_files_move_address_to_building) > 0 %}
     U dnu se nalazi spisak fajlova.
@@ -182,7 +182,7 @@
 
 <h2>Broj različitih kategorija</h2>
 <br/>
-<p>Ovde možete videti ukupan broj adresa koje se nalaze unutar zgrada, po kategorijama unutar općine „{{ opstina_name }}”.
+<p>Ovde možete vidjeti ukupan broj adresa koje se nalaze unutar zgrada, po kategorijama unutar općine „{{ opstina_name }}”.
     Neke od kategorija se mogu rešiti automatizacijom, ali većina zahteva ljudsku pažnju.</p>
 <br/>
 <br/>

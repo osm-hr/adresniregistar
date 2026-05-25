@@ -172,7 +172,7 @@
 <h2>Izvještaj nedostajućih geometrija za {{ opstina_name }}</h2>
 <br/>
 
-<p>Ovde možete videti sve ulice unutar općine „{{ opstina_name }}” kojima se geometrije u DGU-u i u OSM-u ne poklapaju. Razlikujemo dva slučaja:
+<p>Ovde možete vidjeti sve ulice unutar općine „{{ opstina_name }}” kojima se geometrije u DGU-u i u OSM-u ne poklapaju. Razlikujemo dva slučaja:
 <ul>
     <li>
         <b>Potrebna konflacija</b> &mdash; OSM ima kandidate ulice, ali nisu povezane. U ovom slučaju treba prosto povezati te ulice ukoliko je to moguće

@@ -69,7 +69,7 @@
 
 <h2>Adrese unutar zgrade za "{{ opstina_name }}"</h2>
 <br/>
-<p>Ovdje možete videti sve zgrade sa svim adresama unutar njihovih poligona, kao i pokušaj njihove kategorizacije.
+<p>Ovdje možete vidjeti sve zgrade sa svim adresama unutar njihovih poligona, kao i pokušaj njihove kategorizacije.
     Neke od ovih kategorija se mogu riješiti automatizacijom.
     {% if len(osm_files_move_address_to_building) > 0 %}
     Na dnu se nalazi spisak fajlova.

@@ -153,7 +153,7 @@
 <h2>Izvještaj za {{ naselje.name_lat }}</h2>
 <br/>
 
-<p>Ovde možete videti sve ulice unutar naselja „{{ naselje.name_lat }}” i status konflacije. U gornjem desnom uglu je filtriranje.
+<p>Ovde možete vidjeti sve ulice unutar naselja „{{ naselje.name_lat }}” i status konflacije. U gornjem desnom uglu je filtriranje.
 Podaci u poslednjoj koloni tabele prikazuju <b>samo potencijalne vrednosti</b> i treba ih koristiti samo kao savete. Potrebno je svaku ulicu otvoriti u editoru i obratiti pažnju prilikom uvoza!
 </p>
 	<p>

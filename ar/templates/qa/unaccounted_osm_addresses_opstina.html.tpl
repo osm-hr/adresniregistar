@@ -67,7 +67,7 @@
 
 <h2>OSM adrese bez ref:RS:kucni_broj oznake za općinu „{{ opstina_name }}”</h2>
 <br/>
-<p>Ovde možete videti sve adrese u OpenStreetMap-ama koje nemaju ref:RS:kucni_broj oznaku.
+<p>Ovde možete vidjeti sve adrese u OpenStreetMap-ama koje nemaju ref:RS:kucni_broj oznaku.
     Ovo znači ili da nisu spojene sa DGU podacima, ili da je teško spojiti ih sa DGU podacima (postoje na terenu, treba izaći na teren i proveriti...).
     U gornjem desnom uglu je filtriranje. Klikom na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.
     </p>
