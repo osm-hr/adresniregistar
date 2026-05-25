@@ -24,7 +24,7 @@
          "description": "Street name, in Cyrillic script (both names in bilingual regions, separated by '/')"
        },
        {
-         "key": "ref:HR:kucni_broj",
+         "key": "ref:RS:kucni_broj",
          "object_types": ["node", "area", "relation"],
          "doc_url": "https://wiki.openstreetmap.org/wiki/Serbia/Adresses",
          "description": "Id from RGZ for future updates"
