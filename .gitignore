@@ -26,3 +26,7 @@ st/osm-password
 st/client_secrets
 *~
 *.bak
+
+# not used for HR, we use ar/templates-hr & ar/address-taginfo-hr.json
+ar/templates/
+ar/addresses-taginfo.json
