@@ -1,4 +1,9 @@
-* search & replace ``serb`, `srbij`, `srpsk`, `RGZ`, `ref:RS`
+* search & replace:
+  * ``serb`
+  * `srbij`
+  * `srpsk`
+  * `RGZ`
+  * `ref:RS`
 * search contact info `kokanov` and create/replace
 * fix (copy/paste and update) URLs:
   * all in `ar/templates-hr/base.html` (and/or `ar/templates-hr/base.html` ?) 
