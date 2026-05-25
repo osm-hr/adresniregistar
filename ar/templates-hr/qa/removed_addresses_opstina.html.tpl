@@ -16,7 +16,7 @@
                 <li><b>OSM id</b> &mdash; ID adrese iz OSM-a, dat kao link</li>
                 <li><b>Ulica</b> &mdash; Ulica iz adrese (addr:street oznaka)</li>
                 <li><b>Kućni broj</b> &mdash; Kućni broj iz adrese (addr:housenumber oznaka)</li>
-                <li><b>Datum brisanja</b> &mdash; Datum prvog primećivanja da adresa nije više u DGU-u</li>
+                <li><b>Datum brisanja</b> &mdash; Datum prvog primjećivanja da adresa nije više u DGU-u</li>
                 <li><b>„removed:ref:HR:kucni_broj” tag</b> &mdash; „removed:ref:HR:kucni_broj” oznaka na adresi, vrednost koju je adresa nekad imala u DGU-u</li>
                 <li><b>„ref:HR:kucni_broj” tag</b> &mdash; „ref:HR:kucni_broj” oznaka na adresi, ukoliko trenutno postoji. Ako postoje obe vrednosti, treba obrisati „removed:ref:HR:kucni_broj” oznaku</li>
             </ul>
