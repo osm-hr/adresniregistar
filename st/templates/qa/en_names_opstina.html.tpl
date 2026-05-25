@@ -101,7 +101,7 @@
 <p>Ovdje možete da vidite potencijalne probleme sa „name:en” tagom za ulice u OpenStreetMap-apa za općinu „{{ opstina_name }}”. Moguće je da „name:en” tag bude nepotreban, a moguće je i da bude označen kao „sumnjiv”.
     Sumnjivi engleski ne znači da su loši, ali označeni su ovdje jer je često bilo slučajeva da se npr. „Bulevar umetonosti” na engleskom zove kao „Art boulevard” što je pogrešno.
     <br/>
-    Savetujemo da pročitate <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju da bolje razumete kako da tumačite tabelu.
+    Savjetujemo da pročitate <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju da bolje razumete kako da tumačite tabelu.
     U gornjem desnom uglu je filtriranje.
 </p>
 <br/>

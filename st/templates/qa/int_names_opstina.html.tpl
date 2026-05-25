@@ -100,7 +100,7 @@
 <br/>
 <p>Ovdje možete da vidite potencijalne probleme sa „int_name” tagom za ulice u OpenStreetMap-apa za općinu „{{ opstina_name }}”. Moguće je da „int_name” tag fali, a moguće je i da je pogrešan.
     <br/>
-    Savetujemo da pročitate <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju da bolje razumete kako da tumačite tabelu.
+    Savjetujemo da pročitate <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a> u gornjem meniju da bolje razumete kako da tumačite tabelu.
     U gornjem desnom uglu je filtriranje.
 </p>
 <br/>

@@ -73,7 +73,7 @@ Sve komande se izvršavaju sa `make <komanda>`. Dostupne su sledeće komande:
 Osvežavanje nije trivijalan posao i dosta je manuelan. Prvo treba dohvatiti nove adrese, onda uraditi automatske
 izmene u OSM-u, pa onda objaviti nove vektorske mape, pa onda tek možemo da počnemo da ih koristimo.
 
-Savetuje se da se u isto vreme radi ažuriranje i ulica i adresa (kućnih brojeva) i to tako što se prvo uradi ažuriranje ulica
+Savjetuje se da se u isto vreme radi ažuriranje i ulica i adresa (kućnih brojeva) i to tako što se prvo uradi ažuriranje ulica
 (zato što se tad popunjuvaju pravilna imena novododatih ulica)!
 
 ### Skidanje novih DGU adresa

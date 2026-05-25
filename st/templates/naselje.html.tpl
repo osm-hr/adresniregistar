@@ -154,7 +154,7 @@
 <br/>
 
 <p>Ovdje možete vidjeti sve ulice unutar naselja „{{ naselje.name_lat }}” i status konflacije. U gornjem desnom uglu je filtriranje.
-Podaci u poslednjoj koloni tabele prikazuju <b>samo potencijalne vrijednosti</b> i treba ih koristiti samo kao savete. Potrebno je svaku ulicu otvoriti u editoru i obratiti pažnju prilikom uvoza!
+Podaci u poslednjoj koloni tabele prikazuju <b>samo potencijalne vrijednosti</b> i treba ih koristiti samo kao savjete. Potrebno je svaku ulicu otvoriti u editoru i obratiti pažnju prilikom uvoza!
 </p>
 	<p>
 	<b>Kliknite na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a></b> u gornjem meniju da razumete kako da tumačite kolone u ovoj tabeli.

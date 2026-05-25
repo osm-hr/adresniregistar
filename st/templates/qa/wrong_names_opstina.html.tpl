@@ -116,7 +116,7 @@
 <h2>Loši nazivi ulica</h2>
 <br/>
 <p>Ovdje možete da vidite sve ulice u OpenStreetMap-apa koje na neki način nemaju dobar neki od „name” tagova za općinu „{{ opstina_name }}”.
-    Svaka kolona ima svoje specifično značenje i ovdje je natrpano dosta informacija na jednom mestu, pa <b>savetujemo da pročitate <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a></b> u gornjem meniju da bolje razumete kako da tumačite tabelu.
+    Svaka kolona ima svoje specifično značenje i ovdje je natrpano dosta informacija na jednom mestu, pa <b>savjetujemo da pročitate <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a></b> u gornjem meniju da bolje razumete kako da tumačite tabelu.
     U gornjem desnom uglu je filtriranje po raznim kriterijumima.
 </p>
 <br/>
