@@ -7,4 +7,4 @@
   * all in `ar/templates-hr/base.html` (and/or `ar/templates-hr/base.html` ?) 
     they may already have /Croatia instead of /Serbian, but are missing / non-functional
   * all in `ar/addresses-taginfo.json`
-  
+* https://github.com/osm-hr/adresniregistar/issues
