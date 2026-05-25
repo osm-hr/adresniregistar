@@ -154,7 +154,7 @@
 
 <p>Ovdje možete vidjeti sve ulice unutar općine „{{ opstina_name }}” koje imaju bar jednu ulicu kojoj se poklapa geometrija, a ima pogrešno ime.
 
-Potrebno je proveriti zašto se ovo dešava:
+Potrebno je provjeriti zašto se ovo dešava:
 <ul>
 <li>Može biti da je ime slično i da ga treba izmeniti da odgovora pravom imenu ulice i uraditi konflaciju ulice</li>
 <li>Takođe je moguće da je to neka dodatna ulica koja nije povezana sa DGU-om (nema „<code>ref:RS:ulica</code>” tag), pa onda treba naći odgovaraju ulicu u DGU-u i povezati je</li>

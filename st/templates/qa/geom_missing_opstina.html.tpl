@@ -178,7 +178,7 @@
         <b>Potrebna konflacija</b> &mdash; OSM ima kandidate ulice, ali nisu povezane. U ovom slučaju treba prosto povezati te ulice ukoliko je to moguće
     </li>
     <li>
-        <b>Potrebno crtanje</b> &mdash; U OSM-u nema ulice. U ovom slučaju proveriti zašto se ovo dešava:
+        <b>Potrebno crtanje</b> &mdash; U OSM-u nema ulice. U ovom slučaju provjeriti zašto se ovo dešava:
         <ul>
             <li>Može biti da je DGU geometrija skroz pogrešna i tad ne treba raditi ništa</li>
             <li>Može biti da je postoji OSM ulica, ali da je bila predugačka i analiza je nije razmatrala. Tad treba preseći ulicu i povezati samo njen deo</li>

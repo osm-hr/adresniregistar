@@ -85,7 +85,7 @@ sajtu https://download-tmp.geosrbija.rs/download.
 * Bekapovati stare adrese (`cp data/rgz/addresses.csv data/rgz/addresses.old.csv`)
 * Napraviti fasciklu za nove CSV adrese (`mkdir data/rgz/csv-new`)
 * Pokrenuti `python src/download_from_rgz`. Skripta smješta .zip fajlove u `data/rgz/download`. Može se pokretati iznova, krenuće tamo gde je stala. Pratiti ukoliko pukne i pokrenuti ponovo. Skripta traje oko 1-2h.
-* Proveriti (za svaki slučaj) da imate 168 .zip fajlova u `data/rgz/download` i da nijedan fajl nije prazan (0 bajtova)
+* Provjeriti (za svaki slučaj) da imate 168 .zip fajlova u `data/rgz/download` i da nijedan fajl nije prazan (0 bajtova)
 * Pokrenuti `python3 src/prepare_rgz_data.py --output-csv-file data/rgz/addresses.new.csv --output-csv-folder data/rgz/csv-new`. Skripta pravi novi `data/rgz/addresses.new.csv` fajl.
 
 ### Automatske izmene u OSM-u

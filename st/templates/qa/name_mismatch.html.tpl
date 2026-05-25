@@ -12,7 +12,7 @@
         </button>
       </div>
       <div class="modal-body">
-        Ovaj izvještaj proverava da li u blizini ulice ima nepovezana ulica sa sličnom geometrijom i pogrešnim imenom ulice. Potrebno je proveriti zašto se ovo dešava:
+        Ovaj izvještaj proverava da li u blizini ulice ima nepovezana ulica sa sličnom geometrijom i pogrešnim imenom ulice. Potrebno je provjeriti zašto se ovo dešava:
         <ul>
             <li>Može biti da je ime slično i da ga treba izmeniti da odgovora pravom imenu ulice i uraditi konflaciju ulice</li>
             <li>Takođe je moguće da je to neka dodatna ulica koja nije povezana sa DGU-om (nema „<code>ref:RS:ulica</code>” tag), pa onda treba naći odgovaraju ulicu u DGU-u i povezati je</li>

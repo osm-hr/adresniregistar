@@ -33,7 +33,7 @@
                 <li><b>OSM</b> &mdash; Link ka OSM ulici i ime ulice u OSM-u</li>
                 <li><b>„ref:RS:ulica” tag</b> &mdash; Označava da li je ulica spojena sa DGU-om preko „ref:RS:ulica” taga. Ukoliko jeste, prikaza je simbol „✅” i identifikator ulice u DGU-u</li>
                 <li><b>DGU ime</b> &mdash; Ukoliko je OSM ulica spojena sa DGU-om, ovdje je navedeno ime ulice u DGU-u</li>
-                <li><b>„name” tag</b> &mdash; Vrijednost „name” taga iz OSM-a. Navedena su i DGU i OSM imena, čisto da čovek može da ih proveri oba</li>
+                <li><b>„name” tag</b> &mdash; Vrijednost „name” taga iz OSM-a. Navedena su i DGU i OSM imena, čisto da čovek može da ih provjeri oba</li>
                 <li><b>„alt_name” tag</b> &mdash; Stanje „alt_name” taga na osnovu algoritma. Pogledajte iznad kako da tumačite ovu kolonu</li>
                 <li><b>„alt_name:sr” tag</b> &mdash; Stanje „alt_name:sr” taga na osnovu algoritma. Pogledajte iznad kako da tumačite ovu kolonu</li>
                 <li><b>„alt_name:sr-Latn” tag</b> &mdash; Stanje „alt_name:sr-Latn” taga na osnovu algoritma. Pogledajte iznad kako da tumačite ovu kolonu</li>
