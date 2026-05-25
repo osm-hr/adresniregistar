@@ -18,7 +18,7 @@
         Detaljna objašnjenja kolona u tabelama:
 		<ul>
 		    <li><b>Naselje</b> &mdash; Naselje kojem pripada ulica. Klik na naselje vodi do izvještaja za sve ulice u tom naselju.</li>
-			<li><b>Id (DGU)</b> &mdash; Identifikator ulice u DGU-u (ono što se stavlja u „ref:RS:ulica” tag).
+			<li><b>Id (DGU)</b> &mdash; Identifikator ulice u DGU-u (ono što se stavlja u „ref:HR:ulica” tag).
 			Možete da filtrirate po tipu ulice, a dublje objašnjenje kako se formira identifikator možete da vidite <a href="https://community.openstreetmap.org/t/topic/9338/14" target="_blank">ovdje na forumu</a>.</li>
 			<li><b>Ulica (DGU)</b> &mdash; Ime ulice iz DGU-a, a posle strelice i pravilno ime ulice kako treba uneti u OSM.
 			Ukoliko nema imena ulice posle strelice, znači da ulice još nema u <a href="https://dina.openstreetmap.rs/ar/street_mapping.html" target="_blank">registru</a>.
@@ -28,7 +28,7 @@
 			<li><b>Dužina (DGU)</b> &mdash; Ukupna dužina ulice u DGU-u (u metrima)</li>
 			<li><b>Ukupna dužina potencijalnih puteva</b> &mdash; Ukupna dužina onog dela svih potencijalnih kandidata segmenata kojima se OSM geometrija poklapa sa geometrijom iz DGU-a. Dužina koja se računa je samo onaj deo OSM puta koji se poklapa sa DGU geometrijom. Npr. ako je dužina puta 50m, a procenat poklapanja 80%, onda se računa 40m.</li>
 			<li><b>Ukupna dužina puteva za iscrtati</b> &mdash; Ukupna dužina greške DGU-a gde je možda potrebno ucrtati puteve</li>
-			<li><b>Conflated putevi</b> &mdash; Spisak svih nađenih puteva u OSM-u koji su spojeni sa DGU ulicom preko „ref:RS:ulica” taga.</li>
+			<li><b>Conflated putevi</b> &mdash; Spisak svih nađenih puteva u OSM-u koji su spojeni sa DGU ulicom preko „ref:HR:ulica” taga.</li>
 			<li><b>Potencijalni putevi (% poklapanja, dužina)</b> &mdash; Spisak svih potencijalno nađenih OSM puteva koje treba spojiti sa DGU-om. Za svaki OSM put je naveden procenat poklapanja sa DGU putem i njegova OSM dužina.
 			Ukoliko je ime puta <s>precrtano</s>, to označava da se ime iz DGU-a i ime iz OSM-a ne slažu. Ukoliko ime puta ima prefiks „✅”, to znači da se ime DGU i OSM puta kompletno slažu. <b>PAŽNJA:</b> u ovoj koloni može biti dosta grešaka i ne unositi ovo automatizovano</li>
 		</ul>

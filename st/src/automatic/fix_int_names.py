@@ -67,7 +67,7 @@ def fix_int_names(data_path, street_mappings: StreetMapping, oauth_session: OAut
         if 'name' not in entity['tag']:
             print(f"Entity {osm_id} do not have name, skipping")
             continue
-        is_conflated = 'ref:RS:ulica' in entity['tag']
+        is_conflated = 'ref:HR:ulica' in entity['tag']
 
         current_street_name = entity['tag']['name']
         current_int_name = entity['tag']['int_name'] if 'int_name' in entity['tag'] else None

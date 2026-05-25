@@ -14,7 +14,7 @@
         <div class="modal-body">
             <ul>
                 <li><b>OSM ulica</b> &mdash; Ime ulice i link na OSM way</li>
-                <li><b>„ref:RS:ulica” tag</b> &mdash; Označava da li je ulica spojena sa DGU-om preko „ref:RS:ulica” taga. Ukoliko jeste, koristi se DGU ime da se zaključi vrijednost „int_name” taga</li>
+                <li><b>„ref:HR:ulica” tag</b> &mdash; Označava da li je ulica spojena sa DGU-om preko „ref:HR:ulica” taga. Ukoliko jeste, koristi se DGU ime da se zaključi vrijednost „int_name” taga</li>
                 <li><b>Pogrešan „int_name” tag</b> &mdash; Tag postoji, ali mislimo da je pogrešan. U nastavku su navedene trenutna vrijednost taga i (posle strelice) šta bi trebalo da bude vrijednost tog taga</li>
                 <li><b>Nedostaje „int_name” tag</b> &mdash; Na ovom OSM way-u nema „int_name” taga. U nastavku je navedena vrijednost taga koji treba da se stavi</li>
             </ul>
@@ -107,7 +107,7 @@
 <br/>
 
 <div class="text-right">
-    <label for="errorType">Postoji ref:RS:ulica tag:</label>
+    <label for="errorType">Postoji ref:HR:ulica tag:</label>
     <select name="refExists" id="refExistsSelect">
       <option value="all"></option>
       <option value="yes">Da</option>
@@ -126,7 +126,7 @@
 <thead class="thead-dark sticky-top">
 	<tr>
 		<th>OSM ulica</th>
-		<th>„ref:RS:ulica” tag</th>
+		<th>„ref:HR:ulica” tag</th>
         <th>Pogrešan „int_name” tag</th>
         <th>Nedostaje „int_name” tag</th>
 	</tr>

@@ -53,7 +53,7 @@ Sad treba da imate fajlove `data/rgz/streets.old.csv` i `data/rgz/streets.new.cs
 kao i lokalni overpass server.
 
 * Izvršiti `PYTHONPATH=../ar/src/ python3 src/generate_st_rgz_diff.py --generate` i dobićete 3 fajla: `data/rgz/streets-added.csv` (nove ulice), `data/rgz/streets-removed.csv` (izbrisane ulice) i `data/rgz/streets-changed.csv` (promenjene ulice)
-* Izvršiti `PYTHONPATH=../ar/src/ python3 src/generate_st_rgz_diff.py --fix_deleted` - prolazi kroz obrisane ulice i ako su stvarno obrisane, briše im `ref:RS:ulica` i dodaje im `removed:ref:RS:ulica`
+* Izvršiti `PYTHONPATH=../ar/src/ python3 src/generate_st_rgz_diff.py --fix_deleted` - prolazi kroz obrisane ulice i ako su stvarno obrisane, briše im `ref:HR:ulica` i dodaje im `removed:ref:HR:ulica`
 * Izvršiti `PYTHONPATH=../ar/src/ python3 src/generate_st_rgz_diff.py --rename-changed` - prolazi kroz ulice sa promenjenim imenom i menja im `name` tag (i resetuje `alt_name`. Pita da li da stavi `old_name` tag (ukoliko je u DGU-u samo pravopisna greška ili promena padeža, ne treba stavljati `old_name`).
 
 Uvek možete otvoriti ova 3 fajla u QGIS-u (CRS je EPSG:32634) da vidite šta se promenilo.

@@ -107,10 +107,10 @@ def do_analysis_name_mismatch(opstina, data_path, require_return):
         return
 
     print(f"    Loading OSM streets in {opstina}")
-    df_osm = pd.read_csv(input_osm_file, dtype={'ref:RS:ulica': object, 'osm_id': str})
+    df_osm = pd.read_csv(input_osm_file, dtype={'ref:HR:ulica': object, 'osm_id': str})
 
     print(f"    Loading analyzed streets in {opstina}")
-    df_anal = pd.read_csv(input_analysis_file, dtype={'ref:RS:ulica': object, 'osm_id': str})
+    df_anal = pd.read_csv(input_analysis_file, dtype={'ref:HR:ulica': object, 'osm_id': str})
     df_anal = df_anal[pd.notna(df_anal.found_osm_id)]
     df_anal[['total_length', 'average_length', 'total_count_wrong']]  = df_anal.apply(lambda x: calculate_name_match(x, df_osm), axis=1, result_type='expand')
     df_anal = df_anal[df_anal.total_count_wrong > 0]
@@ -132,7 +132,7 @@ def do_analysis_geom_missing(opstina, data_path, require_return):
         return
 
     print(f"    Loading analyzed streets in {opstina}")
-    df_anal = pd.read_csv(input_analysis_file, dtype={'ref:RS:ulica': object, 'osm_id': str})
+    df_anal = pd.read_csv(input_analysis_file, dtype={'ref:HR:ulica': object, 'osm_id': str})
     df_anal = df_anal[pd.notna(df_anal.conflated_osm_id)]
     df_anal[['geom_missing_need_drawing', 'geom_missing_need_conflate']]  = df_anal.apply(lambda x: calculate_geom_missing(x), axis=1, result_type='expand')
     df_anal = df_anal[(df_anal.geom_missing_need_drawing > 0) | (df_anal.geom_missing_need_conflate > 0)]

@@ -15,7 +15,7 @@
         Ovaj izvještaj proverava da li u blizini ulice ima nepovezana ulica sa sličnom geometrijom i pogrešnim imenom ulice. Potrebno je provjeriti zašto se ovo dešava:
         <ul>
             <li>Može biti da je ime slično i da ga treba izmeniti da odgovora pravom imenu ulice i uraditi konflaciju ulice</li>
-            <li>Takođe je moguće da je to neka dodatna ulica koja nije povezana sa DGU-om (nema „<code>ref:RS:ulica</code>” tag), pa onda treba naći odgovaraju ulicu u DGU-u i povezati je</li>
+            <li>Takođe je moguće da je to neka dodatna ulica koja nije povezana sa DGU-om (nema „<code>ref:HR:ulica</code>” tag), pa onda treba naći odgovaraju ulicu u DGU-u i povezati je</li>
             <li>Treći scenario je da ovakva ulica uopšte ne postoji u DGU-u i onda treba obrisati ime ove ulice u OSM-u skroz</li>
         </ul>
         <br><br>
@@ -99,7 +99,7 @@
 
 <h2>Neslaganje imena ulica</h2>
 <br/>
-<p>Ovdje možete da vidite sve ulice preko čije geometrije prelazi ulica sa različitim imenom (i ta ulica nije povezana preko <code>ref:RS:ulica</code> taga sa DGU ulicama. To znači da ulica nije dobro povezana, ili da u blizini ima druga ulica koja nije dobro povezana.
+<p>Ovdje možete da vidite sve ulice preko čije geometrije prelazi ulica sa različitim imenom (i ta ulica nije povezana preko <code>ref:HR:ulica</code> taga sa DGU ulicama. To znači da ulica nije dobro povezana, ili da u blizini ima druga ulica koja nije dobro povezana.
     Klikom na općinu dobijate detaljnije podatke za tu općinu. U gornjem desnom uglu je filtriranje.
     <br/>
     <br/>

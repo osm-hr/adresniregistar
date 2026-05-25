@@ -61,12 +61,12 @@ def do_opstina(data_path, osm_entities_cache, street_mappings: StreetMapping, op
             if 'name:sr-Latn' in entity['tags']:
                 print("Skipping highways with name:sr-Latn tag")
                 continue
-            if 'ref:RS:ulica' in entity['tags']:
-                print("Skipping highways that already have ref:RS:ulica")
+            if 'ref:HR:ulica' in entity['tags']:
+                print("Skipping highways that already have ref:HR:ulica")
                 continue
 
             new_tags = dict(entity['tags'], **{
-                'ref:RS:ulica': str(address.rgz_ulica_mb),
+                'ref:HR:ulica': str(address.rgz_ulica_mb),
                 'name': address.rgz_ulica_proper,
                 'name:sr': address.rgz_ulica_proper,
                 'name:sr-Latn': cyr2lat_small(address.rgz_ulica_proper),

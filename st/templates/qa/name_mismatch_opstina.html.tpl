@@ -16,7 +16,7 @@
       <div class="modal-body">
 		<ul>
 		    <li><b>Naselje</b> &mdash; Naselje kojem pripada ulica. Klik na naselje vodi do izvještaja za sve ulice u tom naselju.</li>
-			<li><b>Id (DGU)</b> &mdash; Identifikator ulice u DGU-u (ono što se stavlja u „ref:RS:ulica” tag).
+			<li><b>Id (DGU)</b> &mdash; Identifikator ulice u DGU-u (ono što se stavlja u „ref:HR:ulica” tag).
 			Možete da filtrirate po tipu ulice, a dublje objašnjenje kako se formira identifikator možete da vidite <a href="https://community.openstreetmap.org/t/topic/9338/14" target="_blank">ovdje na forumu</a>.</li>
 			<li><b>Ulica (DGU)</b> &mdash; Ime ulice iz DGU-a, a posle strelice i pravilno ime ulice kako treba uneti u OSM.
 			Ukoliko nema imena ulice posle strelice, znači da ulice još nema u <a href="https://dina.openstreetmap.rs/ar/street_mapping.html" target="_blank">registru</a>.
@@ -24,9 +24,9 @@
 			Ukoliko na početku ulice ima simbol „⭕”, algoritam je detektovao da je u pitanju zaseok, tj. virtuelna ulica (ne postoji fizički put). Ovo su ulice koje ne treba da se unose.
 			</li>
 			<li><b>Dužina (DGU)</b> &mdash; Ukupna dužina ulice u DGU-u (u metrima)</li>
-			<li><b>Dužina konflacije (DGU)</b> &mdash; Ukupna dužina onog dela ulice iz DGU-a koji su spojeni preko „ref:RS:ulica” taga (u metrima). Ukoliko je ovaj broj manji od dužine ulice, postoji delovi DGU ulice koji nisu spojeni u OSM-u</li>
-			<li><b>Dužina konflacije (OSM)</b> &mdash; Zbir dužina OSM way-eva koji su spojeni preko „ref:RS:ulica” taga sa DGU ulicom (u metrima). Može biti veća od DGU dužine.</li>
-			<li><b>Conflated putevi</b> &mdash; Spisak svih nađenih puteva u OSM-u koji su spojeni sa DGU ulicom preko „ref:RS:ulica” taga.</li>
+			<li><b>Dužina konflacije (DGU)</b> &mdash; Ukupna dužina onog dela ulice iz DGU-a koji su spojeni preko „ref:HR:ulica” taga (u metrima). Ukoliko je ovaj broj manji od dužine ulice, postoji delovi DGU ulice koji nisu spojeni u OSM-u</li>
+			<li><b>Dužina konflacije (OSM)</b> &mdash; Zbir dužina OSM way-eva koji su spojeni preko „ref:HR:ulica” taga sa DGU ulicom (u metrima). Može biti veća od DGU dužine.</li>
+			<li><b>Conflated putevi</b> &mdash; Spisak svih nađenih puteva u OSM-u koji su spojeni sa DGU ulicom preko „ref:HR:ulica” taga.</li>
 			<li><b>Potencijalni putevi (% poklapanja, dužina)</b> &mdash; Spisak svih potencijalno nađenih OSM puteva koje treba spojiti sa DGU-om. Za svaki OSM put je naveden procenat poklapanja sa DGU putem i njegova OSM dužina.
 			Ukoliko je ime puta <s>precrtano</s>, to označava da se ime iz DGU-a i ime iz OSM-a ne slažu. Ukoliko ime puta ima prefiks „✅”, to znači da se ime DGU i OSM puta kompletno slažu. <b>PAŽNJA:</b> u ovoj koloni može biti dosta grešaka i ne unositi ovo automatizovano</li>
 		</ul>
@@ -157,7 +157,7 @@
 Potrebno je provjeriti zašto se ovo dešava:
 <ul>
 <li>Može biti da je ime slično i da ga treba izmeniti da odgovora pravom imenu ulice i uraditi konflaciju ulice</li>
-<li>Takođe je moguće da je to neka dodatna ulica koja nije povezana sa DGU-om (nema „<code>ref:RS:ulica</code>” tag), pa onda treba naći odgovaraju ulicu u DGU-u i povezati je</li>
+<li>Takođe je moguće da je to neka dodatna ulica koja nije povezana sa DGU-om (nema „<code>ref:HR:ulica</code>” tag), pa onda treba naći odgovaraju ulicu u DGU-u i povezati je</li>
 <li>Treći scenario je da ovakva ulica uopšte ne postoji u DGU-u i onda treba obrisati ime ove ulice u OSM-u skroz</li>
 </ul>
 

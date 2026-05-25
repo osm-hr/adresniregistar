@@ -16,7 +16,7 @@
 	    <ul>
 			<li><b>Općina</b> &mdash; Općina za koje se odnose podaci</li>
 			<li><b>#DGU (broj ulica)</b> &mdash; Ukupan broj različitih ulica u DGU-u, bez zaseoka i ulica koje geometrijom podsećaju na zaseoke</li>
-			<li><b>Konflacija (bar jedan way)</b> &mdash; Ukupna broj DGU ulica koje imaju bar jedan segment (jedan OSM way) spojen sa DGU-om (tj. imaju ispravan „ref:RS:ulica” tag)</li>
+			<li><b>Konflacija (bar jedan way)</b> &mdash; Ukupna broj DGU ulica koje imaju bar jedan segment (jedan OSM way) spojen sa DGU-om (tj. imaju ispravan „ref:HR:ulica” tag)</li>
 			<li><b>Konflacija [%]</b> &mdash; Procenat svih ulica u DGU-u kojima je bar jedan segment spojen sa DGU-om</li>
 			<li><b>Pronađeno (bar jedan way)</b> &mdash; Ukupan broj svih ulica u DGU-u koje imaju bar jednog potencijalnog kandidata za spajanje sa DGU-om (ovo znači da generalno neka ulica u blizini postoji u OSM-u, ali ne mora da znači da je to baš ulica iz DGU-a)</li>
 			<li><b>Pronađeno [%]</b> &mdash; Procenat svih ulica u DGU-u koje imaju bar jednog potencijalnog kandidata za spajanje sa DGU-om</li>
@@ -29,7 +29,7 @@
 			<li><b>#DGU [km]</b> &mdash; Ukupna dužina (u kilometrima) svih ulica u DGU-u</li>
 			<li><b>DGU konflacija [km]</b> &mdash; Ukupna dužina (u kilometrima) svih delova ulica DGU-a koje su spojene sa OSM-om. Ukoliko je ovaj broj manji od dužine DGU ulice, postoji delovi DGU ulice koji nisu spojeni u OSM-u</li>
 			<li><b>DGU konflacija [%]</b> &mdash; Procenat kilometraže svih ulica DGU-a koje su spojene sa OSM-om</li>
-			<li><b>OSM konflacija [km]</b> &mdash; Ukupna dužina (u kilometrima) svih ulica u OSM-u koje su spojene sa DGU-om (tj. imaju ispravan „ref:RS:ulica” tag)</li>
+			<li><b>OSM konflacija [km]</b> &mdash; Ukupna dužina (u kilometrima) svih ulica u OSM-u koje su spojene sa DGU-om (tj. imaju ispravan „ref:HR:ulica” tag)</li>
 			<li><b>OSM konflacija [%]</b> &mdash; Procenat kilometraže svih ulica u OSM-u koje su spojene sa DGU-om</li>
 			<li><b>Pronađeno [km]</b> &mdash; Ukupna dužina (u kilometrima) svih ulica u OSM-u koje su potencijalni kandidati za spajanje sa DGU-om</li>
 			<li><b>Pronađeno [%]</b> &mdash; Procenat kilometraže svih ulica u OSM-u koje su potencijalni kandidati za spajanje sa DGU-om (ovo znači da generalno neka ulica u blizini postoji u OSM-u, ali ne mora da znači da je to baš ulica iz DGU-a)</li>

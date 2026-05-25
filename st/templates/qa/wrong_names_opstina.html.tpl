@@ -21,10 +21,10 @@
             Semantika kolona je sledeća:
             <ul>
 			<li><b>OSM id</b> &mdash; ID ulice u OSM-u</li>
-			<li><b>„ref:RS:ulica” tag</b> &mdash; Označava samo da li postoji „ref:RS:ulica” tag ili ne. Zgodno je za filtriranje</li>
-			<li><b>„name” tag</b> &mdash; Stanje „name” taga. Ovaj tag može da bude pogrešan samo ukoliko postoji „ref:RS:ulica” tag, pa je onda pogrešan u odnosu na DGU. <b>PAŽNJA:</b> moguće je da je ime dobro, a da je zapravo pogrešan „ref:RS:ulica” tag</li>
-			<li><b>„name:sr” tag</b> &mdash; Stanje „name:sr” taga. Ukoliko postoji „ref:RS:ulica” tag, onda se gleda da li je pogrešan u odnosu na DGU. Ako ga nema, onda se gleda da li je pogrešan u odnosu na „name” tag</li>
-			<li><b>„name:sr-Latn” tag</b> &mdash; Stanje „name:sr-Latn” taga. Ukoliko postoji „ref:RS:ulica” tag, onda se gleda da li je pogrešan u odnosu na DGU. Ako ga nema, onda se gleda da li je pogrešan u odnosu na „name” tag</li>
+			<li><b>„ref:HR:ulica” tag</b> &mdash; Označava samo da li postoji „ref:HR:ulica” tag ili ne. Zgodno je za filtriranje</li>
+			<li><b>„name” tag</b> &mdash; Stanje „name” taga. Ovaj tag može da bude pogrešan samo ukoliko postoji „ref:HR:ulica” tag, pa je onda pogrešan u odnosu na DGU. <b>PAŽNJA:</b> moguće je da je ime dobro, a da je zapravo pogrešan „ref:HR:ulica” tag</li>
+			<li><b>„name:sr” tag</b> &mdash; Stanje „name:sr” taga. Ukoliko postoji „ref:HR:ulica” tag, onda se gleda da li je pogrešan u odnosu na DGU. Ako ga nema, onda se gleda da li je pogrešan u odnosu na „name” tag</li>
+			<li><b>„name:sr-Latn” tag</b> &mdash; Stanje „name:sr-Latn” taga. Ukoliko postoji „ref:HR:ulica” tag, onda se gleda da li je pogrešan u odnosu na DGU. Ako ga nema, onda se gleda da li je pogrešan u odnosu na „name” tag</li>
             </ul>
         </div>
         <div class="modal-footer">
@@ -123,7 +123,7 @@
 <br/>
 
 <div class="text-right">
-    <label for="errorType">Postoji ref:RS:ulica tag:</label>
+    <label for="errorType">Postoji ref:HR:ulica tag:</label>
     <select name="refExists" id="refExistsSelect">
       <option value="all"></option>
       <option value="yes">Da</option>
@@ -146,7 +146,7 @@
 <thead class="thead-dark sticky-top">
 	<tr>
 		<th>OSM id</th>
-		<th>„ref:RS:ulica” tag</th>
+		<th>„ref:HR:ulica” tag</th>
         <th>„name” tag</th>
         <th>„name:sr” tag</th>
         <th>„name:sr-Latn” tag</th>

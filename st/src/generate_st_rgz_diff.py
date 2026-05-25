@@ -47,7 +47,7 @@ def get_ref_ulica_from_overpass(overpass_api, rgz_ulica_mb):
     response = overpass_api.query(f"""
         [out:json];
         (
-          nwr["ref:RS:ulica"="{rgz_ulica_mb}"];
+          nwr["ref:HR:ulica"="{rgz_ulica_mb}"];
         );
         out body;
         // &contact=https://github.com/osm-hr/adresniregistar
@@ -64,10 +64,10 @@ def get_ref_ulica_from_overpass(overpass_api, rgz_ulica_mb):
 
 def fix_deleted(rgz_path):
     """
-    Nalazi obrisane ulice i briše im ref:RS:ulica tag
+    Nalazi obrisane ulice i briše im ref:HR:ulica tag
     """
     api = osmapi.OsmApi(passwordfile='osm-password', changesetauto=True, changesetautosize=100, changesetautotags={
-        "comment": f"DGU street import (removing ref:RS:ulica after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html",
+        "comment": f"DGU street import (removing ref:HR:ulica after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html",
         "tag": "mechanical=yes",
         "source": "DGU_ST"
     })
@@ -115,7 +115,7 @@ def fix_deleted(rgz_path):
             else:
                 api.RelationUpdate(entity)
 
-            print(f'Removed ref:RS:ulica of {osm_entity_found} and added removed:ref:RS:ulica')
+            print(f'Removed ref:HR:ulica of {osm_entity_found} and added removed:ref:HR:ulica')
             time.sleep(1)
 
         time.sleep(1)
@@ -287,7 +287,7 @@ def create_csv_files(rgz_path):
             continue
         street_old = streets_old[rgz_ulica_mb_id]
         if (street_new['opstina_mb'] != street_old['opstina_mb']) or street_new['opstina'] != street_old['opstina']:
-            print(f"Opstina changed for ref:RS:ulica {rgz_ulica_mb_id} from {street_old['opstina']} ({street_old['opstina_mb']}) to {street_new['opstina']} ({street_new['opstina_mb']}), fix manually")
+            print(f"Opstina changed for ref:HR:ulica {rgz_ulica_mb_id} from {street_old['opstina']} ({street_old['opstina_mb']}) to {street_new['opstina']} ({street_new['opstina_mb']}), fix manually")
             continue
             #raise Exception('Opstina changed, bailing out')
         naselje_mb_changed = street_new['naselje_mb'] != street_old['naselje_mb']
@@ -332,7 +332,7 @@ def main():
     parser = argparse.ArgumentParser(
         description='generate_rgz_diff.py - Fix OSM data after DGU data refresh')
     parser.add_argument('--generate', required=False, help='Should we generate diff files from old and new data', action='store_true')
-    parser.add_argument('--fix_deleted', required=False, help='Should we fix deleted streets - set removed:ref:RS:ulica for those that do not exist anymore', action='store_true')
+    parser.add_argument('--fix_deleted', required=False, help='Should we fix deleted streets - set removed:ref:HR:ulica for those that do not exist anymore', action='store_true')
     parser.add_argument('--rename-changed', required=False, help='Should we rename deleted streets - move name to old_name and rename street', action='store_true')
     args = parser.parse_args()
     cwd = os.getcwd()

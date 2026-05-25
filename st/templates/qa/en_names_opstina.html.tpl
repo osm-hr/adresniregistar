@@ -14,7 +14,7 @@
         <div class="modal-body">
             <ul>
                 <li><b>OSM ulica</b> &mdash; Ime ulice i link na OSM way</li>
-                <li><b>„ref:RS:ulica” tag</b> &mdash; Označava da li je ulica spojena sa DGU-om preko „ref:RS:ulica” taga. Ukoliko jeste, koristi se DGU ime da se zaključi vrijednost „name:en” taga</li>
+                <li><b>„ref:HR:ulica” tag</b> &mdash; Označava da li je ulica spojena sa DGU-om preko „ref:HR:ulica” taga. Ukoliko jeste, koristi se DGU ime da se zaključi vrijednost „name:en” taga</li>
                 <li><b>Nepotreban „name:en” tag</b> &mdash; Tag postoji, je redudantan, može da se obriše.</li>
                 <li><b>Sumnjiv „name:en” tag</b> &mdash; Tag postoji, ali se dosta razlikuje od ostalih imena, pa treba provjeriti jer je često bilo slučajeva da se npr. „Bulevar umetonosti” na engleskom zove kao „Art boulevard” što je pogrešno.</li>
             </ul>
@@ -108,7 +108,7 @@
 <br/>
 
 <div class="text-right">
-    <label for="errorType">Postoji ref:RS:ulica tag:</label>
+    <label for="errorType">Postoji ref:HR:ulica tag:</label>
     <select name="refExists" id="refExistsSelect">
       <option value="all"></option>
       <option value="yes">Da</option>
@@ -127,7 +127,7 @@
 <thead class="thead-dark sticky-top">
 	<tr>
 		<th>OSM ulica</th>
-		<th>„ref:RS:ulica” tag</th>
+		<th>„ref:HR:ulica” tag</th>
         <th>Nepotreban „name:en” tag</th>
         <th>Sumnjiv „name:en” tag</th>
 	</tr>

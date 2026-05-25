@@ -537,13 +537,13 @@ def find_wrong_names(cwd, street_mappings: StreetMapping):
     print("Split all addresses per opstina")
 
     # Merge with DGU streets and find out proper street names
-    streets_per_opstina = streets_per_opstina.merge(df_rgz_streets[['rgz_opstina', 'rgz_ulica_mb', 'rgz_ulica']], how='left', left_on='ref:RS:ulica', right_on='rgz_ulica_mb')
+    streets_per_opstina = streets_per_opstina.merge(df_rgz_streets[['rgz_opstina', 'rgz_ulica_mb', 'rgz_ulica']], how='left', left_on='ref:HR:ulica', right_on='rgz_ulica_mb')
     streets_per_opstina['rgz_ulica_proper'] = streets_per_opstina[['rgz_ulica', 'rgz_ulica_mb']].apply(
         lambda x: street_mappings.get_name(x['rgz_ulica'], x['rgz_ulica_mb'], default_value='') if pd.notna(x['rgz_ulica']) and x['rgz_ulica'] != '' else np.nan, axis=1)
 
     # For testing purposes, save and load addresses_per_opstina like this
     # pd.DataFrame(streets_per_opstina).to_csv('~/src/adresniregistar/st/data/qa/addresses_per_opstina.csv', index=False)
-    # streets_per_opstina = pd.read_csv('~/src/adresniregistar/st/data/qa/addresses_per_opstina.csv', dtype={'ref:RS:ulica': 'string'})
+    # streets_per_opstina = pd.read_csv('~/src/adresniregistar/st/data/qa/addresses_per_opstina.csv', dtype={'ref:HR:ulica': 'string'})
 
     if not os.path.exists(os.path.join(qa_path, 'wrong_street_names.csv')):
         # Detect all wrong tags

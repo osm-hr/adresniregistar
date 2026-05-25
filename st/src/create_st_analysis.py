@@ -34,7 +34,7 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping, df_cached_ci
         return
 
     print(f"    Loading OSM streets in {opstina}")
-    df_osm = pd.read_csv(input_osm_file, dtype={'ref:RS:ulica': object, 'osm_id': str})
+    df_osm = pd.read_csv(input_osm_file, dtype={'ref:HR:ulica': object, 'osm_id': str})
     df_osm['osm_geometry2'] = df_osm.osm_geometry.apply(wkt.loads)
     df_osm['osm_id'] = df_osm['osm_id'].astype('str')
     gdf_osm = gpd.GeoDataFrame(df_osm, geometry='osm_geometry2', crs="EPSG:4326")
@@ -61,13 +61,13 @@ def do_analysis(opstina, data_path, street_mappings: StreetMapping, df_cached_ci
     print(f"    Joining streets in DGU and cached circles")
     gdf_rgz['is_zaseok'] = gdf_rgz['rgz_ulica_mb'].apply(lambda x: x[6] == '2')
 
-    print(f"    Joining streets in DGU and OSM in {opstina} by conflation (ref:RS:ulica)")
-    gdf_rgz = gdf_rgz.merge(gdf_osm, how='left', left_on='rgz_ulica_mb', right_on='ref:RS:ulica')
+    print(f"    Joining streets in DGU and OSM in {opstina} by conflation (ref:HR:ulica)")
+    gdf_rgz = gdf_rgz.merge(gdf_osm, how='left', left_on='rgz_ulica_mb', right_on='ref:HR:ulica')
     gdf_rgz.rename(columns={'osm_id': 'conflated_osm_id'}, inplace=True)
     gdf_rgz.drop(['osm_name', 'osm_name_sr', 'osm_name_sr_latn', 'osm_name_en',
                   'osm_alt_name', 'osm_alt_name_sr', 'osm_alt_name_sr_latn', 'osm_short_name', 'osm_short_name_sr',
                   'osm_short_name_sr_latn',
-                  'osm_int_name', 'ref:RS:ulica', 'note', 'osm_name_norm', 'osm_geometry2'], inplace=True, axis=1)
+                  'osm_int_name', 'ref:HR:ulica', 'note', 'osm_name_norm', 'osm_geometry2'], inplace=True, axis=1)
     gdf_rgz.loc[pd.isna(gdf_rgz['conflated_osm_id']), 'conflated_osm_id'] = ''
     gdf_rgz['conflated_osm_id'] = gdf_rgz.groupby(['rgz_naselje_mb', 'rgz_ulica_mb'])['conflated_osm_id'].transform(
         lambda x: ','.join(x))
@@ -120,13 +120,13 @@ node {
 way {
   color:red;
 }
-way[ref:RS:ulica] {
+way[ref:HR:ulica] {
   color: black;
 }
 }}
     """
 
-    # After ref:RS:ulica conflation, remove all unneeded footways etc
+    # After ref:HR:ulica conflation, remove all unneeded footways etc
     gdf_osm['highway'] = df_osm['tags'].apply(lambda x: ast.literal_eval(x)['highway'])
     gdf_osm = gdf_osm[~gdf_osm.highway.isin(['footway', 'cycleway', 'path', 'steps', 'proposed', 'construction', 'corridor', 'platform', 'services', 'rest_area', 'raceway'])]
     gdf_osm.drop(['highway'], inplace=True, axis=1)
@@ -135,7 +135,7 @@ way[ref:RS:ulica] {
 
     # Join buffered DGU with OSM streets, filter those where 60% of length is in DGU buffer
     print(f"    Joining streets in DGU and OSM in {opstina} that have high length")
-    gdf_osm_no_conflated = gdf_osm[gdf_osm["ref:RS:ulica"].isna()]
+    gdf_osm_no_conflated = gdf_osm[gdf_osm["ref:HR:ulica"].isna()]
     gdf_high_intersection = gdf_rgz.sjoin(gdf_osm_no_conflated, how='inner', predicate='intersects')
     gdf_high_intersection['intersection_length'] = gdf_high_intersection['rgz_buffered_geometry'].intersection(
         gdf_high_intersection['osm_geometry2']).length
@@ -147,7 +147,7 @@ way[ref:RS:ulica] {
     gdf_high_intersection.drop(['index_right', 'osm_name_sr', 'osm_name_sr_latn', 'osm_name_en',
                                 'osm_alt_name', 'osm_alt_name_sr', 'osm_alt_name_sr_latn', 'osm_short_name',
                                 'osm_short_name_sr', 'osm_short_name_sr_latn',
-                                'osm_int_name', 'ref:RS:ulica', 'note', 'osm_geometry2', 'intersection_length'],
+                                'osm_int_name', 'ref:HR:ulica', 'note', 'osm_geometry2', 'intersection_length'],
                                inplace=True, axis=1)
 
     gdf_high_intersection['same_street_names'] = gdf_high_intersection.apply(lambda x: x['rgz_ulica_norm'] == x['osm_name_norm'] or pd.isna(x['rgz_ulica_norm']) or pd.isna(x['osm_name_norm']), axis=1)
