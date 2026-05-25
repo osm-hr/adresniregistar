@@ -27,7 +27,7 @@
 			<li><b>Nedostaje konflacija (DGU)</b> &mdash; Ukupna dužina onih delova ulice iu DGU-u koja nisu spojeni preko „ref:RS:ulica” taga (u metrima). Zapravo, razlika između ukupne dužine ulice i dužine konflacije</li>
 			<li><b>Dužina konflacije (OSM)</b> &mdash; Zbir dužina OSM way-eva koji su spojeni preko „ref:RS:ulica” taga sa DGU ulicom (u metrima). Može biti veća od DGU dužine.</li>
 			<li><b>Conflated putevi</b> &mdash; Spisak svih nađenih puteva u OSM-u koji su spojeni sa DGU ulicom preko „ref:RS:ulica” taga.</li>
-			<li><b>Max greška konflacije (m)</b> &mdash; Greška konflacije između DGU ulice i OSM ulica (u metrima). Najveća udaljenost koju dve tačke na ovim ulicama mogu imati. Ova vrednost obično ne sme biti preko par stotina metara</li>
+			<li><b>Max greška konflacije (m)</b> &mdash; Greška konflacije između DGU ulice i OSM ulica (u metrima). Najveća udaljenost koju dve tačke na ovim ulicama mogu imati. Ova vrijednost obično ne sme biti preko par stotina metara</li>
 			<li><b>Potencijalni putevi (% poklapanja, dužina)</b> &mdash; Spisak svih potencijalno nađenih OSM puteva koje treba spojiti sa DGU-om. Za svaki OSM put je naveden procenat poklapanja sa DGU putem i njegova OSM dužina.
 			Ukoliko je ime puta <s>precrtano</s>, to označava da se ime iz DGU-a i ime iz OSM-a ne slažu. Ukoliko ime puta ima prefiks „✅”, to znači da se ime DGU i OSM puta kompletno slažu. <b>PAŽNJA:</b> u ovoj koloni može biti dosta grešaka i ne unositi ovo automatizovano</li>
 		</ul>
@@ -154,7 +154,7 @@
 <br/>
 
 <p>Ovdje možete vidjeti sve ulice unutar naselja „{{ naselje.name_lat }}” i status konflacije. U gornjem desnom uglu je filtriranje.
-Podaci u poslednjoj koloni tabele prikazuju <b>samo potencijalne vrednosti</b> i treba ih koristiti samo kao savete. Potrebno je svaku ulicu otvoriti u editoru i obratiti pažnju prilikom uvoza!
+Podaci u poslednjoj koloni tabele prikazuju <b>samo potencijalne vrijednosti</b> i treba ih koristiti samo kao savete. Potrebno je svaku ulicu otvoriti u editoru i obratiti pažnju prilikom uvoza!
 </p>
 	<p>
 	<b>Kliknite na <a href="" data-toggle="modal" data-target="#exampleModal">„Pomoć”</a></b> u gornjem meniju da razumete kako da tumačite kolone u ovoj tabeli.

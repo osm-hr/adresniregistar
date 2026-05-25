@@ -176,7 +176,7 @@ da bude uneta u uvozu. Ako je pronađena, videćemo je u koloni <b>„Pronađeno
 <br/>
 <br/>
 Kada imamo OSM entitet, možemo da vidimo da li je on čvor, linija ili relacija, da li je tagovan kao <code>building</code> i
-da li je vrednost tog taga <code>apartments</code>. Idealan slučaj koji nam treba je da je adresa ili linija koja je tagirana
+da li je vrijednost tog taga <code>apartments</code>. Idealan slučaj koji nam treba je da je adresa ili linija koja je tagirana
 kao <code>building=apartments</code> ili da je adresa čvor koji je zakačen za liniju koja je tagirana kao <code>building=apartments</code>.
 <br/>
 <br/>

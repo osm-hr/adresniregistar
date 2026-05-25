@@ -15,8 +15,8 @@
             Sve kolone imaju jedan od tri znaka - „✅”, „⚠️️” ili „❌”. Ovi znaci znače:
             <ul>
                 <li>✅ &mdash; Sve je u redu sa ovim tagom</li>
-                <li>⚠️️ &mdash; Tag ne postoji. U nastavku je <s>precrtano</s> napisano šta mislimo da bi trebalo da stoji za vrednost ovog taga</li>
-                <li>❌ &mdash; Tag postoji, ali mislimo da je pogrešan. U nastavku su navedene trenutna vrednost taga i (posle strelice) šta bi trebalo da bude vrednost tog taga</li>
+                <li>⚠️️ &mdash; Tag ne postoji. U nastavku je <s>precrtano</s> napisano šta mislimo da bi trebalo da stoji za vrijednost ovog taga</li>
+                <li>❌ &mdash; Tag postoji, ali mislimo da je pogrešan. U nastavku su navedene trenutna vrijednost taga i (posle strelice) šta bi trebalo da bude vrijednost tog taga</li>
             </ul>
             Semantika kolona je sledeća:
             <ul>

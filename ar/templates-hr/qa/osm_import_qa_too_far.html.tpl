@@ -91,7 +91,7 @@
 <br/>
 <p>Ovdje možete vidjeti OSM adrese koje imaju tag <code>ref:HR:kucni_broj</code>, ali je udaljenost u odnosu na DGU prevelika.
     <br/>
-    Udaljenosti mogu da se filtriraju po par vrednosti - preko 30m, 50m, 100m i 1000m.
+    Udaljenosti mogu da se filtriraju po par vrijednosti - preko 30m, 50m, 100m i 1000m.
 </p>
 
 <div class="text-right">
