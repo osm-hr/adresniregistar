@@ -119,7 +119,7 @@
       <option value="housenumber_partial">&nbsp;&nbsp; Delimično pogrešan</option>
     </select>
     <br/>
-    <label for="errorType">Ima belešku:</label>
+    <label for="errorType">Ima bilješku:</label>
     <select name="noteType" id="noteTypeSelect">
       <option value="all"></option>
       <option value="yes">Da</option>
@@ -140,7 +140,7 @@
         <th>DGU adresa poklapanje</th>
         <th>DGU kućni broj</th>
         <th>DGU kućni broj poklapanje</th>
-        <th>Beleška</th>
+        <th>Bilješka</th>
 	</tr>
 </thead>
 <tbody>
