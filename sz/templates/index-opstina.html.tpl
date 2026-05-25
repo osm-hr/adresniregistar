@@ -21,7 +21,7 @@
 			<li><b>Nađen u OSM-u</b> &mdash; Ako je stambena zajednica sa identifikatorom iz AR-a nađena u OSM-u preko <code>ref:HR:kucni_broj</code> taga,
 			ovdje će biti ulica i broj iz OSM-a i link ka OSM entitetu</li>
 			<li><b>Stanje u OSM-u</b> &mdash; U idealnom slučaju, čvor iz OSM-a će biti zakačen na zgradu tagovanu kao <code>building=apartments</code> ili će adresa
-			već biti na zgradi ili relaciji koja je ovako tagovana. Ukoliko to nije slučaj iz nekog razloga, ovdje će biti upisano stanje.</li>
+			već biti na zgradi ili relaciji koja je ovako tagirana. Ukoliko to nije slučaj iz nekog razloga, ovdje će biti upisano stanje.</li>
 		</ul>
       </div>
       <div class="modal-footer">
@@ -134,9 +134,9 @@ Klikom na "Pomoć" u gornjem meniju dobićete više informacija o kolonama u ovo
       <option value="all"></option>
       <option value="yes">Nađeno</option>
       <option value="yes_nodedetached">&nbsp;&nbsp; Čvor van zgrade</option>
-      <option value="yes_notbuilding">&nbsp;&nbsp; Nije tagovana kao zgrada</option>
-      <option value="yes_notapartments">&nbsp;&nbsp; Nije tagovana kao building=apartments</option>
-      <option value="yes_apartments">&nbsp;&nbsp; Tagovana kao building=apartment</option>
+      <option value="yes_notbuilding">&nbsp;&nbsp; Nije tagirana kao zgrada</option>
+      <option value="yes_notapartments">&nbsp;&nbsp; Nije tagirana kao building=apartments</option>
+      <option value="yes_apartments">&nbsp;&nbsp; Tagirana kao building=apartment</option>
       <option value="no">Nije nađeno</option>
 </select>
 </div>
@@ -182,9 +182,9 @@ Klikom na "Pomoć" u gornjem meniju dobićete više informacija o kolonama u ovo
 		    {% elif address.resolution == ApartmentResolution.NODE_DETACHED %}
 		    ❌ Čvor van zgrade
 		    {% elif address.resolution == ApartmentResolution.OSM_ENTITY_NOT_BUILDING %}
-		    ❌ Nije tagovana kao zgrada
+		    ❌ Nije tagirana kao zgrada
 		    {% elif address.resolution == ApartmentResolution.OSM_ENTITY_NOT_APARTMENT %}
-		    ❌ Nije tagovana kao building=apartments
+		    ❌ Nije tagirana kao building=apartments
 		    {% elif address.resolution == ApartmentResolution.OSM_ENTITY_APARTMENT %}
 		    ✅
 		    {% else %}
