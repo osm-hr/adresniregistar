@@ -49,7 +49,7 @@
 <br/>
 <p>Pošto su nazivi ulica u DGU-u napisani velikim slovima, koristi se ova tabela da pretvori nazive iz DGU-a u nazive kakve treba imati u OSM-u.
     <br/>
-    Na osnovu ovih naziva se generišu imena ulica za uvoz adresa, kao i detektuju sve greške u QA analizama.
+    Na osnovu ovih naziva se generiraju imena ulica za uvoz adresa, kao i detektuju sve greške u QA analizama.
     <br/>
     Kako smo došli do baš ovakvih naziva možete pogledati na <a href="https://community.openstreetmap.org/t/upisivanje-dgu-adresa-u-hrvatsku/137215">temi na forumu</a>.
     Ukoliko primetite neku grešku, molimo Vas da prijavite grešku <a href="https://github.com/osm-hr/adresniregistar/issues/new">ovdje</a> (potrebno je prvo se registrirati), ili ostavite komentar na istoj

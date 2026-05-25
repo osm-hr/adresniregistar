@@ -61,7 +61,7 @@ Sve komande se izvršavaju sa `make <komanda>`. Dostupne su sledeće komande:
 
 * `report`
 
-  Ova komanda generiše HTML fajlove u `data/report` direktorijumu na osnovu prethodno urađene analize. Izgenerirani
+  Ova komanda generira HTML fajlove u `data/report` direktorijumu na osnovu prethodno urađene analize. Izgenerirani
   fajlovi su statički i mogu se prebaciti na neki server. Veličina je velika, 800 MB neotpakovano, 80 MB zapakovano. 
 
 * `upload_report`
@@ -107,7 +107,7 @@ Za ovo je potrebno da imamo [tippecanoe](https://github.com/felt/tippecanoe) pro
 
 `ogr2ogr data/rgz/adrese.geojson data/rgz/addresses.new.csv -dialect sqlite -sql "SELECT rgz_kucni_broj, ST_GeomFromText(rgz_geometry) AS geometry FROM 'addresses.new'" -nln adrese`
 
-* Generiše se .mbtiles fajl: `tippecanoe data/rgz/adrese.geojson -o data/rgz/brojevi.mbtiles --force`
+* Generira se .mbtiles fajl: `tippecanoe data/rgz/adrese.geojson -o data/rgz/brojevi.mbtiles --force`
 * `scp data/rgz/brojevi.mbtiles vektor:/home/debian/` (kredencijale za vektorski tile server tražiti od autora ovog uputstva)
 
 ### Kreiranje rasterske mape

@@ -13,7 +13,7 @@ Za generiranje `data/sz_analysis.csv` (izlaz analize) možete pokrenuti `python3
 
 `--data-path` je putanja do `ar/` direktorijuma gde se nalaze već generirani fajlovi (pogledajti [README.md](../ar/README.md) ar/ projekta).
 
-Kada imate `data/sz_analysis.csv`, možete pokrenuti `python3 src/report.py` da izgenerišete HTML fajlove u `output/` direktorijumu.
+Kada imate `data/sz_analysis.csv`, možete pokrenuti `python3 src/report.py` da izgenerirate HTML fajlove u `output/` direktorijumu.
 
 Postoji i skripta `run.sh` koja radi sve ovo i upload-uje na server.
 

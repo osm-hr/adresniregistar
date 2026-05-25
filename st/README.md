@@ -8,7 +8,7 @@ Pored toga u direktorijum `data/rgz` treba skinuti sa opendata.geosrbija.rs opst
 
 Treba skinuti i [`geckodriver` binary](https://github.com/mozilla/geckodriver/releases) i staviti ga u root projekta.
 
-ST modul zavisi da u AR modulu postoji `data/mapping/mapping.csv` fajl koji se generiše u AR modulu.
+ST modul zavisi da u AR modulu postoji `data/mapping/mapping.csv` fajl koji se generira u AR modulu.
 
 Treba da imate i `parallel` program (na Debian-u se prosto instalira sa `sudo apt install parallel`).
 
@@ -67,7 +67,7 @@ Za ovo je potrebno da imamo [tippecanoe](https://github.com/felt/tippecanoe) pro
 
 `ogr2ogr data/rgz/ulice.geojson data/rgz/streets.new.csv -dialect sqlite -sql "SELECT rgz_ulica AS ulica_ime, ST_GeomFromText(rgz_geometry) AS geometry FROM 'streets.new'" -nln ulice`
 
-* Generiše se .mbtiles fajl: `tippecanoe data/rgz/ulice.geojson -o data/rgz/ulice.mbtiles --force`
+* Generira se .mbtiles fajl: `tippecanoe data/rgz/ulice.geojson -o data/rgz/ulice.mbtiles --force`
 * `scp data/rgz/ulice.mbtiles vektor:/home/debian/` (kredencijale za vektorski tile server tražiti od autora ovog uputstva)
 
 ### Kreiranje rasterske mape
