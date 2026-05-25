@@ -33,7 +33,7 @@ Sve komande se izvršavaju sa `make <komanda>`. Dostupne su sledeće komande:
   Ova komanda prolazi kroz sve DGU ulice i pokušava da od formata gde su sve ulice velikim slovom (npr. "ПЕТРА ДРАПШИНА")
   pretvori heuristikom u gramatički ispravan format ("Петра Драпшина"). Izlaz se zapisuje u fajl data/mapping/mapping.csv
   gde imamo ulicu iz DGU-a velikim slovima, ulicu kako se pravilno piše, i način kako smo došli do ovoga zaključka i koje
-  ulice iz OSM-a su dovele do ove odluke (radi debagovanja). Naravno, ovaj ceo proces ima grešaka i ovo je best effort
+  ulice iz OSM-a su dovele do ove odluke (radi debugiranja). Naravno, ovaj cijeli proces ima grešaka i ovo je best effort
   heuristika. Za heuristiku se koristi fajl "curated_streets.csv" gde mogu da se ubace sve što želimo odmah da prebacimo
   ručno (override-ujemo heuristiku). Zatim se koristi OSM podaci da se nađu te ulice preko "ref:HR:ulica" taga jer
   pretpostavljamo da su u OSM-u unete dobro. Posle toga se koristi i OSM podaci bez "ref:HR:ulica" taga gde se koristi
@@ -46,7 +46,7 @@ Sve komande se izvršavaju sa `make <komanda>`. Dostupne su sledeće komande:
   Ova komanda uzme podatke iz OSM-a i DGU-a i obrađuje adrese po općinama. Za svaku DGU adresu pokušava da pronađe odgovarajuću
   adresu u OSM-u. Takva adresa može da se nađe (postavi se "`matching`" kolona na `True`), a ako se ne nađe, pokušava da nađe
   najpribližniju adresu u radijusu od 200m na osnovu imena ulice, kućnog broja i udaljenosti DGU i OSM adresa. Ukoliko nađe
-  takvu adresu, postavlja se "`score``" i OSM elementi, a ako nema, te kolone ostaju prazne. Rezultujući CSV se smešta u
+  takvu adresu, postavlja se "`score``" i OSM elementi, a ako nema, te kolone ostaju prazne. Rezultirajući CSV se smješta u
   data/analasis direktorijum.
 
 
@@ -84,7 +84,7 @@ sajtu https://download-tmp.geosrbija.rs/download.
 * Bekapovati staru `data/rgz/download` fasciklu (npr. `mkdir <data-datum>; mv *.zip <data-datum>/`)
 * Bekapovati stare adrese (`cp data/rgz/addresses.csv data/rgz/addresses.old.csv`)
 * Napraviti fasciklu za nove CSV adrese (`mkdir data/rgz/csv-new`)
-* Pokrenuti `python src/download_from_rgz`. Skripta smešta .zip fajlove u `data/rgz/download`. Može se pokretati iznova, krenuće tamo gde je stala. Pratiti ukoliko pukne i pokrenuti ponovo. Skripta traje oko 1-2h.
+* Pokrenuti `python src/download_from_rgz`. Skripta smješta .zip fajlove u `data/rgz/download`. Može se pokretati iznova, krenuće tamo gde je stala. Pratiti ukoliko pukne i pokrenuti ponovo. Skripta traje oko 1-2h.
 * Proveriti (za svaki slučaj) da imate 168 .zip fajlova u `data/rgz/download` i da nijedan fajl nije prazan (0 bajtova)
 * Pokrenuti `python3 src/prepare_rgz_data.py --output-csv-file data/rgz/addresses.new.csv --output-csv-folder data/rgz/csv-new`. Skripta pravi novi `data/rgz/addresses.new.csv` fajl.
 
