@@ -19,7 +19,7 @@ Sve komande se izvršavaju sa `make <komanda>`. Dostupne su sledeće komande:
 
 * `clean`
   
-  Briše sve sakupljene i generisane fajlove da proces počne iz početka
+  Briše sve sakupljene i generirane fajlove da proces počne iz početka
 
 
 * `download_from_osm`
@@ -52,7 +52,7 @@ Sve komande se izvršavaju sa `make <komanda>`. Dostupne su sledeće komande:
 
 * `quality_assurance`
 
-  Ova komanda radi razne analize koje se posle koriste prilikom generisanja report-a. Trenutno se rade dve analize:
+  Ova komanda radi razne analize koje se posle koriste prilikom generiranja report-a. Trenutno se rade dve analize:
   * ref:RS:kucni_broj duplikati - nalazimo sve kućne brojeve koji imaju dupli `ref:RS:kucni_broj` tag
   * analiza adresa unutar zgrada. Ukoliko imamo adresu ili POI koji je unutar zgrade (way-a building-a), detektujemo ga
   ovde i pokušavamo da uradimo kategorizaciju, tj. da vidimo da li je ovo OK ili nije, i ako nije, šta možemo da uradimo
@@ -61,12 +61,12 @@ Sve komande se izvršavaju sa `make <komanda>`. Dostupne su sledeće komande:
 
 * `report`
 
-  Ova komanda generiše HTML fajlove u `data/report` direktorijumu na osnovu prethodno urađene analize. Izgenerisani
+  Ova komanda generiše HTML fajlove u `data/report` direktorijumu na osnovu prethodno urađene analize. Izgenerirani
   fajlovi su statički i mogu se prebaciti na neki server. Veličina je velika, 800 MB neotpakovano, 80 MB zapakovano. 
 
 * `upload_report`
 
-  Ova komanda uploaduje izgenerisane HTML fajlove na DINA platformu.
+  Ova komanda uploaduje izgenerirane HTML fajlove na DINA platformu.
 
 ## Osvežavanje sa DGU-a
 

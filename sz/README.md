@@ -9,9 +9,9 @@ Za sad treba skinuti i .ods fajl sa https://data.gov.rs/sr/datasets/registar-sta
 
 ## Korišćenje
 
-Za generisanje `data/sz_analysis.csv` (izlaz analize) možete pokrenuti `python3 src/sz_analysis.py --data-path <putanja>`.
+Za generiranje `data/sz_analysis.csv` (izlaz analize) možete pokrenuti `python3 src/sz_analysis.py --data-path <putanja>`.
 
-`--data-path` je putanja do `ar/` direktorijuma gde se nalaze već generisani fajlovi (pogledajti [README.md](../ar/README.md) ar/ projekta).
+`--data-path` je putanja do `ar/` direktorijuma gde se nalaze već generirani fajlovi (pogledajti [README.md](../ar/README.md) ar/ projekta).
 
 Kada imate `data/sz_analysis.csv`, možete pokrenuti `python3 src/report.py` da izgenerišete HTML fajlove u `output/` direktorijumu.
 

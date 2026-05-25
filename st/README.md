@@ -16,10 +16,10 @@ Treba da imate i `parallel` program (na Debian-u se prosto instalira sa `sudo ap
 
 Sve komande se izvršavaju sa `make <komanda>`.
 
-* Pokrenuti `make clean_osm` da očistite sve generisane podatke osim DGU podataka
+* Pokrenuti `make clean_osm` da očistite sve generirane podatke osim DGU podataka
 * Pokrenuti `make clean` za čišćenje svih podataka (PAŽNJA: obrisaće i DGU podatke koji se teško skidaju)
 * Za skidanje DGU ulica koristiti `make download_from_rgz`. Za ovo treba headless browser (ja sam stavio `geckodriver` u root dir ST modula i to radi)
-* Za generisanje izvještaja koristiti `make report` i izlaz treba da bude HTML izvještaj u data/report direktorijumu
+* Za generiranje izvještaja koristiti `make report` i izlaz treba da bude HTML izvještaj u data/report direktorijumu
 
 ## Osvežavanje sa DGU-a
 
@@ -40,12 +40,12 @@ sajtu https://download-tmp.geosrbija.rs/download.
 
 ### Dopunjavanje pravilnih imena ulica
 
-* Pokrenuti `PYTHONPATH=../ar/src/ python3 src/fix_missing_proper_street_names.py` i biće generisan `data/rgz/missing_streets.csv` fajl u kome su sve nove ulice kojima nedostaje pravilno imenovanje.
+* Pokrenuti `PYTHONPATH=../ar/src/ python3 src/fix_missing_proper_street_names.py` i biće generiran `data/rgz/missing_streets.csv` fajl u kome su sve nove ulice kojima nedostaje pravilno imenovanje.
 * Prekopirate ih na dno `ar/curated_streets.csv` i ispraviti sve nazive da budu dobri (Ctrl+F da nađete kako su ranije kapitalizovane neke stvari)
   * Na kraju proveriti standardne greške iz DGU-a, kao što je trailing space
 * Sortirajte curated listu sa `PYTHONPATH=../ar/src/ python3 src/sort_curated_streets.py --input-curated-streets ../ar/curated_streets.csv --output-curated-streets curated_streets-sorted.csv`
 * Uporedite ih i ako je sve OK, zamenite `ar/curated_streets.csv` sa `curated_streets-sorted.csv`, a `curated_streets-sorted.csv` obrisati.
-* Sada izbrisati `ar/data/mapping/mapping.csv` i regenerisati ga ponovnim pokretanjem `python3 src/street_mapping.py` iz AR modula.
+* Sada izbrisati `ar/data/mapping/mapping.csv` i regenerirati ga ponovnim pokretanjem `python3 src/street_mapping.py` iz AR modula.
 
 ### Automatske izmene u OSM-u
 

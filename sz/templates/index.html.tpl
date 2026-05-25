@@ -65,7 +65,7 @@
 <br/>
 
 <p>Ovde je spisak svih stambenih zajednica iz DGU-a. Ovo nam pomaže da sve zgrade koje se vode kao stambene zajednice
-tagujemo u OSM-u kao <code>building=apartments</code>. Pročitajte na dnu kako su ovi podaci izgenerisani i kako da ih tumačite.
+tagujemo u OSM-u kao <code>building=apartments</code>. Pročitajte na dnu kako su ovi podaci izgenerirani i kako da ih tumačite.
     Klikom na općinu dobijate podatke za tu općinu. U gornjem desnom uglu je filtriranje.
     U gornjem desnom uglu je filtriranje. Klikom na "Pomoć" u gornjem meniju dobićete više informacija o kolonama u ovoj tabeli.
 </p>
