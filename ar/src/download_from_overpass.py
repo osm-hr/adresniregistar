@@ -179,7 +179,7 @@ def main():
     with open(all_addresses_path, 'w', encoding="utf-8") as all_addresses_csv:
         writer = csv.DictWriter(
             all_addresses_csv,
-            fieldnames=['osm_id', 'osm_country', 'osm_city', 'osm_postcode', 'osm_street', 'osm_housenumber', 'ref:RS:ulica', settings.HOUSE_REF_TAG, 'tags', 'note', 'osm_geometry'])
+            fieldnames=['osm_id', 'osm_country', 'osm_city', 'osm_postcode', 'osm_street', 'osm_housenumber', 'ref:HR:ulica', settings.HOUSE_REF_TAG, 'tags', 'note', 'osm_geometry'])
         writer.writeheader()
         for address in all_entities:
             writer.writerow(address)

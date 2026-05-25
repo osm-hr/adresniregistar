@@ -35,8 +35,8 @@ Sve komande se izvršavaju sa `make <komanda>`. Dostupne su sledeće komande:
   gde imamo ulicu iz DGU-a velikim slovima, ulicu kako se pravilno piše, i način kako smo došli do ovoga zaključka i koje
   ulice iz OSM-a su dovele do ove odluke (radi debagovanja). Naravno, ovaj ceo proces ima grešaka i ovo je best effort
   heuristika. Za heuristiku se koristi fajl "curated_streets.csv" gde mogu da se ubace sve što želimo odmah da prebacimo
-  ručno (override-ujemo heuristiku). Zatim se koristi OSM podaci da se nađu te ulice preko "ref:RS:ulica" taga jer
-  pretpostavljamo da su u OSM-u unete dobro. Posle toga se koristi i OSM podaci bez "ref:RS:ulica" taga gde se koristi
+  ručno (override-ujemo heuristiku). Zatim se koristi OSM podaci da se nađu te ulice preko "ref:HR:ulica" taga jer
+  pretpostavljamo da su u OSM-u unete dobro. Posle toga se koristi i OSM podaci bez "ref:HR:ulica" taga gde se koristi
   normalizacija ulica iz DGU-a i OSM-a da se one match-uju i da proba tako da se nađe kako se ulica pravilno piše.
   Ako ni to ne uspe, algoritam uskače i pokušava, što je bolje moguće da pravilno napiše ulicu. Naravno, greške su neminovne.
 
