@@ -136,8 +136,8 @@
         <th>OSM kućni broj</th>
         <th>Nađen u DGU-u</th>
         <th>DGU općina</th>
-        <th>DGU adresa</th>
-        <th>DGU adresa poklapanje</th>
+        <th>DGU ulica</th>
+        <th>DGU ulica poklapanje</th>
         <th>DGU kućni broj</th>
         <th>DGU kućni broj poklapanje</th>
         <th>Bilješka</th>
