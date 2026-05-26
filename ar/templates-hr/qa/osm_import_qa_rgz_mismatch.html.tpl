@@ -99,11 +99,11 @@
 <br/>
 <p>Ovdje možete vidjeti OSM adrese koje imaju tag <code>ref:HR:kucni_broj</code>, ali se nešto ne poklapa sa DGU-om.
     <br/>
-    Može biti da u DGU-u nema te reference, da je ulica delimično (⚠️) ili potpuno (❌) pogrešna, ili da je kućni broj delimično (⚠️) ili potpuno (❌) pogrešan.
+    Može biti da u DGU-u nema te reference, da je ulica djelomično (⚠️) ili potpuno (❌) pogrešna, ili da je kućni broj djelomično (⚠️) ili potpuno (❌) pogrešan.
     <br/>
     Nisu sve stvari isto bitne, pa postoji i kolona prioritet. Sa gornje desne strane tabele je filter kojim može da se isfiltrira tip greške.
     <br/>
-    Ukoliko je adresa ili kućni broj <i>delimično</i> pogrešna, to znači da je ima neko veliko ili malo slovo drugačije, ili da je napisana pogrešnim pismom ili da ima neke interpunkcijske znake viška ili manjka.
+    Ukoliko je adresa ili kućni broj <i>djelomično</i> pogrešna, to znači da je ima neko veliko ili malo slovo drugačije, ili da je napisana pogrešnim pismom ili da ima neke interpunkcijske znake viška ili manjka.
     Da vidite koje su trenutno ispravna imena ulica, pogledajte stranu sa <a href="street_mapping.html">pravilnim imenima ulica</a>.
 </p>
 
@@ -136,8 +136,8 @@
         <th>OSM kućni broj</th>
         <th>Nađen u DGU-u</th>
         <th>DGU općina</th>
-        <th>DGU adresa</th>
-        <th>DGU adresa poklapanje</th>
+        <th>DGU ulica</th>
+        <th>DGU ulica poklapanje</th>
         <th>DGU kućni broj</th>
         <th>DGU kućni broj poklapanje</th>
         <th>Bilješka</th>
