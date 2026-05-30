@@ -537,7 +537,11 @@ class OsmEntitiesCacheHandler(osmium.SimpleHandler):
                 'lat': n.location.lat,
                 'lon': n.location.lon,
                 'tags': {t.k: t.v for t in n.tags},
-                'version': n.version
+                'version': n.version,
+                'changeset': n.changeset,
+                'timestamp': n.timestamp.strftime('%Y-%m-%dT%H:%M:%SZ'),
+                'user': n.user,
+                'uid': n.uid,
             }
 
     def way(self, w):
@@ -545,5 +549,9 @@ class OsmEntitiesCacheHandler(osmium.SimpleHandler):
             self.ways_cache[w.id] = {
                 'tags': {t.k: t.v for t in w.tags},
                 'nodes': [n.ref for n in w.nodes],
-                'version': w.version
+                'version': w.version,
+                'changeset': w.changeset,
+                'timestamp': w.timestamp.strftime('%Y-%m-%dT%H:%M:%SZ'),
+                'user': w.user,
+                'uid': w.uid,
             }

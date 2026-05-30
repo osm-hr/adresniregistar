@@ -75,11 +75,7 @@ def fix_deleted_to_added(rgz_path, rgz_last_update, oauth_session):
     sa istim imenom ulice i kucnim brojem i unutar 100m i update-uje im ref:HR:kucni_broj
     """
     api = osmapi.OsmApi(session=oauth_session)
-    api.ChangesetCreate({
-        "comment": settings.CHANGESET_COMMENT_REF,
-        "tag": settings.CHANGESET_TAGS,
-        "source": settings.CHANGESET_SOURCE
-    })
+    api.ChangesetCreate({**settings.CHANGESET_TAGS_JSON, "mechanical": "yes"})
 
     overpass_api = overpy.Overpass(url='http://localhost:12345/api/interpreter')
 
@@ -191,11 +187,7 @@ def fix_deleted_to_added(rgz_path, rgz_last_update, oauth_session):
 
 def fix_changed(rgz_path, street_mappings, oauth_session):
     api = osmapi.OsmApi(session=oauth_session)
-    api.ChangesetCreate({
-        "comment": settings.CHANGESET_COMMENT,
-        "tag": "mechanical=yes",
-        "source": settings.CHANGESET_SOURCE
-    })
+    api.ChangesetCreate({**settings.CHANGESET_TAGS_JSON, "mechanical": "yes"})
     changeset_count = 0
 
     overpass_api = overpy.Overpass(url='http://localhost:12345/api/interpreter')
@@ -272,11 +264,7 @@ def fix_changed(rgz_path, street_mappings, oauth_session):
             if changeset_count % 2000 == 0:
                 api.ChangesetClose()
                 time.sleep(5)
-                api.ChangesetCreate({
-                    "comment": settings.CHANGESET_COMMENT,
-                    "tag": "mechanical=yes",
-                    "source": settings.CHANGESET_SOURCE
-                })
+                api.ChangesetCreate( {**settings.CHANGESET_TAGS_JSON, "mechanical": "yes"} )
             time.sleep(0.1)
     api.ChangesetClose()
 

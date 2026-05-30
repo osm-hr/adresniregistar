@@ -61,6 +61,10 @@ def generate_osm_files_move_address_to_building(context, report_qa_address_path,
             osm_nodes_to_delete.append({
                 'id': node_id,
                 'version': entity['version'],
+                'changeset': entity['changeset'],
+                'timestamp': entity['timestamp'],
+                'user': entity['user'],
+                'uid': entity['uid'],
                 'tags': {k: xml_escape(v) for k, v in entity['tags'].items()},
                 'lat': entity['lat'],
                 'lon': entity['lon'],
@@ -92,7 +96,11 @@ def generate_osm_files_move_address_to_building(context, report_qa_address_path,
             'id': way_id,
             'tags': {k: xml_escape(v) for k, v in new_tags.items()},
             'nodes': entity['nodes'],
-            'version': entity['version']
+            'version': entity['version'],
+            'changeset': entity['changeset'],
+            'timestamp': entity['timestamp'],
+            'user': entity['user'],
+            'uid': entity['uid'],
         })
         for node in entity['nodes']:
             node_entity = osm_entities_cache.nodes_cache[node]
@@ -103,7 +111,11 @@ def generate_osm_files_move_address_to_building(context, report_qa_address_path,
                     'lat': node_entity['lat'],
                     'lon': node_entity['lon'],
                     'tags': {k: xml_escape(v) for k, v in node_entity['tags'].items()},
-                    'version': node_entity['version']
+                    'version': node_entity['version'],
+                    'changeset': node_entity['changeset'],
+                    'timestamp': node_entity['timestamp'],
+                    'user': node_entity['user'],
+                    'uid': node_entity['uid'],
                 })
 
     # Final write

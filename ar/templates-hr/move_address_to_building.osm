@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <osm version='0.6' generator='DGU_AR_Generator'>
   {% for osm_node in osm_nodes_to_delete %}
-  <node id='{{ osm_node.id }}' action='delete' visible='true' version='{{ osm_node.version }}' lat='{{ osm_node.lat }}' lon='{{ osm_node.lon }}'>
+  <node id='{{ osm_node.id }}' action='delete' visible='true' version='{{ osm_node.version }}' changeset='{{ osm_node.changeset }}' timestamp='{{ osm_node.timestamp }}' user='{{ osm_node.user }}' uid='{{ osm_node.uid }}' lat='{{ osm_node.lat }}' lon='{{ osm_node.lon }}'>
     {% for k, v in osm_node.tags.items() %}
     <tag k='{{ k }}' v='{{ v }}' />
     {% endfor %}
@@ -9,7 +9,7 @@
   {% endfor %}
 
   {% for osm_node in osm_nodes %}
-  <node id='{{ osm_node.id }}' visible='true' lat='{{ osm_node.lat }}' lon='{{ osm_node.lon }}' version='{{ osm_node.version }}' >
+  <node id='{{ osm_node.id }}' visible='true' lat='{{ osm_node.lat }}' lon='{{ osm_node.lon }}' version='{{ osm_node.version }}' changeset='{{ osm_node.changeset }}' timestamp='{{ osm_node.timestamp }}' user='{{ osm_node.user }}' uid='{{ osm_node.uid }}' >
     {% for k, v in osm_node.tags.items() %}
     <tag k='{{ k }}' v='{{ v }}' />
     {% endfor %}
@@ -17,7 +17,7 @@
   {% endfor %}
 
   {% for osm_way in osm_ways %}
-  <way id='{{ osm_way.id }}' action='modify' visible='true' version='{{ osm_way.version }}'>
+  <way id='{{ osm_way.id }}' action='modify' visible='true' version='{{ osm_way.version }}' changeset='{{ osm_way.changeset }}' timestamp='{{ osm_way.timestamp }}' user='{{ osm_way.user }}' uid='{{ osm_way.uid }}'>
     {% for n in osm_way.nodes %}
     <nd ref='{{ n }}' />
     {% endfor %}

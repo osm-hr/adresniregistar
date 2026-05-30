@@ -107,7 +107,7 @@ def build_osm_entities_cache(data_path):
     for i, file in enumerate(sorted(os.listdir(analysis_path))):
         if not file.endswith(".csv"):
             continue
-        df_opstina = pd.read_csv(os.path.join(analysis_path, file), dtype={'note_left': 'string', 'osm_id': 'string', 'osm_street': 'string', 'osm_housenumber': 'string', 'osm_geometry': 'string'})
+        df_opstina = pd.read_csv(os.path.join(analysis_path, file), dtype={'note_left': 'string', 'osm_id': 'string', 'osm_street': 'string', 'osm_housenumber': 'string', 'osm_geometry': 'string', 'conflated_osm_id': 'string', 'conflated_osm_street': 'string', 'conflated_osm_housenumber': 'string', 'tags_left': 'string', 'inspire_id_left': 'string'})
         osm_entites_to_cache = df_opstina[pd.notna(df_opstina.osm_id) & (df_opstina.matching)]['osm_id']
         if len(osm_entites_to_cache) > 0:
             nodes_to_cache += [int(n[1:]) for n in list(osm_entites_to_cache[osm_entites_to_cache.str.startswith('n')])]
@@ -180,7 +180,11 @@ def generate_osm_files_matched_addresses(context, opstina_dir_path, opstina_name
                     'lat': entity['lat'],
                     'lon': entity['lon'],
                     'tags': {k: xml_escape(v) for k, v in new_tags.items()},
-                    'version': entity['version']
+                    'version': entity['version'],
+                    'changeset': entity['changeset'],
+                    'timestamp': entity['timestamp'],
+                    'user': entity['user'],
+                    'uid': entity['uid'],
                 })
         elif address.osm_id[0] == 'w':
             counter = counter + 1
@@ -193,7 +197,11 @@ def generate_osm_files_matched_addresses(context, opstina_dir_path, opstina_name
                 'id': int(address.osm_id[1:]),
                 'tags': {k: xml_escape(v) for k, v in new_tags.items()},
                 'nodes': entity['nodes'],
-                'version': entity['version']
+                'version': entity['version'],
+                'changeset': entity['changeset'],
+                'timestamp': entity['timestamp'],
+                'user': entity['user'],
+                'uid': entity['uid'],
             })
             for node in entity['nodes']:
                 node_entity = osm_entities_cache.nodes_cache[node]
@@ -204,7 +212,11 @@ def generate_osm_files_matched_addresses(context, opstina_dir_path, opstina_name
                         'lat': node_entity['lat'],
                         'lon': node_entity['lon'],
                         'tags': {k: xml_escape(v) for k, v in node_entity['tags'].items()},
-                        'version': node_entity['version']
+                        'version': node_entity['version'],
+                        'changeset': node_entity['changeset'],
+                        'timestamp': node_entity['timestamp'],
+                        'user': node_entity['user'],
+                        'uid': node_entity['uid'],
                     })
 
     # Final write
@@ -447,7 +459,7 @@ def generate_naselje(context, opstina_dir_path, opstina_name, naselje, df_naselj
         osm_files_new_addresses=osm_files_new_addresses,
         osm_files_new_per_street_addresses=osm_files_new_per_street_addresses,
         osm_files_matched_addresses=osm_files_matched_addresses,
-        changeset_tags=settings.CHANGESET_TAGS+"|source:date="+context['dates']['rgz_data'],
+        changeset_tags=settings.CHANGESET_TAGS_TXT+"|source:date="+context['dates']['rgz_data'],
         settings=settings)
     with open(naselje_path, 'w', encoding='utf-8') as fh:
         fh.write(output)
@@ -623,7 +635,7 @@ def generate_report(context):
             continue
         opstina_name = file[:-4]
         print(f"{i+1}/{total_csvs} Processing {opstina_name}...", end='')
-        df_opstina = pd.read_csv(os.path.join(analysis_path, file), dtype={'note_left': 'string', 'osm_id': 'string', 'osm_street': 'string', 'osm_housenumber': 'string', 'osm_geometry': 'string'})
+        df_opstina = pd.read_csv(os.path.join(analysis_path, file), dtype={'note_left': 'string', 'osm_id': 'string', 'osm_street': 'string', 'osm_housenumber': 'string', 'osm_geometry': 'string', 'conflated_osm_id': 'string', 'conflated_osm_street': 'string', 'conflated_osm_housenumber': 'string', 'tags_left': 'string', 'inspire_id_left': 'string'})
         df_opstina_osm = pd.read_csv(os.path.join(osm_path, file), dtype='unicode')
         opstina, naselja = generate_opstina(context, opstina_name, df_opstina, df_opstina_osm)
         all_naselja += naselja
