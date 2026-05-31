@@ -45,7 +45,6 @@ RUN curl -L -o duckdb.zip https://github.com/duckdb/duckdb/releases/download/v1.
 
 
 COPY src/ /app/src/
-RUN mv ./src/settings-hr.py ./src/settings.py
 COPY templates-hr/ /app/templates/
 COPY curated_streets.csv /app/curated_streets.csv
 COPY curated_streets_per_opstina.csv /app/curated_streets_per_opstina.csv
