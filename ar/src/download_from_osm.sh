@@ -67,7 +67,7 @@ else
     # then copying the value of the "gf_download_oauth" cookie from browser DevTools.
     if [ -n "${OSM_USERNAME:-}" ]; then
       echo "Getting Geofabrik Cookie for user $OSM_USERNAME"
-      GEOFABRIK_OAUTH_COOKIE= python3 get_geofabrik_cookie.py "$OSM_USERNAME" "$OSM_PASSWORD"
+      GEOFABRIK_OAUTH_COOKIE= python3 src/get_geofabrik_cookie.py "$OSM_USERNAME" "$OSM_PASSWORD"
       DOWNLOAD_URL="https://osm-internal.download.geofabrik.de/europe/$COUNTRY-${yesterday}-internal.osm.pbf"
       WGET_ARGS=("--header=Cookie: gf_download_oauth=${GEOFABRIK_OAUTH_COOKIE}")
       echo "Using internal Geofabrik extract (full metadata)"
