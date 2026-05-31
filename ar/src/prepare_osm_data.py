@@ -25,7 +25,7 @@ def main():
     gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs=settings.COORDINATE_SYSTEM)
     gdf_opstine.to_crs("EPSG:4326", inplace=True)
     gdf_opstine.sindex
-    if settings.ENHANCE_WITH_NASELJA.lower() == 'true':
+    if settings.ENHANCE_WITH_NASELJA:
 
         df_naselja = pd.read_csv(os.path.join(rgz_path, 'naselje.csv'), dtype='unicode')
         df_naselja['geometry'] = df_naselja.wkt.apply(wkt.loads)
