@@ -31,7 +31,8 @@ RUN pip install --no-cache-dir \
     lxml \
     Levenshtein \
     overpy \
-    jinja2
+    jinja2 \
+    bs4
 
 WORKDIR /app
 
