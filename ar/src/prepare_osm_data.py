@@ -15,7 +15,7 @@ def main():
     osm_path = os.path.join(cwd, 'data/osm')
     rgz_path = os.path.join(cwd, 'data/rgz')
 
-    if not os.path.exists(os.path.join(rgz_path, 'opstina.csv')):
+    if settings.COUNTRY == 'serbia' and not os.path.exists(os.path.join(rgz_path, 'opstina.csv')):
         print("Skinite opstine.zip sa https://opendata.geosrbija.rs i otpakujte opstina.csv u data/rgz/ direktorijum")
         return
 

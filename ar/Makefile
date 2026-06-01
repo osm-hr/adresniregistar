@@ -62,8 +62,8 @@ clean_report:
 	rm -rf data/report/*
 	rm -f data/report.tar.gz
 
-clean_dgu:
-	@echo "Cleaning DGU data"
+clean_inspire_data:
+	@echo "Cleaning Inspire data"
 	rm -rf data/rgz/unzip/*
 	rm -rf data/rgz/download/*
 	rm -rf data/rgz/csv/*
@@ -77,21 +77,21 @@ download_from_osm:
 	mkdir -p data/osm/csv
 	python3 src/prepare_osm_data.py
 
-download_from_dgu:
+download_inspire_data:
 	mkdir -p data/rgz/unzip
-	@if ./src/check_dgu_feed.sh && \
+	@if ./src/inspire_check_feed.sh && \
 	    [ -f data/rgz/opstina.csv ] && \
 	    [ -f data/rgz/naselje.csv ] && \
 	    [ -f data/rgz/addresses.csv ]; then \
-		echo "DGU podaci su ažurni."; \
+		echo "Inspire podaci su ažurni."; \
 	else \
-		$(MAKE) clean_dgu && \
-		./src/download_from_dgu.sh && \
-		python3 ./src/parse_dgu_admin_data.py --input data/rgz/unzip/AdministrativeUnit.gml --output data/rgz/naselja.csv "Naselje" && \
-		python3 ./src/parse_dgu_admin_data.py --input data/rgz/unzip/AdministrativeUnit.gml --output data/rgz/opstina.csv "Jedinica lokalne samouprave" && \
-		duckdb -csv < src/dgu-consolidate_addresses.sql > data/rgz/addresses.csv && \
-		duckdb -csv < src/dgu-convert_admin_boundaries.sql > data/rgz/naselje.csv && \
-		python3 ./src/prepare_dgu_data.py && \
+		$(MAKE) clean_inspire_data && \
+		./src/download_inspire_data.sh && \
+		python3 ./src/parse_inspire_admin_data.py --input data/rgz/unzip/AdministrativeUnit1.gml --output data/rgz/naselja.csv $(INSPIRE_ADMIN_LEVEL_1_NAME) && \
+		python3 ./src/parse_inspire_admin_data.py --input data/rgz/unzip/AdministrativeUnit2.gml --output data/rgz/opstina.csv $(INSPIRE_ADMIN_LEVEL_2_NAME) && \
+		duckdb -csv < src/inspire-consolidate_addresses.sql > data/rgz/addresses.csv && \
+		duckdb -csv < src/inspire-convert_admin_boundaries.sql > data/rgz/naselje.csv && \
+		python3 ./src/prepare_inspire_data.py && \
 		rm data/rgz/naselja.csv; \
 	fi
 
@@ -139,7 +139,7 @@ report: analyze quality_assurance generate_b_hn_ratio
 		python3 src/create_report_qa.py;\
 	fi
 
-report_with_dgu_data: download_from_dgu report
+report_with_inspire_data: download_inspire_data report
 
 upload_report: report
 	echo "Uploading report"
