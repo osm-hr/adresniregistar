@@ -328,7 +328,7 @@ def find_unaccounted_osm_addresses(cwd):
 
     df_opstine = pd.read_csv(os.path.join(rgz_path, 'opstina.csv'))
     df_opstine['geometry'] = df_opstine.geometry.apply(wkt.loads)
-    gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs=settings.COORDINATE_SYSTEM)
+    gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs=settings.ADMIN_CRS)
     print(gdf_opstine.crs)
     gdf_opstine.to_crs("EPSG:4326", inplace=True)
     gdf_opstine.sindex
@@ -403,7 +403,7 @@ def find_addresses_in_buildings(cwd):
     print(df_opstine[df_opstine.geometry.str.contains("POINT|POLYGON", na=False) == False].head())
 
     df_opstine['geometry'] = df_opstine.geometry.apply(wkt.loads)
-    gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs=settings.COORDINATE_SYSTEM)
+    gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs=settings.ADMIN_CRS)
     print(gdf_opstine.crs)
     gdf_opstine.to_crs("EPSG:4326", inplace=True)
     gdf_opstine.sindex
@@ -438,6 +438,11 @@ def find_addresses_in_buildings(cwd):
     print("Buildings empty?", gdf_buildings.empty)
     print("Addresses empty?", addresses_per_opstina.empty)
 
+    if addresses_per_opstina.empty:
+        pd.DataFrame(columns=['osm_id_left', 'osm_id_right', 'opstina_imel', 'resolution']).to_csv(
+            os.path.join(qa_path, 'addresses_in_buildings_per_opstina.csv'), index=False)
+        print("No OSM addresses found, created empty addresses_in_buildings_per_opstina.csv")
+        return
 
     addresses_in_buildings_per_opstina = addresses_per_opstina.sjoin(gdf_buildings, how='inner', predicate='within')
     addresses_in_buildings_per_opstina.drop(['osm_country', 'osm_city', 'osm_postcode'], inplace=True, axis=1)

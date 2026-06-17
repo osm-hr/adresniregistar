@@ -87,12 +87,15 @@ download_inspire_data:
 	else \
 		$(MAKE) clean_inspire_data && \
 		./src/download_inspire_data.sh && \
-		python3 ./src/parse_inspire_admin_data.py --input data/rgz/unzip/AdministrativeUnit1.gml --output data/rgz/naselja.csv $(INSPIRE_ADMIN_LEVEL_1_NAME) && \
-		python3 ./src/parse_inspire_admin_data.py --input data/rgz/unzip/AdministrativeUnit2.gml --output data/rgz/opstina.csv $(INSPIRE_ADMIN_LEVEL_2_NAME) && \
-		duckdb -csv < src/inspire-consolidate_addresses.sql > data/rgz/addresses.csv && \
-		duckdb -csv < src/inspire-convert_admin_boundaries.sql > data/rgz/naselje.csv && \
+		python3 ./src/parse_inspire_admin_data.py --country $(COUNTRY) --admin-level opstina --input data/rgz/unzip/AdministrativeUnitOpstina.gml --output data/rgz/opstina.csv "$(INSPIRE_ADMIN_LEVEL_1_NAME)" && \
+		if [ "$(COUNTRY)" = "croatia" ]; then \
+			python3 ./src/parse_inspire_admin_data.py --country $(COUNTRY) --admin-level naselje --input data/rgz/unzip/AdministrativeUnitNaselje.gml --output data/rgz/naselja.csv "$(INSPIRE_ADMIN_LEVEL_2_NAME)"; \
+		fi && \
+		duckdb -csv < src/inspire-consolidate_addresses-$(COUNTRY).sql > data/rgz/addresses.csv && \
+		duckdb -csv < src/inspire-convert_admin_boundaries-$(COUNTRY).sql > data/rgz/naselje.csv && \
+		[ "$(COUNTRY)" != "slovenia" ] || python3 ./src/generate_voronoi_borders.py && \
 		python3 ./src/prepare_inspire_data.py && \
-		rm data/rgz/naselja.csv; \
+		rm -f data/rgz/naselja.csv; \
 	fi
 
 

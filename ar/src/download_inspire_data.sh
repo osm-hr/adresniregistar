@@ -13,16 +13,16 @@ download_croatia() {
     local admin_zip="$DOWNLOAD_DIR/INSPIRE_Administrative_Units_(AU).zip"
 
     if [ ! -f "$admin_zip" ]; then
-        curl -L -o "$admin_zip" "$admin_url"
+        curl -L --fail --retry 5 --retry-delay 10 --retry-connrefused -o "$admin_zip" "$admin_url"
         unzip -q "$admin_zip" -d "$UNZIP_DIR"
-        mv "$UNZIP_DIR/AdministrativeUnit.gml" "$UNZIP_DIR/AdministrativeUnit1.gml"
-        ln -sf "AdministrativeUnit1.gml" "$UNZIP_DIR/AdministrativeUnit2.gml"
+        mv "$UNZIP_DIR/AdministrativeUnit.gml" "$UNZIP_DIR/AdministrativeUnitOpstina.gml"
+        ln -sf "AdministrativeUnitOpstina.gml" "$UNZIP_DIR/AdministrativeUnitNaselje.gml"
     else
         echo "Zip datoteka sa administrativnim jedinicama postoji, preskačem preuzimanje."
     fi
 
     if [ ! -f "$addr_zip" ]; then
-        curl -L -o "$addr_zip" "$addr_url"
+        curl -L --fail --retry 5 --retry-delay 10 --retry-connrefused -o "$addr_zip" "$addr_url"
         unzip -q "$addr_zip" -d "$UNZIP_DIR"
     else
         echo "Zip datoteka sa adresama postoji, preskačem preuzimanje."
@@ -36,7 +36,7 @@ download_slovenia() {
     local tmp_dir="$DOWNLOAD_DIR/slovenia_tmp"
 
     if [ ! -f "$outer_zip" ]; then
-        curl -L -o "$outer_zip" "$url"
+        curl -L --fail --retry 5 --retry-delay 10 --retry-connrefused -o "$outer_zip" "$url"
     else
         echo "Zip datoteka za Sloveniju postoji, preskačem preuzimanje."
     fi
@@ -48,7 +48,7 @@ download_slovenia() {
 
     local -A file_map=(
         ["SI.GURS.RPE.ad.Address.zip"]="Address.gml"
-        ["SI.GURS.RPE.ad.AdminUnitName.zip"]="AdminUnitName.gml"
+        ["SI.GURS.RPE.ad.AddressAreaName.zip"]="AdminUnitName.gml"
         ["SI.GURS.RPE.ad.PostalDescriptor.zip"]="PostalDescriptor.gml"
         ["SI.GURS.RPE.ad.ThoroughfareName.zip"]="ThoroughfareName.gml"
     )
@@ -74,19 +74,19 @@ download_slovenia() {
     done
 
     local -A admin_map=(
-        ["opcine"]="AdministrativeUnit1.gml"
-        ["naselja"]="AdministrativeUnit2.gml"
+        ["opcine"]="AdministrativeUnitOpstina.gml"
+        ["naselja"]="AdministrativeUnitNaselje.gml"
     )
     local -A admin_urls=(
-        ["opcine"]="https://eprostor.gov.si/ods/atom?id=8&type=data"
-        ["naselja"]="https://eprostor.gov.si/ods/atom?id=9&type=data"
+        ["opcine"]="https://eprostor.gov.si/ods/atom?id=9&type=data"
+        ["naselja"]="https://eprostor.gov.si/ods/atom?id=8&type=data"
     )
 
     for key in "${!admin_map[@]}"; do
         local gml_name="${admin_map[$key]}"
         local admin_zip="$DOWNLOAD_DIR/slovenia_admin_${key}.zip"
         if [ ! -f "$admin_zip" ]; then
-            curl -L -o "$admin_zip" "${admin_urls[$key]}"
+            curl -L --fail --retry 5 --retry-delay 10 --retry-connrefused -o "$admin_zip" "${admin_urls[$key]}"
         else
             echo "Zip datoteka za $gml_name postoji, preskačem preuzimanje."
         fi
@@ -114,4 +114,11 @@ INSPIRE_DATE=$(head -c 2000 "$UNZIP_DIR/Address.gml" \
 
 echo "$INSPIRE_DATE" > data/rgz/LATEST
 
-./dgu-parse/target/release/dgu-parse ./data/rgz/unzip/
+if [ "${COUNTRY:-croatia}" = "slovenia" ]; then
+    sed -i -E 's|xlink:href="https://[^"]*&lt;Literal&gt;([^&]+)&lt;/Literal&gt;[^"]*"|xlink:href="#SI.GURS.RPE.\1"|g' \
+        "$UNZIP_DIR/Address.gml"
+    sed -i 's|<ad:AddressAreaName |<ad:AdminUnitName |g; s|</ad:AddressAreaName>|</ad:AdminUnitName>|g' \
+        "$UNZIP_DIR/AdminUnitName.gml"
+fi
+
+./dgu-parse/target/release/dgu-parse ./data/rgz/unzip/ $ADDRESS_CRS

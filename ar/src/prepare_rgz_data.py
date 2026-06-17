@@ -17,7 +17,7 @@ import settings
 csv.field_size_limit(sys.maxsize)
 
 wgs84 = pyproj.CRS('EPSG:4326')
-utm = pyproj.CRS(settings.COORDINATE_SYSTEM)
+utm = pyproj.CRS(settings.ADDRESS_CRS)
 project = pyproj.Transformer.from_crs(utm, wgs84, always_xy=True).transform
 
 

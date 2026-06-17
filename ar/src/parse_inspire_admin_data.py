@@ -22,13 +22,24 @@ parser.add_argument(
     default="naselje.csv",
     help="Output CSV file"
 )
+parser.add_argument(
+    "--admin-level",
+    default="opstina",
+    help="Type opstina for Općina, naselje for Naselje"
+)
+parser.add_argument(
+    "--country",
+    default="croatia",
+    help="Country code (croatia or slovenia)"
+)
 
 args = parser.parse_args()
 
 ADMIN_TYPE = args.admin_type
 INPUT = args.input
 OUTPUT = args.output
-
+ADMIN_LEVEL = args.admin_level
+COUNTRY = args.country
 # -------------------------
 # Namespaces
 # -------------------------
@@ -41,7 +52,7 @@ BASE_NS = "http://inspire.ec.europa.eu/schemas/base/3.3"
 
 with open(OUTPUT, "w", newline="", encoding="utf-8") as csvfile:
 
-    if (ADMIN_TYPE == "Jedinica lokalne samouprave"):
+    if (ADMIN_LEVEL == "opstina"):
         admin_fieldnames = [
             "opstina_maticni_broj",
             "opstina_ime",
@@ -51,7 +62,7 @@ with open(OUTPUT, "w", newline="", encoding="utf-8") as csvfile:
             "geometry",
             "inspire_id"
         ]
-    elif (ADMIN_TYPE == "Naselje"):
+    elif (ADMIN_LEVEL == "naselje"):
         admin_fieldnames = [
             "objectid",
             "naselje_maticni_broj",
@@ -97,13 +108,15 @@ with open(OUTPUT, "w", newline="", encoding="utf-8") as csvfile:
             maticni_broj = ""
 
         # inspireId
-        if ADMIN_TYPE == "Naselje":
+        if COUNTRY == "croatia" and ADMIN_LEVEL == "opstina":
+            # Municipality gml:id matches the upperLevelUnit href used by settlements
+            inspire_id = elem.attrib.get(f"{{{GML_NS}}}id", "").strip()
+        else:
+            # Croatia settlements and Slovenia: base:localId matches AdminUnitName.inspire_id
             inspire_id_elem = elem.find(
                 f"./{{{AU_NS}}}inspireId/{{{BASE_NS}}}Identifier/{{{BASE_NS}}}localId"
             )
             inspire_id = inspire_id_elem.text.strip() if inspire_id_elem is not None else ""
-        elif ADMIN_TYPE == "Jedinica lokalne samouprave":
-            inspire_id = elem.attrib.get(f"{{{GML_NS}}}id", "").strip()
 
         # name
         name_elem = elem.find(f".//{{{GN_NS}}}text")
@@ -165,7 +178,7 @@ with open(OUTPUT, "w", newline="", encoding="utf-8") as csvfile:
         elif parent_id == "4324":
             parent_name = "Općina Sveta Nedelja"
 
-        if (ADMIN_TYPE == "Jedinica lokalne samouprave"):
+        if (ADMIN_LEVEL == "opstina"):
             writer.writerow({
                 "opstina_maticni_broj": maticni_broj,
                 "opstina_ime": ime,
@@ -175,7 +188,7 @@ with open(OUTPUT, "w", newline="", encoding="utf-8") as csvfile:
                 "geometry": geometry_wkt,
                 "inspire_id": inspire_id
             })
-        elif (ADMIN_TYPE == "Naselje"):
+        elif (ADMIN_LEVEL == "naselje"):
             writer.writerow({
                 "objectid": "0",
                 "naselje_maticni_broj": maticni_broj,

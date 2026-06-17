@@ -35,7 +35,7 @@ def get_naselje_boundaries(cwd):
     print("Load naselje geometries")
     gdf_naselje = pd.read_csv(os.path.join(rgz_path, 'naselje.csv'), dtype='unicode')
     gdf_naselje['geometry'] = gdf_naselje.wkt.apply(wkt.loads)
-    gdf_naselje = gpd.GeoDataFrame(gdf_naselje, geometry='geometry', crs=settings.COORDINATE_SYSTEM)
+    gdf_naselje = gpd.GeoDataFrame(gdf_naselje, geometry='geometry', crs=settings.ADDRESS_CRS)
     gdf_naselje.to_crs("EPSG:4326", inplace=True)
     gdf_naselje.sindex
     return gdf_naselje

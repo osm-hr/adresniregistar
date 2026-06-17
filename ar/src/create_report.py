@@ -674,7 +674,7 @@ def generate_report(context):
     df_opstine = df_opstine[~df_opstine.okrug_sifra.isin([25, 26, 27, 28, 29])]  # remove kosovo
     df_opstine = df_opstine.merge(df_calc_opstine[['name', 'ratio']], left_on='opstina_imel', right_on='name')
     df_opstine.drop(['name', 'opstina_maticni_broj', 'opstina_ime', 'opstina_povrsina', 'okrug_sifra'], inplace=True, axis=1)
-    gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs=settings.COORDINATE_SYSTEM)
+    gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs=settings.ADMIN_CRS)
     gdf_opstine.to_crs("EPSG:4326", inplace=True)
     gdf_opstine['geometry'] = gdf_opstine.simplify(tolerance=0.0005)
     gdf_opstine.to_file(opstine_js_path, driver='GeoJSON')
@@ -687,7 +687,7 @@ def load_naselja_boundaries(rgz_path):
     df_naselja['geometry'] = df_naselja.wkt.apply(wkt.loads)
     df_naselja.drop(['objectid', 'naselje_ime', 'naselje_povrsina', 'opstina_maticni_broj',
                      'opstina_ime', 'wkt'], inplace=True, axis=1, errors='ignore')
-    gdf_naselja = gpd.GeoDataFrame(df_naselja, geometry='geometry', crs=settings.COORDINATE_SYSTEM)
+    gdf_naselja = gpd.GeoDataFrame(df_naselja, geometry='geometry', crs=settings.ADMIN_CRS)
     gdf_naselja.to_crs("EPSG:4326", inplace=True)
     gdf_naselja['geometry'] = gdf_naselja.simplify(tolerance=0.0001)
     return gdf_naselja

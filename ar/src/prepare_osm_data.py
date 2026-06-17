@@ -22,14 +22,14 @@ def main():
     print("Load opstine geometries")
     df_opstine = pd.read_csv(os.path.join(rgz_path, 'opstina.csv'), dtype='unicode')
     df_opstine['geometry'] = df_opstine.geometry.apply(wkt.loads)
-    gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs=settings.COORDINATE_SYSTEM)
+    gdf_opstine = gpd.GeoDataFrame(df_opstine, geometry='geometry', crs=settings.ADMIN_CRS)
     gdf_opstine.to_crs("EPSG:4326", inplace=True)
     gdf_opstine.sindex
     if settings.ENHANCE_WITH_NASELJA:
 
         df_naselja = pd.read_csv(os.path.join(rgz_path, 'naselje.csv'), dtype='unicode')
         df_naselja['geometry'] = df_naselja.wkt.apply(wkt.loads)
-        gdf_naselja = gpd.GeoDataFrame(df_naselja, geometry='geometry', crs=settings.COORDINATE_SYSTEM)
+        gdf_naselja = gpd.GeoDataFrame(df_naselja, geometry='geometry', crs=settings.ADMIN_CRS)
         gdf_naselja.to_crs("EPSG:4326", inplace=True)
         gdf_naselja.sindex
 
@@ -80,7 +80,6 @@ def main():
 
         if len(addresses_in_opstina) == 0:
             print(f"{opstina} doesn't seem to have any address")
-            continue
 
         pd.DataFrame(addresses_in_opstina).to_csv(csv_file_path, index=False)
 

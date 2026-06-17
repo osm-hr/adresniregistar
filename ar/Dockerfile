@@ -36,7 +36,7 @@ RUN pip install --no-cache-dir \
 
 WORKDIR /app
 
-RUN git clone --depth 1 https://codeberg.org/ihabunek/dgu-parse.git; \
+RUN git clone --depth 1 https://codeberg.org/Janjko/dgu-parse.git; \
      cd dgu-parse; \
      cargo build --release
 
