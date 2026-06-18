@@ -19,10 +19,10 @@ CENTER_COORDINATES = os.getenv('CENTER_COORDINATES', '44.5, 21')
 SW_COORDINATES = os.getenv('SW_COORDINATES', '42, 18.5')
 NE_COORDINATES = os.getenv('NE_COORDINATES', '46.5, 23.5')
 WEB_URL = os.getenv('WEB_URL', 'dina.openstreetmap.rs')
-CHANGESET_COMMENT = 'RGZ address import (updating street and housenumber after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html'
+CHANGESET_COMMENT = os.getenv('CHANGESET_COMMENT', 'RGZ address import (updating street and housenumber after cadastre refresh), https://lists.openstreetmap.org/pipermail/imports/2023-March/007187.html')
 CHANGESET_SOURCE = os.getenv('CHANGESET_SOURCE', 'RGZ_AR')
 IMPORT_PAGE = os.getenv('IMPORT_PAGE', 'https://wiki.openstreetmap.org/wiki/Serbia/RGZ_Import')
-SOURCE_URL = 'https://dina.openstreetmap.rs'
+SOURCE_URL = os.getenv('SOURCE_URL', 'https://dina.openstreetmap.rs')
 CHANGESET_TAGS_JSON = {"comment": CHANGESET_COMMENT, "source": CHANGESET_SOURCE, "import": "yes", "source:url": SOURCE_URL, "import:page": IMPORT_PAGE}
 CHANGESET_TAGS_TXT  = f"comment={CHANGESET_COMMENT}|source={CHANGESET_SOURCE}|import=yes|source:url={SOURCE_URL}|import:page={IMPORT_PAGE}"
 CADASTRE_AUTHORITY_ABBR = os.getenv('CADASTRE_AUTHORITY_ABBR', 'RGZ')
