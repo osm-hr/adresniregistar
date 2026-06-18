@@ -54,7 +54,7 @@ if [ "${AR_INCREMENTAL_UPDATE:-}" = "1" ]; then
 else
   echo "Download $COUNTRY PBF from geofabrik"
   mkdir -p data/osm/download
-  yesterday=`date -d "2 days ago" +"%y%m%d"`
+  yesterday=`date -d "yesterday" +"%y%m%d"`
   echo "Downloading $COUNTRY-$yesterday.osm.pbf"
 
   if [ ! -f data/osm/download/$COUNTRY.osm.pbf ]; then
