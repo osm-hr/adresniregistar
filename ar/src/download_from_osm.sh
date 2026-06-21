@@ -55,7 +55,6 @@ else
   echo "Download $COUNTRY PBF from geofabrik"
   mkdir -p data/osm/download
   yesterday=`date -d "yesterday" +"%y%m%d"`
-  echo "Downloading $COUNTRY-$yesterday.osm.pbf"
 
   if [ ! -f data/osm/download/$COUNTRY.osm.pbf ]; then
     attempts=0
@@ -77,6 +76,7 @@ else
       echo "Using public Geofabrik extract (no changeset/uid/user metadata)"
     fi
 
+    echo "Downloading $DOWNLOAD_URL"
     while [ $attempts -lt $max_attempts ] && [ "$success" = false ]; do
       if wget "${WGET_ARGS[@]}" "$DOWNLOAD_URL" -O data/osm/download/$COUNTRY.osm.pbf -q --show-progress --progress=dot:giga; then
         success=true
