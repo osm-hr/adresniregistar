@@ -61,19 +61,22 @@ else
     max_attempts=240  # 240 * 5 min = 20h
     success=false
 
-    # If GEOFABRIK_OAUTH_COOKIE is set, download internal extract (with full metadata: changeset, uid, user)
-    # Get cookie by logging in at https://osm-internal.download.geofabrik.de with your OSM account,
-    # then copying the value of the "gf_download_oauth" cookie from browser DevTools.
+    # Definisanje URL-ova i parametara
+    DOWNLOAD_URL=""
+    WGET_ARGS=()
+    
     if [ -n "${OSM_USERNAME:-}" ]; then
-      echo "Getting Geofabrik Cookie for user $OSM_USERNAME"
-      GEOFABRIK_OAUTH_COOKIE=$(python3 src/get_geofabrik_cookie.py "$OSM_USERNAME" "$OSM_PASSWORD")
-      DOWNLOAD_URL="https://osm-internal.download.geofabrik.de/europe/$COUNTRY-${yesterday}-internal.osm.pbf"
-      WGET_ARGS=("--header=Cookie: gf_download_oauth=${GEOFABRIK_OAUTH_COOKIE}")
-      echo "Using internal Geofabrik extract (full metadata)"
-    else
+      echo "Pokušavam dobiti Geofabrik Cookie za korisnika $OSM_USERNAME"
+      GEOFABRIK_OAUTH_COOKIE=$(python3 src/get_geofabrik_cookie.py "$OSM_USERNAME" "$OSM_PASSWORD" 2>&1)
+      if [ -n "$GEOFABRIK_OAUTH_COOKIE" ]; then
+        DOWNLOAD_URL="https://osm-internal.download.geofabrik.de/europe/$COUNTRY-${yesterday}-internal.osm.pbf"
+        WGET_ARGS=("--header=Cookie: gf_download_oauth=${GEOFABRIK_OAUTH_COOKIE}")
+      fi
+    fi
+
+    # Ako internal URL nije dostupan, koristi javni
+    if [ -z "$DOWNLOAD_URL" ]; then
       DOWNLOAD_URL="https://download.geofabrik.de/europe/$COUNTRY-$yesterday.osm.pbf"
-      WGET_ARGS=()
-      echo "Using public Geofabrik extract (no changeset/uid/user metadata)"
     fi
 
     echo "Downloading $DOWNLOAD_URL"
