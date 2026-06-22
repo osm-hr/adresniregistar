@@ -61,7 +61,7 @@ else
     max_attempts=240  # 240 * 5 min = 20h
     success=false
 
-    # Definisanje URL-ova i parametara
+    # Definiranje URL-ova i parametara
     DOWNLOAD_URL=""
     WGET_ARGS=()
     
@@ -69,8 +69,11 @@ else
       echo "Pokušavam dobiti Geofabrik Cookie za korisnika $OSM_USERNAME"
       GEOFABRIK_OAUTH_COOKIE=$(python3 src/get_geofabrik_cookie.py "$OSM_USERNAME" "$OSM_PASSWORD" 2>&1)
       if [ -n "$GEOFABRIK_OAUTH_COOKIE" ]; then
+        echo "DEBUG: Cookie dobijen: ${GEOFABRIK_OAUTH_COOKIE:0:50}..."
         DOWNLOAD_URL="https://osm-internal.download.geofabrik.de/europe/$COUNTRY-${yesterday}-internal.osm.pbf"
         WGET_ARGS=("--header=Cookie: gf_download_oauth=${GEOFABRIK_OAUTH_COOKIE}")
+      else
+        echo "DEBUG: Cookie je prazan, koristim javni URL"
       fi
     fi
 
