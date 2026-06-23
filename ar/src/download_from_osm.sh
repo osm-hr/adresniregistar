@@ -58,7 +58,7 @@ else
 
   if [ ! -f data/osm/download/$COUNTRY.osm.pbf ]; then
     attempts=0
-    max_attempts=240  # 288 * 5 min = 24h
+    max_attempts=288  # 288 * 5 min = 24h
     success=false
 
     # Definiranje URL-ova i parametara
