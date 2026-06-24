@@ -95,6 +95,7 @@ download_inspire_data:
 		duckdb -csv < src/inspire-convert_admin_boundaries-$(COUNTRY).sql > data/rgz/naselje.csv && \
 		[ "$(COUNTRY)" != "slovenia" ] || python3 ./src/generate_voronoi_borders.py && \
 		python3 ./src/prepare_inspire_data.py && \
+		duckdb -csv < src/fixed-street_names_list.sql > data/rgz/fixed_street_names_list.csv && \
 		rm -f data/rgz/naselja.csv; \
 	fi
 
