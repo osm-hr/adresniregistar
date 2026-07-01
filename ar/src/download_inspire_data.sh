@@ -27,6 +27,16 @@ download_croatia() {
     else
         echo "Zip datoteka sa adresama postoji, preskačem preuzimanje."
     fi
+
+    local rpj_mo_url="https://data.zagreb.hr/dataset/37fa6630-0a87-4084-b62d-ff5edab3610b/resource/482b7289-d397-4c38-9929-5d0410ad0e16/download/rpj_mo.zip"
+    local rpj_mo_zip="$DOWNLOAD_DIR/rpj_mo.zip"
+
+    if [ ! -f "$rpj_mo_zip" ]; then
+        curl -L --fail --retry 5 --retry-delay 10 --retry-connrefused -o "$rpj_mo_zip" "$rpj_mo_url"
+        unzip -q "$rpj_mo_zip" -d "$UNZIP_DIR"
+    else
+        echo "Zip datoteka RPJ_MO postoji, preskačem preuzimanje."
+    fi
 }
 
 download_slovenia() {

@@ -93,6 +93,7 @@ download_inspire_data:
 		fi && \
 		duckdb -csv < src/inspire-consolidate_addresses-$(COUNTRY).sql > data/rgz/addresses.csv && \
 		duckdb -csv < src/inspire-convert_admin_boundaries-$(COUNTRY).sql > data/rgz/naselje.csv && \
+		if [ "$(COUNTRY)" = "croatia" ]; then python3 ./src/fill_zagreb_mjesni_odbori.py; fi && \
 		[ "$(COUNTRY)" != "slovenia" ] || python3 ./src/generate_voronoi_borders.py && \
 		python3 ./src/prepare_inspire_data.py && \
 		duckdb -csv < src/fixed-street_names_list.sql > data/rgz/fixed_street_names_list.csv && \
