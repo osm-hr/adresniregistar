@@ -294,7 +294,7 @@ def generate_osm_files_new_addresses(context, opstina_dir_path, opstina_name, na
             'lat': location_lat,
             'lon': location_lon,
             'street': street_mappings.get_name(address['rgz_ulica'], str(address['rgz_ulica_mb'])),
-            'housenumber': normalize_name_latin(address['rgz_kucni_broj']),
+            'housenumber': normalize_name_latin(address['rgz_kucni_broj']) if settings.NORMALIZE_HOUSENUMBER else address['rgz_kucni_broj'],
             'ulica': address['rgz_ulica_mb'],
             'kucni_broj': address['rgz_kucni_broj_id'],
             'postcode': postcode if pd.notna(postcode) else ''
