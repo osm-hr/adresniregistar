@@ -51,6 +51,7 @@ COPY curated_streets.csv /app/curated_streets.csv
 COPY curated_streets_per_opstina.csv /app/curated_streets_per_opstina.csv
 COPY Makefile /app/Makefile
 
+ARG ISPRAVCICACHEBUST=1
 RUN git clone --depth 1 https://github.com/osm-hr/adresniregistar-ispravci.git; \
      mv adresniregistar-ispravci/curated_streets.csv ./curated_streets.csv; \
      mv adresniregistar-ispravci/curated_streets_per_naselje.csv ./curated_streets_per_opstina.csv; \
