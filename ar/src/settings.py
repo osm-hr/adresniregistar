@@ -32,4 +32,4 @@ OSM_PASSWORD = os.getenv('OSM_PASSWORD')
 INSPIRE_ADMIN_LEVEL_1_NAME = os.getenv('INSPIRE_ADMIN_LEVEL_1_NAME', 'Jedinica lokalne samouprave')
 INSPIRE_ADMIN_LEVEL_2_NAME = os.getenv('INSPIRE_ADMIN_LEVEL_2_NAME','Naselje')
 INSPIRE_ADDR_FEED_URL = os.getenv('INSPIRE_ADDR_FEED_URL', 'https://geoportal.dgu.hr/services/atom/ad/xml')
-NORMALIZE_HOUSENUMBER = os.getenv('NORMALIZE_HOUSENUMBER', 'true') == 'true'
+LOWERCASE_HOUSENUMBER = os.getenv('LOWERCASE_HOUSENUMBER', 'true') == 'true'

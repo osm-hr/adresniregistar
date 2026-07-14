@@ -11,7 +11,7 @@ from jinja2 import Environment, FileSystemLoader
 from shapely import wkt
 
 from common import AddressInBuildingResolution, OsmEntitiesCacheHandler
-from common import cyr2lat, normalize_name, normalize_name_latin, xml_escape, geojson2js, pad_housenumber
+from common import cyr2lat, normalize_name, normalize_name_latin, housenumber_case, xml_escape, geojson2js, pad_housenumber
 import settings
 from street_mapping import StreetMapping
 
@@ -294,7 +294,7 @@ def generate_osm_files_new_addresses(context, opstina_dir_path, opstina_name, na
             'lat': location_lat,
             'lon': location_lon,
             'street': street_mappings.get_name(address['rgz_ulica'], str(address['rgz_ulica_mb'])),
-            'housenumber': normalize_name_latin(address['rgz_kucni_broj']) if settings.NORMALIZE_HOUSENUMBER else address['rgz_kucni_broj'],
+            'housenumber': housenumber_case(normalize_name_latin(address['rgz_kucni_broj'])),
             'ulica': address['rgz_ulica_mb'],
             'kucni_broj': address['rgz_kucni_broj_id'],
             'postcode': postcode if pd.notna(postcode) else ''
@@ -348,7 +348,7 @@ def generate_osm_files_new_per_street_addresses(context, opstina_dir_path, opsti
                 'lat': location_lat,
                 'lon': location_lon,
                 'street': proper_street,
-                'housenumber': normalize_name_latin(address['rgz_kucni_broj']) if settings.NORMALIZE_HOUSENUMBER else address['rgz_kucni_broj'],
+                'housenumber': housenumber_case(normalize_name_latin(address['rgz_kucni_broj'])),
                 'ulica': address['rgz_ulica_mb'],
                 'kucni_broj': address['rgz_kucni_broj_id'],
                 'postcode': postcode if pd.notna(postcode) else ''

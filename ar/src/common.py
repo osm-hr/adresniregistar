@@ -205,6 +205,15 @@ def geojson2js(js_path, variable_name):
         f.write(js_file_content)
 
 
+def housenumber_case(housenumber):
+    if type(housenumber) != str:
+        return housenumber
+    if settings.LOWERCASE_HOUSENUMBER:
+        return housenumber.lower()
+    else:
+        return housenumber.upper()
+
+
 def pad_housenumber(housenumber):
     if type(housenumber) != str:
         return '00000'
@@ -241,6 +250,15 @@ def housenumber_to_float(housenumber):
     if len(housenumber) == 0:
         return 0
 
+    if '/' in housenumber:
+        # Case with a subnumber, "26A/1"
+        main_part, sub_part = housenumber.split('/', 1)
+        try:
+            sub = int(sub_part)
+        except ValueError:
+            sub = 0
+        return round(housenumber_to_float(main_part) + sub/1000, 5)
+
     if housenumber[-1].isdigit():
         return int(housenumber)
 
@@ -261,6 +279,8 @@ def housenumber_to_float(housenumber):
             # Case with one char, letter, "a"
             number = 0
             letter = housenumber[0]
+    if settings.LOWERCASE_HOUSENUMBER:
+        letter = letter.lower()
     if letter in housenumber_order:
         return round(number + housenumber_order[letter]/30, 3)
     else:
