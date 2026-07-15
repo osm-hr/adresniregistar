@@ -63,23 +63,36 @@ else
 
     # Definiranje URL-ova i parametara
     DOWNLOAD_URL=""
+    INTERNAL_URL="https://osm-internal.download.geofabrik.de/europe/$COUNTRY-${yesterday}-internal.osm.pbf"
     WGET_ARGS=()
-    
+
     if [ -n "${OSM_USERNAME:-}" ]; then
       echo "Pokušavam dobiti Geofabrik Cookie za korisnika $OSM_USERNAME"
       GEOFABRIK_OAUTH_COOKIE=$(python3 src/get_geofabrik_cookie.py "$OSM_USERNAME" "$OSM_PASSWORD" 2>&1)
       if [ -n "$GEOFABRIK_OAUTH_COOKIE" ]; then
         echo "DEBUG: Cookie dobijen: ${GEOFABRIK_OAUTH_COOKIE:0:50}..."
-        DOWNLOAD_URL="https://osm-internal.download.geofabrik.de/europe/$COUNTRY-${yesterday}-internal.osm.pbf"
+        DOWNLOAD_URL="$INTERNAL_URL"
         WGET_ARGS=("--header=Cookie: gf_download_oauth=${GEOFABRIK_OAUTH_COOKIE}")
       else
         echo "DEBUG: Cookie je prazan, koristim javni URL"
       fi
     fi
 
-    # Ako internal URL nije dostupan, koristi javni
+    # Ako internal URL nije dostupan, koristi javni samo ako je FALLBACK_TO_PUBLIC_PBF=true
     if [ -z "$DOWNLOAD_URL" ]; then
-      DOWNLOAD_URL="https://download.geofabrik.de/europe/$COUNTRY-$yesterday.osm.pbf"
+      if [ "${FALLBACK_TO_PUBLIC_PBF:-false}" = "true" ]; then
+        DOWNLOAD_URL="https://download.geofabrik.de/europe/$COUNTRY-$yesterday.osm.pbf"
+      else
+        echo "Internal PBF nije dostupan, a FALLBACK_TO_PUBLIC_PBF nije postavljen na true. Prekidam."
+        exit 1
+      fi
+    fi
+
+    mkdir -p data/osm/download/source
+    if [ "$DOWNLOAD_URL" = "$INTERNAL_URL" ]; then
+      echo "internal" > data/osm/download/source/PBF_SOURCE
+    else
+      echo "public" > data/osm/download/source/PBF_SOURCE
     fi
 
     echo "Downloading $DOWNLOAD_URL"
