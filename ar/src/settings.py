@@ -33,3 +33,4 @@ INSPIRE_ADMIN_LEVEL_1_NAME = os.getenv('INSPIRE_ADMIN_LEVEL_1_NAME', 'Jedinica l
 INSPIRE_ADMIN_LEVEL_2_NAME = os.getenv('INSPIRE_ADMIN_LEVEL_2_NAME','Naselje')
 INSPIRE_ADDR_FEED_URL = os.getenv('INSPIRE_ADDR_FEED_URL', 'https://geoportal.dgu.hr/services/atom/ad/xml')
 LOWERCASE_HOUSENUMBER = os.getenv('LOWERCASE_HOUSENUMBER', 'true') == 'true'
+FALLBACK_TO_PUBLIC_PBF = os.getenv('FALLBACK_TO_PUBLIC_PBF', 'false') == 'true'

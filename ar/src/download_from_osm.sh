@@ -61,48 +61,40 @@ else
     max_attempts=288  # 288 * 5 min = 24h
     success=false
 
-    # Definiranje URL-ova i parametara
-    DOWNLOAD_URL=""
     INTERNAL_URL="https://osm-internal.download.geofabrik.de/europe/$COUNTRY-${yesterday}-internal.osm.pbf"
-    WGET_ARGS=()
+    PUBLIC_URL="https://download.geofabrik.de/europe/$COUNTRY-$yesterday.osm.pbf"
+    PBF_PATH="data/osm/download/$COUNTRY.osm.pbf"
+    FALLBACK_TO_PUBLIC_PBF=${FALLBACK_TO_PUBLIC_PBF:-false}
+    GEOFABRIK_OAUTH_COOKIE=""
 
     if [ -n "${OSM_USERNAME:-}" ]; then
       echo "Pokušavam dobiti Geofabrik Cookie za korisnika $OSM_USERNAME"
-      GEOFABRIK_OAUTH_COOKIE=$(python3 src/get_geofabrik_cookie.py "$OSM_USERNAME" "$OSM_PASSWORD" 2>&1)
+      GEOFABRIK_OAUTH_COOKIE=$(python3 src/get_geofabrik_cookie.py "$OSM_USERNAME" "${OSM_PASSWORD:-}") || GEOFABRIK_OAUTH_COOKIE=""
       if [ -n "$GEOFABRIK_OAUTH_COOKIE" ]; then
         echo "DEBUG: Cookie dobijen: ${GEOFABRIK_OAUTH_COOKIE:0:50}..."
-        DOWNLOAD_URL="$INTERNAL_URL"
-        WGET_ARGS=("--header=Cookie: gf_download_oauth=${GEOFABRIK_OAUTH_COOKIE}")
       else
-        echo "DEBUG: Cookie je prazan, koristim javni URL"
+        echo "DEBUG: Cookie nije dobiven"
       fi
     fi
 
-    # Ako internal URL nije dostupan, koristi javni samo ako je FALLBACK_TO_PUBLIC_PBF=true
-    if [ -z "$DOWNLOAD_URL" ]; then
-      if [ "${FALLBACK_TO_PUBLIC_PBF:-false}" = "true" ]; then
-        DOWNLOAD_URL="https://download.geofabrik.de/europe/$COUNTRY-$yesterday.osm.pbf"
-      else
-        echo "Internal PBF nije dostupan, a FALLBACK_TO_PUBLIC_PBF nije postavljen na true. Prekidam."
-        exit 1
-      fi
+    if [ -z "$GEOFABRIK_OAUTH_COOKIE" ] && [ "$FALLBACK_TO_PUBLIC_PBF" != "true" ]; then
+      echo "Internal PBF nije dostupan, a FALLBACK_TO_PUBLIC_PBF nije postavljen na true. Prekidam."
+      exit 1
     fi
 
-    mkdir -p data/osm/download/source
-    if [ "$DOWNLOAD_URL" = "$INTERNAL_URL" ]; then
-      echo "internal" > data/osm/download/source/PBF_SOURCE
-    else
-      echo "public" > data/osm/download/source/PBF_SOURCE
-    fi
-
-    echo "Downloading $DOWNLOAD_URL"
     while [ $attempts -lt $max_attempts ] && [ "$success" = false ]; do
-      if wget "${WGET_ARGS[@]}" "$DOWNLOAD_URL" -O data/osm/download/$COUNTRY.osm.pbf -q --show-progress --progress=dot:giga; then
+      if [ -n "$GEOFABRIK_OAUTH_COOKIE" ] && echo "Downloading $INTERNAL_URL" && \
+          wget "--header=Cookie: gf_download_oauth=${GEOFABRIK_OAUTH_COOKIE}" "$INTERNAL_URL" -O "$PBF_PATH" -q --show-progress --progress=dot:giga; then
+        pbf_source=internal
+        success=true
+      elif [ "$FALLBACK_TO_PUBLIC_PBF" = "true" ] && echo "Downloading $PUBLIC_URL" && \
+          wget "$PUBLIC_URL" -O "$PBF_PATH" -q --show-progress --progress=dot:giga; then
+        pbf_source=public
         success=true
       else
         attempts=$((attempts + 1))
         echo "Download failed. Attempt $attempts of $max_attempts. Retrying in 5 minutes..."
-        rm -f data/osm/download/$COUNTRY.osm.pbf
+        rm -f "$PBF_PATH"
         sleep 300
       fi
     done
@@ -111,6 +103,9 @@ else
       echo "Failed to download after 3 hours of attempts (reached maximum of $max_attempts attempts)"
       exit 1
     fi
+
+    mkdir -p data/osm/download/source
+    echo "$pbf_source" > data/osm/download/source/PBF_SOURCE
   fi
 
   osm_data_date=`osmium fileinfo data/osm/download/$COUNTRY.osm.pbf | grep osmosis_replication_timestamp | cut -d"=" -f2`

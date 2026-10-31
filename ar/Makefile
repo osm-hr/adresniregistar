@@ -96,9 +96,9 @@ download_inspire_data:
 		if [ "$(COUNTRY)" = "croatia" ]; then python3 ./src/fill_zagreb_mjesni_odbori.py; fi && \
 		[ "$(COUNTRY)" != "slovenia" ] || python3 ./src/generate_voronoi_borders.py && \
 		python3 ./src/prepare_inspire_data.py && \
-		duckdb -csv < src/fixed-street_names_list.sql > data/rgz/fixed_street_names_list.csv && \
 		rm -f data/rgz/naselja.csv; \
 	fi
+	duckdb -csv < src/fixed-street_names_list.sql > data/rgz/fixed_street_names_list.csv
 
 
 normalize_street_names:
@@ -144,7 +144,10 @@ report: analyze quality_assurance generate_b_hn_ratio
 		python3 src/create_report_qa.py;\
 	fi
 
-report_with_inspire_data: download_inspire_data report
+add_street_names:
+	python3 src/add_street_names.py
+
+report_with_inspire_data: download_inspire_data report add_street_names
 
 upload_report: report
 	echo "Uploading report"

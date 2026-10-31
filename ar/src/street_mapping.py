@@ -3,6 +3,7 @@
 import sys
 import csv
 import os
+import re
 import pandas as pd
 
 import osmium
@@ -132,8 +133,12 @@ def best_effort_decapitalize(name):
     return name
 
 
+def clean_rgz_name(rgz_name):
+    return rgz_name.rstrip().replace('    ', ' ').replace('   ', ' ').replace('  ', ' ')
+
+
 def convert_rgz_name_to_osm_name(rgz_id, rgz_name, curated_streets, ref_mappings, osm_mappings):
-    rgz_name = rgz_name.rstrip().replace('    ', ' ').replace('   ', ' ').replace('  ', ' ')
+    rgz_name = clean_rgz_name(rgz_name)
     # Find first in curated list
     if rgz_name in curated_streets:
         return curated_streets[rgz_name], 'curated', ''
@@ -269,6 +274,11 @@ def fix_framacalc():
             })
 
 
+def normalize_ulica_id(ulica_id):
+    # addresses have "UL.0002038275", curated_streets_per_opstina.csv has "2038275"
+    return re.sub(r'^UL\.0*', '', str(ulica_id))
+
+
 class StreetMapping:
     def __init__(self, cwd):
         self.street_mappings = {}
@@ -282,7 +292,7 @@ class StreetMapping:
                 rgz_name = row['rgz_name']
                 if rgz_name not in self.street_mappings:
                     raise Exception(f"Street {rgz_name} present in opstina overrides, but not in main mapping, quitting")
-                self.street_mappings[rgz_name].append({'name': row['name'], 'source': 'curated', 'refs': '', 'ulica_id': row['ulica_id']})
+                self.street_mappings[rgz_name].append({'name': row['name'], 'source': 'curated', 'refs': '', 'ulica_id': normalize_ulica_id(row['ulica_id'])})
 
     def get_all_rgz_names(self):
         """
@@ -308,7 +318,7 @@ class StreetMapping:
         if len(all_names) == 1:
             return all_names[0]['name']
         else:
-            overriden_names = [n for n in all_names if n['ulica_id'] == ulica_id]
+            overriden_names = [n for n in all_names if n['ulica_id'] == normalize_ulica_id(ulica_id)]
             if len(overriden_names) > 0:
                 return overriden_names[0]['name']
             else:
